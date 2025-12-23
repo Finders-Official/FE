@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+#Dependencies
+node_modules
+
+#Build outputs
+dist
+dist-ssr
+
+#vite cache
+.vite
+
+# Coverage / test outputs
+coverage
+
+# TypeScript incremental build
+*.tsbuildinfo
+
+# ESLint cache
+.eslintcache
+
+# Env files (keep example)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
