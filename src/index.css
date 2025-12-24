@@ -1,18 +1,25 @@
+@config "../tailwind.config.ts";
+
+@import "pretendard/dist/web/variable/pretendardvariable.css";
 @import "tailwindcss";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 화면 꽉 차게: 루트 높이 고정 */
-html,
-body,
-#root {
-  height: 100%;
-}
+@layer base {
+  /* 화면 꽉 차게: 루트 높이 고정 */
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
 
-/* 모바일 주소창 변화에도 안정적인 최소 높이 */
-body {
-  min-height: 100dvh;
-  overflow-x: hidden;
+  /* 모바일 주소창 변화에도 안정적인 최소 높이 */
+  body {
+    min-height: 100dvh;
+    overflow-x: hidden;
+
+    font-family: "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  }
 }

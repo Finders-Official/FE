@@ -1,11 +1,7 @@
 export default function Home() {
   return (
     <div className="space-y-4 pt-10">
-      <h1 className="text-2xl font-bold">Home</h1>
-      <p className="text-slate-600">
-        모바일에서는 꽉 차고, PC에서는 중앙 정렬된 최대 폭 레이아웃으로
-        보입니다.
-      </p>
+      <h1 className="text-2xl font-bold">Finders</h1>
 
       <div className="rounded-xl border border-slate-200 p-4">
         <div className="text-sm font-medium">Card</div>
