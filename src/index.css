@@ -1,11 +1,35 @@
-@config "../tailwind.config.ts";
-
 @import "pretendard/dist/web/variable/pretendardvariable.css";
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ✅ Tailwind v4 theme variables: 이 형태여야 bg-neutral-900 같은 유틸이 자동 생성됨 */
+@theme {
+  /* Orange */
+  --color-orange-900: #2f1004;
+  --color-orange-800: #5d1f09;
+  --color-orange-700: #8c2f0d;
+  --color-orange-600: #bb3f11;
+  --color-orange-500: #e94e16;
+  --color-orange-400: #ee7244;
+  --color-orange-300: #f29573;
+  --color-orange-200: #f6b8a2;
+  --color-orange-100: #fbdcd0;
+
+  /* Neutral */
+  --color-neutral-1000: #000000;
+  --color-neutral-900: #131313;
+  --color-neutral-875: #222222;
+  --color-neutral-850: #303030;
+  --color-neutral-800: #3d3d3d;
+  --color-neutral-750: #4a4a4a;
+  --color-neutral-700: #575757;
+  --color-neutral-600: #707070;
+  --color-neutral-500: #8a8a8a;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-300: #bdbdbd;
+  --color-neutral-200: #d6d6d6;
+  --color-neutral-100: #f0f0f0;
+  --color-neutral-0: #fbfbfb;
+}
 
 @layer base {
   /* 화면 꽉 차게: 루트 높이 고정 */
@@ -15,7 +39,7 @@
     height: 100%;
   }
 
-  /* 모바일 주소창 변화에도 안정적인 최소 높이 */
+  /* 모바일 주소창 변화에도 안정적인 최소 높이 + 전역 폰트 */
   body {
     min-height: 100dvh;
     overflow-x: hidden;
