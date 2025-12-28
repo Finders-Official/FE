@@ -1,38 +1,62 @@
+import { useEffect, useRef, useState } from "react";
 import AppleButton from "../../components/AppleButton";
 import KakaoButton from "../../components/KakaoButton";
 
 export default function LoginPage() {
+  const [isSplash, setIsSplash] = useState(true);
+  const timerRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    timerRef.current.push(
+      window.setTimeout(() => {
+        setIsSplash(false);
+      }, 2000),
+    );
+
+    return () => {
+      for (const id of timerRef.current) window.clearTimeout(id);
+      timerRef.current = [];
+    };
+  }, []);
   return (
     <div className="flex w-full flex-1 flex-col items-center">
       {/* 로고 영역 */}
-      <section className="mt-60 flex flex-col items-center text-center">
+      <section className="mt-60 flex animate-[finders-fade-in_1500ms_ease-in-out_forwards] flex-col items-center text-center">
         <img
           src="/MainLogo.svg"
           alt="Main Logo"
-          className="h-24 w-38 sm:h-28 sm:w-42"
+          className="h-28 w-42 sm:h-32 sm:w-46"
         />
-        <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold text-neutral-100 sm:text-[3rem]">
+        <p className="font-ydestreet mt-4 text-[2.5rem] leading-none font-extrabold text-neutral-100 sm:text-[3rem]">
           Finders
         </p>
-        <p className="mt-2 text-sm text-neutral-100 sm:text-base">
-          뷰파인더 너머, 취향을 찾다
-        </p>
+        {!isSplash && (
+          <p className="mt-2 animate-[finders-fade-in_1500ms_ease-in-out_forwards] text-sm text-neutral-100 sm:text-base">
+            뷰파인더 너머, 취향을 찾다
+          </p>
+        )}
       </section>
 
       {/* 버튼 영역: 아래로 내리기 */}
-      <section className="mt-auto w-full max-w-sm pb-15">
-        <div className="flex flex-col gap-4">
-          <AppleButton />
-          <KakaoButton />
-        </div>
+      {isSplash ? (
+        <p className="mt-auto animate-[finders-fade-in_1500ms_ease-in-out_forwards] pb-15 text-sm text-neutral-100 sm:text-base">
+          뷰파인더 너머, 취향을 찾다
+        </p>
+      ) : (
+        <section className="mt-auto w-full max-w-sm animate-[finders-fade-in_1500ms_ease-in-out_forwards] pb-15">
+          <div className="flex flex-col gap-2">
+            <AppleButton />
+            <KakaoButton />
+          </div>
 
-        <button
-          type="button"
-          className="mt-3 w-full text-center text-sm font-medium text-neutral-200 underline underline-offset-2 active:scale-[0.99]"
-        >
-          로그인 없이 둘러보기
-        </button>
-      </section>
+          <button
+            type="button"
+            className="mt-3 w-full text-center text-sm font-medium text-neutral-200 underline underline-offset-2 active:scale-[0.99]"
+          >
+            로그인 없이 둘러보기
+          </button>
+        </section>
+      )}
     </div>
   );
 }
