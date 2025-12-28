@@ -27,11 +27,11 @@ export default function LoginPage() {
           alt="Main Logo"
           className="h-28 w-42 sm:h-32 sm:w-46"
         />
-        <p className="font-ydestreet mt-4 text-[2.5rem] leading-none font-extrabold text-neutral-100 sm:text-[3rem]">
+        <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold text-neutral-100 sm:text-[3rem]">
           Finders
         </p>
         {!isSplash && (
-          <p className="mt-2 animate-[finders-fade-in_1500ms_ease-in-out_forwards] text-sm text-neutral-100 sm:text-base">
+          <p className="text-md mt-2 animate-[finders-fade-in_1500ms_ease-in-out_forwards] text-neutral-100 sm:text-base">
             뷰파인더 너머, 취향을 찾다
           </p>
         )}
@@ -39,7 +39,7 @@ export default function LoginPage() {
 
       {/* 버튼 영역: 아래로 내리기 */}
       {isSplash ? (
-        <p className="mt-auto animate-[finders-fade-in_1500ms_ease-in-out_forwards] pb-15 text-sm text-neutral-100 sm:text-base">
+        <p className="text-md mt-auto animate-[finders-fade-in_1500ms_ease-in-out_forwards] pb-15 text-neutral-100 sm:text-base">
           뷰파인더 너머, 취향을 찾다
         </p>
       ) : (
