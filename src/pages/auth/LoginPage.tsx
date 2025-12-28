@@ -11,7 +11,7 @@ export default function LoginPage() {
           alt="Main Logo"
           className="h-24 w-38 sm:h-28 sm:w-42"
         />
-        <p className="mt-3 text-[3rem] leading-none font-extrabold tracking-tight text-neutral-100 sm:text-[3.5rem]">
+        <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold text-neutral-100 sm:text-[3rem]">
           Finders
         </p>
         <p className="mt-2 text-sm text-neutral-100 sm:text-base">
@@ -28,7 +28,7 @@ export default function LoginPage() {
 
         <button
           type="button"
-          className="mt-3 w-full text-center text-sm font-medium text-neutral-200 underline underline-offset-4 hover:text-white"
+          className="mt-3 w-full text-center text-sm font-medium text-neutral-200 underline underline-offset-2 active:scale-[0.99]"
         >
           로그인 없이 둘러보기
         </button>
