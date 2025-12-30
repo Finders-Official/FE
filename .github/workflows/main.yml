@@ -22,21 +22,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node (with pnpm cache)
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
       - name: Enable Corepack (pnpm)
         run: | 
            corepack enable
            pnpm -v
 
+      - name: Setup Node (with pnpm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.2
+
       - name: Show versions
         run: |
           node -v
           pnpm -v
+
+      - name: Install
+        run: pnpm install 
 
       - name: Format check
         run: pnpm format:check
