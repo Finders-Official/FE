@@ -23,9 +23,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Enable Corepack (pnpm)
-        run: | 
-           corepack enable
-           pnpm -v
+        run: |
+          corepack enable
+          pnpm -v
 
       - name: Setup Node (with pnpm cache)
         uses: actions/setup-node@v4
@@ -39,7 +39,7 @@ jobs:
           pnpm -v
 
       - name: Install
-        run: pnpm install 
+        run: pnpm install
 
       - name: Format check
         run: pnpm format:check
