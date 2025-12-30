@@ -32,11 +32,6 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-          
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.26.2
 
       - name: Show versions
         run: |
