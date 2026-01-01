@@ -24,7 +24,7 @@ export const InputForm = ({
         <input
           placeholder={placeholder}
           name={name}
-          className={`${sizeClass[size]} ${className} bg-neutral-875 rounded-lg p-2 placeholder:text-neutral-600 focus:outline-none`}
+          className={`${sizeClass[size]} ${className} rounded-lg border border-neutral-800 p-2 placeholder:text-neutral-600 focus:outline-none`}
         ></input>
       </form>
     </div>
