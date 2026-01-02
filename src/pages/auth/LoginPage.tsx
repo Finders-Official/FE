@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import AppleButton from "../../components/auth/AppleButton";
 import KakaoButton from "../../components/auth/KakaoButton";
 import { Link } from "react-router";
 import { Button } from "../../components/common/Button";
@@ -7,6 +6,18 @@ import { Button } from "../../components/common/Button";
 export default function LoginPage() {
   const [isSplash, setIsSplash] = useState(true);
   const [isSignedUp, setIsSignedUp] = useState(false);
+  const key = "finders:loginAnimationPlayed";
+  // 애니메이션 1회 재생 제어
+  const [shouldAnimate, setShouldAnimate] = useState(() => {
+    const played = sessionStorage.getItem(key) === "1";
+    return !played;
+  });
+
+  useEffect(() => {
+    if (shouldAnimate) {
+      sessionStorage.setItem(key, "1");
+    }
+  }, [shouldAnimate, key]);
   const timerRef = useRef<number | null>(null);
 
   const hanldeClick = () => {
@@ -14,8 +25,11 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
+    if (!isSplash) return;
+
     timerRef.current = window.setTimeout(() => {
       setIsSplash(false);
+      setShouldAnimate(false);
     }, 2000);
 
     return () => {
@@ -24,17 +38,30 @@ export default function LoginPage() {
       }
       timerRef.current = null;
     };
-  }, []);
+  }, [isSplash]);
+
+  const headerAnim = shouldAnimate
+    ? "animate-[finders-fade-in_1500ms_ease-in-out_forwards]"
+    : "";
+  const taglineAnim = shouldAnimate
+    ? "animate-[finders-fade-in_1500ms_ease-in-out_forwards]"
+    : "";
+  const footerAnim = shouldAnimate
+    ? "animate-[finders-fade-in_1500ms_ease-in-out_forwards]"
+    : "";
 
   return (
     <main className="flex w-full flex-1 flex-col items-center">
       {/* 로고 영역 */}
-      <header className="mt-60 flex animate-[finders-fade-in_1500ms_ease-in-out_forwards] flex-col items-center text-center">
+      <header
+        className={`mt-60 flex flex-col items-center text-center ${headerAnim}`}
+      >
         <img
-          src="/MainLogo.svg"
+          src="../public/MainLogo.svg"
           alt="Main Logo"
           className="h-28 w-42 sm:h-32 sm:w-46"
         />
+
         {isSignedUp ? (
           <div>
             <p className="mt-3 text-[1.375rem] font-bold">
@@ -49,8 +76,9 @@ export default function LoginPage() {
             <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold sm:text-[3rem]">
               Finders
             </p>
+
             {!isSplash && (
-              <p className="text-md mt-2 animate-[finders-fade-in_1500ms_ease-in-out_forwards] sm:text-base">
+              <p className={`text-md mt-2 sm:text-base ${taglineAnim}`}>
                 뷰파인더 너머, 취향을 찾다
               </p>
             )}
@@ -58,20 +86,21 @@ export default function LoginPage() {
         )}
       </header>
 
-      {/* 버튼 영역: 아래로 내리기 */}
+      {/* 버튼 영역 */}
       <footer className="mt-auto w-full pb-15">
         {isSignedUp ? (
-          <div className="mx-auto w-full max-w-sm animate-[finders-fade-in_1500ms_ease-in-out_forwards]">
-            <Button text="홈으로" link="/" color="orange" />
+          <div className={`mx-auto flex w-full max-w-sm ${footerAnim}`}>
+            <Button text="홈으로" link="/" color="orange" size="compact" />
           </div>
         ) : isSplash ? (
-          <p className="text-md mt-auto animate-[finders-fade-in_1500ms_ease-in-out_forwards] text-center text-neutral-100 sm:text-base">
+          <p
+            className={`text-md mt-auto text-center text-neutral-100 sm:text-base ${footerAnim}`}
+          >
             뷰파인더 너머, 취향을 찾다
           </p>
         ) : (
-          <section className="mx-auto max-w-sm animate-[finders-fade-in_1500ms_ease-in-out_forwards]">
+          <section className={`mx-auto max-w-sm ${footerAnim}`}>
             <div className="flex flex-col gap-2">
-              <AppleButton onClick={hanldeClick} />
               <KakaoButton onClick={hanldeClick} />
             </div>
 
@@ -93,3 +122,5 @@ export default function LoginPage() {
 // 2. 회원가입 성공 후 성공문구 + 홈으로 이동 버튼 //
 // 3. 로그인 없이 둘러보기 할 경우 홈으로 아동 //
 // 4. 추가 정보 기입 후 서버 요청 200 오면 로그인 페이지로 이동 후 회원가입 문구 보여주고 홈으로 이동 버튼//
+
+//카카오 디벨로퍼스에 API 키 등록
