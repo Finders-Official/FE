@@ -30,3 +30,7 @@ export default function OnBoardingPage() {
     </div>
   );
 }
+
+// 닉네임 중복 여부 -> 서버에서 소통 -> useDebounce나 usethrottle로 일정 시간 뒤에 검사
+// 닉네임 형식 불일치 여부
+// 전화번호 인증 방식 (나중에)
