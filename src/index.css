@@ -50,7 +50,7 @@
 
 @font-face {
   font-family: Ydestreet;
-  src: url("../public/fonts/YdestreetL.woff2") format("woff2");
+  src: url("./assets/fonts/YdestreetL.woff2") format("woff2");
   font-weight: 700;
 }
 
