@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import KakaoButton from "../../components/auth/KakaoButton";
+import { KakaoButton } from "../../components/auth/KakaoButton";
 import { Link } from "react-router";
 import { Button } from "../../components/common/Button";
 
@@ -55,7 +55,7 @@ export default function LoginPage() {
   }, [isSplash, shouldAnimate]);
 
   // 회원가입 완료 처리: 새로고침/뒤로가기에도 유지되게 저장
-  const hanldeClick = () => {
+  const handleClick = () => {
     localStorage.setItem(SIGNED_UP_KEY, "1");
     setUi((prev) => ({
       ...prev,
@@ -144,7 +144,7 @@ export default function LoginPage() {
         ) : (
           <section key={footerKey} className={`mx-auto max-w-sm ${footerAnim}`}>
             <div className="flex flex-col gap-2">
-              <KakaoButton onClick={hanldeClick} />
+              <KakaoButton onClick={handleClick} />
             </div>
 
             <Link

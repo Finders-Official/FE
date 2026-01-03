@@ -19,9 +19,10 @@ export const InputForm = ({
   };
   return (
     <div>
-      <p>{name}</p>
+      <label htmlFor={name}>{name}</label>
       <form className="mt-[1rem]">
         <input
+          id={name}
           placeholder={placeholder}
           name={name}
           className={`${sizeClass[size]} ${className} rounded-lg border border-neutral-800 p-2 placeholder:text-neutral-600 focus:outline-none`}

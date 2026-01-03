@@ -3,7 +3,7 @@ import KakaoLogo from "../../assets/icon/Kakao.svg";
 interface KakaoButtonProps {
   onClick?: () => void;
 }
-const KakaoButton = ({ onClick }: KakaoButtonProps) => {
+export const KakaoButton = ({ onClick }: KakaoButtonProps) => {
   return (
     <button
       type="button"
@@ -15,5 +15,3 @@ const KakaoButton = ({ onClick }: KakaoButtonProps) => {
     </button>
   );
 };
-
-export default KakaoButton;
