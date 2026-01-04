@@ -47,3 +47,14 @@
     font-family: "Pretendard Variable", Pretendard, system-ui, sans-serif;
   }
 }
+
+@font-face {
+  font-family: Ydestreet;
+  src: url("./assets/fonts/YdestreetL.woff2") format("woff2");
+  font-weight: 700;
+}
+
+.font-ydestreet {
+  font-family:
+    "Ydestreet", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+}

@@ -1,5 +1,6 @@
 import RootLayout from "../layouts/RootLayout";
-import Home from "../pages/TestPage";
+import OnBoardingPage from "../pages/auth/OnBoarding";
+import LoginPage from "../pages/auth/LoginPage";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 const router = createBrowserRouter([
@@ -7,8 +8,12 @@ const router = createBrowserRouter([
     Component: RootLayout,
     children: [
       {
-        element: <Home />,
-        children: [{ path: "/", element: <Home /> }],
+        path: "/auth/login",
+        Component: LoginPage,
+      },
+      {
+        path: "/auth/onboarding",
+        Component: OnBoardingPage,
       },
     ],
   },
