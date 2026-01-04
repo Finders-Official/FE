@@ -1,19 +1,24 @@
-import CheckIcon from "@/assets/icon/check.svg?react";
+import { CheckIcon } from "@/assets/icon";
 
-type SelectMode = "single" | "multi";
-
-type ImageCardProps = {
+type BaseImageCardProps = {
   src: string;
   alt?: string;
-
-  mode: SelectMode;
   isSelected: boolean;
-
-  selectionIndex?: number; // multi 모드에서 선택된 순서 표시용
-
   onToggle: () => void;
   className?: string;
 };
+
+type SingleModeProps = BaseImageCardProps & {
+  mode: "single";
+  selectionIndex?: never;
+};
+
+type MultiModeProps = BaseImageCardProps & {
+  mode: "multi";
+  selectionIndex?: number; // multi 모드에서 선택된 순서 표시용
+};
+
+type ImageCardProps = SingleModeProps | MultiModeProps;
 
 export function ImageCard({
   src,
@@ -34,12 +39,12 @@ export function ImageCard({
     <button
       type="button"
       onClick={onToggle}
-      className={`relative overflow-hidden ${className}`}
+      className={`relative aspect-square overflow-hidden ${className}`}
     >
       <img
         src={src}
         alt={alt}
-        className="h-[122px] w-[122px] object-cover"
+        className="h-full w-full object-cover"
         draggable={false}
       />
 
@@ -50,13 +55,13 @@ export function ImageCard({
 
       {/* 우측 상단 배지: multi면 숫자 / single이면 체크 */}
       {isSelected && (
-        <div className="pointer-events-none absolute top-[7px] right-[7px]">
+        <div className="pointer-events-none absolute top-[0.4375rem] right-[0.4375rem]">
           {mode === "multi" ? (
-            <div className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-orange-500 text-base font-bold text-white">
+            <div className="flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-orange-500 text-base font-bold text-white">
               {badgeText}
             </div>
           ) : (
-            <CheckIcon className="h-[22px] w-[22px]" />
+            <CheckIcon className="h-[1.375rem] w-[1.375rem]" />
           )}
         </div>
       )}

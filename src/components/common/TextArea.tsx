@@ -1,3 +1,5 @@
+import { useRef, useEffect } from "react";
+
 type TextAreaProps = {
   value: string;
   onChange: (value: string) => void;
@@ -21,28 +23,43 @@ export function TextArea({
   textareaClassName = "",
   disabled = false,
 }: TextAreaProps) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
   const length = value.length;
   const hasTyped = length > 0; // 한 글자라도 입력했는가
   const isOverMax = typeof maxLength === "number" && length > maxLength;
 
+  // 내용에 따라 높이 자동 조절
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+
+    el.style.height = "auto"; // 초기화
+    el.style.height = `${el.scrollHeight}px`; // 내용만큼 증가
+  }, [value]);
+
   return (
     <div
-      className={`mx-auto flex h-[150px] w-[343px] flex-col gap-[10px] rounded-2xl bg-[#222222] p-[20px] ${className} `}
+      className={`flex flex-col gap-[0.625rem] rounded-2xl bg-neutral-900 p-[1.25rem] ${className}`}
     >
       <textarea
+        ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className={`textarea-scrollbar w-full flex-1 resize-none overflow-y-auto bg-transparent text-[15px] text-[#D6D6D6] outline-none placeholder:text-[#707070] ${textareaClassName} `}
+        className={`textarea-scrollbar w-full resize-none overflow-y-auto bg-transparent text-[0.9375rem] text-neutral-200 outline-none placeholder:text-neutral-500 ${textareaClassName} `}
+        style={{
+          maxHeight: "18.4375rem", // 295px
+        }}
       />
 
       {/* 우측 하단: 입력 전에는 최소 글자 안내 / 입력 후에는 카운터 */}
-      <div className="flex justify-end text-[12px]">
+      <div className="flex justify-end text-[0.75rem]">
         {!hasTyped && typeof minLength === "number" ? (
-          <span className="text-[#707070]">최소 {minLength}자 이상</span>
+          <span className="text-neutral-500">최소 {minLength}자 이상</span>
         ) : typeof maxLength === "number" ? (
-          <span className={isOverMax ? "text-[#E94E16]" : "text-[#A3A3A3]"}>
+          <span className={isOverMax ? "text-orange-500" : "text-neutral-400"}>
             {length}/{maxLength}
           </span>
         ) : null}
