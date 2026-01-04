@@ -27,14 +27,14 @@ export function TextArea({
 
   return (
     <div
-      className={`flex h-[150px] w-[343px] flex-col gap-[10px] rounded-2xl bg-[#222222] p-[20px] ${className} `}
+      className={`mx-auto flex h-[150px] w-[343px] flex-col gap-[10px] rounded-2xl bg-[#222222] p-[20px] ${className} `}
     >
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full flex-1 resize-none bg-transparent text-[15px] text-[#D6D6D6] outline-none placeholder:text-[#707070] ${textareaClassName} `}
+        className={`textarea-scrollbar w-full flex-1 resize-none overflow-y-auto bg-transparent text-[15px] text-[#D6D6D6] outline-none placeholder:text-[#707070] ${textareaClassName} `}
       />
 
       {/* 우측 하단: 입력 전에는 최소 글자 안내 / 입력 후에는 카운터 */}
