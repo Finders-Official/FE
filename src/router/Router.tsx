@@ -2,6 +2,7 @@ import RootLayout from "../layouts/RootLayout";
 import OnBoardingPage from "../pages/auth/OnBoarding";
 import LoginPage from "../pages/auth/LoginPage";
 import PhotoFeedPage from "../pages/photoFeed/PhotoFeedPage";
+import PostPage from "../pages/photoFeed/PostPage";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 const router = createBrowserRouter([
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "/photoFeed",
         Component: PhotoFeedPage,
+      },
+      {
+        path: "/post/:postId",
+        Component: PostPage,
       },
     ],
   },
