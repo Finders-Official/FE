@@ -1,3 +1,6 @@
-// 예시 2개:
-// export { default as Icon } from "./icon.svg?react";
-// export { default as CloseIcon } from "./close.svg?react";
+export { default as AppleIcon } from "./Apple.svg?react";
+export { default as CheckIcon } from "./check.svg?react";
+//export { default as FloatingIcon } from "./floating.svg?react";
+export { default as KakaoIcon } from "./Kakao.svg?react";
+//export { default as PencilIcon } from "./pencil.svg?react";
+//export { default as XIcon } from "./x.svg?react";
