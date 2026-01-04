@@ -1,7 +1,5 @@
 import { Button } from "@/components/common/Button";
-import XIcon from "@/assets/icon/x.svg?react";
-import PencilIcon from "@/assets/icon/pencil.svg?react";
-
+import { PencilIcon, XIcon } from "@/assets/icon";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -16,23 +14,31 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* 모달 */}
-      <div className="border-neutral-850 h-[358px] w-[314px] rounded-3xl bg-[#222222]/80 pt-7 pr-7 pb-14 pl-7 backdrop-blur-3xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="new-post-modal-title"
+        className="border-neutral-850 h-[22.375rem] w-[19.625rem] rounded-3xl bg-[#222222]/80 pt-7 pr-7 pb-14 pl-7 backdrop-blur-3xl"
+      >
         {/* 닫기 버튼 */}
-        <section className="mb-2 flex justify-end">
-          <button onClick={onClose}>
-            <XIcon className="h-[14px] w-[14px]" />
+        <div className="mb-2 flex justify-end">
+          <button onClick={onClose} aria-label="모달 닫기">
+            <XIcon className="h-[0.875rem] w-[0.875rem]" />
           </button>
-        </section>
+        </div>
 
         <section className="flex flex-col items-center gap-12">
           <div className="flex flex-col items-center gap-3">
-            <PencilIcon className="h-[32px] w-[32px]" />
-            <h2 className="text-center text-[19px] font-semibold text-white">
+            <PencilIcon className="h-[2rem] w-[2rem]" />
+            <h2
+              id="new-post-modal-title"
+              className="text-center text-[1.1875rem] font-semibold text-white"
+            >
               사진수다는 필름 사진만
               <br />
               업로드 할 수 있는 공간이에요
             </h2>
-            <p className="text-center text-[13px] text-neutral-200">
+            <p className="text-center text-[0.8125rem] text-neutral-200">
               사진수다는 필름 현상소 리뷰 기능도
               <br />
               함께 운영되고 있어요

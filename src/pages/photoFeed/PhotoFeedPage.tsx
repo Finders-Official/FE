@@ -2,7 +2,7 @@ import { useState } from "react";
 import PhotoCard from "../../components/photoFeed/PhotoCard";
 import { photoMock } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
-import FloatingIcon from "@/assets/icon/floating.svg?react";
+import { FloatingIcon } from "@/assets/icon";
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -18,10 +18,12 @@ export default function PhotoFeedPage() {
 
       {/* 새 게시물 작성 플로팅 버튼 */}
       <button
+        type="button"
+        aria-label="새 게시물 작성"
         onClick={() => setIsCreateModalOpen(true)}
-        className="fixed right-6 bottom-6 z-50 flex h-[57px] w-[57px]"
+        className="fixed right-6 bottom-6 z-50 flex h-[3.5625rem] w-[3.5625rem]"
       >
-        <FloatingIcon className="h-[57px] w-[57px]" />
+        <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
       </button>
 
       {isCreateModalOpen && (

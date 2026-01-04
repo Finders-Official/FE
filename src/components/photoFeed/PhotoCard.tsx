@@ -8,7 +8,7 @@ type Props = {
 export default function PhotoCard({ photo }: Props) {
   return (
     <div className="mb-4 [break-inside:avoid]">
-      <Link to={`/post/${photo.id}`} className="group w-[162px]">
+      <Link to={`/post/${photo.id}`} className="group w-[10.125rem]">
         {/* 이미지 */}
         <div className="relative overflow-hidden rounded-2xl">
           <img
@@ -23,7 +23,7 @@ export default function PhotoCard({ photo }: Props) {
         </div>
 
         {/* 제목 */}
-        <div className="mt-1 text-[10px] break-words text-white">
+        <div className="mt-1 text-[0.625rem] break-words text-white">
           {photo.title}
         </div>
       </Link>

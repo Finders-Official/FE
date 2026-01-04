@@ -27,7 +27,7 @@ export const Button = ({ text, link, color, size, onClick }: ButtonProps) => {
   const baseClass =
     "inline-flex items-center justify-center rounded-2xl border shadow-sm active:scale-[0.99]";
   const sizeClass: Record<ButtonSize, string> = {
-    xsmall: "h-[46px] w-[121px] text-[14px]",
+    xsmall: "h-[2.875rem] w-[7.5625rem] text-[0.875rem]",
     small: "h-[3.5rem] w-[7.5625rem]",
     medium: "h-[3.5rem] w-[10.4375rem]",
     large: "h-[3.5rem] w-[13.125rem]",
