@@ -5,6 +5,8 @@ interface InputFormProps {
   placeholder: string;
   size: InputFormSize;
   className?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const InputForm = ({
@@ -12,6 +14,8 @@ export const InputForm = ({
   placeholder,
   size,
   className,
+  value,
+  onChange,
 }: InputFormProps) => {
   const sizeClass: Record<InputFormSize, string> = {
     medium: "h-[3.25rem] w-[15.75rem]",
@@ -25,6 +29,8 @@ export const InputForm = ({
           id={name}
           placeholder={placeholder}
           name={name}
+          value={value}
+          onChange={onChange}
           className={`${sizeClass[size]} ${className} rounded-lg border border-neutral-800 p-2 placeholder:text-neutral-600 focus:outline-none`}
         ></input>
       </form>
