@@ -28,3 +28,17 @@
     transform: translateY(0);
   }
 }
+
+/* TextArea용 스크롤바 */
+.textarea-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.textarea-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(214, 214, 214, 0.35);
+  border-radius: 9999px;
+}
+
+.textarea-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
