@@ -18,7 +18,7 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="new-post-modal-title"
-        className="border-neutral-850 h-[22.375rem] w-[19.625rem] rounded-3xl bg-[#222222]/80 pt-7 pr-7 pb-14 pl-7 backdrop-blur-3xl"
+        className="border-neutral-850 bg-neutral-875/80 h-[22.375rem] w-[19.625rem] rounded-3xl pt-7 pr-7 pb-14 pl-7 backdrop-blur-3xl"
       >
         {/* 닫기 버튼 */}
         <div className="mb-2 flex justify-end">
