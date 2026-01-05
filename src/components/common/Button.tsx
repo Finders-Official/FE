@@ -1,7 +1,13 @@
 import { useNavigate } from "react-router";
 
-type ButtonColor = "orange" | "black";
-type ButtonSize = "small" | "medium" | "large" | "compact" | "xlarge";
+type ButtonColor = "orange" | "black" | "transparent";
+type ButtonSize =
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "compact"
+  | "xlarge";
 
 interface ButtonProps {
   text: string;
@@ -21,6 +27,7 @@ export const Button = ({ text, link, color, size, onClick }: ButtonProps) => {
   const baseClass =
     "inline-flex items-center justify-center rounded-2xl border shadow-sm active:scale-[0.99]";
   const sizeClass: Record<ButtonSize, string> = {
+    xsmall: "h-[2.875rem] w-[7.5625rem] text-[0.875rem]",
     small: "h-[3.5rem] w-[7.5625rem]",
     medium: "h-[3.5rem] w-[10.4375rem]",
     large: "h-[3.5rem] w-[13.125rem]",
@@ -31,6 +38,7 @@ export const Button = ({ text, link, color, size, onClick }: ButtonProps) => {
   const colorClass: Record<ButtonColor, string> = {
     orange: "bg-orange-500 border-orange-200 ",
     black: "bg-neutral-900 border-neutral-500 ",
+    transparent: "bg-transparent border-neutral-500",
   };
 
   const handleClick = () => {
