@@ -83,7 +83,7 @@ export default function Header({
 
   return (
     <header
-      className={`flex h-[3.8125rem] items-center gap-5 px-4 py-[1.125rem] ${className}`}
+      className={`flex h-15.25 items-center gap-5 px-[1rem] py-4.5 ${className}`}
     >
       {renderLeft()}
       <h1 className="flex-1 text-center text-base font-semibold tracking-[-0.02em] text-neutral-100">
