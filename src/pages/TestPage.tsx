@@ -1,113 +1,61 @@
-import { Header, Icon } from "@/components/common";
-import { SearchIcon, CloseIcon, ShareIcon } from "@/assets/icon";
+import { useState } from "react";
+import { Header, Icon, SearchBar, SearchItem } from "@/components/common";
+import { SearchIcon } from "@/assets/icon";
 
 export default function TestPage() {
+  const [searchValue, setSearchValue] = useState("");
+
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <p className="px-4 text-sm text-neutral-400">1. 뒤로가기 + 검색</p>
-        <Header
-          title="현상 맡기기"
-          showBack
-          onBack={() => console.log("back")}
-          rightAction={{
-            type: "icon",
-            icon: (
-              <Icon className="text-neutral-200">
-                <SearchIcon />
-              </Icon>
-            ),
-            onClick: () => console.log("search"),
-          }}
+    <div className="flex min-h-screen flex-col bg-neutral-900">
+      <Header
+        title="테스트 페이지"
+        showBack
+        onBack={() => console.log("back")}
+        rightAction={{
+          type: "icon",
+          icon: (
+            <Icon className="text-neutral-200">
+              <SearchIcon />
+            </Icon>
+          ),
+          onClick: () => console.log("search"),
+        }}
+      />
+
+      <div className="px-5 py-4">
+        <SearchBar
+          value={searchValue}
+          onChange={setSearchValue}
+          placeholder="검색어를 입력하세요"
         />
       </div>
 
-      <div className="space-y-2">
-        <p className="px-4 text-sm text-neutral-400">2. 뒤로가기 + 저장</p>
-        <Header
-          title="탄 사진 복원하기"
-          showBack
-          onBack={() => console.log("back")}
-          rightAction={{
-            type: "text",
-            text: "다음",
-            onClick: () => console.log("save"),
-          }}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <p className="px-4 text-sm text-neutral-400">
-          3. 뒤로가기 + 저장 (disabled)
-        </p>
-        <Header
-          title="탄 사진 복원하기"
-          showBack
-          onBack={() => console.log("back")}
-          rightAction={{
-            type: "text",
-            text: "다음",
-            onClick: () => console.log("save"),
-            disabled: true,
-          }}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <p className="px-4 text-sm text-neutral-400">
-          4. 뒤로가기 + 저장 (loading)
-        </p>
-        <Header
-          title="탄 사진 복원하기"
-          showBack
-          onBack={() => console.log("back")}
-          rightAction={{
-            type: "text",
-            text: "저장",
-            onClick: () => console.log("save"),
-            loading: true,
-          }}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <p className="px-4 text-sm text-neutral-400">5. 닫기 버튼</p>
-        <Header
-          title="파인더스 상도점"
-          rightAction={{
-            type: "icon",
-            icon: (
-              <Icon className="text-neutral-200">
-                <CloseIcon />
-              </Icon>
-            ),
-            onClick: () => console.log("close"),
-          }}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <p className="px-4 text-sm text-neutral-400">6. 제목만</p>
-        <Header title="홈" />
-      </div>
-
-      <div className="space-y-2">
-        <p className="px-4 text-sm text-neutral-400">7. 뒤로가기 + 공유</p>
-        <Header
-          title="저장완료"
-          showBack
-          onBack={() => console.log("back")}
-          rightAction={{
-            type: "icon",
-            icon: (
-              <Icon className="text-neutral-200">
-                <ShareIcon />
-              </Icon>
-            ),
-            onClick: () => console.log("share"),
-          }}
-        />
-      </div>
+      {searchValue && (
+        <div className="flex flex-col gap-3 px-5">
+          <SearchItem
+            type="recent"
+            text={searchValue}
+            onClick={() => console.log("click:", searchValue)}
+            onDelete={() => console.log("delete:", searchValue)}
+          />
+          <SearchItem
+            type="recent"
+            text={`${searchValue} 1`}
+            onClick={() => console.log("click:", `${searchValue} 1`)}
+            onDelete={() => console.log("delete:", `${searchValue} 1`)}
+          />
+          <SearchItem
+            type="search"
+            text={searchValue}
+            onClick={() => console.log("click:", searchValue)}
+          />
+          <SearchItem
+            type="search"
+            text={`${searchValue} 2`}
+            onClick={() => console.log("click:", `${searchValue} 2`)}
+          />
+        </div>
+      )}
     </div>
   );
 }
