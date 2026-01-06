@@ -42,6 +42,7 @@ export { default as MinusIcon } from "./minus.svg?react";
 export { default as PackageIcon } from "./package.svg?react";
 export { default as PaperAirplaneFillIcon } from "./paper-airplane-fill.svg?react";
 export { default as PencilLineIcon } from "./pencil-line.svg?react";
+export { default as PencilLineFillIcon } from "./pencil-line-fill.svg?react";
 export { default as PhotoFillIcon } from "./photo-fill.svg?react";
 export { default as PhotoIcon } from "./photo.svg?react";
 export { default as PlusIcon } from "./plus.svg?react";
