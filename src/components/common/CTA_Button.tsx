@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 
-type ButtonColor = "orange" | "black" | "transparent";
-type ButtonSize =
+type CTA_ButtonColor = "orange" | "black" | "transparent";
+type CTA_ButtonSize =
   | "xsmall"
   | "small"
   | "medium"
@@ -9,24 +9,30 @@ type ButtonSize =
   | "compact"
   | "xlarge";
 
-interface ButtonProps {
+interface CTA_ButtonProps {
   text: string;
   link?: string;
-  size: ButtonSize;
-  color: ButtonColor;
+  size: CTA_ButtonSize;
+  color: CTA_ButtonColor;
   onClick?: () => void;
 }
 
 // link 이동 시 endpoint 설정 ex link="/home"
-// size: small, medium, large, xlarge, compact(로그인 화면 하단 버튼 용)
+// size: xsmall, small, medium, large, xlarge, compact(로그인 화면 하단 버튼 용)
 // color: orange, black 중 설정 후 사용
 // onClick: 클릭 시 추가 기능 필요할 때 설정
 
-export const Button = ({ text, link, color, size, onClick }: ButtonProps) => {
+export const CTA_Button = ({
+  text,
+  link,
+  color,
+  size,
+  onClick,
+}: CTA_ButtonProps) => {
   const router = useNavigate();
   const baseClass =
     "inline-flex items-center justify-center rounded-2xl border shadow-sm active:scale-[0.99]";
-  const sizeClass: Record<ButtonSize, string> = {
+  const sizeClass: Record<CTA_ButtonSize, string> = {
     xsmall: "h-[2.875rem] w-[7.5625rem] text-[0.875rem]",
     small: "h-[3.5rem] w-[7.5625rem]",
     medium: "h-[3.5rem] w-[10.4375rem]",
@@ -35,7 +41,7 @@ export const Button = ({ text, link, color, size, onClick }: ButtonProps) => {
     compact: "h-[3.125rem] w-full",
   };
 
-  const colorClass: Record<ButtonColor, string> = {
+  const colorClass: Record<CTA_ButtonColor, string> = {
     orange: "bg-orange-500 border-orange-200 ",
     black: "bg-neutral-900 border-neutral-500 ",
     transparent: "bg-transparent border-neutral-500",

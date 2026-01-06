@@ -1,4 +1,4 @@
-import { Button } from "@/components/common/Button";
+import { CTA_Button } from "@/components/common/CTA_Button";
 import { PencilIcon, XIcon } from "@/assets/icon";
 interface ModalProps {
   isOpen: boolean;
@@ -47,13 +47,13 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
 
           {/* 하단 버튼 */}
           <div className="flex gap-3">
-            <Button
+            <CTA_Button
               text="다음에 올릴게요"
               size="xsmall"
               color="transparent"
               onClick={onClose}
             />
-            <Button
+            <CTA_Button
               text="네 확인했어요"
               size="xsmall"
               color="orange"
