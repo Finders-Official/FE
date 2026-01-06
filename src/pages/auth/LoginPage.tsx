@@ -6,7 +6,7 @@ import { CTA_Button } from "../../components/common/CTA_Button";
 const SIGNED_UP_KEY = "finders:signedUp"; //추후에 변경 예정
 const ANIM_KEY = "finders:loginAnimationPlayed";
 
-export default function LoginPage() {
+export function LoginPage() {
   const timerRef = useRef<number | null>(null);
 
   //초기 상태를 "스토리지" 기준으로 한 번에 결정 (splash 여부, 애니메이션 여부, 로그인 여부)

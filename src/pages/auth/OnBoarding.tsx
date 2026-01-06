@@ -3,7 +3,7 @@ import { InputForm } from "../../components/auth/InputForm";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { formatMMSS } from "@/utils/time";
 
-export default function OnBoardingPage() {
+export function OnBoardingPage() {
   const [isSending, setIsSending] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [nickname, setNickname] = useState("");
