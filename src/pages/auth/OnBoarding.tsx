@@ -1,31 +1,44 @@
 import { useState } from "react";
 import { InputForm } from "../../components/auth/InputForm";
+import { CTA_Button } from "@/components/common/CTA_Button";
 
 export default function OnBoardingPage() {
-  const [isVerifyed, setIsVerified] = useState(false);
-  const [phone, SetPhone] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [nickname, setNickname] = useState("");
+  const [phone, setPhone] = useState("");
+  const [verifiedNumber, setVerifiedNumber] = useState("");
+
+  const handleSend = () => {
+    setIsSending(true);
+    // 인증번호 발송 로직 구현
+  };
 
   const handleVerify = () => {
     // 인증 로직 구현
     setIsVerified(true);
   };
 
-  const buttonBgClass = phone ? "bg-orange-500" : "bg-neutral-875";
+  const buttonBgClass = phone ? "bg-orange-500" : "bg-neutral-850";
+  const buttonClass = verifiedNumber ? "bg-orange-500" : "bg-neutral-850";
   return (
-    <div className="mt-[3.4375rem] w-full">
-      <header className="pt-[2.5rem]">
+    <div className="mt-[3.4375rem] flex w-full flex-col items-center">
+      <header className="justifty-start w-full max-w-sm pt-[2.5rem]">
         <p className="text-[1rem] font-normal">소셜 로그인 연동한 정보 중</p>
         <p className="text-[1.375rem] font-semibold">
           필요한 정보를 더 입력해주세요
         </p>
       </header>
-      <main className="mt-[2.5rem] flex flex-col gap-[1.5rem]">
+      <main className="mt-[2.5rem] flex flex-col">
         <InputForm
           name="닉네임"
           placeholder="2~8자, 한글, 영어, 숫자 허용"
           size="large"
+          invalidText="잘못된 닉네임입니다."
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
         />
-        <section className="flex justify-between">
+        <section className="flex gap-[1.25rem]">
           <InputForm
             name="전화번호"
             placeholder="'-'제외하고 입력"
@@ -34,19 +47,47 @@ export default function OnBoardingPage() {
             value={phone}
             onChange={(e) => {
               const onlyDigits = e.target.value.replace(/\D/g, "").slice(0, 11);
-              SetPhone(onlyDigits);
+              setPhone(onlyDigits);
             }}
           />
           {/* 인증하기 버튼 누르고 발송되면 재발송으로 코멘트 바꾸기 */}
           <button
             type="button"
-            className={`mt-auto h-[3.25rem] w-[5.25rem] rounded-lg active:scale-[0.99] active:bg-orange-500 ${buttonBgClass}`}
-            onClick={handleVerify}
+            className={`mt-auto h-[3.25rem] w-[5.25rem] rounded-lg active:scale-[0.99] ${buttonBgClass}`}
+            onClick={handleSend}
+            disabled={!phone}
           >
-            {isVerifyed ? "재발송" : "인증하기"}
+            {isSending ? "재발송" : "인증하기"}
           </button>
         </section>
+        {isSending && (
+          <section className="flex gap-[1.25rem]">
+            <InputForm
+              placeholder="인증번호 입력"
+              size="medium"
+              className="focus:border-orange-500"
+              value={verifiedNumber}
+              onChange={(e) => {
+                const Digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+                setVerifiedNumber(Digits);
+              }}
+            />
+            <button
+              type="button"
+              className={`mt-auto h-[3.25rem] w-[5.25rem] rounded-lg active:scale-[0.99] ${buttonClass}`}
+              onClick={handleVerify}
+              disabled={!verifiedNumber}
+            >
+              확인
+            </button>
+          </section>
+        )}
       </main>
+      {isVerified && (
+        <footer className="mx-auto mt-auto w-full max-w-sm pb-15">
+          <CTA_Button text="가입하기" color="orange" size="xlarge" />
+        </footer>
+      )}
     </div>
   );
 }

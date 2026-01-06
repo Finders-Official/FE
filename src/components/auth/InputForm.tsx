@@ -1,11 +1,12 @@
 type InputFormSize = "medium" | "large";
 
 interface InputFormProps {
-  name: string;
+  name?: string;
   placeholder: string;
   size: InputFormSize;
   className?: string;
   value?: string;
+  invalidText?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -15,6 +16,7 @@ export const InputForm = ({
   size,
   className,
   value,
+  invalidText,
   onChange,
 }: InputFormProps) => {
   const sizeClass: Record<InputFormSize, string> = {
@@ -34,6 +36,9 @@ export const InputForm = ({
           className={`${sizeClass[size]} ${className} rounded-lg border border-neutral-800 p-2 placeholder:text-neutral-600 focus:outline-none`}
         ></input>
       </form>
+      {invalidText && (
+        <p className="mb-[2.45rem] p-[0.625rem] text-sm">{invalidText}</p>
+      )}
     </div>
   );
 };
