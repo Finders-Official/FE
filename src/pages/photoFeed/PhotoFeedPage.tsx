@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PhotoCard from "../../components/photoFeed/PhotoCard";
+import PhotoCard from "@/components/photoFeed/PhotoCard";
 import { photoMock } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
 import { FloatingIcon } from "@/assets/icon";

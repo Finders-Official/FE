@@ -71,13 +71,13 @@ export default function NewPostPage() {
         className="scrollbar-hide mb-[1rem] flex h-[15.1875rem] snap-x snap-mandatory gap-[0.5rem] overflow-x-auto p-[1rem] [-webkit-overflow-scrolling:touch]"
         aria-label="선택된 사진 미리보기"
       >
-        {previewUrls.map((url, idx) => (
+        {limitedFiles.map((file, idx) => (
           <div
-            key={`${url}-${idx}`}
+            key={`${file.name}-${file.lastModified}-${idx}`}
             className="h-[13.1875rem] w-[9.9375rem] shrink-0 snap-start overflow-hidden bg-neutral-800"
           >
             <img
-              src={url}
+              src={previewUrls[idx]}
               alt={`선택한 사진 ${idx + 1}`}
               className="h-full w-full object-cover"
               draggable={false}
@@ -116,44 +116,40 @@ export default function NewPostPage() {
         {/** 유의사항 표시 */}
         <div className="text-[0.75rem] leading-relaxed text-neutral-200">
           <p className="font-semibold">금지 활동 및 제한 사유</p>
-          <p>
+          <p className="mb-4">
             다음과 같은 게시물 작성 시, 사전 통보 없이 삭제되거나 서비스 이용이
             제한될 수 있습니다.
           </p>
-          <br />
-          <p>
-            [콘텐츠 관련 위반] 비(非) 필름 사진 업로드: 디지털 사진, 스마트폰
-            촬영 사진 등을 필름 사진인 것처럼 업로드하는 경우
-          </p>
-          <br />
-          <p>
-            저작권 침해: 타인의 사진을 무단으로 도용하거나 출처를 밝히지 않고
-            사용하는 경우
-          </p>
-          <br />
-          <p>
-            초상권 침해: 타인의 동의 없이 얼굴이 노출된 사진을 게시하여 피해를
-            주는 경우
-          </p>
-          <br />
-          <p>
-            불법/유해 정보: 음란물, 도박, 불법 제품 홍보, 청소년에게 유해한 내용
-          </p>
-          <br />
-          <p>
-            [커뮤니티 매너 위반] 비방 및 욕설: 특정 인물, 타 회원, 현상소
-            운영자에 대한 근거 없는 비방, 욕설, 인신공격
-          </p>
-          <br />
-          <p>
-            허위 사실 유포: 현상소에 대한 악의적인 허위 리뷰 작성으로 영업을
-            방해하는 경우
-          </p>
-          <br />
-          <p>
-            도배 및 스팸: 동일한 내용을 반복 게시하거나, 커뮤니티 성격과 무관한
-            홍보/광고 글 게시
-          </p>
+          <ul className="flex flex-col gap-y-4">
+            <li>
+              [콘텐츠 관련 위반] 비(非) 필름 사진 업로드: 디지털 사진, 스마트폰
+              촬영 사진 등을 필름 사진인 것처럼 업로드하는 경우
+            </li>
+            <li>
+              저작권 침해: 타인의 사진을 무단으로 도용하거나 출처를 밝히지 않고
+              사용하는 경우
+            </li>
+            <li>
+              초상권 침해: 타인의 동의 없이 얼굴이 노출된 사진을 게시하여 피해를
+              주는 경우
+            </li>
+            <li>
+              불법/유해 정보: 음란물, 도박, 불법 제품 홍보, 청소년에게 유해한
+              내용
+            </li>
+            <li>
+              [커뮤니티 매너 위반] 비방 및 욕설: 특정 인물, 타 회원, 현상소
+              운영자에 대한 근거 없는 비방, 욕설, 인신공격
+            </li>
+            <li>
+              허위 사실 유포: 현상소에 대한 악의적인 허위 리뷰 작성으로 영업을
+              방해하는 경우
+            </li>
+            <li>
+              도배 및 스팸: 동일한 내용을 반복 게시하거나, 커뮤니티 성격과
+              무관한 홍보/광고 글 게시
+            </li>
+          </ul>
         </div>
 
         <hr className="border-neutral-800" />
