@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router";
+import type { ComponentType, SVGProps } from "react";
 
 type CapsuleSize = "small" | "medium";
 
 interface CapsuleButtonProps {
   text: string;
-  image: string; // 아이콘 이미지 경로
+  image: ComponentType<SVGProps<SVGSVGElement>>;
   link?: string;
   size: CapsuleSize;
   onClick?: () => void;
@@ -13,7 +14,7 @@ interface CapsuleButtonProps {
 
 export const CapsuleButton = ({
   text,
-  image,
+  image: Icon,
   link,
   size,
   onClick,
@@ -21,15 +22,19 @@ export const CapsuleButton = ({
 }: CapsuleButtonProps) => {
   const router = useNavigate();
 
+  const borderGradient =
+    "linear-gradient(139.21deg, rgba(172, 157, 157, 0.215) 0%, rgba(255, 255, 255, 0.5) 103.3%)";
+
+  const backgroundColor = "var(--color-neutral-900)";
+
   const baseClass =
-    "inline-flex items-center justify-center rounded-[50px] border border-transparent transition-all duration-200 active:scale-[0.99] bg-neutral-900 text-white hover:bg-neutral-800";
+    "inline-flex items-center justify-center rounded-[3.125rem] border border-transparent text-white transition-all duration-200 active:scale-[0.98] hover:brightness-110";
 
   const sizeClass: Record<CapsuleSize, string> = {
     small:
-      "w-[141px] h-[57px] gap-[8px] text-[16px] font-semibold drop-shadow-[0_6px_20px_rgba(238,114,68,0.5)]",
-
+      "w-[8.8125rem] h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold",
     medium:
-      "w-[212px] h-[57px] gap-[8px] text-[16px] font-semibold drop-shadow-[0_6px_20px_rgba(238,114,68,0.5)]",
+      "w-[13.25rem] h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold",
   };
 
   const handleClick = () => {
@@ -42,9 +47,16 @@ export const CapsuleButton = ({
       type="button"
       className={`${baseClass} ${sizeClass[size]} ${className}`}
       onClick={handleClick}
+      style={{
+        background: `
+          linear-gradient(${backgroundColor}, ${backgroundColor}) padding-box,
+          ${borderGradient} border-box
+        `,
+        border: "1px solid transparent",
+      }}
     >
-      <img src={image} alt="" className="h-6 w-6 object-contain" />
-      <span>{text}</span>
+      <Icon className="h-[1.5rem] w-[1.5rem]" />
+      <span className="whitespace-nowrap">{text}</span>
     </button>
   );
 };
