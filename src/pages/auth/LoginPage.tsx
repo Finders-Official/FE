@@ -1,7 +1,7 @@
+import { KakaoButton } from "@/components/auth";
+import { CTA_Button } from "@/components/common";
 import { useEffect, useRef, useState } from "react";
-import { KakaoButton } from "../../components/auth/KakaoButton";
 import { Link } from "react-router";
-import { CTA_Button } from "../../components/common/CTA_Button";
 
 const SIGNED_UP_KEY = "finders:signedUp"; //추후에 변경 예정
 const ANIM_KEY = "finders:loginAnimationPlayed";

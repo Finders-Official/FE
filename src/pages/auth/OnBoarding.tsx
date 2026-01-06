@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { InputForm } from "../../components/auth/InputForm";
-import { CTA_Button } from "@/components/common/CTA_Button";
 import { formatMMSS } from "@/utils/time";
+import { InputForm } from "@/components/auth";
+import { CTA_Button } from "@/components/common";
 
 export function OnBoardingPage() {
   const [isSending, setIsSending] = useState(false);
