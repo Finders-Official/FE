@@ -35,3 +35,8 @@ export default function PhotoFeedPage() {
     </main>
   );
 }
+
+/**
+ * CO-010 PhotoFeedPage.tsx
+ * Description: 사진수다 전체 피드 페이지
+ */

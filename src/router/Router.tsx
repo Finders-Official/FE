@@ -4,6 +4,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import PhotoFeedPage from "../pages/photoFeed/PhotoFeedPage";
 import PostPage from "../pages/photoFeed/PostPage";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import NewPostPage from "@/pages/photoFeed/NewPostPage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "/post/:postId",
         Component: PostPage,
+      },
+      {
+        path: "/post/new",
+        Component: NewPostPage,
       },
     ],
   },
