@@ -65,7 +65,7 @@ export default function NewPostPage() {
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[375px] py-[1rem]">
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
       {/* 선택된 사진 슬라이딩 */}
       <div
         className="scrollbar-hide mb-[1rem] flex h-[15.1875rem] snap-x snap-mandatory gap-[0.5rem] overflow-x-auto p-[1rem] [-webkit-overflow-scrolling:touch]"
@@ -89,7 +89,7 @@ export default function NewPostPage() {
       {/* 내용 작성 + 다음 */}
       <div className="flex flex-col gap-[1rem]">
         <section className="flex flex-col gap-[0.5rem]">
-          <p className="text-[14px] text-white">제목</p>
+          <p className="text-[0.875rem] text-white">제목</p>
           <TextArea
             value={titleText}
             onChange={setTitleText}
@@ -100,7 +100,7 @@ export default function NewPostPage() {
         </section>
 
         <section className="flex flex-col gap-[0.5rem]">
-          <p className="text-[14px] text-white">설명</p>
+          <p className="text-[0.875rem] text-white">설명</p>
           <TextArea
             value={contentText}
             onChange={setContentText}
@@ -114,7 +114,7 @@ export default function NewPostPage() {
 
         {/** TODO: 유의사항은 DB에서 가져오남..? 얜 나중에 제대로.. */}
         {/** 유의사항 표시 */}
-        <div className="text-[12px] leading-relaxed text-neutral-200">
+        <div className="text-[0.75rem] leading-relaxed text-neutral-200">
           <p className="font-semibold">금지 활동 및 제한 사유</p>
           <p>
             다음과 같은 게시물 작성 시, 사전 통보 없이 삭제되거나 서비스 이용이
