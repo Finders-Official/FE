@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputForm } from "../../components/auth/InputForm";
 import { CTA_Button } from "@/components/common/CTA_Button";
+import { formatMMSS } from "@/utils/time";
 
 export default function OnBoardingPage() {
   const [isSending, setIsSending] = useState(false);
@@ -9,13 +10,28 @@ export default function OnBoardingPage() {
   const [phone, setPhone] = useState("");
   const [verifiedNumber, setVerifiedNumber] = useState("");
 
+  //타이머 설정
+  const [remainSec, setRemainSec] = useState(0);
+
   const handleSend = () => {
     setIsSending(true);
+    setRemainSec(180);
     // 인증번호 발송 로직 구현
   };
 
+  useEffect(() => {
+    if (!isSending) return;
+    if (remainSec <= 0) return;
+
+    const id = window.setInterval(() => {
+      setRemainSec((prev) => prev - 1);
+    }, 1000);
+
+    return () => window.clearInterval(id);
+  }, [isSending, remainSec]);
+
   const handleVerify = () => {
-    // 인증 로직 구현
+    if (remainSec <= 0) return;
     setIsVerified(true);
   };
 
@@ -29,7 +45,7 @@ export default function OnBoardingPage() {
           필요한 정보를 더 입력해주세요
         </p>
       </header>
-      <main className="mt-[2.5rem] flex flex-col">
+      <form className="mt-[2.5rem] flex flex-col">
         <InputForm
           name="닉네임"
           placeholder="2~8자, 한글, 영어, 숫자 허용"
@@ -67,6 +83,11 @@ export default function OnBoardingPage() {
               size="medium"
               className="focus:border-orange-500"
               value={verifiedNumber}
+              timer={
+                <span className="text-sm text-orange-500">
+                  {formatMMSS(Math.max(remainSec, 0))}
+                </span>
+              }
               onChange={(e) => {
                 const Digits = e.target.value.replace(/\D/g, "").slice(0, 6);
                 setVerifiedNumber(Digits);
@@ -82,7 +103,7 @@ export default function OnBoardingPage() {
             </button>
           </section>
         )}
-      </main>
+      </form>
       {isVerified && (
         <footer className="mx-auto mt-auto w-full max-w-sm pb-15">
           <CTA_Button text="가입하기" color="orange" size="xlarge" />
