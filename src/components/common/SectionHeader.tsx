@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import { ChevronRightIcon } from "../../assets/icon";
 
 interface SectionHeaderProps {
   title: string; // 예: "이번주 인기있는 현상소"
@@ -34,26 +35,10 @@ export const SectionHeader = ({
         <button
           onClick={handleMoreClick}
           type="button"
-          className="font-regular flex items-center gap-[0.125rem] text-[0.938rem] leading-[155%] tracking-[-0.02em] text-[#D6D6D6]"
+          className="font-regular flex shrink-0 items-center gap-[0.125rem] text-[0.938rem] leading-[155%] tracking-[-0.02em] whitespace-nowrap text-[#D6D6D6]"
         >
           더보기
-          {/* Chevron Right Icon (화살표 >) */}
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-[1rem] w-[1rem]"
-          >
-            <path
-              d="M6 12L10 8L6 4"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <ChevronRightIcon className="h-[1rem] w-[1rem]" />
         </button>
       )}
     </div>
