@@ -1,8 +1,9 @@
 import { Button } from "@/components/common/Button";
-import { PencilIcon, XIcon } from "@/assets/icon";
+import { PencilLineFillIcon, XMarkIcon } from "@/assets/icon";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -30,13 +31,13 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
         {/* 닫기 버튼 */}
         <div className="mb-2 flex justify-end">
           <button onClick={onClose} aria-label="모달 닫기">
-            <XIcon className="h-[0.875rem] w-[0.875rem]" />
+            <XMarkIcon className="h-[0.875rem] w-[0.875rem]" />
           </button>
         </div>
 
         <section className="flex flex-col items-center gap-12">
           <div className="flex flex-col items-center gap-3">
-            <PencilIcon className="h-[2rem] w-[2rem]" />
+            <PencilLineFillIcon className="h-[2rem] w-[2rem]" />
             <h2
               id="new-post-modal-title"
               className="text-center text-[1.1875rem] font-semibold text-white"
