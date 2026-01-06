@@ -1,59 +1,170 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSelectedPhotos } from "@/store/useSelectedPhotos";
+import { TextArea } from "@/components/common/TextArea";
+import { Button } from "@/components/common/Button";
+
+const LIMITS = {
+  titleMin: 2,
+  titleMax: 30,
+  contentMin: 20,
+  contentMax: 2000,
+  maxPhotos: 10,
+} as const;
+
+function isValidText(value: string, min: number, max: number) {
+  const len = value.trim().length;
+  if (len === 0) return false;
+  return len >= min && len <= max;
+}
 
 export default function NewPostPage() {
   const navigate = useNavigate();
   const files = useSelectedPhotos((s) => s.files);
 
-  // 1) 파일이 없으면(직접 URL로 들어왔거나 새로고침) 다시 선택 페이지로
+  const [titleText, setTitleText] = useState("");
+  const [contentText, setContentText] = useState("");
+
+  // 파일 없으면(직접 URL 접근/새로고침 등) 피드로
   useEffect(() => {
     if (files.length === 0) {
-      navigate("/photoFeed");
+      navigate("/photoFeed", { replace: true });
     }
-  }, [files, navigate]);
+  }, [files.length, navigate]);
 
-  // 최대 10장 제한 (선택 단계에서 제한하는 게 더 좋지만, 여기서도 안전장치)
-  const limitedFiles = useMemo(() => files.slice(0, 10), [files]);
+  const limitedFiles = useMemo(() => files.slice(0, LIMITS.maxPhotos), [files]);
 
-  // 2) File -> objectURL로 변환 (img src로 사용)
-  const previewUrls = useMemo(() => {
-    return limitedFiles.map((file) => URL.createObjectURL(file));
-  }, [limitedFiles]);
+  const previewUrls = useMemo(
+    () => limitedFiles.map((file) => URL.createObjectURL(file)),
+    [limitedFiles],
+  );
 
-  // 3) 페이지 나갈 때 objectURL 해제(메모리 누수 방지)
   useEffect(() => {
     return () => {
       previewUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [previewUrls]);
 
+  const isTitleValid = useMemo(
+    () => isValidText(titleText, LIMITS.titleMin, LIMITS.titleMax),
+    [titleText],
+  );
+
+  const isContentValid = useMemo(
+    () => isValidText(contentText, LIMITS.contentMin, LIMITS.contentMax),
+    [contentText],
+  );
+
+  const canGoNext = isTitleValid && isContentValid;
+
+  const handleNext = () => {
+    if (!canGoNext) return;
+
+    // TODO: 다음 페이지로 라우팅 지금은 이전 페이지 걍 둠
+    navigate("/photoFeed");
+  };
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      {/** 선택된 사진 */}
-      <div className="mb-4">
-        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch]">
-          {previewUrls.map((url, idx) => (
-            <div
-              key={url}
-              className="h-32 w-32 shrink-0 snap-start overflow-hidden rounded-2xl bg-neutral-800"
-            >
-              <img
-                src={url}
-                alt={`선택한 사진 ${idx + 1}`}
-                className="h-full w-full object-cover"
-                draggable={false}
-              />
-            </div>
-          ))}
-        </div>
+    <div className="mx-auto min-h-dvh w-full max-w-[375px] py-[1rem]">
+      {/* 선택된 사진 슬라이딩 */}
+      <div
+        className="scrollbar-hide mb-[1rem] flex h-[15.1875rem] snap-x snap-mandatory gap-[0.5rem] overflow-x-auto p-[1rem] [-webkit-overflow-scrolling:touch]"
+        aria-label="선택된 사진 미리보기"
+      >
+        {previewUrls.map((url, idx) => (
+          <div
+            key={`${url}-${idx}`}
+            className="h-[13.1875rem] w-[9.9375rem] shrink-0 snap-start overflow-hidden bg-neutral-800"
+          >
+            <img
+              src={url}
+              alt={`선택한 사진 ${idx + 1}`}
+              className="h-full w-full object-cover"
+              draggable={false}
+            />
+          </div>
+        ))}
       </div>
 
-      {/** 내용 작성 */}
+      {/* 내용 작성 + 다음 */}
+      <div className="flex flex-col gap-[1rem]">
+        <section className="flex flex-col gap-[0.5rem]">
+          <p className="text-[14px] text-white">제목</p>
+          <TextArea
+            value={titleText}
+            onChange={setTitleText}
+            placeholder="제목을 입력해주세요."
+            minLength={LIMITS.titleMin}
+            maxLength={LIMITS.titleMax}
+          />
+        </section>
 
-      {/** 유의사항 */}
+        <section className="flex flex-col gap-[0.5rem]">
+          <p className="text-[14px] text-white">설명</p>
+          <TextArea
+            value={contentText}
+            onChange={setContentText}
+            placeholder="나만의 필름 사진 이야기를 공유해주세요."
+            minLength={LIMITS.contentMin}
+            maxLength={LIMITS.contentMax}
+          />
+        </section>
 
-      {/** 다음 버튼 */}
+        <hr className="border-neutral-800" />
+
+        {/** TODO: 유의사항은 DB에서 가져오남..? 얜 나중에 제대로.. */}
+        {/** 유의사항 표시 */}
+        <div className="text-[12px] leading-relaxed text-neutral-200">
+          <p className="font-semibold">금지 활동 및 제한 사유</p>
+          <p>
+            다음과 같은 게시물 작성 시, 사전 통보 없이 삭제되거나 서비스 이용이
+            제한될 수 있습니다.
+          </p>
+          <br />
+          <p>
+            [콘텐츠 관련 위반] 비(非) 필름 사진 업로드: 디지털 사진, 스마트폰
+            촬영 사진 등을 필름 사진인 것처럼 업로드하는 경우
+          </p>
+          <br />
+          <p>
+            저작권 침해: 타인의 사진을 무단으로 도용하거나 출처를 밝히지 않고
+            사용하는 경우
+          </p>
+          <br />
+          <p>
+            초상권 침해: 타인의 동의 없이 얼굴이 노출된 사진을 게시하여 피해를
+            주는 경우
+          </p>
+          <br />
+          <p>
+            불법/유해 정보: 음란물, 도박, 불법 제품 홍보, 청소년에게 유해한 내용
+          </p>
+          <br />
+          <p>
+            [커뮤니티 매너 위반] 비방 및 욕설: 특정 인물, 타 회원, 현상소
+            운영자에 대한 근거 없는 비방, 욕설, 인신공격
+          </p>
+          <br />
+          <p>
+            허위 사실 유포: 현상소에 대한 악의적인 허위 리뷰 작성으로 영업을
+            방해하는 경우
+          </p>
+          <br />
+          <p>
+            도배 및 스팸: 동일한 내용을 반복 게시하거나, 커뮤니티 성격과 무관한
+            홍보/광고 글 게시
+          </p>
+        </div>
+
+        <hr className="border-neutral-800" />
+
+        <Button
+          text="다음"
+          size="xlarge"
+          color={canGoNext ? "orange" : "black"}
+          onClick={handleNext}
+        />
+      </div>
     </div>
   );
 }
