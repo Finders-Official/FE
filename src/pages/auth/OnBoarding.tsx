@@ -13,12 +13,14 @@ export function OnBoardingPage() {
   //타이머 설정
   const [remainSec, setRemainSec] = useState(0);
 
+  //인증번호 발송 처리
   const handleSend = () => {
     setIsSending(true);
     setRemainSec(180);
     // 인증번호 발송 로직 구현
   };
 
+  //타이머 카운트다운 처리
   useEffect(() => {
     if (!isSending) return;
     if (remainSec <= 0) return;
@@ -30,6 +32,7 @@ export function OnBoardingPage() {
     return () => window.clearInterval(id);
   }, [isSending, remainSec]);
 
+  //인증번호 확인 처리
   const handleVerify = () => {
     if (remainSec <= 0) return;
     setIsVerified(true);
@@ -89,7 +92,6 @@ export function OnBoardingPage() {
                 setVerifiedNumber(Digits);
               }}
             />
-
             <ActionButton
               type="button"
               text="확인"
