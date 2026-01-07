@@ -20,16 +20,30 @@ export function OnBoardingPage() {
     // 인증번호 발송 로직 구현
   };
 
+  //전화번호 입력 처리
+  const hanldePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+    setPhone(digits);
+  };
+
+  //인증번호 입력 처리
+  const handleVerifiedNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setVerifiedNumber(digits);
+  };
+
   //타이머 카운트다운 처리
   useEffect(() => {
     if (!isSending) return;
     if (remainSec <= 0) return;
 
-    const id = window.setInterval(() => {
+    const id = setTimeout(() => {
       setRemainSec((prev) => prev - 1);
     }, 1000);
 
-    return () => window.clearInterval(id);
+    return () => window.clearTimeout(id);
   }, [isSending, remainSec]);
 
   //인증번호 확인 처리
@@ -40,7 +54,7 @@ export function OnBoardingPage() {
 
   return (
     <div className="mt-[3.4375rem] flex w-full flex-col items-center">
-      <header className="justifty-start w-full max-w-sm pt-[2.5rem]">
+      <header className="w-full max-w-sm pt-[2.5rem]">
         <p className="text-[1rem] font-normal">소셜 로그인 연동한 정보 중</p>
         <p className="text-[1.375rem] font-semibold">
           필요한 정보를 더 입력해주세요
@@ -62,10 +76,7 @@ export function OnBoardingPage() {
             size="medium"
             className="focus:border-orange-500"
             value={phone}
-            onChange={(e) => {
-              const onlyDigits = e.target.value.replace(/\D/g, "").slice(0, 11);
-              setPhone(onlyDigits);
-            }}
+            onChange={(e) => hanldePhoneChange(e)}
           />
           {/* 인증하기 버튼 누르고 발송되면 재발송으로 코멘트 바꾸기 */}
           <ActionButton
@@ -87,10 +98,7 @@ export function OnBoardingPage() {
                   {formatMMSS(Math.max(remainSec, 0))}
                 </span>
               }
-              onChange={(e) => {
-                const Digits = e.target.value.replace(/\D/g, "").slice(0, 6);
-                setVerifiedNumber(Digits);
-              }}
+              onChange={(e) => handleVerifiedNumberChange(e)}
             />
             <ActionButton
               type="button"
