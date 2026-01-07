@@ -31,7 +31,7 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
         {/* 닫기 버튼 */}
         <div className="mb-2 flex justify-end">
           <button onClick={onClose} aria-label="모달 닫기">
-            <XMarkIcon className="h-[0.875rem] w-[0.875rem]" />
+            <XMarkIcon className="h-[0.875rem] w-[0.875rem] text-neutral-200" />
           </button>
         </div>
 
