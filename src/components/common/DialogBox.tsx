@@ -4,17 +4,13 @@ type TextAlign = "center" | "left";
 type ConfirmStyle = "filled" | "text";
 
 interface DialogBoxProps {
-  isOpen: boolean; // 모달 표시 여부
+  isOpen: boolean;
   title: string;
   description?: string;
-
-  confirmText: string; // 확인 버튼 텍스트 (예: 계속 편집, 확인)
-  onConfirm: () => void; // 확인 버튼 클릭 함수
-
-  cancelText?: string; // 취소 버튼 텍스트 (없으면 버튼 안 보임. 예: 저장 안 함)
-  onCancel?: () => void; // 취소 버튼 클릭 함수 (배경 클릭 시에도 호출됨)
-
-  // 스타일 옵션
+  confirmText: string;
+  onConfirm: () => void;
+  cancelText?: string;
+  onCancel?: () => void;
   align?: TextAlign;
   confirmButtonStyle?: ConfirmStyle;
 }
@@ -30,18 +26,24 @@ export const DialogBox = ({
   align = "center",
   confirmButtonStyle = "filled",
 }: DialogBoxProps) => {
-  //  닫혀있거나, SSR 환경(document가 없는 경우)에서는 렌더링하지 않음
   if (!isOpen || typeof document === "undefined") return null;
 
   const borderGradient =
     "linear-gradient(139.21deg, rgba(172, 157, 157, 0.215) 0%, rgba(255, 255, 255, 0.5) 120.67%)";
 
-  // 렌더링할 JSX 내용을 변수 혹은 createPortal 내부에 직접 작성
   const modalContent = (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]">
-      <div className="absolute inset-0" onClick={onCancel} />
+    <div
+      // 1. 배경(Wrapper)에 직접 onClick 이벤트 할당
+      onClick={onCancel}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
+    >
+      {/* 기존의 absolute overlay div 제거됨 */}
 
-      <div className="bg-neutral-875/70 relative w-[20rem] rounded-[1.25rem] border border-neutral-800 px-6 py-8">
+      <div
+        // 2. 모달 내부 클릭 시 상위(배경)로 클릭 이벤트가 전파되지 않도록 차단
+        onClick={(e) => e.stopPropagation()}
+        className="bg-neutral-875/70 relative w-[20rem] rounded-[1.25rem] border border-neutral-800 px-6 py-8"
+      >
         <div
           className={`mb-8 flex flex-col gap-2 ${align === "center" ? "text-center" : "text-left"}`}
         >
@@ -58,7 +60,6 @@ export const DialogBox = ({
         <div
           className={`flex items-center gap-3 ${align === "center" ? "justify-center" : "justify-end"}`}
         >
-          {/* 취소 버튼 */}
           {cancelText && (
             <button
               onClick={onCancel}
@@ -72,7 +73,6 @@ export const DialogBox = ({
             </button>
           )}
 
-          {/* 확인 버튼 */}
           {confirmButtonStyle === "filled" ? (
             <button
               onClick={onConfirm}
@@ -85,7 +85,6 @@ export const DialogBox = ({
               {confirmText}
             </button>
           ) : (
-            // 텍스트형 버튼
             <button
               onClick={onConfirm}
               className="font-regular px-2 py-1 text-[0.875rem] leading-[155%] text-orange-500 transition-colors"
@@ -98,6 +97,5 @@ export const DialogBox = ({
     </div>
   );
 
-  // createPortal을 사용하여 document.body에 렌더링
   return createPortal(modalContent, document.body);
 };
