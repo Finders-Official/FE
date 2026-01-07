@@ -28,13 +28,11 @@ export const CapsuleButton = ({
   const backgroundColor = "var(--color-neutral-900)";
 
   const baseClass =
-    "inline-flex items-center justify-center rounded-[3.125rem] border border-transparent text-white transition-all duration-200 active:scale-[0.98] hover:brightness-110";
+    "inline-flex items-center justify-center rounded-[3.125rem] border border-transparent text-white transition-all duration-200 active:scale-[0.98] hover:brightness-110 h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold";
 
   const sizeClass: Record<CapsuleSize, string> = {
-    small:
-      "w-[8.8125rem] h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold",
-    medium:
-      "w-[13.25rem] h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold",
+    small: "w-[8.8125rem]",
+    medium: "w-[13.25rem]",
   };
 
   const handleClick = () => {
