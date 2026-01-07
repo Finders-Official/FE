@@ -32,6 +32,7 @@ export const InputForm = ({
       {name && <label htmlFor={name}>{name}</label>}
       <div className="relative mt-[1rem]">
         <input
+          autoComplete="off"
           id={name}
           placeholder={placeholder}
           name={name}
