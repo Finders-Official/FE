@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+
 type TextAlign = "center" | "left";
 type ConfirmStyle = "filled" | "text";
 
@@ -28,12 +30,14 @@ export const DialogBox = ({
   align = "center",
   confirmButtonStyle = "filled",
 }: DialogBoxProps) => {
-  if (!isOpen) return null;
+  //  닫혀있거나, SSR 환경(document가 없는 경우)에서는 렌더링하지 않음
+  if (!isOpen || typeof document === "undefined") return null;
 
   const borderGradient =
     "linear-gradient(139.21deg, rgba(172, 157, 157, 0.215) 0%, rgba(255, 255, 255, 0.5) 120.67%)";
 
-  return (
+  // 렌더링할 JSX 내용을 변수 혹은 createPortal 내부에 직접 작성
+  const modalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]">
       <div className="absolute inset-0" onClick={onCancel} />
 
@@ -93,4 +97,7 @@ export const DialogBox = ({
       </div>
     </div>
   );
+
+  // createPortal을 사용하여 document.body에 렌더링
+  return createPortal(modalContent, document.body);
 };
