@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { ChevronRightIcon } from "../../assets/icon";
+import { ChevronRightIcon } from "@/assets/icon";
 
 interface SectionHeaderProps {
   title: string;
