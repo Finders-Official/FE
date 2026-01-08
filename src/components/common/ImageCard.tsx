@@ -1,4 +1,4 @@
-import { CheckIcon } from "@/assets/icon";
+import { CheckCircleIcon } from "@/assets/icon";
 
 type BaseImageCardProps = {
   src: string;
@@ -61,7 +61,7 @@ export function ImageCard({
               {badgeText}
             </div>
           ) : (
-            <CheckIcon className="h-[1.375rem] w-[1.375rem]" />
+            <CheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
           )}
         </div>
       )}
