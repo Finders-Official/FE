@@ -6,10 +6,6 @@ import PostPage from "@/pages/photoFeed/PostPage";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
-import mainpage from "@/test/mainpage";
-import ManagePage from "@/test/managepage";
-import MyPage from "@/test/mypage";
-import PhotoLabPage from "@/test/photolabpage";
 
 const router = createBrowserRouter([
   {
@@ -40,22 +36,6 @@ const router = createBrowserRouter([
           {
             path: "/photoFeed",
             Component: PhotoFeedPage,
-          },
-          {
-            path: "/mainpage",
-            Component: mainpage,
-          },
-          {
-            path: "/photolab-list",
-            Component: PhotoLabPage,
-          },
-          {
-            path: "/mypage",
-            Component: MyPage,
-          },
-          {
-            path: "/development-manage",
-            Component: ManagePage,
           },
         ],
       },
