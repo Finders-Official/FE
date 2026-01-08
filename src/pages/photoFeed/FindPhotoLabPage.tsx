@@ -23,6 +23,19 @@ export default function FindPhotoLabPage() {
     return results.filter((r) => r.name.toLowerCase().includes(q));
   }, [text]);
 
+  const handleResetSearch = () => {
+    setStep("search");
+    setSearching(false);
+    setText("");
+    setSelectedLab(null);
+  };
+
+  const handleLabSelect = (lab: PhotoLab) => {
+    setSelectedLab(lab);
+    setSearching(false);
+    setStep("confirm");
+  };
+
   /** 확인 화면(Confirm) 렌더링  */
   if (step === "confirm" && selectedLab) {
     return (
@@ -32,9 +45,7 @@ export default function FindPhotoLabPage() {
           <h1 className="text-left text-[1.375rem] font-semibold text-white">
             이용하신 현상소가 이곳이 맞나요?
           </h1>
-          <div
-            className={`border-neutral-750 gap-[0.625rem] rounded-2xl border p-[1.25rem]`}
-          >
+          <div className="border-neutral-750 gap-[0.625rem] rounded-2xl border p-[1.25rem]">
             <p className="font-semibold text-white">{selectedLab.name}</p>
             <p className="text-sm text-neutral-400">
               {selectedLab.addr} ({selectedLab.dist})
@@ -47,12 +58,7 @@ export default function FindPhotoLabPage() {
             text="아니요 달라요"
             size="medium"
             color="black"
-            onClick={() => {
-              setStep("search");
-              setSearching(false);
-              setText("");
-              setSelectedLab(null);
-            }}
+            onClick={handleResetSearch}
           />
           <Button
             text="네 맞아요"
@@ -106,12 +112,7 @@ export default function FindPhotoLabPage() {
                       key={r.name}
                       className="py-4"
                       onMouseDown={(e) => e.preventDefault()} // (웹) 클릭 시 blur로 닫히는거 방지용
-                      onClick={() => {
-                        // TODO: 선택 처리
-                        setSelectedLab(r);
-                        setSearching(false);
-                        setStep("confirm");
-                      }}
+                      onClick={() => handleLabSelect(r)}
                     >
                       <p className="font-semibold">
                         <HighlightText text={r.name} keyword={text} />
