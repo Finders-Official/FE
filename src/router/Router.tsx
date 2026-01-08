@@ -5,6 +5,7 @@ import PhotoFeedPage from "@/pages/photoFeed/PhotoFeedPage";
 import PostPage from "@/pages/photoFeed/PostPage";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
+import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 
 const router = createBrowserRouter([
   {
@@ -23,11 +24,15 @@ const router = createBrowserRouter([
         Component: PhotoFeedPage,
       },
       {
-        path: "/post/:postId",
+        path: "/photoFeed/find/lab",
+        Component: FindPhotoLabPage,
+      },
+      {
+        path: "/photoFeed/post/:postId",
         Component: PostPage,
       },
       {
-        path: "/post/new",
+        path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
     ],
