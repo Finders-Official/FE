@@ -2,7 +2,7 @@ import { Button } from "@/components/common/Button";
 import { PencilIcon, XIcon } from "@/assets/icon";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
-import { useSelectedPhotos } from "@/store/useSelectedPhotos";
+import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
