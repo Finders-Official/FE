@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { ChevronRightIcon } from "@/assets/icon";
+import { ChevronLeftIcon } from "@/assets/icon";
 
 interface SectionHeaderProps {
   title: string;
@@ -37,7 +37,7 @@ export const SectionHeader = ({
           className="font-regular flex shrink-0 items-center gap-[0.125rem] text-[0.938rem] leading-[155%] tracking-[-0.02em] whitespace-nowrap text-neutral-200"
         >
           더보기
-          <ChevronRightIcon className="h-[1rem] w-[1rem]" />
+          <ChevronLeftIcon className="h-[1rem] w-[1rem] -scale-x-100 text-neutral-200" />
         </button>
       )}
     </div>
