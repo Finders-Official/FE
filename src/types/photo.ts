@@ -14,11 +14,11 @@ export type Photo = {
 
 // Mock 데이터
 export const photoMock: Photo[] = [
-  { id: 1, src: mock1, title: "mock1" },
-  { id: 2, src: mock2, title: "mock2" },
-  { id: 3, src: mock3, title: "mock3" },
-  { id: 4, src: mock4, title: "mock4" },
-  { id: 5, src: mock5, title: "mock5" },
-  { id: 6, src: mock6, title: "mock6" },
-  { id: 7, src: mock7, title: "mock7" },
+  { id: 1, src: mock1, title: "크리스마스 산타케이크입니당" },
+  { id: 2, src: mock2, title: "이건 산타 책.." },
+  { id: 3, src: mock3, title: "요건 귀여운 눈사람만들기" },
+  { id: 4, src: mock4, title: "얜 맛있겠죠?" },
+  { id: 5, src: mock5, title: "아기 눈사람이에오" },
+  { id: 6, src: mock6, title: "목도리 탐난다" },
+  { id: 7, src: mock7, title: "멜크멜크" },
 ];

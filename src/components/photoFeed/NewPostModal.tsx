@@ -1,11 +1,18 @@
 import { Button } from "@/components/common/Button";
 import { PencilIcon, XIcon } from "@/assets/icon";
+import { useRef } from "react";
+import { useNavigate } from "react-router";
+import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function NewPostModal({ isOpen, onClose }: ModalProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
+  const setFiles = useSelectedPhotos((s) => s.setFiles);
+
   if (!isOpen) return null;
 
   return (
@@ -45,6 +52,25 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
             </p>
           </div>
 
+          {/* 사진 파일 선택 */}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            hidden
+            onChange={(e) => {
+              const files = Array.from(e.target.files ?? []);
+              if (files.length === 0) return; // 사용자가 취소한 경우
+
+              setFiles(files); // 전역에 저장
+              e.currentTarget.value = ""; // 같은 파일 재선택 대비
+
+              onClose();
+              navigate("/post/new"); // 바로 다음 페이지로
+            }}
+          />
+
           {/* 하단 버튼 */}
           <div className="flex gap-3">
             <Button
@@ -58,8 +84,7 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
               size="xsmall"
               color="orange"
               onClick={() => {
-                // TODO: 다음 단계 로직
-                onClose();
+                inputRef.current?.click();
               }}
             />
           </div>

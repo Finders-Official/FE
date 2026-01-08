@@ -5,3 +5,8 @@ export default function PostPage() {
     </div>
   );
 }
+
+/**
+ * CO-030 PostPage.tsx
+ * Description: 게시물 상세보기 페이지
+ */
