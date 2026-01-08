@@ -49,7 +49,7 @@ const tabs: TabItem[] = [
 
 export const TabBar = () => {
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 h-[5.5625rem] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-6 py-5">
+    <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-6 py-5">
       <nav className="grid h-full grid-cols-5 gap-1">
         {tabs.map((tab) => {
           return (

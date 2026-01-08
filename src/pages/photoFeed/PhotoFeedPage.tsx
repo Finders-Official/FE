@@ -21,7 +21,7 @@ export default function PhotoFeedPage() {
         type="button"
         aria-label="새 게시물 작성"
         onClick={() => setIsCreateModalOpen(true)}
-        className="fixed right-6 bottom-26 z-50 flex h-[3.5625rem] w-[3.5625rem]"
+        className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
       >
         <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
       </button>
