@@ -6,7 +6,7 @@ export type TabItem = {
   to: string;
   label: string;
   icon: IconComponent;
-  activeicon: IconComponent;
+  activeIcon: IconComponent;
   end?: boolean;
 };
 

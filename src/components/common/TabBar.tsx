@@ -18,38 +18,38 @@ const tabs: TabItem[] = [
     to: "/mainpage",
     label: "홈",
     icon: TabHomeIcon,
-    activeicon: TabHomeFillIcon,
+    activeIcon: TabHomeFillIcon,
     end: true,
   },
   {
     to: "/photolab-list",
     label: "현상소 보기",
     icon: PhotoLabIcon,
-    activeicon: PhotoLabFillIcon,
+    activeIcon: PhotoLabFillIcon,
   },
   {
     to: "/photoFeed",
     label: "사진수다",
     icon: ChatIcon,
-    activeicon: ChatFillIcon,
+    activeIcon: ChatFillIcon,
   },
   {
     to: "/development-manage",
     label: "현상 관리",
     icon: ManageIcon,
-    activeicon: ManageFillIcon,
+    activeIcon: ManageFillIcon,
   },
   {
     to: "/mypage",
     label: "마이페이지",
     icon: MyPageIcon,
-    activeicon: MyPageFillIcon,
+    activeIcon: MyPageFillIcon,
   },
 ];
 
 export const TabBar = () => {
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 h-[5.5625rem] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-[1.5rem] py-[1.25rem]">
+    <div className="fixed bottom-0 left-1/2 z-50 h-[5.5625rem] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-6 py-5">
       <nav className="grid h-full grid-cols-5 gap-1">
         {tabs.map((tab) => {
           return (
@@ -66,7 +66,7 @@ export const TabBar = () => {
               aria-label={tab.label}
             >
               {({ isActive }) => {
-                const Icon = isActive ? tab.activeicon : tab.icon;
+                const Icon = isActive ? tab.activeIcon : tab.icon;
                 return (
                   <>
                     <Icon className="h-[1.5rem] w-[1.5rem]" />
