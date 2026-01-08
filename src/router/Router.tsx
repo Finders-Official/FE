@@ -3,7 +3,7 @@ import OnBoardingPage from "@/pages/auth/OnBoarding";
 import LoginPage from "@/pages/auth/LoginPage";
 import PhotoFeedPage from "@/pages/photoFeed/PhotoFeedPage";
 import PostPage from "@/pages/photoFeed/PostPage";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 
@@ -11,6 +11,7 @@ const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
+      { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
       {
         path: "/auth/login",
         Component: LoginPage,
