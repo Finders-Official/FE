@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PhotoCard from "../../components/photoFeed/PhotoCard";
+import PhotoCard from "@/components/photoFeed/PhotoCard";
 import { photoMock } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
 import { FloatingIcon } from "@/assets/icon";
@@ -35,3 +35,8 @@ export default function PhotoFeedPage() {
     </main>
   );
 }
+
+/**
+ * CO-010 PhotoFeedPage.tsx
+ * Description: 사진수다 전체 피드 페이지
+ */

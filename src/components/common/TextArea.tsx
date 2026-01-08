@@ -40,7 +40,7 @@ export function TextArea({
 
   return (
     <div
-      className={`flex flex-col gap-[0.625rem] rounded-2xl bg-neutral-900 p-[1.25rem] ${className}`}
+      className={`border-neutral-750 flex flex-col gap-[0.625rem] rounded-2xl border bg-neutral-900 p-[1.25rem] ${className}`}
     >
       <textarea
         ref={textareaRef}
@@ -50,7 +50,8 @@ export function TextArea({
         disabled={disabled}
         className={`textarea-scrollbar w-full resize-none overflow-y-auto bg-transparent text-[0.9375rem] text-neutral-200 outline-none placeholder:text-neutral-500 ${textareaClassName} `}
         style={{
-          maxHeight: "18.4375rem", // 295px
+          minHeight: "5.5rem",
+          maxHeight: "11.4375rem",
         }}
       />
 
