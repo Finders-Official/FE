@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { useSelectedPhotos } from "@/store/useSelectedPhotos";
+import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
 import { TextArea } from "@/components/common/TextArea";
 import { Button } from "@/components/common/Button";
+import { isValidText } from "@/utils/isValidText";
 
 const LIMITS = {
   titleMin: 2,
@@ -11,12 +12,6 @@ const LIMITS = {
   contentMax: 2000,
   maxPhotos: 10,
 } as const;
-
-function isValidText(value: string, min: number, max: number) {
-  const len = value.trim().length;
-  if (len === 0) return false;
-  return len >= min && len <= max;
-}
 
 export default function NewPostPage() {
   const navigate = useNavigate();
