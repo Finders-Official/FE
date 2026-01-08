@@ -4,6 +4,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import PhotoFeedPage from "../pages/photoFeed/PhotoFeedPage";
 import PostPage from "../pages/photoFeed/PostPage";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { FooterLayout } from "@/layouts/FooterLayout";
 
 const router = createBrowserRouter([
   {
@@ -18,12 +19,19 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/photoFeed",
-        Component: PhotoFeedPage,
-      },
-      {
         path: "/post/:postId",
         Component: PostPage,
+      },
+
+      // FooterLayout 적용 필요한 페이지들
+      {
+        Component: FooterLayout,
+        children: [
+          {
+            path: "/photoFeed",
+            Component: PhotoFeedPage,
+          },
+        ],
       },
     ],
   },
