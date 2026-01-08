@@ -13,7 +13,7 @@ export const TabBar = () => {
       <nav className="grid h-full grid-cols-5 gap-1">
         <button
           type="button"
-          className="flex flex-col items-center justify-center"
+          className="flex flex-col items-center justify-center active:scale-[0.99]"
         >
           <KakaoIcon className="h-[1.5rem] w-[1.5rem]" fill="orange-500" />
           <label className="mt-auto text-center text-xs text-neutral-300">
@@ -22,7 +22,7 @@ export const TabBar = () => {
         </button>
         <button
           type="button"
-          className="flex flex-col items-center justify-center"
+          className="flex flex-col items-center justify-center active:scale-[0.99]"
         >
           <KakaoIcon className="h-[1.5rem] w-[1.5rem]" />
           <label className="mt-auto text-center text-xs text-neutral-300">
@@ -31,7 +31,7 @@ export const TabBar = () => {
         </button>
         <button
           type="button"
-          className="flex flex-col items-center justify-center"
+          className="flex flex-col items-center justify-center active:scale-[0.99]"
         >
           <KakaoIcon className="h-[1.5rem] w-[1.5rem]" />
           <label className="mt-auto text-center text-xs text-neutral-300">
@@ -40,7 +40,7 @@ export const TabBar = () => {
         </button>
         <button
           type="button"
-          className="flex flex-col items-center justify-center"
+          className="flex flex-col items-center justify-center active:scale-[0.99]"
         >
           <KakaoIcon className="h-[1.5rem] w-[1.5rem]" />
           <label className="mt-auto text-center text-xs text-neutral-300">
@@ -49,7 +49,7 @@ export const TabBar = () => {
         </button>
         <button
           type="button"
-          className="flex flex-col items-center justify-center"
+          className="flex flex-col items-center justify-center active:scale-[0.99]"
         >
           <KakaoIcon className="h-[1.5rem] w-[1.5rem]" />
           <label className="mt-auto text-center text-xs text-neutral-300">
