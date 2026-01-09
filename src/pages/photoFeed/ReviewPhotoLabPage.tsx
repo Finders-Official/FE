@@ -10,6 +10,11 @@ export default function ReviewPhotoLabPage() {
   const { state } = useLocation();
   const labName = state?.labName;
 
+  if (!state?.labName) {
+    // labName 정보가 없으면 FindPhotoLabPage로 이동
+    navigate("/photoFeed/lab/find");
+  }
+
   const [text, setText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -29,7 +34,7 @@ export default function ReviewPhotoLabPage() {
             이 현상소, 어떤 기억으로 남았나요?
           </h1>
           <div className="flex items-center justify-start gap-2">
-            <HomeIcon className="h-[14px] w-[12px]" />
+            <HomeIcon className="h-[0.875rem] w-[0.75rem]" />
             <p className="text-sm text-neutral-200">{labName}</p>
           </div>
         </div>
@@ -45,8 +50,8 @@ export default function ReviewPhotoLabPage() {
         />
 
         <div className="bg-neutral-875 flex justify-center gap-2 rounded-2xl p-[1.25rem] text-neutral-500">
-          <ExclamationCircleIcon className="h-[20px] w-[20px]" />
-          <p className="text-[12px]">
+          <ExclamationCircleIcon className="h-[1.25rem] w-[1.25rem]" />
+          <p className="text-[0.75rem]">
             서로를 존중하는 표현으로 남겨주세요. 부적절한 내용은 별도 안내 없이
             삭제될 수 있어요.
           </p>
@@ -70,7 +75,7 @@ export default function ReviewPhotoLabPage() {
             confirmText="네"
             onConfirm={() => {
               setIsDialogOpen(false);
-              navigate("/photoFeed/post/${postId}");
+              navigate("/photoFeed"); // TODO: API 연동 후 실제 postId로 수정
             }}
             cancelText="아니오"
             onCancel={() => setIsDialogOpen(false)}

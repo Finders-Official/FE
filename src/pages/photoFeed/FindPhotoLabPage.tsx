@@ -119,7 +119,7 @@ export default function FindPhotoLabPage() {
                 <ul className="divide-y divide-neutral-800 px-4">
                   {filteredResults.map((r) => (
                     <li
-                      key={r.name}
+                      key={r.id}
                       className="py-4"
                       onMouseDown={(e) => e.preventDefault()} // (웹) 클릭 시 blur로 닫히는거 방지용
                       onClick={() => handleLabSelect(r)}
@@ -149,7 +149,7 @@ export default function FindPhotoLabPage() {
                   text="다음"
                   size="xlarge"
                   disabled={!checked}
-                  link="/photoFeed/post/:postId"
+                  link="/photoFeed/post/:postId" // TODO: 수정 예정
                   color={checked ? "orange" : "black"}
                   onClick={() => {}}
                 />
