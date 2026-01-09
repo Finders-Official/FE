@@ -31,6 +31,11 @@
   --color-neutral-0: #fbfbfb;
 }
 
+:root {
+  --tabbar-height: 5.5625rem;
+  --fab-gap: 0.8rem; /* spacing.4 */
+}
+
 @layer base {
   /* 화면 꽉 차게: 루트 높이 고정 */
   html,
