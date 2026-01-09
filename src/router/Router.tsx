@@ -6,6 +6,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
+import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 
 const router = createBrowserRouter([
   {
@@ -21,8 +22,12 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/photoFeed/find/lab",
+        path: "/photoFeed/lab/find",
         Component: FindPhotoLabPage,
+      },
+      {
+        path: "/photoFeed/lab/review",
+        Component: ReviewPhotoLabPage,
       },
       {
         path: "/photoFeed/post/:postId",

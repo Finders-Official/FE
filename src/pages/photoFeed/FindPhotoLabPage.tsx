@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { HighlightText } from "@/utils/highlightText";
 import type { PhotoLab } from "@/types/photoLab";
 import { results } from "@/types/photoLab";
+import { useNavigate } from "react-router";
 
 type Step = "search" | "confirm";
 
@@ -16,6 +17,8 @@ export default function FindPhotoLabPage() {
   const [checked, setChecked] = useState(false);
 
   const [selectedLab, setSelectedLab] = useState<PhotoLab | null>(null);
+
+  const navigate = useNavigate();
 
   const filteredResults = useMemo(() => {
     const q = text.trim().toLowerCase();
@@ -64,7 +67,14 @@ export default function FindPhotoLabPage() {
             text="네 맞아요"
             size="medium"
             color="orange"
-            onClick={() => {}} // TODO: 다음 페이지로 이동
+            onClick={() => {
+              navigate("/photoFeed/lab/review", {
+                state: {
+                  labName: selectedLab.name,
+                  labId: selectedLab.id,
+                },
+              });
+            }}
           />
         </div>
       </div>
@@ -138,7 +148,8 @@ export default function FindPhotoLabPage() {
                 <CTA_Button
                   text="다음"
                   size="xlarge"
-                  link="" // TODO: 다음 페이지 어디로 갈지 물어보기
+                  disabled={!checked}
+                  link="/photoFeed/post/:postId"
                   color={checked ? "orange" : "black"}
                   onClick={() => {}}
                 />
