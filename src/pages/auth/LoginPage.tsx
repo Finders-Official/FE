@@ -1,15 +1,16 @@
+import { KakaoButton } from "@/components/auth";
+import { CTA_Button } from "@/components/common";
 import { useEffect, useRef, useState } from "react";
-import { KakaoButton } from "../../components/auth/KakaoButton";
 import { Link } from "react-router";
-import { Button } from "../../components/common/Button";
 
 const SIGNED_UP_KEY = "finders:signedUp"; //추후에 변경 예정
 const ANIM_KEY = "finders:loginAnimationPlayed";
 
-export default function LoginPage() {
+export function LoginPage() {
   const timerRef = useRef<number | null>(null);
 
   //초기 상태를 "스토리지" 기준으로 한 번에 결정 (splash 여부, 애니메이션 여부, 로그인 여부)
+  // isSignedup은 전역상태로 뺼 예정이나, splash/애니메이션 여부는 이 페이지에서만 관리하면 되므로 로컬 상태로 둠
   const [ui, setUi] = useState(() => {
     if (typeof window === "undefined") {
       return { isSignedUp: false, isSplash: false, shouldAnimate: false };
@@ -132,7 +133,7 @@ export default function LoginPage() {
             key={footerKey}
             className={`mx-auto flex w-full max-w-sm ${footerAnim}`}
           >
-            <Button text="홈으로" link="/" color="orange" size="compact" />
+            <CTA_Button text="홈으로" link="/" color="orange" size="compact" />
           </div>
         ) : isSplash ? (
           <p

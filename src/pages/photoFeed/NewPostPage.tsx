@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
 import { TextArea } from "@/components/common/TextArea";
-import { Button } from "@/components/common/Button";
 import { isValidText } from "@/utils/isValidText";
+import { CTA_Button } from "@/components/common";
 
 const LIMITS = {
   titleMin: 2,
@@ -149,7 +149,7 @@ export default function NewPostPage() {
 
         <hr className="border-neutral-800" />
 
-        <Button
+        <CTA_Button
           text="다음"
           size="xlarge"
           color={canGoNext ? "orange" : "black"}
