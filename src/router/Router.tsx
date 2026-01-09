@@ -7,6 +7,9 @@ import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import { MyPage } from "@/pages/mypage/MyPage";
 import { EditInfoPage } from "@/pages/mypage/EditInfoPage";
+import { Liked_PostPage } from "@/pages/mypage/Liked-PostPage";
+import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLapPage";
+import { MyPostPage } from "@/pages/mypage/MyPostPage";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +32,19 @@ const router = createBrowserRouter([
         path: "/post/new",
         Component: NewPostPage,
       },
+      // HeaderLayout.tsx로 이동 예정
+      {
+        path: "/mypage/liked-posts",
+        Component: Liked_PostPage,
+      },
+      {
+        path: "/mypage/liked-photolabs",
+        Component: Liked_PhotoLabPage,
+      },
+      {
+        path: "/mypage/my-posts",
+        Component: MyPostPage,
+      },
 
       // FooterLayout 적용 필요한 페이지들
       {
@@ -40,13 +56,19 @@ const router = createBrowserRouter([
           },
           {
             path: "/mypage",
-            Component: MyPage,
+            Component: MyPage, // HeaderFooterLayout으로 이동 예정
           },
           {
             path: "/mypage/edit-info",
-            Component: EditInfoPage,
+            Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
           },
         ],
+      },
+      {
+        // HeaderLayout만 사용하는 페이지
+      },
+      {
+        //HeaderFooteryLayout 사용하는 페이지
       },
     ],
   },
