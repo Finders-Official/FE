@@ -20,7 +20,7 @@ export const PostCard = ({ post }: PostCardProps) => {
       <section className="flex items-center gap-1">
         <p className="flex-1 text-sm text-neutral-400">{post.date}</p>
         <button>
-          <HeartIcon className="h-[1rem] w-[1rem]" fill="orange-500" />
+          <HeartIcon className="h-[1rem] w-[1rem] fill-orange-500 text-orange-500" />
         </button>
         <p className="text-sm">{post.likes}</p>
       </section>
