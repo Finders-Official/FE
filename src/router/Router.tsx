@@ -6,6 +6,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import { MyPage } from "@/pages/mypage/MyPage";
+import { EditInfoPage } from "@/pages/mypage/EditInfoPage";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
           {
             path: "/mypage",
             Component: MyPage,
+          },
+          {
+            path: "/mypage/edit-info",
+            Component: EditInfoPage,
           },
         ],
       },
