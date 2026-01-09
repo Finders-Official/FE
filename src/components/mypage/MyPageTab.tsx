@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { Link } from "react-router";
 import { tabs } from "@/constants/mypage/mypagetab.constant";
 
 export function MyPageTabs() {
@@ -10,7 +10,7 @@ export function MyPageTabs() {
 
       <div className="grid h-full w-full grid-cols-3 gap-[2.5rem]">
         {tabs.map(({ to, label, Icon }) => (
-          <NavLink
+          <Link
             key={to}
             to={to}
             className="flex h-full w-full flex-col items-center justify-center gap-2"
@@ -19,7 +19,7 @@ export function MyPageTabs() {
             {/* 아이콘 박스 */}
             <Icon className="h-10 w-10" />
             <p className="text-sm leading-none font-light">{label}</p>
-          </NavLink>
+          </Link>
         ))}
       </div>
     </div>
