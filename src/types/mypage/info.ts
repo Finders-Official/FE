@@ -14,7 +14,6 @@ export interface MyPageData {
 export interface Member {
   memberId: number;
   name: string;
-  email: string;
   phone: string;
   role: "USER" | "OWNER" | "ADMIN";
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "DELETED";
