@@ -2,13 +2,15 @@ import RootLayout from "@/layouts/RootLayout";
 import { LoginPage, OnBoardingPage } from "@/pages/auth";
 import PhotoFeedPage from "@/pages/photoFeed/PhotoFeedPage";
 import PostPage from "@/pages/photoFeed/PostPage";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 
 const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
+      { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
       {
         path: "/auth/login",
         Component: LoginPage,
@@ -18,16 +20,23 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/photoFeed",
-        Component: PhotoFeedPage,
-      },
-      {
         path: "/post/:postId",
         Component: PostPage,
       },
       {
         path: "/post/new",
         Component: NewPostPage,
+      },
+
+      // FooterLayout 적용 필요한 페이지들
+      {
+        Component: FooterLayout,
+        children: [
+          {
+            path: "/photoFeed",
+            Component: PhotoFeedPage,
+          },
+        ],
       },
     ],
   },
