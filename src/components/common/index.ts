@@ -14,3 +14,6 @@ export type { SearchItemProps, SearchItemType } from "./SearchItem";
 
 export { UnderlineTabs } from "./UnderlineTabs";
 export type { UnderlineTabsProps, TabItem } from "./UnderlineTabs";
+
+export { default as FilterContainer } from "./FilterContainer";
+export type { FilterContainerProps } from "./FilterContainer";
