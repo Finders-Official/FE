@@ -34,6 +34,9 @@ export { default as UploadIcon } from "./upload.svg?react";
 export { default as XMarkIcon } from "./x-mark.svg?react";
 
 // 색상 고정
+export { default as LikedPhotoLabIcon } from "./liked-photolab.svg?react";
+export { default as MyPostIcon } from "./post.svg?react";
+export { default as LikedPostIcon } from "./liked-heart.svg?react";
 
 // 소셜 / 브랜드
 export { default as AppleIcon } from "./Apple.svg?react";
