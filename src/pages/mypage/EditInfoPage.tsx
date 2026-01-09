@@ -16,7 +16,7 @@ export function EditInfoPage() {
           infoColor="gray"
         />
         <div className="flex justify-between p-4">
-          <h1>이름</h1>
+          <p>이름</p>
           <p className="mr-8 text-neutral-500">{member.name}</p>
         </div>
         <OptionLink

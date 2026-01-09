@@ -14,7 +14,7 @@ export const posts: Post[] = [
     title: "크리스마스 산타케이크입니당",
     date: "2025-12-24",
     likes: 12,
-    isLiked: true,
+    isLiked: false,
   },
   {
     id: 2,

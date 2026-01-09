@@ -9,7 +9,9 @@ type Props = {
 };
 
 export default function PhotoCard({ photo, isLiked }: Props) {
-  const heartColorClass = isLiked ? "fill-orange-500 text-orange-500" : "";
+  const heartColorClass = isLiked
+    ? "fill-orange-500 text-orange-500"
+    : "text-white fill-none ";
   return (
     <div className="mb-4 [break-inside:avoid]">
       <div className="group relative">

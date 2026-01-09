@@ -33,7 +33,7 @@ export function MyPage() {
         <section>
           <h1 className="p-[1rem]">고객 지원</h1>
           {servielist.map(({ to, text, Icon }) => (
-            <OptionLink to={to} text={text} Icon={Icon} />
+            <OptionLink key={text} to={to} text={text} Icon={Icon} />
           ))}
         </section>
       </main>

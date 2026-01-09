@@ -7,8 +7,8 @@ import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import { MyPage } from "@/pages/mypage/MyPage";
 import { EditInfoPage } from "@/pages/mypage/EditInfoPage";
-import { Liked_PostPage } from "@/pages/mypage/Liked-PostPage";
-import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLapPage";
+import { LikedPostPage } from "@/pages/mypage/Liked-PostPage";
+import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
 
 const router = createBrowserRouter([
@@ -35,7 +35,7 @@ const router = createBrowserRouter([
       // HeaderLayout.tsx로 이동 예정
       {
         path: "/mypage/liked-posts",
-        Component: Liked_PostPage,
+        Component: LikedPostPage,
       },
       {
         path: "/mypage/liked-photolabs",
