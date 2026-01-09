@@ -21,7 +21,7 @@ export function OnBoardingPage() {
   };
 
   //전화번호 입력 처리
-  const hanldePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
     setPhone(digits);
   };
@@ -76,7 +76,7 @@ export function OnBoardingPage() {
             size="medium"
             className="focus:border-orange-500"
             value={phone}
-            onChange={(e) => hanldePhoneChange(e)}
+            onChange={(e) => handlePhoneChange(e)}
           />
           {/* 인증하기 버튼 누르고 발송되면 재발송으로 코멘트 바꾸기 */}
           <ActionButton
