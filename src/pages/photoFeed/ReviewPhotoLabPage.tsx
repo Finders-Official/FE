@@ -75,7 +75,7 @@ export default function ReviewPhotoLabPage() {
             confirmText="네"
             onConfirm={() => {
               setIsDialogOpen(false);
-              navigate("/photoFeed"); // TODO: API 연동 후 실제 postId로 수정
+              navigate("/photoFeed/post/1"); // TODO: API 연동 후 실제 postId로 수정
             }}
             cancelText="아니오"
             onCancel={() => setIsDialogOpen(false)}
