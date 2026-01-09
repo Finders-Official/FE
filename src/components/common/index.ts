@@ -11,3 +11,6 @@ export type { SearchBarProps, RightIconType } from "./SearchBar";
 
 export { default as SearchItem } from "./SearchItem";
 export type { SearchItemProps, SearchItemType } from "./SearchItem";
+
+export { UnderlineTabs } from "./UnderlineTabs";
+export type { UnderlineTabsProps, TabItem } from "./UnderlineTabs";
