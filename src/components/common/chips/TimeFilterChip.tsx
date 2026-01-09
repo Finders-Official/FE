@@ -15,10 +15,10 @@ export default function TimeFilterChip({
     <button
       type="button"
       onClick={onClick}
-      className={`flex h-[2.375rem] items-center justify-center rounded-[3.125rem] px-[0.625rem] py-[0.5rem] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] transition-colors ${
+      className={`flex h-[2.375rem] items-center justify-center rounded-[3.125rem] border px-[0.625rem] py-[0.5rem] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] transition-colors ${
         selected
-          ? "bg-orange-500 text-white"
-          : "border border-neutral-700 text-white"
+          ? "border-orange-500 bg-orange-500 text-white"
+          : "border-neutral-700 text-white"
       } ${className}`}
     >
       {time}
