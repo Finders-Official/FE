@@ -1,5 +1,5 @@
 import SearchBar from "@/components/common/SearchBar";
-import { Button } from "@/components/common/Button";
+import { CTA_Button } from "@/components/common/CTA_Button";
 import { Checkbox } from "@/components/common/CheckBox";
 import { useMemo, useState } from "react";
 import { HighlightText } from "@/utils/highlightText";
@@ -54,13 +54,13 @@ export default function FindPhotoLabPage() {
         </div>
         {/* 하단 버튼 영역 */}
         <div className="fixed right-0 bottom-0 left-0 flex justify-center gap-3 px-5 py-5">
-          <Button
+          <CTA_Button
             text="아니요 달라요"
             size="medium"
             color="black"
             onClick={handleResetSearch}
           />
-          <Button
+          <CTA_Button
             text="네 맞아요"
             size="medium"
             color="orange"
@@ -135,7 +135,7 @@ export default function FindPhotoLabPage() {
                 <p className="text-[0.875rem] text-white">자가 현상했어요.</p>
               </div>
               <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5">
-                <Button
+                <CTA_Button
                   text="다음"
                   size="xlarge"
                   link="" // TODO: 다음 페이지 어디로 갈지 물어보기
