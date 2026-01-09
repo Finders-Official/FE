@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Header, Icon, SearchBar, SearchItem } from "@/components/common";
-import { SearchIcon } from "@/assets/icon";
+import { MagnifyingGlassIcon } from "@/assets/icon";
 
 export default function TestPage() {
   const [searchValue, setSearchValue] = useState("");
@@ -15,7 +15,7 @@ export default function TestPage() {
           type: "icon",
           icon: (
             <Icon className="text-neutral-200">
-              <SearchIcon />
+              <MagnifyingGlassIcon />
             </Icon>
           ),
           onClick: () => console.log("search"),

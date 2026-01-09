@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeftIcon, CloseIcon, SearchIcon } from "@/assets/icon";
+import { ArrowLeftIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
 import Icon from "./Icon";
 
 type RightIconType = "clear" | "search";
@@ -81,7 +81,7 @@ export default function SearchBar({
           aria-label="검색어 지우기"
         >
           <Icon className="text-neutral-500">
-            <CloseIcon />
+            <XMarkIcon />
           </Icon>
         </button>
       )}
@@ -93,7 +93,7 @@ export default function SearchBar({
           aria-label="검색"
         >
           <Icon className="text-neutral-500">
-            <SearchIcon />
+            <MagnifyingGlassIcon />
           </Icon>
         </button>
       )}
