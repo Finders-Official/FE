@@ -3,7 +3,14 @@ import type { OptionLinkItem } from "@/types/mypage/optionlink";
 
 import { NavLink } from "react-router";
 
-export const OptionLink = ({ to, text, info, Icon }: OptionLinkItem) => {
+export const OptionLink = ({
+  to,
+  text,
+  info,
+  infoColor,
+  Icon,
+}: OptionLinkItem) => {
+  const infoColorClass = infoColor === "gray" ? "text-neutral-500" : "";
   return (
     <NavLink
       to={to}
@@ -12,7 +19,7 @@ export const OptionLink = ({ to, text, info, Icon }: OptionLinkItem) => {
       {Icon && <Icon className="h-[1rem] w-[1.125rem]" />}
       <div className="flex flex-1 justify-between">
         <p>{text}</p>
-        {info ? <p>{info}</p> : null}
+        {info ? <p className={`${infoColorClass}`}>{info}</p> : null}
       </div>
       <ChevronLeftIcon className="h-[1.25rem] w-[1.25rem] rotate-180" />
     </NavLink>
