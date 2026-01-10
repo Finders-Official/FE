@@ -15,6 +15,7 @@ interface CTA_ButtonProps {
   size: CTA_ButtonSize;
   color: CTA_ButtonColor;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 // link 이동 시 endpoint 설정 ex link="/home"
@@ -28,6 +29,7 @@ export const CTA_Button = ({
   color,
   size,
   onClick,
+  disabled = false,
 }: CTA_ButtonProps) => {
   const router = useNavigate();
   const baseClass =
@@ -48,6 +50,7 @@ export const CTA_Button = ({
   };
 
   const handleClick = () => {
+    if (disabled) return;
     if (link) router(link);
     if (onClick) onClick();
   };
@@ -55,6 +58,8 @@ export const CTA_Button = ({
   return (
     <button
       type="button"
+      disabled={disabled}
+      aria-disabled={disabled}
       className={`${baseClass} ${sizeClass[size]} ${colorClass[color]}`}
       onClick={handleClick}
     >
