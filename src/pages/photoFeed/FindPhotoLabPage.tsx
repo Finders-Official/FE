@@ -1,7 +1,7 @@
 import SearchBar from "@/components/common/SearchBar";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { Checkbox } from "@/components/common/CheckBox";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { HighlightText } from "@/utils/highlightText";
 import type { PhotoLab } from "@/types/photoLab";
 import { results } from "@/types/photoLab";
@@ -15,6 +15,8 @@ export default function FindPhotoLabPage() {
   const [text, setText] = useState("");
   const [searching, setSearching] = useState(false);
   const [checked, setChecked] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [selectedLab, setSelectedLab] = useState<PhotoLab | null>(null);
 
@@ -34,6 +36,7 @@ export default function FindPhotoLabPage() {
   };
 
   const handleLabSelect = (lab: PhotoLab) => {
+    inputRef.current?.blur();
     setSelectedLab(lab);
     setSearching(false);
     setStep("confirm");
@@ -101,6 +104,7 @@ export default function FindPhotoLabPage() {
         <div className="relative z-20 flex flex-col gap-4">
           <SearchBar
             value={text}
+            inputRef={inputRef}
             onChange={setText}
             placeholder="이용하신 현상소를 찾아보세요."
             showBack={false}
@@ -121,7 +125,10 @@ export default function FindPhotoLabPage() {
                     <li
                       key={r.id}
                       className="py-4"
-                      onMouseDown={(e) => e.preventDefault()} // (웹) 클릭 시 blur로 닫히는거 방지용
+                      onPointerDown={(e) => {
+                        e.preventDefault();
+                        inputRef.current?.blur();
+                      }}
                       onClick={() => handleLabSelect(r)}
                     >
                       <p className="font-semibold">

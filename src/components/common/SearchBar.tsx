@@ -6,6 +6,7 @@ type RightIconType = "clear" | "search";
 
 interface SearchBarProps {
   value: string;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
   onChange: (value: string) => void;
   placeholder?: string;
   showBack?: boolean;
@@ -19,6 +20,7 @@ interface SearchBarProps {
 
 export default function SearchBar({
   value,
+  inputRef,
   onChange,
   placeholder = "",
   showBack = false,
@@ -69,6 +71,7 @@ export default function SearchBar({
         )}
         <input
           type="text"
+          ref={inputRef}
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
           onFocus={onFocus}
