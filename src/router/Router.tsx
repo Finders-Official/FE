@@ -5,6 +5,11 @@ import PostPage from "@/pages/photoFeed/PostPage";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
+import { MyPage } from "@/pages/mypage/MyPage";
+import { EditInfoPage } from "@/pages/mypage/EditInfoPage";
+import { LikedPostPage } from "@/pages/mypage/Liked-PostPage";
+import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLabPage";
+import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 
@@ -37,6 +42,19 @@ const router = createBrowserRouter([
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
+      // HeaderLayout.tsx로 이동 예정
+      {
+        path: "/mypage/liked-posts",
+        Component: LikedPostPage,
+      },
+      {
+        path: "/mypage/liked-photolabs",
+        Component: Liked_PhotoLabPage,
+      },
+      {
+        path: "/mypage/my-posts",
+        Component: MyPostPage,
+      },
 
       // FooterLayout 적용 필요한 페이지들
       {
@@ -46,7 +64,21 @@ const router = createBrowserRouter([
             path: "/photoFeed",
             Component: PhotoFeedPage,
           },
+          {
+            path: "/mypage",
+            Component: MyPage, // HeaderFooterLayout으로 이동 예정
+          },
+          {
+            path: "/mypage/edit-info",
+            Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
+          },
         ],
+      },
+      {
+        // HeaderLayout만 사용하는 페이지
+      },
+      {
+        //HeaderFooteryLayout 사용하는 페이지
       },
     ],
   },

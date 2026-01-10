@@ -1,4 +1,4 @@
-import { ClockIcon, CloseIcon, SearchIcon } from "@/assets/icon";
+import { ClockIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
 
 type SearchItemType = "recent" | "search";
 
@@ -17,7 +17,7 @@ export default function SearchItem({
   onDelete,
   className = "",
 }: SearchItemProps) {
-  const IconComponent = type === "recent" ? ClockIcon : SearchIcon;
+  const IconComponent = type === "recent" ? ClockIcon : MagnifyingGlassIcon;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -46,7 +46,7 @@ export default function SearchItem({
           onClick={handleDelete}
           className="flex h-6 w-6 items-center justify-center"
         >
-          <CloseIcon className="h-3 w-3 text-neutral-400" />
+          <XMarkIcon className="h-3 w-3 text-neutral-400" />
         </button>
       )}
     </div>
