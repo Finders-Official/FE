@@ -23,12 +23,6 @@ export default defineConfig({
               },
             },
             "removeDimensions",
-            {
-              name: "convertColors",
-              params: {
-                currentColor: true,
-              },
-            },
           ],
         },
       },
