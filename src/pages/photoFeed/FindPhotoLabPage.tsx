@@ -2,7 +2,7 @@ import SearchBar from "@/components/common/SearchBar";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { Checkbox } from "@/components/common/CheckBox";
 import { useMemo, useState } from "react";
-import { HighlightText } from "@/utils/highlightText";
+import { HighlightText } from "@/components/photoFeed/highlightText";
 import type { PhotoLab } from "@/types/photoLab";
 import { results } from "@/types/photoLab";
 
