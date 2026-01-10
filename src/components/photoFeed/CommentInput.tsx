@@ -32,7 +32,7 @@ export default function CommentInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 text-[1.0625rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200 placeholder:text-neutral-700 focus:outline-none"
+          className="flex-1 text-[1.0625rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200 placeholder:text-neutral-700 focus:ring-2 focus:ring-orange-500"
           onKeyDown={(e) => {
             if (e.key === "Enter" && canSubmit) onSubmit();
           }}

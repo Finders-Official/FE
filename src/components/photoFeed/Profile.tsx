@@ -28,7 +28,13 @@ export default function Profile({
   return (
     <div className="flex items-start gap-2">
       {/* avatar */}
-      <img src={avatarUrl} alt={userName} className="h-9 w-9 rounded-full" />
+      <img
+        src={avatarUrl}
+        alt={userName}
+        className="h-9 w-9 rounded-full"
+        width="36"
+        height="36"
+      />
 
       {/* content */}
       <div className="flex flex-1 flex-col">
@@ -72,7 +78,6 @@ export default function Profile({
       {moreMenu && (
         <ActionSheet
           open={moreMenu}
-          title=" "
           onClose={() => setMoreMenu(false)}
           actions={[
             {

@@ -44,14 +44,9 @@ export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
           scrollbarWidth: "none",
         }}
       >
-        {/* 스크롤바 숨김(크롬) */}
-        <style>{`
-          .hide-scrollbar::-webkit-scrollbar { display: none; }
-        `}</style>
-
         {images.map((src, i) => (
           <div
-            key={src + i}
+            key={src}
             className="hide-scrollbar w-full flex-none snap-center"
           >
             <img

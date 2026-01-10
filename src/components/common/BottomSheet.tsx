@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
+const ANIMATION_DURATION = 180;
+
 type SheetProps = {
   open: boolean;
   onClose: () => void;
@@ -102,7 +104,7 @@ export default function BottomSheet({
     if (next === "collapsed") setY(yCollapsed);
     if (next === "dismissed") {
       setY(yDismissed);
-      window.setTimeout(() => onClose(), 180); // 애니메이션 끝난 뒤 close (간단히 timeout)
+      window.setTimeout(() => onClose(), ANIMATION_DURATION); // 애니메이션 끝난 뒤 close (간단히 timeout)
     }
   };
 
@@ -189,7 +191,7 @@ export default function BottomSheet({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/45"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45"
       onTouchMove={(e) => e.preventDefault()}
       onWheel={(e) => e.preventDefault()}
       onMouseDown={closeSheet}
@@ -199,7 +201,9 @@ export default function BottomSheet({
         style={{
           height: `${expandedHeight}px`, // “확장 최대 높이”를 시트 실높이로
           transform: `translateY(${displayY}px)`, // 드래그는 translate로 처리
-          transition: isDragging ? "none" : "transform 180ms ease",
+          transition: isDragging
+            ? "none"
+            : `transform ${ANIMATION_DURATION}ms ease`,
           willChange: "transform",
         }}
         onPointerDown={onPointerDown}

@@ -142,8 +142,9 @@ export default function PostPage() {
           title="댓글"
         >
           <div className="mb-4 flex flex-col gap-5">
-            {commentMock.map(({ user, content, createdAt }) => (
+            {commentMock.map(({ id, user, content, createdAt }) => (
               <Profile
+                key={id}
                 type="comment"
                 userName={user?.username}
                 avatarUrl={user?.avatarUrl}

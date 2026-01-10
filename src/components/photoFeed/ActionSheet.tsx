@@ -9,7 +9,6 @@ type ActionSheetAction = {
 
 interface ActionSheetProps {
   open: boolean;
-  title?: string;
   actions: ActionSheetAction[];
   onClose: () => void;
 }
