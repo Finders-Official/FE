@@ -10,6 +10,8 @@ import { EditInfoPage } from "@/pages/mypage/EditInfoPage";
 import { LikedPostPage } from "@/pages/mypage/Liked-PostPage";
 import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
+import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
+import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 
 const router = createBrowserRouter([
   {
@@ -25,11 +27,19 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/post/:postId",
+        path: "/photoFeed/lab/find",
+        Component: FindPhotoLabPage,
+      },
+      {
+        path: "/photoFeed/lab/review",
+        Component: ReviewPhotoLabPage,
+      },
+      {
+        path: "/photoFeed/post/:postId",
         Component: PostPage,
       },
       {
-        path: "/post/new",
+        path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
       // HeaderLayout.tsx로 이동 예정
