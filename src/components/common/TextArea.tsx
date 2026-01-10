@@ -48,7 +48,7 @@ export function TextArea({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className={`textarea-scrollbar placeholder:text-neutral-750 w-full resize-none overflow-y-auto bg-transparent text-[0.9375rem] text-neutral-200 outline-none ${textareaClassName} `}
+        className={`textarea-scrollbar placeholder:text-neutral-750 w-full resize-none overflow-y-auto bg-transparent text-[1rem] text-neutral-200 outline-none ${textareaClassName} `}
         style={{
           minHeight: "5.5rem",
           maxHeight: "11.4375rem",
