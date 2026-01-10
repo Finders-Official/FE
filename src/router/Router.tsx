@@ -7,6 +7,7 @@ import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+import MainPage from "@/pages/mainPage/MainPage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/mainpage",
+        Component: MainPage,
       },
       {
         path: "/photoFeed/lab/find",
