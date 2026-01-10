@@ -15,6 +15,7 @@ interface SearchBarProps {
   rightIcon?: RightIconType;
   onSearch?: () => void;
   inputRef?: RefObject<HTMLInputElement | null>;
+  onFocus?: () => void;
 }
 
 export default function SearchBar({
@@ -28,6 +29,7 @@ export default function SearchBar({
   rightIcon = "clear",
   onSearch,
   inputRef,
+  onFocus,
 }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
 
@@ -72,6 +74,7 @@ export default function SearchBar({
           type="text"
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
+          onFocus={onFocus}
           placeholder={placeholder}
           className="flex-1 bg-transparent text-[1.0625rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200 placeholder:text-neutral-700 focus:outline-none"
         />
