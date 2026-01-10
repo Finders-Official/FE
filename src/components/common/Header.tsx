@@ -62,23 +62,19 @@ export default function Header({
       );
     }
 
-    if (rightAction.type === "text") {
-      const isDisabled = rightAction.disabled || rightAction.loading;
-      return (
-        <button
-          type="button"
-          onClick={rightAction.onClick}
-          disabled={isDisabled}
-          className={`text-[0.9375rem] font-normal ${
-            isDisabled ? "text-neutral-600" : "text-orange-500"
-          }`}
-        >
-          {rightAction.loading ? "..." : rightAction.text}
-        </button>
-      );
-    }
-
-    return <div className="h-6 w-6" />;
+    const isDisabled = rightAction.disabled || rightAction.loading;
+    return (
+      <button
+        type="button"
+        onClick={rightAction.onClick}
+        disabled={isDisabled}
+        className={`text-[0.9375rem] font-normal ${
+          isDisabled ? "text-neutral-600" : "text-orange-500"
+        }`}
+      >
+        {rightAction.loading ? "..." : rightAction.text}
+      </button>
+    );
   };
 
   return (

@@ -16,8 +16,9 @@ export default function DateChip({
   className = "",
 }: DateChipProps) {
   const getTextColor = () => {
-    if (selected) return "text-neutral-100";
-    if (disabled) return "text-neutral-700";
+    if (!selected && disabled) {
+      return "text-neutral-700";
+    }
     return "text-neutral-100";
   };
 

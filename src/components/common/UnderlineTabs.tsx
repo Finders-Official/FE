@@ -9,12 +9,12 @@ interface UnderlineTabsProps {
   className?: string;
 }
 
-export const UnderlineTabs = ({
+export default function UnderlineTabs({
   tabs,
   activeIndex,
   onChange,
   className = "",
-}: UnderlineTabsProps) => {
+}: UnderlineTabsProps) {
   return (
     <div role="tablist" className={`flex h-[3.4375rem] w-full ${className}`}>
       {tabs.map((tab, index) => {
@@ -34,6 +34,6 @@ export const UnderlineTabs = ({
       })}
     </div>
   );
-};
+}
 
 export type { UnderlineTabsProps, TabItem };

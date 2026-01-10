@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type RefObject } from "react";
 import { ArrowLeftIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
 import Icon from "./Icon";
 
@@ -14,6 +14,7 @@ interface SearchBarProps {
   debounceMs?: number;
   rightIcon?: RightIconType;
   onSearch?: () => void;
+  inputRef?: RefObject<HTMLInputElement | null>;
 }
 
 export default function SearchBar({
@@ -26,6 +27,7 @@ export default function SearchBar({
   debounceMs = 300,
   rightIcon = "clear",
   onSearch,
+  inputRef,
 }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
 
@@ -66,6 +68,7 @@ export default function SearchBar({
           </button>
         )}
         <input
+          ref={inputRef}
           type="text"
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
@@ -85,7 +88,7 @@ export default function SearchBar({
           </Icon>
         </button>
       )}
-      {rightIcon === "search" && (
+      {rightIcon === "search" && onSearch && (
         <button
           type="button"
           onClick={onSearch}
