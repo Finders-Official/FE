@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ArrowLeftIcon, CloseIcon, SearchIcon } from "@/assets/icon";
+import { useState, useEffect, type RefObject } from "react";
+import { ArrowLeftIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
 import Icon from "./Icon";
 
 type RightIconType = "clear" | "search";
@@ -14,6 +14,7 @@ interface SearchBarProps {
   debounceMs?: number;
   rightIcon?: RightIconType;
   onSearch?: () => void;
+  inputRef?: RefObject<HTMLInputElement | null>;
   onFocus?: () => void;
 }
 
@@ -27,6 +28,7 @@ export default function SearchBar({
   debounceMs = 300,
   rightIcon = "clear",
   onSearch,
+  inputRef,
   onFocus,
 }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
@@ -68,6 +70,7 @@ export default function SearchBar({
           </button>
         )}
         <input
+          ref={inputRef}
           type="text"
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
@@ -84,11 +87,11 @@ export default function SearchBar({
           aria-label="검색어 지우기"
         >
           <Icon className="text-neutral-500">
-            <CloseIcon />
+            <XMarkIcon />
           </Icon>
         </button>
       )}
-      {rightIcon === "search" && (
+      {rightIcon === "search" && onSearch && (
         <button
           type="button"
           onClick={onSearch}
@@ -96,7 +99,7 @@ export default function SearchBar({
           aria-label="검색"
         >
           <Icon className="text-neutral-500">
-            <SearchIcon />
+            <MagnifyingGlassIcon />
           </Icon>
         </button>
       )}
