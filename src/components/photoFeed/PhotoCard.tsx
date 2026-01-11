@@ -15,7 +15,7 @@ export default function PhotoCard({ photo, isLiked }: Props) {
   return (
     <div className="mb-4 [break-inside:avoid]">
       <div className="group relative">
-        <Link to={`/post/${photo.id}`} className="w-[10.125rem]">
+        <Link to={`/photoFeed/post/${photo.id}`} className="w-[10.125rem]">
           {/* 이미지 */}
           <div className="relative overflow-hidden rounded-2xl">
             <img

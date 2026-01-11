@@ -14,7 +14,7 @@ export function Checkbox({ checked, onChange }: CheckboxProps) {
       className="inline-flex items-center justify-center"
     >
       {checked ? (
-        <CheckBoxIcon className="h-4 w-4 text-orange-500 [&_path]:fill-white" />
+        <CheckBoxIcon className="h-4 w-4" />
       ) : (
         <EmptyBoxIcon className="h-4 w-4" />
       )}

@@ -68,7 +68,7 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
               e.currentTarget.value = ""; // 같은 파일 재선택 대비
 
               onClose();
-              navigate("/post/new"); // 바로 다음 페이지로
+              navigate("/photoFeed/post/new"); // 바로 다음 페이지로
             }}
           />
 
