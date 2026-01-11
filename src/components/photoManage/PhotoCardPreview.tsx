@@ -3,13 +3,15 @@ import { DeleteIcon } from "@/assets/icon";
 type ImageCardProps = {
   src: string;
   alt?: string;
-  onClose: () => void;
+  showClose: boolean;
+  onClose?: () => void;
   className?: string;
 };
 
 export function PhotoCardPreview({
   src,
   alt = "",
+  showClose,
   onClose,
   className = "",
 }: ImageCardProps) {
@@ -25,14 +27,16 @@ export function PhotoCardPreview({
       </div>
 
       {/* 우측 상단 X */}
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="선택 해제"
-        className="absolute top-[-0.375rem] right-[-0.375rem] flex"
-      >
-        <DeleteIcon className="h-[1.375rem] w-[1.375rem]" />
-      </button>
+      {showClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="선택 해제"
+          className="absolute top-[-0.375rem] right-[-0.375rem] flex"
+        >
+          <DeleteIcon className="h-[1.375rem] w-[1.375rem]" />
+        </button>
+      )}
     </div>
   );
 }
