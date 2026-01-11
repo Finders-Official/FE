@@ -4,7 +4,7 @@ import { OptionLink } from "@/components/mypage/OptionLink";
 import { info } from "@/constants/mypage/info.constant";
 import {
   managelist,
-  servielist,
+  servicelist,
 } from "@/constants/mypage/servicelist.constant";
 
 export function MyPage() {
@@ -31,7 +31,7 @@ export function MyPage() {
           ))}
         </section>
         <section>
-          {servielist.map(({ to, text, Icon }) => (
+          {servicelist.map(({ to, text, Icon }) => (
             <OptionLink key={text} to={to} text={text} Icon={Icon} />
           ))}
         </section>
