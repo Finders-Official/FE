@@ -12,6 +12,7 @@ import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+import PhotoDownload from "@/pages/photoManage/PhotoDownload";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "/photoFeed/post/1", //TODO: 임시 postId
         Component: PostPage,
+      },
+      {
+        path: "/photoManage/download",
+        Component: PhotoDownload,
       },
       {
         path: "/photoFeed/post/new",

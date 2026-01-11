@@ -1,4 +1,4 @@
-import { CheckCircleIcon } from "@/assets/icon";
+import { CheckCircleIcon, EmptyCheckCircleIcon } from "@/assets/icon";
 
 type BaseImageCardProps = {
   src: string;
@@ -53,8 +53,8 @@ export function ImageCard({
         <div className="pointer-events-none absolute inset-0 border-4 border-orange-500" />
       )}
 
-      {/* 우측 상단 배지: multi면 숫자 / single이면 체크 */}
-      {isSelected && (
+      {/* 우측 상단 배지: 선택된 경우, multi면 숫자 / single이면 체크 선택되지 않은 경우, 빈 체크*/}
+      {isSelected ? (
         <div className="pointer-events-none absolute top-[0.4375rem] right-[0.4375rem]">
           {mode === "multi" ? (
             <div className="flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-orange-500 text-base font-bold text-white">
@@ -63,6 +63,10 @@ export function ImageCard({
           ) : (
             <CheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
           )}
+        </div>
+      ) : (
+        <div className="pointer-events-none absolute top-[0.4375rem] right-[0.4375rem]">
+          <EmptyCheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
         </div>
       )}
     </button>
