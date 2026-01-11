@@ -159,7 +159,7 @@ export default function FindPhotoLabPage() {
                   text="다음"
                   size="xlarge"
                   disabled={!checked}
-                  link="/photoFeed/post/:postId" // TODO: 수정 예정
+                  link="/photoFeed/post/1" // TODO: 수정 예정
                   color={checked ? "orange" : "black"}
                   onClick={() => {}}
                 />

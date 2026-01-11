@@ -6,7 +6,7 @@ import {
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
 import { Header, ToastItem } from "@/components/common";
-import { postMock } from "@/types/post";
+import { postSelfMock } from "@/types/post";
 import { commentMock } from "@/types/comment";
 import { timeAgo } from "@/utils/timeAgo";
 import PhotoCarousel from "@/components/photoFeed/PhotoCarousel";
@@ -17,6 +17,7 @@ import { useNavigate } from "react-router";
 import CommentInput from "@/components/photoFeed/CommentInput";
 
 export default function PostPage() {
+  const mock = postSelfMock;
   const [toastVisible, setToastVisible] = useState(true);
   const [mounted, setMounted] = useState(true);
   const [commentVisible, setCommentVisible] = useState(false);
@@ -49,15 +50,12 @@ export default function PostPage() {
         <div className="flex flex-col gap-[10px]">
           <Profile
             type="post"
-            userName={postMock.user?.username}
-            avatarUrl={postMock.user?.avatarUrl}
-            date={postMock.date}
+            userName={mock.user?.username}
+            avatarUrl={mock.user?.avatarUrl}
+            date={mock.date}
             isOwner={true}
           />
-          <PhotoCarousel
-            images={postMock.photoUrl}
-            altPrefix={postMock.title}
-          />
+          <PhotoCarousel images={mock.photoUrl} altPrefix={mock.title} />
           <div className="flex h-5 w-full justify-start gap-3 pl-1">
             <div className="flex items-center gap-1">
               <button
@@ -72,7 +70,7 @@ export default function PostPage() {
                   <HeartIcon className="h-[20px] w-[22.5px] text-white/80" />
                 )}
               </button>
-              <p className="text-[13px]">{postMock.likes}</p>
+              <p className="text-[13px]">{mock.likes}</p>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -84,7 +82,7 @@ export default function PostPage() {
               >
                 <ChatBubbleEmptyIcon className="h-[20px] w-[20px]" />
               </button>
-              <p className="text-[13px]">{postMock.comments}</p>
+              <p className="text-[13px]">{mock.comments}</p>
             </div>
           </div>
         </div>
@@ -94,9 +92,9 @@ export default function PostPage() {
           {/** 게시글 제목 및 내용 */}
           <div className="flex flex-col gap-2">
             <p className="text-semi-bold text-[17px] text-neutral-100">
-              {postMock.title}
+              {mock.title}
             </p>
-            <p className="text-[15px] text-neutral-300">{postMock.content}</p>
+            <p className="text-[15px] text-neutral-300">{mock.content}</p>
           </div>
 
           {/** 현상소 후기 */}
@@ -106,15 +104,26 @@ export default function PostPage() {
             onClick={() => navigate("/photoFeed/lab/review")} // TODO: PL-020으로 이동
             className="bg-neutral-875 flex flex-col gap-2 rounded-2xl p-[1.25rem] text-left text-neutral-500"
           >
-            <div className="flex items-center gap-2">
-              <HomeIcon className="h-4 w-4 font-semibold" />
-              <p className="text-[16px] font-semibold text-neutral-200">
-                {postMock.lab.name} 이용
-              </p>
-            </div>
-            <p className="text-[14px] text-neutral-200">
-              {postMock.lab.review}
-            </p>
+            {mock.isSelfProcessed ? (
+              <div className="flex items-center gap-2">
+                <HomeIcon className="h-4 w-4 font-semibold" />
+                <p className="text-[16px] font-semibold text-neutral-200">
+                  자가 현상했어요
+                </p>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-center gap-2">
+                  <HomeIcon className="h-4 w-4 font-semibold" />
+                  <p className="text-[16px] font-semibold text-neutral-200">
+                    {mock.lab.name} 이용
+                  </p>
+                </div>
+                <p className="text-[14px] text-neutral-200">
+                  {mock.lab.review}
+                </p>
+              </div>
+            )}
           </button>
         </div>
       </section>
@@ -151,7 +160,7 @@ export default function PostPage() {
                 avatarUrl={user?.avatarUrl}
                 comment={content}
                 time={timeAgo(createdAt)}
-                isOwner={postMock.user?.id === user?.id}
+                isOwner={mock.user?.id === user?.id}
               />
             ))}
           </div>
