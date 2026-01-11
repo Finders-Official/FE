@@ -12,7 +12,7 @@ export const info: MyPageData = {
   roleData: {
     user: {
       nickname: "Bingguriguri",
-      profileImage: "https://cdn.finders.com/profile/1.png",
+      profileImage: "",
       tokenBalance: 2,
       favoritePhotoLabs: 3,
       likedPosts: 12,

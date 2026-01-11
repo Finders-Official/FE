@@ -1,4 +1,5 @@
 import { ChevronLeftIcon } from "@/assets/icon";
+import { info } from "@/constants/mypage/info.constant";
 import { NavLink } from "react-router";
 
 interface InfoBarProps {
@@ -12,7 +13,12 @@ export const InfoBar = ({ name, nickname }: InfoBarProps) => {
     <div className="mb-[1rem] flex items-center gap-3">
       {/* 프로필 이미지 */}
       <div className="h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border border-2 border-orange-400 bg-orange-600">
-        <img src="" alt="" />
+        <img
+          src={info.roleData.user?.profileImage}
+          alt="프로필 이미지"
+          width={60}
+          height={60}
+        />
       </div>
       {/* 이름 / 닉네임 */}
       <div className="flex flex-1 flex-col text-neutral-100">
