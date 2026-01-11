@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
-import Icon from "./Icon";
 
 type RightAction =
   | { type: "icon"; icon: ReactNode; onClick: () => void }
@@ -38,9 +37,7 @@ export default function Header({
         className="flex h-6 w-6 items-center justify-center"
         aria-label="뒤로 가기"
       >
-        <Icon size="lg" className="text-neutral-200">
-          <ChevronLeftIcon />
-        </Icon>
+        <ChevronLeftIcon className="h-6 w-6 text-neutral-200" />
       </button>
     );
   };
