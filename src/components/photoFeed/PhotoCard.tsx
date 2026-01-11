@@ -1,12 +1,17 @@
+import { HeartIcon } from "@/assets/icon";
 import type { Photo } from "@/types/photo";
 import { Link } from "react-router";
 
 type Props = {
   photo: Photo;
+  isLiked?: boolean;
   onToggleLike?: (id: number) => void; // 좋아요 해제 및 등록 api에 사용 예정
 };
 
-export default function PhotoCard({ photo }: Props) {
+export default function PhotoCard({ photo, isLiked }: Props) {
+  const heartColorClass = isLiked
+    ? "fill-orange-500 text-orange-500"
+    : "text-white fill-none ";
   return (
     <div className="mb-4 [break-inside:avoid]">
       <div className="group relative">
@@ -29,6 +34,11 @@ export default function PhotoCard({ photo }: Props) {
             {photo.title}
           </div>
         </Link>
+        {isLiked ? (
+          <button className="absolute right-2 bottom-7">
+            <HeartIcon className={`h-6 w-6 ${heartColorClass}`} />
+          </button>
+        ) : null}
       </div>
     </div>
   );
