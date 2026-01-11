@@ -13,12 +13,17 @@ import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import TestPage from "@/pages/TestPage";
 
 const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
       { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
+      {
+        path: "/test",
+        Component: TestPage,
+      },
       {
         path: "/auth/login",
         Component: LoginPage,
