@@ -1,0 +1,42 @@
+import { Link } from "react-router";
+
+export interface NewsData {
+  id: number;
+  title: string;
+  description: string;
+  thumbnail: string;
+  link: string;
+}
+
+interface FilmNewsCardProps {
+  news: NewsData;
+}
+
+export default function FilmNewsCard({ news }: FilmNewsCardProps) {
+  return (
+    <Link
+      to={news.link}
+      className="group relative block h-57.5 w-full overflow-hidden rounded-[10px]"
+    >
+      {/* 배경 이미지 */}
+      <img
+        src={news.thumbnail}
+        alt={news.title}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+
+      {/* 텍스트 컨텐츠 (하단 배치) */}
+      <div className="absolute right-0 bottom-0 left-0 z-20 flex flex-col gap-1 p-5">
+        {/* 제목 */}
+        <h3 className="line-clamp-2 text-[18px] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-800">
+          {news.title}
+        </h3>
+
+        {/* 요약문 (최대 2줄, 넘치면 ...) */}
+        <p className="font-regular line-clamp-2 text-[16px] leading-[155%] tracking-[-0.02em] text-neutral-800">
+          {news.description}
+        </p>
+      </div>
+    </Link>
+  );
+}
