@@ -1,6 +1,6 @@
 import { EllipsisVerticalIcon } from "@/assets/icon";
 import { useState } from "react";
-import { ActionSheet } from "./ActionSheet";
+import ActionSheet from "./ActionSheet";
 
 type ProfileType = "post" | "comment";
 

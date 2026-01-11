@@ -13,7 +13,11 @@ interface ActionSheetProps {
   onClose: () => void;
 }
 
-export function ActionSheet({ open, actions, onClose }: ActionSheetProps) {
+export default function ActionSheet({
+  open,
+  actions,
+  onClose,
+}: ActionSheetProps) {
   // ESC 닫기
   useEffect(() => {
     if (!open) return;
