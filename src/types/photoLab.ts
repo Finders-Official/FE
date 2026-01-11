@@ -22,6 +22,7 @@ export type FilterTag =
 // 현상소 공지
 export interface LabNews {
   id: number;
+  type: "공지" | "이벤트" | "할인";
   labName: string;
   content: string;
 }
