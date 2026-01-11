@@ -68,7 +68,7 @@ export default function PhotoDownload() {
   if (step === "DETAIL" && currentPhotoId === null) return null;
 
   return (
-    <main className="mx-auto max-w-6xl overflow-x-hidden py-6">
+    <main className="mx-auto w-full max-w-6xl overflow-x-hidden pt-6">
       {step === "GRID" ? (
         <div>
           <Header
@@ -156,34 +156,38 @@ export default function PhotoDownload() {
           </section>
         </div>
       ) : (
-        <div>
-          <Header
-            title="사진 다운로드"
-            showBack
-            onBack={() => setCurrentPhotoId(null)}
-          />
-          <section className="flex flex-col">
-            {/** 이미지 선택 */}
-            <div className="flex justify-end py-5">
-              <button
-                type="button"
-                onClick={() => {
-                  if (currentPhotoId !== null) {
-                    toggle(currentPhotoId);
-                  }
-                }}
-              >
-                {typeof currentIndex === "number" ? (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-[20px] font-bold text-white">
-                    {currentIndex + 1}
-                  </div>
-                ) : (
-                  <EmptyCheckCircleIcon className="h-10 w-10" />
-                )}
-              </button>
-            </div>
+        <div className="flex flex-col">
+          {/** 헤더 영역 */}
+          <div>
+            <Header
+              title="사진 다운로드"
+              showBack
+              onBack={() => setCurrentPhotoId(null)}
+            />
+          </div>
 
-            {/* 선택된 사진 크게 보기 */}
+          {/** 선택 영역 */}
+          <div className="mb-5 flex h-[55px] w-full justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                if (currentPhotoId !== null) {
+                  toggle(currentPhotoId);
+                }
+              }}
+            >
+              {typeof currentIndex === "number" ? (
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-[20px] font-bold text-white">
+                  {currentIndex + 1}
+                </div>
+              ) : (
+                <EmptyCheckCircleIcon className="h-10 w-10" />
+              )}
+            </button>
+          </div>
+
+          {/** 확대한 사진 노출 영역 */}
+          <div className="mb-10 flex h-[379px] w-full">
             {currentPhotoId !== null && photoById.get(currentPhotoId) && (
               <div className="w-full max-w-full">
                 <div className="relative mb-8 h-[379px] w-full overflow-hidden">
@@ -195,39 +199,41 @@ export default function PhotoDownload() {
                 </div>
               </div>
             )}
+          </div>
 
-            {/* 선택된 사진 리스트(가로 스크롤) */}
-            {selectedIds.length > 0 && (
-              <div
-                className="flex w-full max-w-full min-w-0 gap-2 overflow-x-auto px-[50vw] py-5 pt-2"
-                style={{
-                  scrollbarWidth: "none",
-                  WebkitOverflowScrolling: "touch",
-                }}
-              >
-                {selectedIds.map((id) => {
-                  const photo = photoById.get(id);
-                  if (!photo) return null;
+          {/** 선택된 사진 그리드 영역 */}
+          <div
+            className="fixed right-0 bottom-0 left-0 flex h-[90px] w-full min-w-0 gap-2 overflow-x-auto"
+            style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
+          >
+            {/* 왼쪽 스페이서 */}
+            <div className="w-[calc(50vw-2.5rem)] shrink-0" />
 
-                  return (
-                    <div
-                      key={id}
-                      ref={(el) => {
-                        if (el) previewRefs.current.set(id, el);
-                      }}
-                      onClick={() => setCurrentPhotoId(id)} // 클릭 시 해당 사진으로 이동
-                    >
-                      <PhotoCardPreview
-                        src={photo.src}
-                        showClose={false}
-                        className={id === currentPhotoId ? "scale-110" : ""}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </section>
+            {selectedIds.map((id) => {
+              const photo = photoById.get(id);
+              if (!photo) return null;
+
+              return (
+                <div
+                  key={id}
+                  ref={(el) => {
+                    if (el) previewRefs.current.set(id, el);
+                  }}
+                  onClick={() => setCurrentPhotoId(id)}
+                  className="shrink-0"
+                >
+                  <PhotoCardPreview
+                    src={photo.src}
+                    showClose={false}
+                    className={id === currentPhotoId ? "scale-110" : ""}
+                  />
+                </div>
+              );
+            })}
+
+            {/* 오른쪽 스페이서 */}
+            <div className="w-[calc(50vw-2.5rem)] shrink-0" />
+          </div>
         </div>
       )}
     </main>
