@@ -9,7 +9,7 @@ const LIMITS = {
   titleMin: 2,
   titleMax: 30,
   contentMin: 20,
-  contentMax: 2000,
+  contentMax: 300,
   maxPhotos: 10,
 } as const;
 

@@ -44,7 +44,8 @@ export default function PostPage() {
   }, []);
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
-      <Header title="" showBack onBack={() => navigate(-1)} />
+      {/** TODO: 상황별로 다른 곳으로 navigate 되어야 함  */}
+      <Header title="" showBack onBack={() => navigate("/photoFeed")} />
       <section className="flex flex-col gap-[10px] pb-10">
         {/** 상단 */}
         <div className="flex flex-col gap-[10px]">
@@ -129,6 +130,7 @@ export default function PostPage() {
       </section>
 
       {/** toast 메세지 */}
+      {/** TODO: 게시글 작성 직후에만 뜨도록 변경 예정 */}
       {mounted && (
         <div className="fixed right-0 bottom-0 left-0 z-50 flex justify-center px-5 py-5">
           <div
