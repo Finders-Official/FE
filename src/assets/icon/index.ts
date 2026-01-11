@@ -64,6 +64,7 @@ export { default as FlimIcon } from "./flim.svg?react";
 export { default as FlimImageIcon } from "./flim-image.svg?react";
 export { default as FloatingIcon } from "./floating.svg?react";
 export { default as HeadsetFillIcon } from "./headset-fill.svg?react";
+export { default as HeartFillIcon } from "./heart-fill.svg?react";
 export { default as ManageFillIcon } from "./tab-camera-fill.svg?react";
 export { default as MapPinFillIcon } from "./map-pin-fill.svg?react";
 export { default as MyPageFillIcon } from "./mypage-fill.svg?react";

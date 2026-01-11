@@ -1,11 +1,12 @@
 import SearchBar from "@/components/common/SearchBar";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { Checkbox } from "@/components/common/CheckBox";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { HighlightText } from "@/components/photoFeed/highlightText";
 import type { PhotoLab } from "@/types/photoLab";
 import { results } from "@/types/photoLab";
 import { useNavigate } from "react-router";
+import { Header } from "@/components/common";
 
 type Step = "search" | "confirm";
 
@@ -15,6 +16,8 @@ export default function FindPhotoLabPage() {
   const [text, setText] = useState("");
   const [searching, setSearching] = useState(false);
   const [checked, setChecked] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [selectedLab, setSelectedLab] = useState<PhotoLab | null>(null);
 
@@ -34,6 +37,7 @@ export default function FindPhotoLabPage() {
   };
 
   const handleLabSelect = (lab: PhotoLab) => {
+    inputRef.current?.blur();
     setSelectedLab(lab);
     setSearching(false);
     setStep("confirm");
@@ -43,6 +47,7 @@ export default function FindPhotoLabPage() {
   if (step === "confirm" && selectedLab) {
     return (
       <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
+        <Header title="현상소 입력하기" showBack onBack={() => navigate(-1)} />
         {/* 상단 영역 */}
         <div className="flex flex-col gap-6 pt-10 pb-10">
           <h1 className="text-left text-[1.375rem] font-semibold text-white">
@@ -84,6 +89,7 @@ export default function FindPhotoLabPage() {
   /** 검색 화면(Search) 렌더링 */
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
+      <Header title="현상소 입력하기" showBack onBack={() => navigate(-1)} />
       {/* 검색모드일 때: 화면 전체 클릭을 감지하는 투명 오버레이 */}
       {searching && (
         <button
@@ -101,6 +107,7 @@ export default function FindPhotoLabPage() {
         <div className="relative z-20 flex flex-col gap-4">
           <SearchBar
             value={text}
+            inputRef={inputRef}
             onChange={setText}
             placeholder="이용하신 현상소를 찾아보세요."
             showBack={false}
@@ -121,7 +128,10 @@ export default function FindPhotoLabPage() {
                     <li
                       key={r.id}
                       className="py-4"
-                      onMouseDown={(e) => e.preventDefault()} // (웹) 클릭 시 blur로 닫히는거 방지용
+                      onPointerDown={(e) => {
+                        e.preventDefault();
+                        inputRef.current?.blur();
+                      }}
                       onClick={() => handleLabSelect(r)}
                     >
                       <p className="font-semibold">
@@ -149,7 +159,7 @@ export default function FindPhotoLabPage() {
                   text="다음"
                   size="xlarge"
                   disabled={!checked}
-                  link="/photoFeed/post/:postId" // TODO: 수정 예정
+                  link="/photoFeed/post/1" // TODO: 수정 예정
                   color={checked ? "orange" : "black"}
                   onClick={() => {}}
                 />
