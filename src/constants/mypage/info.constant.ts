@@ -3,8 +3,9 @@ import type { MyPageData } from "@/types/mypage/info";
 export const info: MyPageData = {
   member: {
     memberId: 1,
+    email: "finders@gmail.com",
     name: "전병국",
-    phone: "01012345678",
+    phone: "010-1234-5678",
     role: "USER",
     status: "ACTIVE",
   },

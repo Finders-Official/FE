@@ -3,7 +3,7 @@ import { Outlet, useMatches, useNavigate } from "react-router";
 import Header from "@/components/common/Header";
 import { TabBar } from "@/components/common/TabBar";
 
-type Handle = { title?: string; isTab?: boolean };
+type Handle = { title?: string; isTab?: boolean; showBack?: boolean };
 
 export default function MyPageLayout() {
   const matches = useMatches();
@@ -13,15 +13,16 @@ export default function MyPageLayout() {
   const handle = (last.handle as Handle | undefined) ?? {};
   const title = handle.title ?? "마이페이지";
 
-  const showBack = matches.length > 1; // 상황에 맞게 조절
+  const isTab = handle.isTab ?? false;
+  const showBack = handle.showBack ?? true;
 
   return (
-    <div className="w-full pt-[3.275rem]">
+    <div className="flex min-h-0 w-full flex-col pt-[3.75rem]">
       <Header title={title} showBack={showBack} onBack={() => navigate(-1)} />
-      <main>
+      <main className="flex-1">
         <Outlet />
       </main>
-      {handle.isTab && <TabBar />}
+      {isTab && <TabBar />}
     </div>
   );
 }

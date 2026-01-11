@@ -39,9 +39,3 @@ export function MyPage() {
     </div>
   );
 }
-
-// 1. 라우팅 별 페이지 만들기
-// 2. 헤더는 나중에 pull 받아서 사용 예정
-// 3. 관심 현상소 mock data 4개 렌더링 예정 -> UR 030.
-// 4. 관심 게시글 mock data 사용 예정 -> UR 040.
-// 5. 내가 쓴 글 mock data 4개 사용 예정 -> UR 050.

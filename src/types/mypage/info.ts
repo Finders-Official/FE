@@ -13,6 +13,7 @@ export interface MyPageData {
 
 export interface Member {
   memberId: number;
+  email: string;
   name: string;
   phone: string;
   role: "USER" | "OWNER" | "ADMIN";

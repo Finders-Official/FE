@@ -13,6 +13,9 @@ import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import MyPageLayout from "@/layouts/MyPageLayout";
+import { NickNameEditPage } from "@/pages/mypage/NickNameEditPage";
+import { PhoneEditPage } from "@/pages/mypage/PhoneEditPage";
+import { SocialPage } from "@/pages/mypage/SocialPage";
 
 const router = createBrowserRouter([
   {
@@ -59,26 +62,45 @@ const router = createBrowserRouter([
         path: "/mypage",
         element: <MyPageLayout />,
         children: [
-          { index: true, Component: MyPage, handle: { isTab: true } },
+          {
+            index: true,
+            Component: MyPage,
+            handle: { isTab: true, showBack: false },
+          },
           {
             path: "edit-info",
             Component: EditInfoPage,
             handle: { title: "내정보 수정", isTab: true },
           },
           {
+            path: "edit-info/nickname",
+            Component: NickNameEditPage,
+            handle: { title: "닉네임 변경" },
+          },
+          {
+            path: "edit-info/phone",
+            Component: PhoneEditPage,
+            handle: { title: "전화번호 변경" },
+          },
+          {
+            path: "edit-info/social",
+            Component: SocialPage,
+            handle: { title: "연동된 소셜계정" },
+          },
+          {
             path: "liked-posts",
             Component: LikedPostPage,
-            handle: { title: "관심 게시글", isTab: false },
+            handle: { title: "관심 게시글" },
           },
           {
             path: "liked-photolabs",
             Component: LikedPhotoLabPage,
-            handle: { title: "관심 현상소", isTab: false },
+            handle: { title: "관심 현상소" },
           },
           {
             path: "my-posts",
             Component: MyPostPage,
-            handle: { title: "내가 쓴 글", isTab: false },
+            handle: { title: "내가 쓴 글" },
           },
         ],
       },
