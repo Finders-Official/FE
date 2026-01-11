@@ -105,6 +105,9 @@ export default function PhotoDownload() {
                 isSelected={isSelected}
                 selectionIndex={selectionIndex}
                 onToggle={() => toggle(p.id)}
+                onOpen={() => {
+                  navigate(`/photoManage/download/detail/${p.id}`);
+                }}
                 className="mx-auto"
               />
             );

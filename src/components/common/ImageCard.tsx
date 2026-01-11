@@ -4,7 +4,8 @@ type BaseImageCardProps = {
   src: string;
   alt?: string;
   isSelected: boolean;
-  onToggle: () => void;
+  onToggle: () => void; // 선택 및 해제
+  onOpen: () => void; // 상세 페이지 이동
   className?: string;
 };
 
@@ -27,6 +28,7 @@ export function ImageCard({
   isSelected,
   selectionIndex,
   onToggle,
+  onOpen,
   className = "",
 }: ImageCardProps) {
   // multi 선택일 때 표시할 배지 텍스트 (1부터 보이게)
@@ -38,7 +40,15 @@ export function ImageCard({
   return (
     <button
       type="button"
-      onClick={onToggle}
+      onClick={(e) => {
+        const target = e.target as HTMLElement; // 클릭 위치로 분기
+        if (target.closest("[data-toggle-area]")) {
+          // 우측 상단 영역 클릭 여부
+          onToggle();
+          return;
+        }
+        onOpen(); // 그 외 영역
+      }}
       className={`relative aspect-square overflow-hidden ${className}`}
     >
       <img
@@ -47,6 +57,9 @@ export function ImageCard({
         className="h-full w-full object-cover"
         draggable={false}
       />
+
+      {/* 우측 상단 1/4 토글 영역: 해당 영역 클릭시 사진 선택 및 해제 (그 외 영역은 확대 페이지로 이동) */}
+      <div data-toggle-area className="absolute top-0 right-0 h-1/2 w-1/2" />
 
       {/* 선택된 경우: 테두리(주황) */}
       {isSelected && (

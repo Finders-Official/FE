@@ -12,7 +12,8 @@ import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
-import PhotoDownload from "@/pages/photoManage/PhotoDownload";
+import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import PhotoDetailPage from "@/pages/photoManage/PhotoDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -41,7 +42,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/photoManage/download",
-        Component: PhotoDownload,
+        Component: PhotoDownloadPage,
+      },
+      {
+        path: "/photoManage/download/detail/:photoId",
+        Component: PhotoDetailPage,
       },
       {
         path: "/photoFeed/post/new",
