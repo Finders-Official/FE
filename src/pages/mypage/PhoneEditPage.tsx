@@ -2,8 +2,10 @@ import { ActionButton, InputForm } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { formatMMSS } from "@/utils/time";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 export function PhoneEditPage() {
+  const navigate = useNavigate();
   const [isSending, setIsSending] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [phone, setPhone] = useState("");
@@ -11,6 +13,8 @@ export function PhoneEditPage() {
 
   //타이머 설정
   const [remainSec, setRemainSec] = useState(0);
+
+  const color = isVerified ? "orange" : "black";
 
   //인증번호 발송 처리
   const handleSend = () => {
@@ -51,7 +55,12 @@ export function PhoneEditPage() {
     setIsVerified(true);
   };
 
-  const color = isVerified ? "orange" : "black";
+  const handleSubmit = () => {
+    navigate("/mypage/edit-info", {
+      replace: true,
+      state: { toast: "전화번호를 변경했어요" },
+    });
+  };
 
   return (
     <div className="flex h-full flex-1 flex-col">
@@ -101,7 +110,7 @@ export function PhoneEditPage() {
           size="xlarge"
           text="변경 완료"
           color={color}
-          link="/mypage/edit-info"
+          onClick={handleSubmit}
           disabled={!isVerified}
         />
       </footer>

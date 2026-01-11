@@ -1,12 +1,19 @@
 import { InputForm } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export function NickNameEditPage() {
+  const navigate = useNavigate();
   const [nickname, setNickname] = useState("");
-
   const color = nickname ? "orange" : "black";
 
+  const handleSubmit = () => {
+    navigate("/mypage/edit-info", {
+      replace: true,
+      state: { toast: "닉네임을 변경했어요" },
+    });
+  };
   return (
     <div className="flex h-full flex-1 flex-col">
       <form className="py-6">
@@ -25,7 +32,7 @@ export function NickNameEditPage() {
           text="변경 완료"
           color={color}
           disabled={!nickname}
-          link="/mypage/edit-info"
+          onClick={handleSubmit}
         />
       </footer>
     </div>
