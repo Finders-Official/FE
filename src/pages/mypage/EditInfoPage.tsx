@@ -4,7 +4,7 @@ import { info } from "@/constants/mypage/info.constant";
 export function EditInfoPage() {
   const { member, roleData } = info;
   return (
-    <div className="w-full pt-[5rem]">
+    <div>
       <header className="border-neutral-850 flex items-center justify-center border-b-[0.4rem] py-10">
         <div className="border-radius-100 h-[5rem] w-[5rem] rounded-full border border-neutral-800"></div>
       </header>
