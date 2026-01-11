@@ -6,6 +6,7 @@ import { HighlightText } from "@/components/photoFeed/highlightText";
 import type { PhotoLab } from "@/types/photoLab";
 import { results } from "@/types/photoLab";
 import { useNavigate } from "react-router";
+import { Header } from "@/components/common";
 
 type Step = "search" | "confirm";
 
@@ -46,6 +47,7 @@ export default function FindPhotoLabPage() {
   if (step === "confirm" && selectedLab) {
     return (
       <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
+        <Header title="현상소 입력하기" showBack onBack={() => navigate(-1)} />
         {/* 상단 영역 */}
         <div className="flex flex-col gap-6 pt-10 pb-10">
           <h1 className="text-left text-[1.375rem] font-semibold text-white">
@@ -87,6 +89,7 @@ export default function FindPhotoLabPage() {
   /** 검색 화면(Search) 렌더링 */
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
+      <Header title="현상소 입력하기" showBack onBack={() => navigate(-1)} />
       {/* 검색모드일 때: 화면 전체 클릭을 감지하는 투명 오버레이 */}
       {searching && (
         <button

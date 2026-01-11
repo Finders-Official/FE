@@ -5,7 +5,7 @@ import {
   HeartFillIcon,
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
-import { ToastItem } from "@/components/common";
+import { Header, ToastItem } from "@/components/common";
 import { postMock } from "@/types/post";
 import { commentMock } from "@/types/comment";
 import { timeAgo } from "@/utils/timeAgo";
@@ -42,8 +42,9 @@ export default function PostPage() {
     };
   }, []);
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
-      <section className="flex flex-col gap-[10px] pt-10 pb-10">
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
+      <Header title="" showBack onBack={() => navigate(-1)} />
+      <section className="flex flex-col gap-[10px] pb-10">
         {/** 상단 */}
         <div className="flex flex-col gap-[10px]">
           <Profile

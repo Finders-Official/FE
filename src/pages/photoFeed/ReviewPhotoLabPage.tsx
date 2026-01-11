@@ -4,6 +4,7 @@ import { HomeIcon, ExclamationCircleIcon } from "@/assets/icon";
 import { TextArea } from "@/components/common/TextArea";
 import { DialogBox } from "@/components/common/DialogBox";
 import { useNavigate, useLocation } from "react-router";
+import { Header } from "@/components/common";
 
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function ReviewPhotoLabPage() {
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
+      <Header title="현상소 리뷰 작성" showBack onBack={() => navigate(-1)} />
       <section className="flex flex-col gap-6 pt-10 pb-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-left text-[1.375rem] font-semibold text-white">

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
 import { TextArea } from "@/components/common/TextArea";
 import { isValidText } from "@/utils/isValidText";
-import { CTA_Button } from "@/components/common";
+import { CTA_Button, Header } from "@/components/common";
 
 const LIMITS = {
   titleMin: 2,
@@ -54,13 +54,12 @@ export default function NewPostPage() {
 
   const handleNext = () => {
     if (!canGoNext) return;
-
-    // TODO: 다음 페이지로 라우팅 지금은 이전 페이지 걍 둠
-    navigate("/photoFeed");
+    navigate("/photoFeed/lab/find");
   };
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
+      <Header title="글 작성하기" showBack onBack={() => navigate(-1)} />
       {/* 선택된 사진 슬라이딩 */}
       <div
         className="scrollbar-hide mb-[1rem] flex h-[15.1875rem] snap-x snap-mandatory gap-[0.5rem] overflow-x-auto p-[1rem] [-webkit-overflow-scrolling:touch]"
