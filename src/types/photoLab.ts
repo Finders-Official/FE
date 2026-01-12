@@ -27,6 +27,21 @@ export interface LabNews {
   content: string;
 }
 
+// 필터 상태 (바텀시트용)
+export interface FilterState {
+  date?: string; // "2026-1-xx" 형식
+  time?: string; // "오전 10:00" 형식
+  region?: string; // "서울"
+  subRegion?: string; // "동작구"
+}
+
+// 지역 정보
+export interface Region {
+  name: string;
+  count: number;
+  subRegions: string[];
+}
+
 // 기존 타입 (FindPhotoLabPage에서 사용)
 export type PhotoLab = {
   id: number;
