@@ -77,3 +77,8 @@ export { default as TabHomeFillIcon } from "./tab-home-fill.svg?react";
 export { default as TicketFillIcon } from "./ticket-fill.svg?react";
 export { default as TruckFillIcon } from "./truck-fill.svg?react";
 export { default as TruckIcon } from "./truck.svg?react";
+
+// 메인 페이지 아이콘
+export { default as MainCamera } from "./main-camera.svg?react";
+export { default as MainFilm } from "./main-film.svg?react";
+export { default as MainSparkle } from "./main-sparkle.svg?react";
