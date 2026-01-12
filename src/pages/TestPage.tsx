@@ -1,9 +1,31 @@
+import { useState } from "react";
 import { Header } from "@/components/common";
-import { TagBadge, LabNewsBanner } from "@/components/photoLab";
+import { TagBadge, LabNewsBanner, LabCard } from "@/components/photoLab";
+import type { PhotoLabItem } from "@/types/photoLab";
+import PLmock from "@/assets/mocks/PLmock.png";
+
+const mockLab: PhotoLabItem = {
+  photoLabId: 1,
+  name: "파인더스 현상소 상도점",
+  keywords: ["따뜻한 색감", "빈티지한", "택배 접수"],
+  address: "서울 동작구 상도 1동 OOO",
+  distanceKm: 1.5,
+  workCount: 52,
+  avgWorkTimeMinutes: 30,
+  imageUrls: [PLmock, PLmock],
+  isFavorite: false,
+};
 
 export default function TestPage() {
+  const [lab, setLab] = useState<PhotoLabItem>(mockLab);
+
+  const handleFavoriteToggle = (photoLabId: number) => {
+    setLab((prev) => ({ ...prev, isFavorite: !prev.isFavorite }));
+    console.log("Favorite toggled:", photoLabId);
+  };
+
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col overflow-y-auto">
       <Header title="PhotoLab 컴포넌트 테스트" />
 
       <div className="flex flex-col gap-6 p-4">
@@ -45,6 +67,18 @@ export default function TestPage() {
           />
         </section>
       </div>
+
+      {/* LabCard */}
+      <div className="px-4 pb-2">
+        <h2 className="text-sm font-semibold text-neutral-100">
+          LabCard (즐겨찾기 클릭 테스트)
+        </h2>
+      </div>
+      <LabCard
+        lab={lab}
+        onFavoriteToggle={handleFavoriteToggle}
+        onCardClick={(id) => console.log("Card clicked:", id)}
+      />
     </div>
   );
 }
