@@ -24,7 +24,7 @@ export function MyPage() {
               {...item}
               info={
                 item.text === "티켓 충전"
-                  ? `${user?.tokenBalance ?? 0}개`
+                  ? `${user?.creditBalance ?? 0}개`
                   : undefined
               }
             />

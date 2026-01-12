@@ -6,16 +6,16 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import { MyPage } from "@/pages/mypage/MyPage";
-import { EditInfoPage } from "@/pages/mypage/EditInfoPage";
+import { EditInfoPage } from "@/pages/mypage/edit-info/EditInfoPage";
 import { LikedPostPage } from "@/pages/mypage/LikedPostPage";
 import { LikedPhotoLabPage } from "@/pages/mypage/LikedPhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import MyPageLayout from "@/layouts/MyPageLayout";
-import { NickNameEditPage } from "@/pages/mypage/NickNameEditPage";
-import { PhoneEditPage } from "@/pages/mypage/PhoneEditPage";
-import { SocialPage } from "@/pages/mypage/SocialPage";
+import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
+import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
+import { SocialPage } from "@/pages/mypage/edit-info/SocialPage";
 
 const router = createBrowserRouter([
   {
