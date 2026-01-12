@@ -65,8 +65,6 @@ export default function PhotoDownload() {
   const currentIndex =
     currentPhotoId !== null ? selectedIndexMap.get(currentPhotoId) : undefined;
 
-  if (step === "DETAIL" && currentPhotoId === null) return null;
-
   return (
     <main className="mx-auto w-full max-w-6xl overflow-x-hidden pt-6">
       {step === "GRID" ? (
@@ -87,11 +85,13 @@ export default function PhotoDownload() {
 
           <section className="flex flex-col">
             {/* 제목 */}
-            <div className="flex flex-col gap-2 pt-[30px] pb-[15px] text-left text-white">
-              <h1 className="text-[20px] font-semibold">
+            <div className="flex flex-col gap-2 pt-[1.875rem] pb-[0.9375rem] text-left text-white">
+              <h1 className="text-[1.25rem] font-semibold">
                 다운로드 할 사진을 선택해주세요
               </h1>
-              <p className="text-[15px]">사진을 선택하면 크게 볼 수 있어요!</p>
+              <p className="text-[0.9375rem]">
+                사진을 선택하면 크게 볼 수 있어요!
+              </p>
             </div>
             {/* 선택된 사진 미리보기(가로 스크롤) */}
             {selectedIds.length > 0 && (
@@ -119,7 +119,7 @@ export default function PhotoDownload() {
               </div>
             )}
             {/* 사진 그리드 */}
-            <div className="mt-[15px] grid grid-cols-3 gap-1">
+            <div className="mt-[0.9375rem] grid grid-cols-3 gap-1">
               {photoMock.map((p) => {
                 const isSelected = selectedSet.has(p.id);
                 const selectionIndex = isSelected
@@ -167,7 +167,7 @@ export default function PhotoDownload() {
           </div>
 
           {/** 선택 영역 */}
-          <div className="mb-5 flex h-[55px] w-full justify-end">
+          <div className="mb-5 flex h-[3.4375rem] w-full justify-end">
             <button
               type="button"
               onClick={() => {
@@ -177,7 +177,7 @@ export default function PhotoDownload() {
               }}
             >
               {typeof currentIndex === "number" ? (
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-[20px] font-bold text-white">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-[1.25rem] font-bold text-white">
                   {currentIndex + 1}
                 </div>
               ) : (
@@ -187,23 +187,28 @@ export default function PhotoDownload() {
           </div>
 
           {/** 확대한 사진 노출 영역 */}
-          <div className="mb-10 flex h-[379px] w-full">
-            {currentPhotoId !== null && photoById.get(currentPhotoId) && (
-              <div className="w-full max-w-full">
-                <div className="relative mb-8 h-[379px] w-full overflow-hidden">
-                  <img
-                    src={photoById.get(currentPhotoId)!.src}
-                    alt=""
-                    className="absolute inset-0 h-full w-full object-contain"
-                  />
+          <div className="mb-10 flex h-[23.6875rem] w-full">
+            {(() => {
+              const currentPhoto =
+                currentPhotoId !== null ? photoById.get(currentPhotoId) : null;
+              if (!currentPhoto) return null;
+              return (
+                <div className="w-full max-w-full">
+                  <div className="relative mb-8 h-[23.6875rem] w-full overflow-hidden">
+                    <img
+                      src={currentPhoto.src}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-contain"
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
 
           {/** 선택된 사진 그리드 영역 */}
           <div
-            className="fixed right-0 bottom-0 left-0 flex h-[90px] w-full min-w-0 gap-2 overflow-x-auto"
+            className="fixed right-0 bottom-0 left-0 flex h-[5.625rem] w-full min-w-0 gap-2 overflow-x-auto"
             style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
           >
             {/* 왼쪽 스페이서 */}

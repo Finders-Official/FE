@@ -3,10 +3,11 @@ import { DeleteIcon } from "@/assets/icon";
 type ImageCardProps = {
   src: string;
   alt?: string;
-  showClose: boolean;
-  onClose?: () => void;
   className?: string;
-};
+} & (
+  | { showClose: true; onClose: () => void }
+  | { showClose: false; onClose?: never }
+);
 
 export function PhotoCardPreview({
   src,
