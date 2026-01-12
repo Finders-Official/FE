@@ -8,6 +8,7 @@ import {
 } from "@/constants/mypage/servicelist.constant";
 
 export function MyPage() {
+  // 내 정보 조희 api 연동 -> 데이터 값 캐싱 활용 예정 (zustand 사용 x)
   const { member, roleData } = info;
   const { user } = roleData;
   return (

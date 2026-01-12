@@ -16,8 +16,8 @@ export const InfoBar = ({ name, nickname }: InfoBarProps) => {
         <img
           src={info.roleData.user?.profileImage}
           alt="프로필 이미지"
-          width={60}
-          height={60}
+          draggable={false}
+          className="h-full w-full object-cover"
         />
       </div>
       {/* 이름 / 닉네임 */}
