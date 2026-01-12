@@ -1,5 +1,5 @@
 import { useState, useEffect, type RefObject } from "react";
-import { ArrowLeftIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
+import { ChevronLeftIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
 import Icon from "./Icon";
 
 type RightIconType = "clear" | "search";
@@ -64,9 +64,7 @@ export default function SearchBar({
             className="flex h-6 w-6 items-center justify-center"
             aria-label="뒤로 가기"
           >
-            <Icon className="text-neutral-500">
-              <ArrowLeftIcon />
-            </Icon>
+            <ChevronLeftIcon className="h-6 w-6 text-neutral-500" />
           </button>
         )}
         <input

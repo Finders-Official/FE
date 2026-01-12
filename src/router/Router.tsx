@@ -16,6 +16,7 @@ import MyPageLayout from "@/layouts/MyPageLayout";
 import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
 import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
 import { SocialPage } from "@/pages/mypage/edit-info/SocialPage";
+import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: "/photoFeed/post/1", //TODO: 임시 postId
         Component: PostPage,
+      },
+      {
+        path: "/photoManage/download",
+        Component: PhotoDownloadPage,
       },
       {
         path: "/photoFeed/post/new",
