@@ -2,19 +2,29 @@ import { CheckCircleIcon } from "@/assets/icon";
 import { ToastItem } from "@/components/common";
 import { OptionLink } from "@/components/mypage/OptionLink";
 import { info } from "@/constants/mypage/info.constant";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
   const { member, roleData } = info;
-  // 사진 수정 -> 전역 상태로 뺄거임
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
+
   const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+  const [objectUrl, setObjectUrl] = useState<string | null>(null); // blob 전용
+  const objectUrlRef = useRef<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  //서버에서 온 초기 프로필 URL (string 고정)
+  const serverProfileUrl = useMemo(() => {
+    const url = roleData.user?.profileImage;
+    return typeof url === "string" ? url : "";
+  }, [roleData.user?.profileImage]);
+
+  //실제 화면에서 쓸 src: 파일 선택 시 objectUrl, 아니면 serverProfileUrl
+  const previewSrc = objectUrl ?? serverProfileUrl;
 
   //토스트 관련 값
   const navigate = useNavigate();
@@ -24,18 +34,26 @@ export function EditInfoPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!state?.toast) return;
-    setMessage(state.toast);
-    setShowToast(true);
+    const toast = state?.toast;
+    if (!toast) return;
 
-    setTimeout(() => {
+    // ✅ effect 본문에서 setState 동기 호출 금지 룰 대응: "콜백 안에서" setState
+    const showId = window.setTimeout(() => {
+      setMessage(toast);
+      setShowToast(true);
+    }, 0);
+
+    const id = window.setTimeout(() => {
+      navigate(location.pathname, { replace: true, state: null });
       setShowToast(false);
     }, 1000);
 
-    navigate(".", { replace: true, state: null });
-  }, [state, navigate]);
+    return () => {
+      window.clearTimeout(id);
+      window.clearTimeout(showId);
+    };
+  }, [state?.toast, navigate, location.pathname]);
 
-  //로직 분리 예정
   const openPicker = () => {
     setError(null);
     inputRef.current?.click();
@@ -60,26 +78,28 @@ export function EditInfoPage() {
       console.log(error);
       return;
     }
+    // ✅ 기존 objectURL 정리 (blob만)
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current);
+      objectUrlRef.current = null;
+    }
+
+    // ✅ objectURL은 effect에서 만들지 말고, 이벤트 핸들러에서 생성/세팅
+    const url = URL.createObjectURL(picked);
+    objectUrlRef.current = url;
+    setObjectUrl(url);
 
     setFile(picked);
   };
 
-  // 미리보기 URL 생성/정리
+  //objectURL 생성/정리 (blob만 revoke)
   useEffect(() => {
-    if (!file) {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      setPreviewUrl(undefined);
-      return;
-    }
-
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-
     return () => {
-      URL.revokeObjectURL(url);
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]);
 
   return (
@@ -87,7 +107,7 @@ export function EditInfoPage() {
       <header className="border-neutral-875 flex flex-col items-center justify-center gap-3 border-b-[0.4rem] pt-8 pb-6">
         <div className="border-radius-100 h-[5rem] w-[5rem] overflow-hidden rounded-full border border-orange-400">
           <img
-            src={previewUrl}
+            src={previewSrc}
             alt="프로필 이미지"
             draggable={false}
             className="h-full w-full object-cover"
@@ -129,11 +149,11 @@ export function EditInfoPage() {
         />
         <button className="p-4">로그아웃</button>
       </main>
-      {showToast && (
-        <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex items-center justify-center">
+      {showToast ? (
+        <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
           <ToastItem message={message} icon={<CheckCircleIcon />} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
