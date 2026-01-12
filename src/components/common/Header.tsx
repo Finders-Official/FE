@@ -76,7 +76,7 @@ export default function Header({
 
   return (
     <header
-      className={`relative flex h-15.25 items-center gap-5 py-4.5 ${className}`}
+      className={`relative flex h-15.25 items-center justify-between py-4.5 ${className}`}
     >
       {renderLeft()}
       <h1 className="absolute left-1/2 -translate-x-1/2 text-base font-semibold tracking-[-0.02em] text-neutral-100">
