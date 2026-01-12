@@ -13,6 +13,7 @@ import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import PmMainPage from "@/pages/photoManage/PmMainPage";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "/photoManage/download",
         Component: PhotoDownloadPage,
+      },
+      {
+        path: "/photoManage/main",
+        Component: PmMainPage,
       },
       {
         path: "/photoFeed/post/new",
