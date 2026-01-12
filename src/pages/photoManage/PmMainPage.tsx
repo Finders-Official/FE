@@ -8,11 +8,21 @@ import {
 } from "@/assets/icon";
 import Banner from "@/components/photoManage/Banner";
 import { Header } from "@/components/common";
-import { scanMock } from "@/types/process";
+import { deliveryMock } from "@/types/process";
+
+type Status = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
 
 export default function PmMainPage() {
-  const mock = scanMock;
-  const status = mock.status;
+  const STATUS_INDEX_MAP: Record<Status, number> = {
+    DEVELOP: 1,
+    SCAN: 2,
+    PRINT: 3,
+    DELIVERY: 4,
+  };
+
+  const mock = deliveryMock;
+  const status = mock.status as Status;
+  const currentIndex = STATUS_INDEX_MAP[status];
 
   return (
     <div className="mx-auto w-full max-w-6xl overflow-x-hidden pt-6">
@@ -65,15 +75,20 @@ export default function PmMainPage() {
         <p className="flex justify-start text-[13px] text-white">
           작업 진행 상황
         </p>
-        <div className="flex flex-col items-center gap-5">
+        <div className="flex flex-col">
           {/** 필름 현상 단계 */}
           <div>
             <ProcessStep
               step="DEVELOP"
               isCurrent={status === "DEVELOP"}
               title="필름 현상"
-              showSub={false}
-              content="아직 현상이 완료되지 않았어요"
+              content={
+                status === "DEVELOP"
+                  ? "아직 현상이 완료되지 않았어요"
+                  : "어둠 속에서 이미지를 깨우는 중"
+              }
+              index={1}
+              currentIndex={currentIndex}
             />
           </div>
           {/** 디지털 스캔 단계 */}
@@ -82,18 +97,40 @@ export default function PmMainPage() {
               step="SCAN"
               isCurrent={status === "SCAN"}
               title="디지털 스캔"
-              showSub={false}
-              content="고해상도 디지털 파일로 변환"
+              content={
+                status === "SCAN"
+                  ? "인화여부를 확정해야 다음 단계로 넘어가요!"
+                  : "고해상도 디지털 파일로 변환"
+              }
+              index={2}
+              currentIndex={currentIndex}
             />
           </div>
           {/** 사진 인화 단계 */}
           <div>
             <ProcessStep
-              step="PRINT"
+              step={
+                mock.receiptMethod === "DELIVERY"
+                  ? "PRINT_DELIVERY"
+                  : "PRINT_PICKUP"
+              }
               isCurrent={status === "PRINT"}
-              title="디지털 스캔"
-              showSub={false}
-              content="선명한 사진 프린트 작업"
+              title="사진 인화"
+              // TODO 알아서 데이터 넣으셔
+              subComment={
+                <div>
+                  <p className="text-[13px] text-orange-500">
+                    예상 작업 완료 시간: 현재 확인 중
+                  </p>
+                  <br className="text-orange-500" />
+                </div>
+              }
+              // TODO 알아서 데이터 넣으셔
+              content={<p>배송지 정보</p>}
+              // TODO 알아서 데이터 넣으셔
+              children={<p>Action 버튼</p>}
+              index={3}
+              currentIndex={currentIndex}
             />
           </div>
 
@@ -103,8 +140,22 @@ export default function PmMainPage() {
               step="DELIVERY"
               isCurrent={status === "DELIVERY"}
               title="수령/배송"
-              showSub={false}
-              content="안전하게 포장하여 수령/배송"
+              // TODO 알아서 데이터 넣으셔
+              subComment={
+                <div>
+                  <p className="text-[13px] text-orange-500">
+                    배송 상태: 배송중
+                  </p>
+                  <br className="text-orange-500" />
+                </div>
+              }
+              // TODO 알아서 데이터 넣으셔
+              content={<p>배송지 정보</p>}
+              // TODO: Action 버튼 넣으세여
+              children={<p>Action 버튼</p>}
+              index={4}
+              currentIndex={currentIndex}
+              isLast={true}
             />
           </div>
         </div>

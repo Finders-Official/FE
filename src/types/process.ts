@@ -14,7 +14,12 @@ export const developMock: Process = {
 export const scanMock: Process = {
   status: "SCAN",
 };
-export const printMock: Process = {
+export const printDeliveryMock: Process = {
+  status: "PRINT",
+  specStep: "BEFORE",
+  receiptMethod: "DELIVERY",
+};
+export const printPickupMock: Process = {
   status: "PRINT",
   specStep: "BEFORE",
   receiptMethod: "PICKUP",

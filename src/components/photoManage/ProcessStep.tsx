@@ -1,15 +1,20 @@
 import type { ReactNode } from "react";
 import { FlimIcon, ScanIcon, PrinterIcon, PackageIcon } from "@/assets/icon";
 
-type Step = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
+type Step = "DEVELOP" | "SCAN" | "PRINT_DELIVERY" | "PRINT_PICKUP" | "DELIVERY";
 
 type ProcessProps = {
   step: Step;
   isCurrent: boolean;
   title: string;
-  showSub: boolean;
   subComment?: ReactNode;
-  content: string;
+  content: ReactNode;
+  children?: ReactNode;
+
+  /** 타임라인용: 전체에서 몇 번째인지 / 마지막인지 */
+  index: number;
+  currentIndex: number; // 현재 단계의 index
+  isLast?: boolean;
 };
 
 const ICON_BY_STEP: Record<
@@ -18,17 +23,28 @@ const ICON_BY_STEP: Record<
 > = {
   DEVELOP: FlimIcon,
   SCAN: ScanIcon,
-  PRINT: PrinterIcon,
+  PRINT_DELIVERY: PrinterIcon,
+  PRINT_PICKUP: PrinterIcon,
   DELIVERY: PackageIcon,
 };
+
+type LineVariant = "DONE" | "CURRENT" | "TODO";
+
+function getLineVariant(index: number, currentIndex: number): LineVariant {
+  if (index < currentIndex) return "DONE"; // 완료 단계의 아래 선
+  if (index === currentIndex) return "CURRENT"; // 현재→다음 선(그라데이션)
+  return "TODO"; // 이후 단계의 아래 선
+}
 
 export default function Process({
   step,
   isCurrent,
   title,
-  showSub,
   subComment,
   content,
+  index,
+  currentIndex,
+  isLast = false,
 }: ProcessProps) {
   const Icon = ICON_BY_STEP[step];
 
@@ -38,8 +54,10 @@ export default function Process({
   ].join(" ");
 
   const cardClass = [
-    "flex w-[17.3125rem] flex-col justify-start rounded-xl border px-4 py-[0.625rem]",
-    isCurrent ? "border-orange-500/30" : "border-neutral-600",
+    "flex flex-col justify-start rounded-xl border px-4 py-[0.625rem]",
+    isCurrent
+      ? "border-orange-500/30 w-[17.3125rem]"
+      : "border-neutral-600 w-[246px]",
   ].join(" ");
 
   const titleClass = isCurrent
@@ -53,19 +71,49 @@ export default function Process({
     isCurrent ? "text-orange-500" : "text-neutral-600",
   ].join(" ");
 
+  // 선 스타일 결정
+  const lineVariant = getLineVariant(index, currentIndex);
+
+  const lineClass = [
+    "w-[0.125rem] min-h-8 rounded-full",
+    lineVariant === "DONE" && "bg-orange-500",
+    lineVariant === "TODO" && "bg-neutral-700",
+    // 인화 단계이고 배송 수령인 경우
+    lineVariant === "CURRENT" &&
+      step === "PRINT_DELIVERY" &&
+      "bg-gradient-to-b h-58 from-orange-500 to-neutral-700",
+    // 인화 단계이고 직접 수령인 경우
+    lineVariant === "CURRENT" &&
+      step === "PRINT_PICKUP" &&
+      "bg-gradient-to-b h-38 from-orange-500 to-neutral-700",
+    // 그 외의 단계
+    lineVariant === "CURRENT" &&
+      step != "PRINT_DELIVERY" &&
+      step != "PRINT_PICKUP" &&
+      "bg-gradient-to-b from-orange-500 to-neutral-700",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className="flex items-start justify-between gap-5">
-      <div className={iconWrapperClass}>
-        <Icon className={iconClass} />
+    <div className="flex items-start gap-5">
+      {/* 아이콘 + 아래 선 (개별) */}
+      <div className="flex w-[3.125rem] flex-col items-center">
+        <div className={iconWrapperClass}>
+          <Icon className={iconClass} />
+        </div>
+
+        {/* 마지막 단계는 선 없음 */}
+        {!isLast && <div className={lineClass} />}
       </div>
 
+      {/* 카드 */}
       <div className={cardClass}>
         <h3 className={titleClass}>{title}</h3>
 
-        {showSub && (
+        {isCurrent && (
           <>
             <div>{subComment}</div>
-            <br />
           </>
         )}
 
