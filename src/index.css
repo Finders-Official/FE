@@ -51,6 +51,7 @@
   body {
     min-height: 100dvh;
     overflow-x: hidden;
+    background-color: var(--color-neutral-900);
 
     font-family: "Pretendard Variable", Pretendard, system-ui, sans-serif;
   }

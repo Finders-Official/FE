@@ -72,11 +72,11 @@ export default function PhotoLabPage() {
   // 현상소 목록 상태
   const [labs, setLabs] = useState<PhotoLabItem[]>(mockLabs);
 
-  // 필터링된 목록
+  // 필터링된 목록 (AND 조건: 선택한 모든 태그를 포함해야 하도록)
   const filteredLabs =
     selectedTags.length > 0
       ? labs.filter((lab) =>
-          selectedTags.some((tag) => lab.keywords.includes(tag)),
+          selectedTags.every((tag) => lab.keywords.includes(tag)),
         )
       : labs;
 
@@ -125,7 +125,7 @@ export default function PhotoLabPage() {
           onBack={() => navigate(-1)}
           rightAction={{
             type: "icon",
-            icon: <SearchIcon className="h-6 w-6 text-neutral-200" />,
+            icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
             onClick: handleSearchClick,
           }}
         />
@@ -136,17 +136,21 @@ export default function PhotoLabPage() {
         <LabNewsBanner newsList={mockNews} />
       </div>
 
-      {/* 필터 섹션 */}
-      <div className="border-neutral-850 flex flex-col gap-4 border-b-[0.1875rem] px-4 pb-6">
-        <FilterContainer
-          label="날짜 / 지역"
-          value={filterValue}
-          onClick={handleFilterClick}
-        />
-        <FilterTagList
-          selectedTags={selectedTags}
-          onTagToggle={handleTagToggle}
-        />
+      {/* 필터 섹션 - 스크롤 시 상단 고정 */}
+      <div className="sticky top-0 z-10 bg-neutral-900">
+        <div className="flex flex-col gap-4 px-4 pb-6">
+          <FilterContainer
+            label="날짜 / 지역"
+            value={filterValue}
+            onClick={handleFilterClick}
+          />
+          <FilterTagList
+            selectedTags={selectedTags}
+            onTagToggle={handleTagToggle}
+          />
+        </div>
+        {/* 구분선 */}
+        <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
       </div>
 
       {/* 현상소 목록 */}
@@ -154,6 +158,12 @@ export default function PhotoLabPage() {
         labs={filteredLabs}
         onFavoriteToggle={handleFavoriteToggle}
         onCardClick={handleCardClick}
+        emptyMessage={
+          selectedTags.length > 0
+            ? "검색 조건에 맞는 현상소가 없어요"
+            : "아직 현상소가 없어요" //말투는 추후 확인 필요
+        }
+        className="pb-(--tabbar-height)"
       />
     </div>
   );
