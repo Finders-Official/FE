@@ -1,26 +1,45 @@
 import { useState } from "react";
 import { Header } from "@/components/common";
-import { TagBadge, LabNewsBanner, LabCard } from "@/components/photoLab";
+import { TagBadge, LabNewsBanner, LabList } from "@/components/photoLab";
 import type { PhotoLabItem } from "@/types/photoLab";
 import PLmock from "@/assets/mocks/PLmock.png";
 
-const mockLab: PhotoLabItem = {
-  photoLabId: 1,
-  name: "파인더스 현상소 상도점",
-  keywords: ["따뜻한 색감", "빈티지한", "택배 접수"],
-  address: "서울 동작구 상도 1동 OOO",
-  distanceKm: 1.5,
-  workCount: 52,
-  avgWorkTimeMinutes: 30,
-  imageUrls: [PLmock, PLmock],
-  isFavorite: false,
-};
+const mockLabs: PhotoLabItem[] = [
+  {
+    photoLabId: 1,
+    name: "파인더스 현상소 상도점",
+    keywords: ["따뜻한 색감", "빈티지한", "택배 접수"],
+    address: "서울 동작구 상도 1동 OOO",
+    distanceKm: 1.5,
+    workCount: 52,
+    avgWorkTimeMinutes: 30,
+    imageUrls: [PLmock, PLmock],
+    isFavorite: false,
+  },
+  {
+    photoLabId: 2,
+    name: "파인더스 현상소 흑석점",
+    keywords: ["청량한", "영화용 필름"],
+    address: "서울 동작구 흑석동 OOO",
+    distanceKm: 3.2,
+    workCount: 128,
+    avgWorkTimeMinutes: 45,
+    imageUrls: [PLmock, PLmock],
+    isFavorite: true,
+  },
+];
 
 export default function TestPage() {
-  const [lab, setLab] = useState<PhotoLabItem>(mockLab);
+  const [labs, setLabs] = useState<PhotoLabItem[]>(mockLabs);
 
   const handleFavoriteToggle = (photoLabId: number) => {
-    setLab((prev) => ({ ...prev, isFavorite: !prev.isFavorite }));
+    setLabs((prev) =>
+      prev.map((lab) =>
+        lab.photoLabId === photoLabId
+          ? { ...lab, isFavorite: !lab.isFavorite }
+          : lab,
+      ),
+    );
     console.log("Favorite toggled:", photoLabId);
   };
 
@@ -68,14 +87,12 @@ export default function TestPage() {
         </section>
       </div>
 
-      {/* LabCard */}
+      {/* LabList */}
       <div className="px-4 pb-2">
-        <h2 className="text-sm font-semibold text-neutral-100">
-          LabCard (즐겨찾기 클릭 테스트)
-        </h2>
+        <h2 className="text-sm font-semibold text-neutral-100">LabList</h2>
       </div>
-      <LabCard
-        lab={lab}
+      <LabList
+        labs={labs}
         onFavoriteToggle={handleFavoriteToggle}
         onCardClick={(id) => console.log("Card clicked:", id)}
       />
