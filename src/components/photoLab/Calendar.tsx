@@ -28,9 +28,18 @@ export default function Calendar({
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
 
+  // 이전 달로 이동 가능 여부 (minDate가 있는 달 이전으로는 못 감)
+  const canGoPrev = useMemo(() => {
+    const minYear = effectiveMinDate.getFullYear();
+    const minMonth = effectiveMinDate.getMonth();
+    return year > minYear || (year === minYear && month > minMonth);
+  }, [year, month, effectiveMinDate]);
+
   // 이전 달로 이동
   const goToPrevMonth = () => {
-    setViewDate(new Date(year, month - 1, 1));
+    if (canGoPrev) {
+      setViewDate(new Date(year, month - 1, 1));
+    }
   };
 
   // 다음 달로 이동
@@ -38,23 +47,39 @@ export default function Calendar({
     setViewDate(new Date(year, month + 1, 1));
   };
 
-  // 해당 월의 날짜 배열 생성
+  // 해당 월의 날짜 배열 생성 (이전/다음 달 포함)
   const calendarDays = useMemo(() => {
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
     const startDayOfWeek = firstDayOfMonth.getDay();
     const daysInMonth = lastDayOfMonth.getDate();
 
-    const days: (Date | null)[] = [];
+    const days: { date: Date; isCurrentMonth: boolean }[] = [];
 
-    // 이전 달의 빈 칸
-    for (let i = 0; i < startDayOfWeek; i++) {
-      days.push(null);
+    // 이전 달의 날짜들
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+      days.push({
+        date: new Date(year, month - 1, prevMonthLastDay - i),
+        isCurrentMonth: false,
+      });
     }
 
     // 해당 월의 날짜들
     for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day));
+      days.push({
+        date: new Date(year, month, day),
+        isCurrentMonth: true,
+      });
+    }
+
+    // 다음 달의 날짜들 (6주 채우기)
+    const remainingDays = 42 - days.length;
+    for (let day = 1; day <= remainingDays; day++) {
+      days.push({
+        date: new Date(year, month + 1, day),
+        isCurrentMonth: false,
+      });
     }
 
     return days;
@@ -86,12 +111,15 @@ export default function Calendar({
         <button
           type="button"
           onClick={goToPrevMonth}
-          className="flex h-6 w-6 items-center justify-center"
+          disabled={!canGoPrev}
+          className="flex h-6 w-6 items-center justify-center disabled:cursor-not-allowed"
           aria-label="이전 달"
         >
-          <ChevronLeftIcon className="h-3 w-4 text-neutral-700" />
+          <ChevronLeftIcon
+            className={`h-4.5 w-auto ${canGoPrev ? "text-neutral-200" : "text-neutral-600"}`}
+          />
         </button>
-        <span className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+        <span className="w-[5rem] text-center text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] whitespace-nowrap text-neutral-100">
           {year}. {String(month + 1).padStart(2, "0")}
         </span>
         <button
@@ -100,7 +128,7 @@ export default function Calendar({
           className="flex h-6 w-6 items-center justify-center"
           aria-label="다음 달"
         >
-          <ChevronLeftIcon className="h-3 w-4 rotate-180 text-neutral-200" />
+          <ChevronLeftIcon className="h-4.5 w-auto rotate-180 text-neutral-200" />
         </button>
       </div>
 
@@ -118,9 +146,17 @@ export default function Calendar({
 
       {/* 날짜 그리드 */}
       <div className="grid grid-cols-7 gap-x-[0.125rem] gap-y-[0.125rem]">
-        {calendarDays.map((date, index) => {
-          if (!date) {
-            return <div key={`empty-${index}`} className="h-[3rem] w-[3rem]" />;
+        {calendarDays.map(({ date, isCurrentMonth }, index) => {
+          // 현재 달이 아닌 날짜는 회색으로 표시만
+          if (!isCurrentMonth) {
+            return (
+              <div
+                key={`other-${index}`}
+                className="flex h-[3rem] w-[3rem] items-center justify-center text-[1rem] leading-[155%] font-medium tracking-[-0.02em] text-neutral-600"
+              >
+                {date.getDate()}
+              </div>
+            );
           }
 
           const disabled = isDisabled(date);

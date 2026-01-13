@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Header, FilterContainer } from "@/components/common";
-import { LabNewsBanner, FilterTagList, LabList } from "@/components/photoLab";
+import {
+  LabNewsBanner,
+  FilterTagList,
+  LabList,
+  FilterBottomSheet,
+} from "@/components/photoLab";
 import { SearchIcon } from "@/assets/icon";
-import type { PhotoLabItem, FilterTag, LabNews } from "@/types/photoLab";
+import type {
+  PhotoLabItem,
+  FilterTag,
+  LabNews,
+  FilterState,
+} from "@/types/photoLab";
 import PLmock from "@/assets/mocks/PLmock.png";
 
 // Mock 데이터 (추후 API 연동)
@@ -67,7 +77,33 @@ export default function PhotoLabPage() {
 
   // 필터 상태
   const [selectedTags, setSelectedTags] = useState<FilterTag[]>([]);
-  const [filterValue] = useState<string | undefined>(undefined); // 바텀시트 연동 시 setFilterValue 사용. husky 우회용
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filter, setFilter] = useState<FilterState>({});
+
+  // 필터 값 표시 문자열 계산
+  const formatFilterValue = (): string | undefined => {
+    const parts: string[] = [];
+
+    if (filter.date) {
+      const date = new Date(filter.date);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+      const weekday = weekdays[date.getDay()];
+      parts.push(`${month}.${day}(${weekday})`);
+    }
+
+    if (filter.region) {
+      const regionText = filter.subRegion
+        ? `${filter.region} ${filter.subRegion}`
+        : filter.region;
+      parts.push(regionText);
+    }
+
+    return parts.length > 0 ? parts.join(" • ") : undefined;
+  };
+
+  const filterValue = formatFilterValue();
 
   // 현상소 목록 상태
   const [labs, setLabs] = useState<PhotoLabItem[]>(mockLabs);
@@ -111,8 +147,12 @@ export default function PhotoLabPage() {
 
   // 날짜/지역 필터 클릭
   const handleFilterClick = () => {
-    // TODO: Bottom Sheet 열기
-    console.log("Filter clicked");
+    setIsFilterOpen(true);
+  };
+
+  // 필터 적용
+  const handleFilterApply = (newFilter: FilterState) => {
+    setFilter(newFilter);
   };
 
   return (
@@ -164,6 +204,14 @@ export default function PhotoLabPage() {
             : "아직 현상소가 없어요" //말투는 추후 확인 필요
         }
         className="pb-(--tabbar-height)"
+      />
+
+      {/* 필터 바텀시트 */}
+      <FilterBottomSheet
+        open={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        initialFilter={filter}
+        onApply={handleFilterApply}
       />
     </div>
   );
