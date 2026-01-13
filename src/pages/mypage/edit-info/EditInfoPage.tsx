@@ -46,7 +46,7 @@ export function EditInfoPage() {
     const id = window.setTimeout(() => {
       navigate(location.pathname, { replace: true, state: null });
       setShowToast(false);
-    }, 1000);
+    }, 2000);
 
     return () => {
       window.clearTimeout(id);
@@ -75,7 +75,6 @@ export function EditInfoPage() {
     const msg = validate(picked);
     if (msg) {
       setError(msg);
-      console.log(error);
       return;
     }
     //기존 objectURL 정리 (blob만)
@@ -117,6 +116,11 @@ export function EditInfoPage() {
         <button type="button" className="text-orange-500" onClick={openPicker}>
           사진 수정
         </button>
+        {error ? (
+          <p className="mt-2 text-sm text-orange-600" role="alert">
+            {error}
+          </p>
+        ) : null}
         <input
           ref={inputRef}
           type="file"

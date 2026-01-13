@@ -1,20 +1,19 @@
 import { ChevronLeftIcon } from "@/assets/icon";
-import { info } from "@/constants/mypage/info.constant";
 import { NavLink } from "react-router";
 
 interface InfoBarProps {
   name: string;
   nickname: string | undefined;
-  profile?: string;
+  profile: string | undefined;
 }
 
-export const InfoBar = ({ name, nickname }: InfoBarProps) => {
+export const InfoBar = ({ name, nickname, profile }: InfoBarProps) => {
   return (
     <div className="mb-[1rem] flex items-center gap-3">
       {/* 프로필 이미지 */}
       <div className="h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border border-2 border-orange-400 bg-orange-600">
         <img
-          src={info.roleData.user?.profileImage}
+          src={profile}
           alt="프로필 이미지"
           draggable={false}
           className="h-full w-full object-cover"

@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 type props = {
   photoLab: PhotoLab;
-  onToggleLike?: (id: number) => void;
+  onToggleLike?: (id: number) => void; //TODO: api 연동 사용
 };
 
 export const PhotoLabCard = ({ photoLab }: props) => {

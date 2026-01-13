@@ -14,7 +14,11 @@ export function MyPage() {
   return (
     <div>
       <header className="rounded-tl-lg rounded-tr-lg bg-orange-500 p-[1rem]">
-        <InfoBar name={member.name} nickname={user?.nickname} />
+        <InfoBar
+          name={member.name}
+          nickname={user?.nickname}
+          profile={user?.profileImage}
+        />
         <MyPageTabs />
       </header>
       <main>
