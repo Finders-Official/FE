@@ -25,7 +25,7 @@ const FilmCameraGuidePage = () => {
         >
           <ChevronLeftIcon className="neutral-200 h-6 w-6" />
         </button>
-        <h1 className="text-[16px] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+        <h1 className="mx-auto text-[16px] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
           필카 입문 101
         </h1>
       </header>
