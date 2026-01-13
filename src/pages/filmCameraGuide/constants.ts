@@ -17,7 +17,7 @@ export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
     introText: `셔터를 누르기 전의 망설임도 필름 사진의 일부라고 생각해요. 어디서 찍을지 고민하는 그 시간까지도 사진의 분위기가 되는 곳.\n\n동작구는 천천히 걷다 보면 자연스럽게 카메라를 들게 되는 동네입니다. 그래서, 필름으로 담기 좋은 동작구 출사 맛집 다섯 곳을 소개해볼게요!`,
     contents: [
       {
-        heading: "📍 노을이 예쁜 한강 뷰",
+        locationHeading: "📍 노을이 예쁜 한강 뷰",
         subHeading: "| 노량진 한강공원 · 노들섬 인근",
         imageUrl:
           "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&q=80&w=1000",
@@ -25,7 +25,7 @@ export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
           "해 질 무렵의 한강은 필름 사진으로 담기기 가장 좋은 순간이에요. 강 너머로 떨어지는 햇빛과 물 위에 번지는 색감이 자연스럽게 프레임을 채워줍니다.\n\n삼각대 없이도 촬영하기 좋고, 실루엣 위주의 구도로 찍으면 노출에 크게 신경 쓰지 않아도 안정적인 결과를 얻을 수 있어요. 처음 출사를 나가는 날이라면, 해 질 시간에 맞춰 천천히 산책하듯 촬영해보세요!",
       },
       {
-        heading: "📍 필름 감성 골목",
+        locationHeading: "📍 필름 감성 골목",
         subHeading: "| 상도동 주택가",
         imageUrl:
           "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&q=80&w=1000",
@@ -33,7 +33,7 @@ export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
           "오래된 붉은 벽돌과 좁은 골목길은 필름 카메라와 가장 잘 어울리는 피사체입니다. 화려하지 않지만 따뜻한 색감을 담을 수 있어요.",
       },
       {
-        heading: "📍 빛이 고운 공원",
+        locationHeading: "📍 빛이 고운 공원",
         subHeading: "| 보라매 공원",
         imageUrl:
           "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&q=80&w=1000",
