@@ -218,9 +218,9 @@ export default function PmMainPage() {
               <ProcessStep
                 {...rest}
                 currentIndex={currentIndex}
-                {...(subComment !== undefined ? { subComment } : {})}
-                {...(buttons !== undefined ? { buttons } : {})}
-                {...(isLast !== undefined ? { isLast } : {})}
+                subComment={subComment}
+                buttons={buttons}
+                isLast={isLast}
               />
             </div>
           ))}
