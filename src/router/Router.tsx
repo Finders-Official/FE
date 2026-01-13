@@ -13,6 +13,8 @@ import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import FilmCameraGuidePage from "@/pages/filmCameraGuide/FilmCameraGuidePage";
+import FilmCameraGuideDetailPage from "@/pages/filmCameraGuide/FilmCameraGuideDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +28,14 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/film-camera-guide",
+        Component: FilmCameraGuidePage,
+      },
+      {
+        path: `/film-camera-guide/:id`,
+        Component: FilmCameraGuideDetailPage,
       },
       {
         path: "/photoFeed/lab/find",
