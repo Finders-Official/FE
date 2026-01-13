@@ -23,7 +23,7 @@ const FilmCameraGuidePage = () => {
           className="-ml-1 flex items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ChevronLeftIcon className="neutral-200 h-6 w-6" />
+          <ChevronLeftIcon className="h-6 w-6 text-neutral-200" />
         </button>
         <h1 className="mx-auto text-[16px] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
           필카 입문 101
