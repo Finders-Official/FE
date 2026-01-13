@@ -45,9 +45,8 @@ export interface AdminRoleDto {
   // TODO: 서버 스펙 나오면 채우기
 }
 
-/**
- * ✅ 핵심: roleData를 "role"로 좁힐 수 있게(discriminated union) 만들기
- * - 서버는 user/owner/admin을 동시에 보내지만, 실제로는 member.role에 맞는 것만 채운다고 가정
+/*
+roleData를 "role"로 좁힐 수 있게(discriminated union) 만들기 member.role에 맞는 것만 채운다고 가정
  */
 export type RoleDataDto =
   | { role: "USER"; user: UserRoleDto; owner: null; admin: null }

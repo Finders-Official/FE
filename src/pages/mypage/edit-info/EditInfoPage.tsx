@@ -78,13 +78,13 @@ export function EditInfoPage() {
       console.log(error);
       return;
     }
-    // ✅ 기존 objectURL 정리 (blob만)
+    //기존 objectURL 정리 (blob만)
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = null;
     }
 
-    // ✅ objectURL은 effect에서 만들지 말고, 이벤트 핸들러에서 생성/세팅
+    //objectURL은 이벤트 핸들러에서 생성/세팅
     const url = URL.createObjectURL(picked);
     objectUrlRef.current = url;
     setObjectUrl(url);
