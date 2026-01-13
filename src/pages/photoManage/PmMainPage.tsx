@@ -2,13 +2,19 @@ import ProcessStep from "@/components/photoManage/ProcessStep";
 import {
   DevelopPicIcon,
   ScanPicIcon,
+  PrinterIcon,
   PrintPicIcon,
   DeliveryPicIcon,
   MenuIcon,
+  DownloadIcon,
 } from "@/assets/icon";
 import Banner from "@/components/photoManage/Banner";
 import { Header } from "@/components/common";
-import { deliveryMock } from "@/types/process";
+import { ActionButton } from "@/components/photoManage/ActionButton";
+import { useNavigate } from "react-router";
+import { DialogBox } from "@/components/common/DialogBox";
+import { useState } from "react";
+import { scanMock } from "@/types/process";
 
 type Status = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
 type StepId =
@@ -38,7 +44,11 @@ export default function PmMainPage() {
     DELIVERY: 4,
   };
 
-  const mock = deliveryMock;
+  const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogStep, setDialogStep] = useState(1);
+
+  const mock = scanMock;
   const status = mock.status as Status;
   const currentIndex = STATUS_INDEX_MAP[status];
 
@@ -88,6 +98,26 @@ export default function PmMainPage() {
         status === "SCAN"
           ? "인화여부를 확정해야 다음 단계로 넘어가요!"
           : "고해상도 디지털 파일로 변환",
+      buttons: (
+        <div className="mb-[14px] flex flex-col gap-[0.625rem]">
+          <ActionButton
+            leftIcon={<PrinterIcon />}
+            message="인화 여부 확정하기"
+            showNext={true}
+            onClick={() => {
+              setIsDialogOpen(true);
+            }} // 모달창 열기
+          />
+          <ActionButton
+            leftIcon={<DownloadIcon />}
+            message="사진 다운로드 하러 가기"
+            showNext={true}
+            onClick={() => {
+              navigate("/photoManage/download");
+            }}
+          />
+        </div>
+      ),
       index: 2,
     },
     {
@@ -147,6 +177,38 @@ export default function PmMainPage() {
       <div>{currentBanner && <Banner {...currentBanner} />}</div>
 
       <main className="flex flex-col gap-[0.875rem] py-4">
+        {isDialogOpen && dialogStep === 1 && (
+          <DialogBox
+            isOpen={isDialogOpen}
+            title="인화하실건가요?"
+            description="인화를 하면 실물로 사진을 받아볼 수 있어요!"
+            confirmText="네"
+            onConfirm={() => {
+              setIsDialogOpen(false);
+              navigate("/"); // TODO: 인화페이지로 이동
+            }}
+            cancelText="아니오"
+            onCancel={() => setDialogStep(2)}
+          />
+        )}
+        {isDialogOpen && dialogStep === 2 && (
+          <DialogBox
+            isOpen={isDialogOpen}
+            title="소중한 추억, 화면 속에만 두실 건가요?"
+            description={`지금 실물로 간직해 보세요
+            물론, 나중에 인화도 언제든 가능해요!`}
+            confirmText="지금 인화 할게요"
+            onConfirm={() => {
+              setIsDialogOpen(false);
+              navigate("/"); // TODO: 인화페이지로 이동
+            }}
+            cancelText="다음에 할게요"
+            onCancel={() => {
+              setIsDialogOpen(false);
+              setDialogStep(1);
+            }}
+          />
+        )}
         <p className="flex justify-start text-[0.8125rem] text-white">
           작업 진행 상황
         </p>

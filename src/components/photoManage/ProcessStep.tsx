@@ -81,6 +81,7 @@ export default function Process({
     lineVariant === "TODO" && "bg-neutral-700",
     lineVariant === "CURRENT" &&
       "bg-gradient-to-b from-orange-500 to-neutral-700",
+    lineVariant === "CURRENT" && step === "SCAN" && "h-39",
     lineVariant === "CURRENT" && step === "PRINT_DELIVERY" && "h-58",
     // 인화 단계이고 직접 수령인 경우
     lineVariant === "CURRENT" && step === "PRINT_PICKUP" && "h-38",
