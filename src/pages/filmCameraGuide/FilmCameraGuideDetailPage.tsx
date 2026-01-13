@@ -90,9 +90,21 @@ const FilmCameraGuideDetailPage = () => {
             <article key={idx} className="flex flex-col gap-4">
               {/* 소제목 영역 */}
               <div>
-                <h3 className="mb-1 text-[16px] leading-[155%] font-bold tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
-                  {section.heading}
-                </h3>
+                {/* Case 1: Heading */}
+                {section.heading && (
+                  <h3 className="mb-1 text-[16px] leading-[155%] font-bold tracking-[-0.02%] whitespace-pre-wrap text-orange-500">
+                    {section.heading}
+                  </h3>
+                )}
+
+                {/* Case 2: LocationHeading */}
+                {section.locationHeading && (
+                  <h3 className="mb-1 text-[15px] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
+                    {section.locationHeading}
+                  </h3>
+                )}
+
+                {/* 서브 헤딩 */}
                 {section.subHeading && (
                   <p className="text-[14px] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-500">
                     {section.subHeading}
@@ -104,7 +116,7 @@ const FilmCameraGuideDetailPage = () => {
               <div className="overflow-hidden rounded-[10px]">
                 <img
                   src={section.imageUrl}
-                  alt={section.heading}
+                  alt={section.heading || section.locationHeading}
                   className="h-auto w-full object-cover"
                 />
               </div>
