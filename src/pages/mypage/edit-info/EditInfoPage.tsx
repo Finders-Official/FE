@@ -37,7 +37,7 @@ export function EditInfoPage() {
     const toast = state?.toast;
     if (!toast) return;
 
-    // ✅ effect 본문에서 setState 동기 호출 금지 룰 대응: "콜백 안에서" setState
+    //  effect 본문에서 setState 동기 호출 금지 룰 대응: "콜백 안에서" setState
     const showId = window.setTimeout(() => {
       setMessage(toast);
       setShowToast(true);
@@ -90,6 +90,7 @@ export function EditInfoPage() {
     setObjectUrl(url);
 
     setFile(picked);
+    console.log(file); // api 연동 예정
   };
 
   //objectURL 생성/정리 (blob만 revoke)
@@ -100,7 +101,7 @@ export function EditInfoPage() {
         objectUrlRef.current = null;
       }
     };
-  }, [file]);
+  }, []);
 
   return (
     <div className="flex h-full flex-1 flex-col">
