@@ -8,6 +8,7 @@ import {
   FilterBottomSheet,
 } from "@/components/photoLab";
 import { SearchIcon } from "@/assets/icon";
+import { WEEKDAYS } from "@/constants/date";
 import type {
   PhotoLabItem,
   FilterTag,
@@ -88,8 +89,7 @@ export default function PhotoLabPage() {
       const date = new Date(filter.date);
       const month = date.getMonth() + 1;
       const day = date.getDate();
-      const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
-      const weekday = weekdays[date.getDay()];
+      const weekday = WEEKDAYS[date.getDay()];
       parts.push(`${month}.${day}(${weekday})`);
     }
 

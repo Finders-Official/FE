@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import Calendar from "./Calendar";
@@ -86,9 +86,17 @@ export default function FilterBottomSheet({
     setSelectedSubRegion(undefined);
   };
 
+  // 화면 높이 상태
+  const [vh, setVh] = useState(() => window.innerHeight);
+
+  useEffect(() => {
+    const onResize = () => setVh(window.innerHeight);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // 화면 높이 기반으로 expandedVh 계산, bottomsheet 너무 작거나 크게 열리는거 방지
   const expandedVh = useMemo(() => {
-    const vh = window.innerHeight;
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
@@ -97,7 +105,7 @@ export default function FilterBottomSheet({
     const calculated = Math.min(92, (contentHeightPx / vh) * 100);
     // 최소 75%
     return Math.max(75, calculated);
-  }, []);
+  }, [vh]);
 
   return (
     <BottomSheet

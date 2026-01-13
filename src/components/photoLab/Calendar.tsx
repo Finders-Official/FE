@@ -1,14 +1,13 @@
 import { useState, useMemo } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import DateChip from "@/components/common/chips/DateChip";
+import { WEEKDAYS } from "@/constants/date";
 
 interface CalendarProps {
   selectedDate?: Date;
   onDateSelect: (date: Date) => void;
   minDate?: Date; // 선택 가능한 최소 날짜 (기본: 오늘)
 }
-
-const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 export default function Calendar({
   selectedDate,
