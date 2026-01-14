@@ -18,6 +18,7 @@ import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
 import { SocialPage } from "@/pages/mypage/edit-info/SocialPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
+import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
 import TestPage from "@/pages/TestPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
       {
         path: "/photoManage/download",
         Component: PhotoDownloadPage,
+      },
+      {
+        path: "/photolab/search",
+        Component: PhotoLabSearchPage,
       },
       {
         path: "/photoFeed/post/new",
