@@ -1,5 +1,5 @@
 import type { PopularLab, LabPreview } from "@/types/photoLabSearch";
-import PLmock from "@/assets/mocks/PLmock.png";
+import mockSearchImg from "@/assets/mocks/mocksearch.png";
 
 // 인기 현상소 (1~8위)
 export const MOCK_POPULAR_LABS: PopularLab[] = [
@@ -32,13 +32,13 @@ export const MOCK_LAB_PREVIEWS: LabPreview[] = [
     name: "파인더스 현상소 상도점",
     address: "서울 동작구 상도로 00길 00",
     distanceKm: 1.5,
-    mainImageUrl: PLmock,
+    mainImageUrl: mockSearchImg,
   },
   {
     photoLabId: 2,
     name: "초보자를 위한 현상소 흑석점",
     address: "서울 동작구 흑석동 00길 00",
     distanceKm: 2.1,
-    mainImageUrl: PLmock,
+    mainImageUrl: mockSearchImg,
   },
 ];
