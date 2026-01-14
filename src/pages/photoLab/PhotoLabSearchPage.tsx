@@ -233,7 +233,7 @@ export default function PhotoLabSearchPage() {
 
       {/* PL-011-2: 검색어 입력 중 */}
       {!isResultsState && query.trim() && (
-        <div className="flex flex-col gap-6 px-4 pt-4">
+        <div className="flex flex-col gap-[1.875rem] px-4 pt-5">
           <KeywordSuggestionSection
             keywords={filteredKeywords}
             onKeywordClick={handleKeywordClick}

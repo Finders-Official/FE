@@ -12,7 +12,7 @@ export default function KeywordSuggestionSection({
   if (keywords.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 border-b border-neutral-800 pb-5">
       {keywords.map((keyword) => (
         <SearchItem
           key={keyword}
