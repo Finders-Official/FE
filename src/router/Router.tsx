@@ -66,10 +66,6 @@ const router = createBrowserRouter([
         Component: PhotoLabSearchPage,
       },
       {
-        path: "/photoManage/main",
-        Component: PmMainPage,
-      },
-      {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
