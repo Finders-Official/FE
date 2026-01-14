@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { SearchBar, FilterContainer } from "@/components/common";
 import {
   FilterTagList,
@@ -19,7 +19,6 @@ import {
   MOCK_LAB_PREVIEWS,
 } from "@/constants/photoLab";
 import { WEEKDAYS } from "@/constants/date";
-import type { SearchState } from "@/types/photoLabSearch";
 import type { PhotoLabItem, FilterTag, FilterState } from "@/types/photoLab";
 import PLmock from "@/assets/mocks/PLmock.png";
 
@@ -51,10 +50,25 @@ const mockSearchResults: PhotoLabItem[] = [
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // 검색 상태 머신
-  const [searchState, setSearchState] = useState<SearchState>("idle");
+  // URL에서 검색어 가져오기 (results 상태 판단)
+  const searchQuery = searchParams.get("q") || "";
+  const isResultsState = !!searchQuery;
+
+  // 입력 중인 검색어 (PL-011-1, PL-011-2용)
   const [query, setQuery] = useState("");
+
+  // SearchBar에 표시할 값 (results 상태에서는 URL 파라미터, 입력 상태에서는 local state)
+  const displayQuery = isResultsState ? searchQuery : query;
+
+  // 검색어 변경 핸들러
+  const handleQueryChange = (newQuery: string) => {
+    setQuery(newQuery);
+    if (isResultsState && newQuery === "") {
+      navigate("/photolab/search");
+    }
+  };
 
   // 최근 검색어
   const { recentSearches, addSearch, removeSearch, clearAll } =
@@ -120,39 +134,39 @@ export default function PhotoLabSearchPage() {
 
   // 핸들러
   const handleBack = () => {
-    if (searchState === "results") {
-      setSearchState("idle");
-      setQuery("");
-    } else {
-      navigate(-1);
-    }
+    navigate(-1);
   };
 
-  const handleFocus = () => {
-    if (searchState === "idle") {
-      setSearchState("typing");
-    }
-  };
-
+  // 검색 제출 시 replace로 입력화면을 history에서 제거
   const handleSearch = (searchValue: string) => {
     const trimmed = searchValue.trim();
     if (trimmed) {
-      setQuery(trimmed);
       addSearch(trimmed);
-      setSearchState("results");
+      navigate(`/photolab/search?q=${encodeURIComponent(trimmed)}`, {
+        replace: true,
+      });
     }
   };
 
   const handleRecentSearchClick = (keyword: string) => {
-    setQuery(keyword);
     addSearch(keyword);
-    setSearchState("results");
+    navigate(`/photolab/search?q=${encodeURIComponent(keyword)}`, {
+      replace: true,
+    });
   };
 
   const handleKeywordClick = (keyword: string) => {
-    setQuery(keyword);
     addSearch(keyword);
-    setSearchState("results");
+    navigate(`/photolab/search?q=${encodeURIComponent(keyword)}`, {
+      replace: true,
+    });
+  };
+
+  const handleSearchBarClick = () => {
+    if (isResultsState) {
+      setQuery(searchQuery);
+      navigate("/photolab/search");
+    }
   };
 
   const handleLabPreviewClick = (photoLabId: number) => {
@@ -188,19 +202,19 @@ export default function PhotoLabSearchPage() {
       {/* SearchBar */}
       <div className="px-4 py-3">
         <SearchBar
-          value={query}
-          onChange={setQuery}
+          value={displayQuery}
+          onChange={handleQueryChange}
           placeholder="어떤 현상소를 찾으시나요?"
           showBack
           onBack={handleBack}
-          onFocus={handleFocus}
+          onFocus={handleSearchBarClick}
           onSearch={handleSearch}
-          rightIcon={searchState === "results" ? undefined : "clear"}
+          rightIcon="clear"
         />
       </div>
 
-      {/* Idle 상태 */}
-      {searchState === "idle" && (
+      {/* PL-011-1: 검색어 입력 전 */}
+      {!isResultsState && !query.trim() && (
         <div className="flex flex-col gap-8 px-4 pt-4">
           <RecentSearchSection
             searches={recentSearches}
@@ -217,8 +231,8 @@ export default function PhotoLabSearchPage() {
         </div>
       )}
 
-      {/* Typing 상태 */}
-      {searchState === "typing" && query.trim() && (
+      {/* PL-011-2: 검색어 입력 중 */}
+      {!isResultsState && query.trim() && (
         <div className="flex flex-col gap-6 px-4 pt-4">
           <KeywordSuggestionSection
             keywords={filteredKeywords}
@@ -231,8 +245,8 @@ export default function PhotoLabSearchPage() {
         </div>
       )}
 
-      {/* Results 상태 */}
-      {searchState === "results" && (
+      {/* PL-011-3: 검색 결과 */}
+      {isResultsState && (
         <>
           {/* 필터 섹션 */}
           <div className="sticky top-0 z-10 bg-neutral-900">
