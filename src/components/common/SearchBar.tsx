@@ -76,6 +76,7 @@ export default function SearchBar({
           onKeyDown={(e) => {
             if (e.key === "Enter" && onSearch) {
               e.preventDefault();
+              e.currentTarget.blur();
               onSearch(localValue);
             }
           }}
