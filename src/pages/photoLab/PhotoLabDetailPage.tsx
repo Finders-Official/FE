@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import {
   LabBasicInfo,
+  LabLocationSection,
   LabNoticeSection,
   LabWorkResultsSection,
 } from "@/components/photoLab/detail";
@@ -50,6 +51,14 @@ export default function PhotoLabDetailPage() {
           labName={lab.name}
           workResults={lab.workResults}
           onMoreClick={() => navigate("/photoFeed")}
+        />
+
+        {/* 지도 */}
+        <LabLocationSection
+          address={lab.address}
+          distanceKm={lab.distanceKm}
+          location={lab.location}
+          labName={lab.name}
         />
       </main>
     </div>
