@@ -26,7 +26,7 @@ export function DetailInfoPage() {
 
   return (
     <div className="y-scroll-hidden flex h-dvh flex-col">
-      <form className="flex flex-1 flex-col gap-10 py-10">
+      <main className="flex flex-1 flex-col gap-10 py-10">
         <InputForm
           name="받는 분"
           placeholder="받는 사람의 이름을 입력해 주세요"
@@ -41,7 +41,7 @@ export function DetailInfoPage() {
           value={phone}
           onChange={(e) => handlePhoneChange(e)}
         />
-      </form>
+      </main>
       <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900 px-4">
         <div className="flex h-full items-center">
           <CTA_Button
