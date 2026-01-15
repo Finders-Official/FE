@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { CTA_Button } from "@/components/common";
 import { photoMock } from "@/types/photo";
-import { PhotoQuantityStepper } from "./PhotoQuantityStepper";
+import { PhotoQuantityStepper } from "../../components/photoManage/PhotoQuantityStepper";
+import { useNavigate } from "react-router";
 
 type QtyMap = Record<number, number>;
 
 export function PrintRequestPage() {
+  const navigate = useNavigate();
   const [qtyById, setQtyById] = useState<QtyMap>(() => {
     const init: QtyMap = {};
     for (const p of photoMock) init[p.id] = 0;
@@ -25,6 +27,11 @@ export function PrintRequestPage() {
       const next = (prev[id] ?? 0) - 1;
       return { ...prev, [id]: next < 0 ? 0 : next };
     });
+  };
+
+  const handleNext = () => {
+    if (isNextEnabled) navigate("../photoManage/pickup-method");
+    else return;
   };
 
   const isNextEnabled = totalQty > 0;
@@ -68,6 +75,7 @@ export function PrintRequestPage() {
             size="xlarge"
             color={isNextEnabled ? "orange" : "black"}
             disabled={!isNextEnabled}
+            onClick={handleNext}
           />
         </div>
       </nav>
