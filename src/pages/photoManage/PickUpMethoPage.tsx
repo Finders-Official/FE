@@ -23,7 +23,7 @@ export function PickUpMethodPage() {
       navigate("../photoManage/select-address");
     }
     if (selectedMethod === "pickup") {
-      navigate("../photoManage/photo-option");
+      navigate("../photoManage/print-option");
     }
   };
 
