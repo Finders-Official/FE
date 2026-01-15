@@ -18,6 +18,7 @@ import TestPage from "@/pages/TestPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
+import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethoPage";
 
 const router = createBrowserRouter([
   {
@@ -102,7 +103,22 @@ const router = createBrowserRouter([
           {
             path: "/photoManage/print-request",
             Component: PrintRequestPage,
-            handle: { title: "인화 요청하기", buttonTitle: "다음" },
+            handle: { title: "인화 요청하기" },
+          },
+          {
+            path: "/photoManage/pickup-method",
+            Component: PickUpMethodPage,
+            handle: { title: "인화 요청하기" },
+          },
+          {
+            path: "/photoManage/select-address",
+            Component: PickUpMethodPage,
+            handle: { title: "주소 입력하기" },
+          },
+          {
+            path: "/photoManage/select-address/detail",
+            Component: PickUpMethodPage,
+            handle: { title: "상세 정보 입력하기" },
           },
         ],
       },
