@@ -49,7 +49,6 @@ export default function LabCard({
       className={`flex flex-col p-4 ${onCardClick ? "cursor-pointer" : ""} ${className}`}
     >
       <div className="flex flex-col gap-3.5 border-b border-neutral-800 pb-5">
-        {/* 정보 섹션 */}
         <div className="flex flex-col gap-2">
           {/* 이름 + 즐겨찾기 */}
           <div className="flex items-center justify-between">
