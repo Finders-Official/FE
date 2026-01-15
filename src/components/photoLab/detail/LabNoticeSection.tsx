@@ -23,7 +23,7 @@ export default function LabNoticeSection({
   if (activeNotices.length === 0) return null;
 
   return (
-    <div className={`px-4 py-[1.875rem] ${className}`}>
+    <div className={`py-[1.875rem] ${className}`}>
       <h3 className="mb-4 text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
         주요 공지
       </h3>

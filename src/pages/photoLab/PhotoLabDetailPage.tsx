@@ -21,9 +21,7 @@ export default function PhotoLabDetailPage() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="0.25rem">
-        <Header title="파인더스 상도점" showBack onBack={handleBack} />
-      </div>
+      <Header title="파인더스 상도점" showBack onBack={handleBack} />
 
       <main>
         {/* 메인 이미지 */}

@@ -34,7 +34,7 @@ export default function LabBasicInfo({
 
   return (
     <div className={className}>
-      <div className="flex flex-col gap-3 px-4 py-[1.875rem]">
+      <div className="flex flex-col gap-3 py-[1.875rem]">
         {/* 이름 + 즐겨찾기 */}
         <div className="flex items-center justify-between">
           <h2 className="text-[1.375rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">

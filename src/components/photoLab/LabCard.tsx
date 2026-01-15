@@ -46,7 +46,7 @@ export default function LabCard({
       tabIndex={onCardClick ? 0 : undefined}
       onClick={handleCardClick}
       onKeyDown={(e) => e.key === "Enter" && handleCardClick()}
-      className={`flex flex-col p-4 ${onCardClick ? "cursor-pointer" : ""} ${className}`}
+      className={`flex flex-col py-4 ${onCardClick ? "cursor-pointer" : ""} ${className}`}
     >
       <div className="flex flex-col gap-3.5 border-b border-neutral-800 pb-5">
         <div className="flex flex-col gap-2">
