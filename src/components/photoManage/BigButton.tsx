@@ -17,7 +17,8 @@ export const BigButton = ({
   onClick,
 }: BigButtonProps) => {
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
       className={[
         "bg-neutral-875 flex h-48 w-full flex-col items-center justify-center rounded-[1rem] active:scale-[0.99]",
@@ -33,6 +34,6 @@ export const BigButton = ({
 
       <p className="mt-3 text-[1rem]">{title}</p>
       <p className="text-[0.8125rem]">{description}</p>
-    </div>
+    </button>
   );
 };

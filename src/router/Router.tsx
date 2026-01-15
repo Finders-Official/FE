@@ -19,6 +19,8 @@ import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
 import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethoPage";
+import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
+import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
 
 const router = createBrowserRouter([
   {
@@ -112,12 +114,12 @@ const router = createBrowserRouter([
           },
           {
             path: "/photoManage/select-address",
-            Component: PickUpMethodPage,
+            Component: SelectAddressPage,
             handle: { title: "주소 입력하기" },
           },
           {
             path: "/photoManage/select-address/detail",
-            Component: PickUpMethodPage,
+            Component: DetailInfoPage,
             handle: { title: "상세 정보 입력하기" },
           },
         ],
