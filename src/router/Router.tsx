@@ -14,6 +14,8 @@ import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
+import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
+import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
 
 const router = createBrowserRouter([
   {
@@ -43,10 +45,6 @@ const router = createBrowserRouter([
       {
         path: "/photoManage/download",
         Component: PhotoDownloadPage,
-      },
-      {
-        path: "/photoManage/main",
-        Component: PmMainPage,
       },
       {
         path: "/photoFeed/post/new",
@@ -82,10 +80,21 @@ const router = createBrowserRouter([
             path: "/mypage/edit-info",
             Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
           },
+          {
+            path: "/photoManage/main",
+            Component: PmMainPage,
+          },
         ],
       },
       {
-        // HeaderLayout만 사용하는 페이지
+        Component: PhotoManageLayout,
+        children: [
+          {
+            path: "/photoManage/print-request",
+            Component: PrintRequestPage,
+            handle: { title: "인화 요청하기", buttonTitle: "다음" },
+          },
+        ],
       },
       {
         //HeaderFooteryLayout 사용하는 페이지
