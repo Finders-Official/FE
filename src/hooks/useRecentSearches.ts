@@ -5,7 +5,7 @@ const STORAGE_KEY = "photolab_recent_searches";
 const MAX_ITEMS = 20;
 
 function generateId(): string {
-  return Math.random().toString(36).substring(2, 9);
+  return crypto.randomUUID();
 }
 
 function loadFromStorage(): RecentSearch[] {
