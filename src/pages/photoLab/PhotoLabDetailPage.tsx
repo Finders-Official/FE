@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
-import { LabBasicInfo } from "@/components/photoLab/detail";
+import { LabBasicInfo, LabNoticeSection } from "@/components/photoLab/detail";
 import { MOCK_LAB_DETAIL } from "@/constants/photoLab";
 import type { PhotoLabDetail } from "@/types/photoLab";
 
@@ -21,7 +21,7 @@ export default function PhotoLabDetailPage() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="px-4">
+      <div className="0.25rem">
         <Header title="파인더스 상도점" showBack onBack={handleBack} />
       </div>
 
@@ -39,6 +39,9 @@ export default function PhotoLabDetailPage() {
 
         {/* 기본 정보 */}
         <LabBasicInfo lab={lab} onFavoriteToggle={handleFavoriteToggle} />
+
+        {/* 주요 공지 */}
+        <LabNoticeSection notices={lab.notices} />
       </main>
     </div>
   );
