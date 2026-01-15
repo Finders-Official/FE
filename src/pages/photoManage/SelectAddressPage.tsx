@@ -1,3 +1,4 @@
+import { PlusIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { AddressCard } from "@/components/photoManage/AddressCard";
 import { useMemo, useState } from "react";
@@ -34,7 +35,12 @@ export function SelectAddressPage() {
   return (
     <div className="y-scroll-hidden flex h-dvh flex-col">
       <header className="border-b-[0.8125rem] border-neutral-800 py-4 text-neutral-100">
-        <CTA_Button text="배송지 신규 등록" size="xlarge" color="transparent" />
+        <CTA_Button
+          text="배송지 신규 등록"
+          size="xlarge"
+          color="gray"
+          icon={PlusIcon}
+        />
       </header>
 
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] flex flex-1 flex-col gap-4">
