@@ -8,20 +8,25 @@ type QtyMap = Record<number, number>;
 
 export function PrintRequestPage() {
   const navigate = useNavigate();
+
+  //수량 초기화 -> 사진 id 별로 초기 수량을 0으로 세팅
   const [qtyById, setQtyById] = useState<QtyMap>(() => {
     const init: QtyMap = {};
     for (const p of photoMock) init[p.id] = 0;
     return init;
   });
 
+  //수량들을 뽑아 총 장 수를 계산
   const totalQty = useMemo(() => {
     return Object.values(qtyById).reduce((sum, v) => sum + v, 0);
   }, [qtyById]);
 
+  //해당 id 사진의 수량을 증가시킴
   const increase = (id: number) => {
     setQtyById((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
   };
 
+  //해당 id 사진의 수량을 감소시킴 (0아래 금지)
   const decrease = (id: number) => {
     setQtyById((prev) => {
       const next = (prev[id] ?? 0) - 1;

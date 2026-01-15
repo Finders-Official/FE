@@ -12,10 +12,8 @@ export type DropDownOption = {
   value: string;
   /** 화면에 보여줄 라벨 */
   label: string;
-
   /** 계산용 (원 단위). 배수 옵션 등은 일단 0으로 두고 추후 정책에 맞게 확장 */
   priceWon: number;
-
   /** 우측 가격/배수 표기 (예: "0원", "+(0.1배)") */
   priceText: string;
 };

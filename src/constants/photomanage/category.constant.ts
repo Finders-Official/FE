@@ -106,3 +106,5 @@ export const DROPBOX_CATEGORIES: readonly DropDownCategory[] = [
     ],
   },
 ] as const;
+
+//옵션은 변경될 수 있음

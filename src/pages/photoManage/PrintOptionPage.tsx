@@ -36,20 +36,20 @@ export function PrintOptionPage() {
   };
 
   const deliveryWon = 3000;
-  // ✅ 옵션 합계 = 선택된 옵션들의 priceWon 합산
+  //옵션 합계 = 선택된 옵션들의 priceWon 합산
   const optionsTotalWon = useMemo(() => {
     return (Object.values(selection) as (DropDownOption | null)[])
       .filter((v): v is DropDownOption => v !== null)
       .reduce((sum, opt) => sum + opt.priceWon, 0);
   }, [selection]);
 
-  // ✅ 총 금액 = 옵션 합계 + 배송비
+  //총 금액 = 옵션 합계 + 배송비
   const totalWon = useMemo(
     () => optionsTotalWon + deliveryWon,
     [optionsTotalWon],
   );
 
-  // ✅ 표시용 포맷
+  //표시용 포맷
   const formatWon = (n: number) => `${n.toLocaleString("ko-KR")}원`;
   const formatPlusWon = (n: number) => `+ ${n.toLocaleString("ko-KR")}원`;
 

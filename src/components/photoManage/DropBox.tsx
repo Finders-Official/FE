@@ -20,12 +20,12 @@ export function DropBox({
   onToggle,
   onSelect,
 }: DropBoxProps) {
-  // ✅ 선택되면: 왼쪽(흰색)은 옵션 label
-  // ✅ 미선택이면: 왼쪽(흰색)은 카테고리 title
+  //선택되면: 왼쪽(흰색)은 옵션 label
+  //미선택이면: 왼쪽(흰색)은 카테고리 title
   const leftText = value ? value.label : category.title;
 
-  // ✅ 선택되면: 오른쪽(회색)은 가격/배수(priceText)
-  // ✅ 미선택이면: placeholder
+  // 선택되면: 오른쪽(회색)은 가격/배수(priceText)
+  // 미선택이면: placeholder
   const rightText = value ? value.priceText : category.placeholder;
 
   return (
