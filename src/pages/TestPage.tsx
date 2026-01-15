@@ -1,61 +1,101 @@
 import { useState } from "react";
-import { Header, Icon, SearchBar, SearchItem } from "@/components/common";
-import { MagnifyingGlassIcon } from "@/assets/icon";
+import { Header } from "@/components/common";
+import { TagBadge, LabNewsBanner, LabList } from "@/components/photoLab";
+import type { PhotoLabItem } from "@/types/photoLab";
+import PLmock from "@/assets/mocks/PLmock.png";
+
+const mockLabs: PhotoLabItem[] = [
+  {
+    photoLabId: 1,
+    name: "파인더스 현상소 상도점",
+    keywords: ["따뜻한 색감", "빈티지한", "택배 접수"],
+    address: "서울 동작구 상도 1동 OOO",
+    distanceKm: 1.5,
+    workCount: 52,
+    avgWorkTimeMinutes: 30,
+    imageUrls: [PLmock, PLmock],
+    isFavorite: false,
+  },
+  {
+    photoLabId: 2,
+    name: "파인더스 현상소 흑석점",
+    keywords: ["청량한", "영화용 필름"],
+    address: "서울 동작구 흑석동 OOO",
+    distanceKm: 3.2,
+    workCount: 128,
+    avgWorkTimeMinutes: 45,
+    imageUrls: [PLmock, PLmock],
+    isFavorite: true,
+  },
+];
 
 export default function TestPage() {
-  const [searchValue, setSearchValue] = useState("");
+  const [labs, setLabs] = useState<PhotoLabItem[]>(mockLabs);
+
+  const handleFavoriteToggle = (photoLabId: number) => {
+    setLabs((prev) =>
+      prev.map((lab) =>
+        lab.photoLabId === photoLabId
+          ? { ...lab, isFavorite: !lab.isFavorite }
+          : lab,
+      ),
+    );
+    console.log("Favorite toggled:", photoLabId);
+  };
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-900">
-      <Header
-        title="테스트 페이지"
-        showBack
-        onBack={() => console.log("back")}
-        rightAction={{
-          type: "icon",
-          icon: (
-            <Icon className="text-neutral-200">
-              <MagnifyingGlassIcon />
-            </Icon>
-          ),
-          onClick: () => console.log("search"),
-        }}
-      />
+    <div className="flex w-full flex-col overflow-y-auto">
+      <Header title="PhotoLab 컴포넌트 테스트" />
 
-      <div className="px-5 py-4">
-        <SearchBar
-          value={searchValue}
-          onChange={setSearchValue}
-          placeholder="검색어를 입력하세요"
-        />
+      <div className="flex flex-col gap-6 p-4">
+        {/* TagBadge */}
+        <section>
+          <h2 className="mb-3 text-sm font-semibold text-neutral-100">
+            TagBadge
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <TagBadge label="따뜻한 색감" />
+            <TagBadge label="빈티지한" />
+            <TagBadge label="택배 접수" />
+            <TagBadge label="청량한" />
+            <TagBadge label="영화용 필름" />
+          </div>
+        </section>
+
+        {/* LabNewsBanner */}
+        <section>
+          <h2 className="mb-3 text-sm font-semibold text-neutral-100">
+            LabNewsBanner (5초마다 롤링)
+          </h2>
+          <LabNewsBanner
+            newsList={[
+              {
+                id: 1,
+                type: "공지",
+                labName: "파인더스 동작점",
+                content: "택배 접수 시작합니다",
+              },
+              {
+                id: 2,
+                type: "이벤트",
+                labName: "파인더스 홍대점",
+                content: "첫 방문 고객 대상 500원 할인",
+              },
+            ]}
+            intervalMs={5000}
+          />
+        </section>
       </div>
 
-      {searchValue && (
-        <div className="flex flex-col gap-3 px-5">
-          <SearchItem
-            type="recent"
-            text={searchValue}
-            onClick={() => console.log("click:", searchValue)}
-            onDelete={() => console.log("delete:", searchValue)}
-          />
-          <SearchItem
-            type="recent"
-            text={`${searchValue} 1`}
-            onClick={() => console.log("click:", `${searchValue} 1`)}
-            onDelete={() => console.log("delete:", `${searchValue} 1`)}
-          />
-          <SearchItem
-            type="search"
-            text={searchValue}
-            onClick={() => console.log("click:", searchValue)}
-          />
-          <SearchItem
-            type="search"
-            text={`${searchValue} 2`}
-            onClick={() => console.log("click:", `${searchValue} 2`)}
-          />
-        </div>
-      )}
+      {/* LabList */}
+      <div className="px-4 pb-2">
+        <h2 className="text-sm font-semibold text-neutral-100">LabList</h2>
+      </div>
+      <LabList
+        labs={labs}
+        onFavoriteToggle={handleFavoriteToggle}
+        onCardClick={(id) => console.log("Card clicked:", id)}
+      />
     </div>
   );
 }

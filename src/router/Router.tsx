@@ -13,6 +13,8 @@ import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
+import TestPage from "@/pages/TestPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
@@ -22,6 +24,10 @@ const router = createBrowserRouter([
     Component: RootLayout,
     children: [
       { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
+      {
+        path: "/test",
+        Component: TestPage,
+      },
       {
         path: "/auth/login",
         Component: LoginPage,
@@ -71,6 +77,10 @@ const router = createBrowserRouter([
           {
             path: "/photoFeed",
             Component: PhotoFeedPage,
+          },
+          {
+            path: "/photolab",
+            Component: PhotoLabPage,
           },
           {
             path: "/mypage",

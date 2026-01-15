@@ -31,6 +31,7 @@ export default function BottomSheet({
 }: SheetProps) {
   const [isDragging, setIsDragging] = useState(false); // UI용: 드래그 중에는 애니메이션 꺼야 함
   const [y, setY] = useState<number | null>(null); // 시트가 얼마나 아래로 내려와 있는가 (y=0이면 맨 위)
+  const [isClosing, setIsClosing] = useState(false); // 닫히는 중인지 (클릭 차단용)
 
   const draggingRef = useRef(false); // 계산용: 드래그 중인지를 즉시 판단하기 위한 플래그
   const startYRef = useRef(0); // 드래그 시작할 때 손가락 y좌표
@@ -38,6 +39,7 @@ export default function BottomSheet({
   const lastMoveRef = useRef({ t: 0, y: 0 }); // 스와이프 속도 계산용
 
   const [vh, setVh] = useState(() => window.innerHeight); // 현재 실제 화면 높이(px) - 가변
+  const [prevOpen, setPrevOpen] = useState(open); // 이전 open 상태 추적
 
   /** resize effect: 화면 높이 바뀔 때 vh 갱신 */
   useEffect(() => {
@@ -45,6 +47,23 @@ export default function BottomSheet({
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  // 열릴 때 상태 리셋 (렌더링 중 상태 업데이트)
+  if (open && !prevOpen) {
+    setPrevOpen(true);
+    setY(null);
+    setIsDragging(false);
+    setIsClosing(false);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
+
+  // ref는 effect에서 업데이트 (렌더링 중 ref 접근 불가)
+  useEffect(() => {
+    if (open) {
+      draggingRef.current = false;
+    }
+  }, [open]);
 
   // Body Scroll Lock
   useEffect(() => {
@@ -95,16 +114,20 @@ export default function BottomSheet({
   };
 
   const closeSheet = () => {
+    setIsClosing(true);
     resetInternal();
-    onClose();
+    // 클릭 이벤트가 아래로 전달되지 않도록 약간의 딜레이 후 닫기
+    window.setTimeout(() => onClose(), 50);
   };
 
   const animateTo = (next: Snap) => {
     if (next === "expanded") setY(yExpanded);
     if (next === "collapsed") setY(yCollapsed);
     if (next === "dismissed") {
+      setIsClosing(true);
       setY(yDismissed);
-      window.setTimeout(() => onClose(), ANIMATION_DURATION); // 애니메이션 끝난 뒤 close (간단히 timeout)
+      // 애니메이션 끝난 뒤 + 약간의 딜레이 후 close
+      window.setTimeout(() => onClose(), ANIMATION_DURATION + 50);
     }
   };
 
@@ -122,8 +145,11 @@ export default function BottomSheet({
       return;
     }
 
-    // 상단 영역에서 시작된 터치만 허용
-    if (e.clientY > DRAG_START_AREA + displayY) return;
+    // 시트의 실제 상단 위치 계산
+    const sheetTop = vh - expandedHeight + displayY;
+
+    // 핸들 바 근처에서 시작된 터치만 허용
+    if (e.clientY < sheetTop || e.clientY > sheetTop + DRAG_START_AREA) return;
 
     draggingRef.current = true;
     setIsDragging(true);
@@ -189,12 +215,22 @@ export default function BottomSheet({
     animateTo(nearest);
   };
 
+  // backdrop 클릭/터치 핸들러
+  const handleBackdropInteraction = (
+    e: React.MouseEvent | React.TouchEvent,
+  ) => {
+    if (isClosing) return; // 닫히는 중이면 무시
+    if (e.target !== e.currentTarget) return; // backdrop 직접 클릭만 처리
+    e.preventDefault();
+    e.stopPropagation();
+    closeSheet();
+  };
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45"
-      onTouchMove={(e) => e.preventDefault()}
-      onWheel={(e) => e.preventDefault()}
-      onMouseDown={closeSheet}
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/45"
+      onMouseDown={handleBackdropInteraction}
+      onTouchEnd={handleBackdropInteraction}
     >
       <div
         className="bg-neutral-875 flex w-full max-w-[430px] flex-col rounded-t-[24px] p-4 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_40px_rgba(0,0,0,0.4)]"
@@ -211,11 +247,12 @@ export default function BottomSheet({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         onMouseDown={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
       >
         {/* Header + Handle */}
-        <div className="flex flex-col items-center justify-center gap-3 py-[10px]">
+        <div className="flex flex-col items-center gap-3 pb-[0.625rem]">
           {/* Handle */}
-          <div className="mt-2 mb-1 h-[3px] w-[41px] touch-none rounded-full bg-neutral-500" />
+          <div className="h-[0.1875rem] w-[2.5625rem] rounded-full bg-neutral-500" />
           {title && (
             <h2 className="text-[16px] font-bold text-neutral-200">{title}</h2>
           )}

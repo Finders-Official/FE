@@ -3,6 +3,9 @@
 
 /* ✅ Tailwind v4 theme variables: 이 형태여야 bg-neutral-900 같은 유틸이 자동 생성됨 */
 @theme {
+  /* Animation */
+  --animate-slide-up: slide-up 0.4s ease-out;
+
   /* Orange */
   --color-orange-900: #2f1004;
   --color-orange-800: #5d1f09;
@@ -48,6 +51,7 @@
   body {
     min-height: 100dvh;
     overflow-x: hidden;
+    background-color: var(--color-neutral-900);
 
     font-family: "Pretendard Variable", Pretendard, system-ui, sans-serif;
   }
@@ -62,4 +66,16 @@
 .font-ydestreet {
   font-family:
     "Ydestreet", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+}
+
+/* 현상소 소식 rolling 애니메이션 */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
