@@ -174,7 +174,7 @@ export default function PhotoLabPage() {
       </div>
 
       {/* 필터 섹션 - 스크롤 시 상단 고정 */}
-      <div className="sticky top-0 z-10 bg-neutral-900">
+      <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
         <div className="flex flex-col gap-4 pb-6">
           <FilterContainer
             label="날짜 / 지역"

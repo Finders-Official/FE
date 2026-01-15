@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import {
@@ -14,6 +14,10 @@ import type { PhotoLabDetail } from "@/types/photoLab";
 export default function PhotoLabDetailPage() {
   const navigate = useNavigate();
   const [lab, setLab] = useState<PhotoLabDetail>(MOCK_LAB_DETAIL);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleBack = () => {
     navigate(-1);
