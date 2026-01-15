@@ -1,5 +1,5 @@
 import { CTA_Button } from "@/components/common";
-import { DropBox } from "@/components/photoFeed/DropBox";
+import { DropBox } from "@/components/photoManage/DropBox";
 import { DROPBOX_CATEGORIES } from "@/constants/photomanage/category.constant";
 import type {
   CategoryKey,
