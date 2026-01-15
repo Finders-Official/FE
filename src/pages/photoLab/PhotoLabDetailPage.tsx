@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import {
   LabBasicInfo,
+  LabBottomBar,
   LabLocationSection,
   LabNoticeSection,
   LabWorkResultsSection,
@@ -28,7 +29,7 @@ export default function PhotoLabDetailPage() {
     <div className="flex w-full flex-col">
       <Header title="파인더스 상도점" showBack onBack={handleBack} />
 
-      <main>
+      <main className="pb-32">
         {/* 메인 이미지 */}
         {mainImage && (
           <div className="-mx-4">
@@ -61,6 +62,8 @@ export default function PhotoLabDetailPage() {
           labName={lab.name}
         />
       </main>
+
+      <LabBottomBar />
     </div>
   );
 }
