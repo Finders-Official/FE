@@ -22,6 +22,7 @@ import FilmCameraGuideDetailPage from "@/pages/filmCameraGuide/FilmCameraGuideDe
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
+import ReservationPage from "@/pages/photoLab/ReservationPage";
 import TestPage from "@/pages/TestPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
       {
         path: "/photolab/:photoLabId",
         Component: PhotoLabDetailPage,
+      },
+      {
+        path: "/photolab/:photoLabId/reservation",
+        Component: ReservationPage,
       },
       {
         path: "/photoManage/main",
