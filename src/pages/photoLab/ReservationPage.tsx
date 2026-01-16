@@ -110,8 +110,10 @@ export default function ReservationPage() {
           <div className="border-neutral-850 -mx-4 flex flex-col gap-5 border-t px-4 pt-5">
             {/* 오전 */}
             <div className="flex flex-col gap-2.5">
-              <span className="text-base font-normal text-white">오전</span>
-              <div className="flex flex-wrap gap-2">
+              <span className="text-[1.15rem] font-normal text-white">
+                오전
+              </span>
+              <div className="grid grid-cols-4 gap-2">
                 {AM_TIME_SLOTS.map((time) => (
                   <TimeSlotChip
                     key={time}
@@ -126,8 +128,10 @@ export default function ReservationPage() {
 
             {/* 오후 */}
             <div className="flex flex-col gap-2.5">
-              <span className="text-base font-normal text-white">오후</span>
-              <div className="flex flex-wrap gap-2">
+              <span className="text-[1.15rem] font-normal text-white">
+                오후
+              </span>
+              <div className="grid grid-cols-4 gap-2">
                 {PM_TIME_SLOTS.map((time) => (
                   <TimeSlotChip
                     key={`pm-${time}`}
@@ -241,7 +245,7 @@ export default function ReservationPage() {
             {CAUTION_ITEMS.map((item, index) => (
               <div key={index} className="flex items-start gap-1.5">
                 <div className="flex h-6 w-6 items-center justify-center">
-                  <ExclamationCircleIcon className="h-4 w-4 text-neutral-300" />
+                  <ExclamationCircleIcon className="h-4 w-4 text-neutral-200" />
                 </div>
                 <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] break-keep text-neutral-300">
                   {item}
