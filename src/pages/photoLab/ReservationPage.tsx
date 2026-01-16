@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { Header, Checkbox } from "@/components/common";
+import { Header, Checkbox, TextArea } from "@/components/common";
 import { TimeSlotChip } from "@/components/common/chips";
 import { Calendar } from "@/components/photoLab";
 import { MinusIcon, PlusIcon } from "@/assets/icon";
@@ -11,6 +11,7 @@ import {
   TASK_OPTIONS,
   FILM_ROLL_MIN,
   FILM_ROLL_MAX,
+  REQUEST_MEMO_MAX_LENGTH,
 } from "@/constants/photoLab";
 import type { TaskType } from "@/types/reservation";
 
@@ -29,6 +30,7 @@ export default function ReservationPage() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedTasks, setSelectedTasks] = useState<TaskType[]>([]);
   const [filmRollCount, setFilmRollCount] = useState(0);
+  const [requestMemo, setRequestMemo] = useState("");
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -205,6 +207,24 @@ export default function ReservationPage() {
               </button>
             </div>
           </div>
+        </section>
+
+        {/* 구분선 */}
+        <div className="border-neutral-850 -mx-4 border-t" />
+
+        {/* 요청사항 섹션 */}
+        <section className="flex flex-col gap-4 py-[1.875rem]">
+          <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
+            요청사항을 적어주세요
+          </h2>
+
+          <TextArea
+            value={requestMemo}
+            onChange={setRequestMemo}
+            placeholder="사장님께 전달할 말을 작성해주세요."
+            maxLength={REQUEST_MEMO_MAX_LENGTH}
+            emptyHint="max"
+          />
         </section>
       </main>
     </div>
