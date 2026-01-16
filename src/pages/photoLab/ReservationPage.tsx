@@ -38,7 +38,7 @@ export default function ReservationPage() {
 
       <main className="pb-32">
         {/* 날짜 선택 섹션 */}
-        <section className="border-neutral-850 flex flex-col gap-4 border-b px-4 py-[1.875rem]">
+        <section className="flex flex-col gap-4 py-[1.875rem]">
           <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
             날짜와 시간을 선택해주세요
           </h2>
@@ -49,7 +49,7 @@ export default function ReservationPage() {
           />
 
           {/* 시간 선택 */}
-          <div className="border-neutral-850 flex flex-col gap-5 border-t pt-5">
+          <div className="border-neutral-850 -mx-4 flex flex-col gap-5 border-t px-4 pt-5">
             {/* 오전 */}
             <div className="flex flex-col gap-2.5">
               <span className="text-base font-normal text-white">오전</span>
@@ -83,6 +83,9 @@ export default function ReservationPage() {
             </div>
           </div>
         </section>
+
+        {/* 구분선 */}
+        <div className="bg-neutral-850 -mx-4 h-1.5" />
       </main>
     </div>
   );
