@@ -1,9 +1,13 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Header } from "@/components/common";
 import { TimeSlotChip } from "@/components/common/chips";
 import { Calendar } from "@/components/photoLab";
-import { AM_TIME_SLOTS, PM_TIME_SLOTS } from "@/constants/photoLab";
+import {
+  AM_TIME_SLOTS,
+  PM_TIME_SLOTS,
+  MOCK_DISABLED_TIMES,
+} from "@/constants/photoLab";
 
 interface LocationState {
   labName?: string;
@@ -32,6 +36,34 @@ export default function ReservationPage() {
     setSelectedTime(time);
   }, []);
 
+  // 날짜가 전체 비활성화인지 확인
+  const isDateDisabled = useCallback((date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
+
+    return MOCK_DISABLED_TIMES[dateKey] === "ALL";
+  }, []);
+
+  // 선택된 날짜의 비활성화 시간 데이터
+  const disabledTimesForDate = useMemo(() => {
+    if (!selectedDate) return "ALL" as const;
+
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(selectedDate.getDate()).padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
+
+    return MOCK_DISABLED_TIMES[dateKey] ?? [];
+  }, [selectedDate]);
+
+  // 시간 비활성화 여부 확인
+  const isTimeDisabled = (time: string): boolean => {
+    if (disabledTimesForDate === "ALL") return true;
+    return disabledTimesForDate.includes(time);
+  };
+
   return (
     <div className="flex w-full flex-col">
       <Header title={labName} showBack onBack={handleBack} />
@@ -46,6 +78,7 @@ export default function ReservationPage() {
           <Calendar
             selectedDate={selectedDate ?? undefined}
             onDateSelect={handleDateSelect}
+            isDateDisabled={isDateDisabled}
           />
 
           {/* 시간 선택 */}
@@ -59,7 +92,7 @@ export default function ReservationPage() {
                     key={time}
                     time={time}
                     selected={selectedTime === time}
-                    disabled={!selectedDate}
+                    disabled={isTimeDisabled(time)}
                     onClick={() => handleTimeSelect(time)}
                   />
                 ))}
@@ -75,7 +108,7 @@ export default function ReservationPage() {
                     key={`pm-${time}`}
                     time={time}
                     selected={selectedTime === time}
-                    disabled={!selectedDate}
+                    disabled={isTimeDisabled(time)}
                     onClick={() => handleTimeSelect(time)}
                   />
                 ))}

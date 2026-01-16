@@ -23,6 +23,9 @@ export interface TimeSlot {
   disabled: boolean;
 }
 
+// 날짜별 비활성화 시간 (string[] = 특정 시간, "ALL" = 전체 비활성화)
+export type DisabledTimesMap = Record<string, string[] | "ALL">;
+
 // API 요청 타입 (API 연동용)
 export interface CreateReservationRequest {
   photoLabId: number;

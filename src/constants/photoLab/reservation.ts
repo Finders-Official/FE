@@ -1,4 +1,4 @@
-import type { TaskOption } from "@/types/reservation";
+import type { TaskOption, DisabledTimesMap } from "@/types/reservation";
 
 // 작업 옵션 설정
 export const TASK_OPTIONS: TaskOption[] = [
@@ -37,8 +37,9 @@ export const CAUTION_ITEMS: string[] = [
 ];
 
 // Mock: 날짜별 비활성화 시간 슬롯 (테스트용)
-export const MOCK_DISABLED_TIMES: Record<string, string[]> = {
+export const MOCK_DISABLED_TIMES: DisabledTimesMap = {
   "2026-01-20": ["10:00"],
   "2026-01-21": ["9:00", "2:00"],
   "2026-01-22": [],
+  "2026-01-23": "ALL", // 전체 비활성화
 };
