@@ -53,6 +53,9 @@ export const CTA_Button = ({
     gray: "bg-neutral-850 border-neutral-850",
   };
 
+  const disabledClass =
+    "bg-neutral-800 border-neutral-700 text-neutral-500 cursor-not-allowed";
+
   const handleClick = () => {
     if (disabled) return;
     if (link) router(link);
@@ -64,7 +67,7 @@ export const CTA_Button = ({
       type="button"
       disabled={disabled}
       aria-disabled={disabled}
-      className={`${baseClass} ${sizeClass[size]} ${colorClass[color]} flex gap-3`}
+      className={`${baseClass} ${sizeClass[size]} ${disabled ? disabledClass : colorClass[color]}`}
       onClick={handleClick}
     >
       {Icon ? <Icon className="h-4 w-4" /> : null}

@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { Header, Checkbox, TextArea } from "@/components/common";
+import { Header, Checkbox, TextArea, CTA_Button } from "@/components/common";
 import { TimeSlotChip } from "@/components/common/chips";
 import { Calendar } from "@/components/photoLab";
 import { MinusIcon, PlusIcon, ExclamationCircleIcon } from "@/assets/icon";
@@ -88,6 +88,24 @@ export default function ReservationPage() {
     if (disabledTimesForDate === "ALL") return true;
     return disabledTimesForDate.includes(time);
   };
+
+  // 예약 버튼 활성화 조건
+  const isReservationValid =
+    selectedDate !== null &&
+    selectedTime !== null &&
+    selectedTasks.length > 0 &&
+    filmRollCount >= 1 &&
+    cautionConfirmed;
+
+  const handleReservation = useCallback(() => {
+    console.log("예약하기", {
+      selectedDate,
+      selectedTime,
+      selectedTasks,
+      filmRollCount,
+      requestMemo,
+    });
+  }, [selectedDate, selectedTime, selectedTasks, filmRollCount, requestMemo]);
 
   return (
     <div className="flex w-full flex-col">
@@ -272,6 +290,17 @@ export default function ReservationPage() {
           </span>
         </div>
       </main>
+
+      {/* 예약하기 버튼 */}
+      <div className="fixed right-0 bottom-0 left-0 border-t border-neutral-800 bg-neutral-900 px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+        <CTA_Button
+          text="예약하기"
+          size="xlarge"
+          color="orange"
+          onClick={handleReservation}
+          disabled={!isReservationValid}
+        />
+      </div>
     </div>
   );
 }
