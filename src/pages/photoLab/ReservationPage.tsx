@@ -353,7 +353,7 @@ export default function ReservationPage() {
       {/* 예약하기 버튼 */}
       <div className="fixed right-0 bottom-0 left-0 border-t border-neutral-800 bg-neutral-900 px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
         <CTA_Button
-          text="예약하기"
+          text="예약 완료하기"
           size="xlarge"
           color={isReservationValid ? "orange" : "black"}
           onClick={handleReservation}
