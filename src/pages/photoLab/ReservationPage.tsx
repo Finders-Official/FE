@@ -1,7 +1,9 @@
 import { useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Header } from "@/components/common";
+import { TimeSlotChip } from "@/components/common/chips";
 import { Calendar } from "@/components/photoLab";
+import { AM_TIME_SLOTS, PM_TIME_SLOTS } from "@/constants/photoLab";
 
 interface LocationState {
   labName?: string;
@@ -15,6 +17,7 @@ export default function ReservationPage() {
   const labName = state?.labName ?? "현상소";
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -22,6 +25,11 @@ export default function ReservationPage() {
 
   const handleDateSelect = useCallback((date: Date) => {
     setSelectedDate(date);
+    setSelectedTime(null); // 날짜 변경 시 시간 초기화
+  }, []);
+
+  const handleTimeSelect = useCallback((time: string) => {
+    setSelectedTime(time);
   }, []);
 
   return (
@@ -39,6 +47,41 @@ export default function ReservationPage() {
             selectedDate={selectedDate ?? undefined}
             onDateSelect={handleDateSelect}
           />
+
+          {/* 시간 선택 */}
+          <div className="border-neutral-850 flex flex-col gap-5 border-t pt-5">
+            {/* 오전 */}
+            <div className="flex flex-col gap-2.5">
+              <span className="text-base font-normal text-white">오전</span>
+              <div className="flex flex-wrap gap-2">
+                {AM_TIME_SLOTS.map((time) => (
+                  <TimeSlotChip
+                    key={time}
+                    time={time}
+                    selected={selectedTime === time}
+                    disabled={!selectedDate}
+                    onClick={() => handleTimeSelect(time)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* 오후 */}
+            <div className="flex flex-col gap-2.5">
+              <span className="text-base font-normal text-white">오후</span>
+              <div className="flex flex-wrap gap-2">
+                {PM_TIME_SLOTS.map((time) => (
+                  <TimeSlotChip
+                    key={`pm-${time}`}
+                    time={time}
+                    selected={selectedTime === time}
+                    disabled={!selectedDate}
+                    onClick={() => handleTimeSelect(time)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </section>
       </main>
     </div>
