@@ -1,9 +1,22 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { Header, Checkbox, TextArea, CTA_Button } from "@/components/common";
+import {
+  Header,
+  Checkbox,
+  TextArea,
+  CTA_Button,
+  ToastList,
+  ToastItem,
+} from "@/components/common";
 import { TimeSlotChip } from "@/components/common/chips";
 import { Calendar } from "@/components/photoLab";
-import { MinusIcon, PlusIcon, ExclamationCircleIcon } from "@/assets/icon";
+import {
+  MinusIcon,
+  PlusIcon,
+  ExclamationCircleIcon,
+  CalendarFillIcon,
+  BriefcaseFillIcon,
+} from "@/assets/icon";
 import {
   AM_TIME_SLOTS,
   PM_TIME_SLOTS,
@@ -33,6 +46,8 @@ export default function ReservationPage() {
   const [filmRollCount, setFilmRollCount] = useState(0);
   const [requestMemo, setRequestMemo] = useState("");
   const [cautionConfirmed, setCautionConfirmed] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastIcon, setToastIcon] = useState<React.ReactNode | null>(null);
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -97,7 +112,43 @@ export default function ReservationPage() {
     filmRollCount >= 1 &&
     cautionConfirmed;
 
+  const showToast = useCallback((message: string, icon?: React.ReactNode) => {
+    setToastMessage(message);
+    setToastIcon(icon ?? null);
+    setTimeout(() => {
+      setToastMessage(null);
+      setToastIcon(null);
+    }, 3000);
+  }, []);
+
   const handleReservation = useCallback(() => {
+    // 날짜/시간 선택
+    if (selectedDate === null || selectedTime === null) {
+      showToast(
+        "날짜 및 시간을 선택해주세요.",
+        <CalendarFillIcon className="h-[1.125rem] w-[1.125rem] text-orange-500" />,
+      );
+      return;
+    }
+
+    // 작업 내용
+    if (selectedTasks.length === 0 || filmRollCount < 1) {
+      showToast(
+        "작업 옵션을 선택해주세요.",
+        <BriefcaseFillIcon className="h-[1.125rem] w-[1.125rem] text-orange-500" />,
+      );
+      return;
+    }
+
+    // 주의사항 확인
+    if (!cautionConfirmed) {
+      showToast(
+        "주의사항을 확인해주세요.",
+        <ExclamationCircleIcon className="h-[1.125rem] w-[1.125rem] text-orange-500" />,
+      );
+      return;
+    }
+
     console.log("예약하기", {
       selectedDate,
       selectedTime,
@@ -105,7 +156,15 @@ export default function ReservationPage() {
       filmRollCount,
       requestMemo,
     });
-  }, [selectedDate, selectedTime, selectedTasks, filmRollCount, requestMemo]);
+  }, [
+    selectedDate,
+    selectedTime,
+    selectedTasks,
+    filmRollCount,
+    requestMemo,
+    cautionConfirmed,
+    showToast,
+  ]);
 
   return (
     <div className="flex w-full flex-col">
@@ -296,11 +355,17 @@ export default function ReservationPage() {
         <CTA_Button
           text="예약하기"
           size="xlarge"
-          color="orange"
+          color={isReservationValid ? "orange" : "black"}
           onClick={handleReservation}
-          disabled={!isReservationValid}
         />
       </div>
+
+      {/* 토스트 메시지 */}
+      {toastMessage && (
+        <ToastList>
+          <ToastItem message={toastMessage} icon={toastIcon} />
+        </ToastList>
+      )}
     </div>
   );
 }
