@@ -185,10 +185,10 @@ export default function ReservationPage() {
                 type="button"
                 onClick={handleFilmRollDecrement}
                 disabled={filmRollCount <= 0}
-                className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-600 disabled:opacity-40"
+                className="disabled:text-neutral-750 flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded-full border border-current text-neutral-100"
                 aria-label="롤 수 감소"
               >
-                <MinusIcon className="h-3 w-3 text-neutral-400" />
+                <MinusIcon className="h-[0.0625rem] w-2" />
               </button>
               <span className="w-6 text-center text-base font-normal text-white">
                 {filmRollCount}
@@ -197,10 +197,10 @@ export default function ReservationPage() {
                 type="button"
                 onClick={handleFilmRollIncrement}
                 disabled={filmRollCount >= FILM_ROLL_MAX}
-                className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-600 disabled:opacity-40"
+                className="disabled:text-neutral-750 flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded-full border border-current text-neutral-100"
                 aria-label="롤 수 증가"
               >
-                <PlusIcon className="h-3 w-3 text-neutral-400" />
+                <PlusIcon className="h-2 w-2" />
               </button>
             </div>
           </div>
