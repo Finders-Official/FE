@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { Header, Checkbox, TextArea } from "@/components/common";
 import { TimeSlotChip } from "@/components/common/chips";
 import { Calendar } from "@/components/photoLab";
-import { MinusIcon, PlusIcon } from "@/assets/icon";
+import { MinusIcon, PlusIcon, ExclamationCircleIcon } from "@/assets/icon";
 import {
   AM_TIME_SLOTS,
   PM_TIME_SLOTS,
@@ -12,6 +12,7 @@ import {
   FILM_ROLL_MIN,
   FILM_ROLL_MAX,
   REQUEST_MEMO_MAX_LENGTH,
+  CAUTION_ITEMS,
 } from "@/constants/photoLab";
 import type { TaskType } from "@/types/reservation";
 
@@ -31,6 +32,7 @@ export default function ReservationPage() {
   const [selectedTasks, setSelectedTasks] = useState<TaskType[]>([]);
   const [filmRollCount, setFilmRollCount] = useState(0);
   const [requestMemo, setRequestMemo] = useState("");
+  const [cautionConfirmed, setCautionConfirmed] = useState(false);
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -226,6 +228,45 @@ export default function ReservationPage() {
             emptyHint="max"
           />
         </section>
+
+        <div className="border-neutral-850 -mx-4 border-t" />
+
+        {/* 주의사항 */}
+        <section className="flex flex-col gap-4 py-[1.875rem]">
+          <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
+            주의사항
+          </h2>
+
+          <div className="flex flex-col gap-1.5 px-1.5">
+            {CAUTION_ITEMS.map((item, index) => (
+              <div key={index} className="flex items-start gap-1.5">
+                <div className="flex h-6 w-6 items-center justify-center">
+                  <ExclamationCircleIcon className="h-4 w-4 text-neutral-300" />
+                </div>
+                <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] break-keep text-neutral-300">
+                  {item}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div className="bg-neutral-850 -mx-4 h-1.5" />
+
+        {/* 주의사항 확인 체크박스 */}
+        <div className="flex items-center gap-2 py-[1.875rem] pl-2">
+          <Checkbox
+            checked={cautionConfirmed}
+            onChange={setCautionConfirmed}
+            iconClassName="h-4 w-4"
+          />
+          <span
+            className="cursor-pointer text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-100"
+            onClick={() => setCautionConfirmed(!cautionConfirmed)}
+          >
+            위의 주의사항을 확인하였습니다.
+          </span>
+        </div>
       </main>
     </div>
   );
