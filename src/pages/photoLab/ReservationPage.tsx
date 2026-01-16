@@ -1,13 +1,18 @@
 import { useState, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { Header } from "@/components/common";
+import { Header, Checkbox } from "@/components/common";
 import { TimeSlotChip } from "@/components/common/chips";
 import { Calendar } from "@/components/photoLab";
+import { MinusIcon, PlusIcon } from "@/assets/icon";
 import {
   AM_TIME_SLOTS,
   PM_TIME_SLOTS,
   MOCK_DISABLED_TIMES,
+  TASK_OPTIONS,
+  FILM_ROLL_MIN,
+  FILM_ROLL_MAX,
 } from "@/constants/photoLab";
+import type { TaskType } from "@/types/reservation";
 
 interface LocationState {
   labName?: string;
@@ -22,6 +27,8 @@ export default function ReservationPage() {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedTasks, setSelectedTasks] = useState<TaskType[]>([]);
+  const [filmRollCount, setFilmRollCount] = useState(0);
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -34,6 +41,20 @@ export default function ReservationPage() {
 
   const handleTimeSelect = useCallback((time: string) => {
     setSelectedTime(time);
+  }, []);
+
+  const handleTaskToggle = useCallback((task: TaskType) => {
+    setSelectedTasks((prev) =>
+      prev.includes(task) ? prev.filter((t) => t !== task) : [...prev, task],
+    );
+  }, []);
+
+  const handleFilmRollDecrement = useCallback(() => {
+    setFilmRollCount((prev) => Math.max(FILM_ROLL_MIN - 1, prev - 1));
+  }, []);
+
+  const handleFilmRollIncrement = useCallback(() => {
+    setFilmRollCount((prev) => Math.min(FILM_ROLL_MAX, prev + 1));
   }, []);
 
   // 날짜가 전체 비활성화인지 확인
@@ -119,6 +140,71 @@ export default function ReservationPage() {
 
         {/* 구분선 */}
         <div className="bg-neutral-850 -mx-4 h-1.5" />
+
+        {/* 작업 옵션 */}
+        <section className="flex flex-col gap-5 py-[1.875rem]">
+          <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
+            작업 옵션을 선택해주세요
+          </h2>
+
+          {/* 작업 종류 */}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-base font-normal text-white">
+                작업 종류
+              </span>
+              <span className="text-sm font-normal text-neutral-400">
+                필요한 작업을 모두 선택해주세요
+              </span>
+            </div>
+            <div className="flex flex-col gap-2.5">
+              {TASK_OPTIONS.map((option) => (
+                <div key={option.type} className="flex items-center gap-2">
+                  <Checkbox
+                    checked={selectedTasks.includes(option.type)}
+                    onChange={() => handleTaskToggle(option.type)}
+                  />
+                  <span
+                    className="cursor-pointer text-base font-normal text-white"
+                    onClick={() => handleTaskToggle(option.type)}
+                  >
+                    {option.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 현상할 필름 롤 수 */}
+          <div className="flex flex-col gap-3">
+            <span className="text-base font-normal text-white">
+              현상할 필름 롤 수
+            </span>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={handleFilmRollDecrement}
+                disabled={filmRollCount <= 0}
+                className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-600 disabled:opacity-40"
+                aria-label="롤 수 감소"
+              >
+                <MinusIcon className="h-3 w-3 text-neutral-400" />
+              </button>
+              <span className="w-6 text-center text-base font-normal text-white">
+                {filmRollCount}
+              </span>
+              <button
+                type="button"
+                onClick={handleFilmRollIncrement}
+                disabled={filmRollCount >= FILM_ROLL_MAX}
+                className="flex h-6 w-6 items-center justify-center rounded-full border border-neutral-600 disabled:opacity-40"
+                aria-label="롤 수 증가"
+              >
+                <PlusIcon className="h-3 w-3 text-neutral-400" />
+              </button>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
