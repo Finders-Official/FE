@@ -148,24 +148,25 @@ export default function ReservationPage() {
           </h2>
 
           {/* 작업 종류 */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3.5">
             <div className="flex flex-col gap-1">
-              <span className="text-base font-normal text-white">
+              <span className="text-[1.15rem] font-normal text-white">
                 작업 종류
               </span>
-              <span className="text-sm font-normal text-neutral-400">
+              <span className="text-base font-normal text-neutral-400">
                 필요한 작업을 모두 선택해주세요
               </span>
             </div>
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-3">
               {TASK_OPTIONS.map((option) => (
-                <div key={option.type} className="flex items-center gap-2">
+                <div key={option.type} className="flex items-center gap-2.5">
                   <Checkbox
                     checked={selectedTasks.includes(option.type)}
                     onChange={() => handleTaskToggle(option.type)}
+                    iconClassName="h-[1.15rem] w-[1.15rem]"
                   />
                   <span
-                    className="cursor-pointer text-base font-normal text-white"
+                    className="cursor-pointer text-[1.15rem] font-normal text-white"
                     onClick={() => handleTaskToggle(option.type)}
                   >
                     {option.label}
@@ -176,31 +177,31 @@ export default function ReservationPage() {
           </div>
 
           {/* 현상할 필름 롤 수 */}
-          <div className="flex flex-col gap-3">
-            <span className="text-base font-normal text-white">
+          <div className="flex flex-col gap-3.5">
+            <span className="text-[1.15rem] font-normal text-white">
               현상할 필름 롤 수
             </span>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-5">
               <button
                 type="button"
                 onClick={handleFilmRollDecrement}
                 disabled={filmRollCount <= 0}
-                className="disabled:text-neutral-750 flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded-full border border-current text-neutral-100"
+                className="disabled:text-neutral-750 flex h-[1.43rem] w-[1.43rem] items-center justify-center rounded-full border border-current text-neutral-100"
                 aria-label="롤 수 감소"
               >
-                <MinusIcon className="h-[0.0625rem] w-2" />
+                <MinusIcon className="h-[0.08rem] w-[0.633rem]" />
               </button>
-              <span className="w-6 text-center text-base font-normal text-white">
+              <span className="w-8 text-center text-[1.1rem] font-normal text-white">
                 {filmRollCount}
               </span>
               <button
                 type="button"
                 onClick={handleFilmRollIncrement}
                 disabled={filmRollCount >= FILM_ROLL_MAX}
-                className="disabled:text-neutral-750 flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded-full border border-current text-neutral-100"
+                className="disabled:text-neutral-750 flex h-[1.43rem] w-[1.43rem] items-center justify-center rounded-full border border-current text-neutral-100"
                 aria-label="롤 수 증가"
               >
-                <PlusIcon className="h-2 w-2" />
+                <PlusIcon className="h-[0.633rem] w-[0.633rem]" />
               </button>
             </div>
           </div>
