@@ -15,12 +15,12 @@ export function PickUpMethodPage() {
   const isNextEnabled = selectedMethod;
 
   const handleNext = () => {
-    if (!selectedMethod) return;
     if (selectedMethod === "delivery") {
       navigate("../photoManage/select-address");
-    }
-    if (selectedMethod === "pickup") {
+      // 배달을 선택할 경우 주소 선택 페이지로
+    } else if (selectedMethod === "pickup") {
       navigate("../photoManage/print-option");
+      // 직접 수령을 선택할 경우 인화 옵션 페이지로
     }
   };
 

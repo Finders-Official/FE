@@ -107,4 +107,5 @@ export const DROPBOX_CATEGORIES: readonly DropDownCategory[] = [
   },
 ] as const;
 
+export const DELIVERY_FEE_WON = 3000;
 //옵션은 변경될 수 있음

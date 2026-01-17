@@ -1,6 +1,9 @@
 import { CTA_Button } from "@/components/common";
 import { DropBox } from "@/components/photoManage/DropBox";
-import { DROPBOX_CATEGORIES } from "@/constants/photomanage/category.constant";
+import {
+  DELIVERY_FEE_WON,
+  DROPBOX_CATEGORIES,
+} from "@/constants/photomanage/category.constant";
 import type {
   CategoryKey,
   DropDownOption,
@@ -35,7 +38,6 @@ export function PrintOptionPage() {
     setOpenKey(null); // 선택하면 닫히게(원하면 제거)
   };
 
-  const deliveryWon = 3000;
   //옵션 합계 = 선택된 옵션들의 priceWon 합산
   const optionsTotalWon = useMemo(() => {
     return (Object.values(selection) as (DropDownOption | null)[])
@@ -45,7 +47,7 @@ export function PrintOptionPage() {
 
   //총 금액 = 옵션 합계 + 배송비
   const totalWon = useMemo(
-    () => optionsTotalWon + deliveryWon,
+    () => optionsTotalWon + DELIVERY_FEE_WON,
     [optionsTotalWon],
   );
 
@@ -83,7 +85,7 @@ export function PrintOptionPage() {
         <section className="shrink-0">
           <div className="border-neutral-875 flex justify-between border-b-[0.5rem] py-5">
             <p>배송</p>
-            <p>{formatPlusWon(deliveryWon)}</p>
+            <p>{formatPlusWon(DELIVERY_FEE_WON)}</p>
           </div>
           <div className="mt-4 mb-4 flex justify-between text-[1.1875rem]">
             <p>총 금액</p>

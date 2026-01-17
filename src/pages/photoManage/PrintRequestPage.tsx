@@ -35,8 +35,7 @@ export function PrintRequestPage() {
   };
 
   const handleNext = () => {
-    if (isNextEnabled) navigate("../photoManage/pickup-method");
-    else return;
+    navigate("../photoManage/pickup-method");
   };
 
   const isNextEnabled = totalQty > 0;

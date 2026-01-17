@@ -39,7 +39,7 @@ export function DetailInfoPage() {
           placeholder="받는 사람의 휴대폰 번호를 입력해 주세요"
           size="large"
           value={phone}
-          onChange={(e) => handlePhoneChange(e)}
+          onChange={handlePhoneChange}
         />
       </main>
       <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900 px-4">
