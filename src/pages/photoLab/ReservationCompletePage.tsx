@@ -1,5 +1,6 @@
 import { useNavigate, useLocation, useParams } from "react-router";
 import { Header, ConfirmationIcon, TextArea } from "@/components/common";
+import { LabLocationSection } from "@/components/photoLab/detail";
 import {
   XMarkIcon,
   CalendarIcon,
@@ -9,9 +10,19 @@ import {
   PencilLineIcon,
 } from "@/assets/icon";
 
+// Mock data - 추후 API로 연동
 const MOCK_MEMO = "안녕하세요. 처음으로 현상 맡깁니다.\n친절하게 안내해주세요!";
 const DEFAULT_LAB_MESSAGE =
   "예약이 확정되었습니다. 당일취소 불가능하며 1시간 전 연락주시면 일정 변경 가능합니다. 감사합니다:)";
+// 위치도 API response에 추가 가능한지 확인 필요
+const MOCK_LOCATION = {
+  address: "서울 동작구 상도로 00길 00",
+  distanceKm: 1.5,
+  location: {
+    latitude: 37.50287963116875,
+    longitude: 126.94790892178148,
+  },
+};
 
 interface LocationState {
   labName?: string;
@@ -140,6 +151,14 @@ export default function ReservationCompletePage() {
             </div>
           </div>
         </section>
+
+        {/* 위치 */}
+        <LabLocationSection
+          address={MOCK_LOCATION.address}
+          distanceKm={MOCK_LOCATION.distanceKm}
+          location={MOCK_LOCATION.location}
+          labName={labName}
+        />
       </main>
     </div>
   );
