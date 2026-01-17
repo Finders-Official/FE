@@ -75,7 +75,7 @@ export default function Profile({
       )}
 
       {/* more menu */}
-      {moreMenu && (
+      {moreMenu && type === "post" && (
         <ActionSheet
           open={moreMenu}
           onClose={() => setMoreMenu(false)}
@@ -83,7 +83,6 @@ export default function Profile({
             {
               label: "공유하기",
               onClick: async () => {
-                // Web Share API (모바일 브라우저에서 잘 됨)
                 if (navigator.share) {
                   await navigator.share({
                     title: "파인더스",
@@ -100,7 +99,30 @@ export default function Profile({
               variant: "danger",
               onClick: () => {
                 // 삭제 API 호출
-                console.log("delete");
+                console.log("삭제");
+              },
+            },
+          ]}
+        />
+      )}
+      {moreMenu && type === "comment" && (
+        <ActionSheet
+          open={moreMenu}
+          onClose={() => setMoreMenu(false)}
+          actions={[
+            {
+              label: "신고하기",
+              onClick: () => {
+                // 신고 API 호출
+                console.log("신고");
+              },
+            },
+            {
+              label: "삭제하기",
+              variant: "danger",
+              onClick: () => {
+                // 삭제 API 호출
+                console.log("삭제");
               },
             },
           ]}

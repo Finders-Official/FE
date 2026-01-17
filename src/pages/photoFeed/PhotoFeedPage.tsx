@@ -2,7 +2,7 @@ import { useState } from "react";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
 import { photoMock } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
-import { FloatingIcon, MagnifyingGlassIcon } from "@/assets/icon";
+import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
 
 export default function PhotoFeedPage() {
@@ -14,9 +14,9 @@ export default function PhotoFeedPage() {
         title="사진수다"
         rightAction={{
           type: "icon",
-          icon: <MagnifyingGlassIcon />,
+          icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
           onClick: () => {
-            // TODO 돋보기 눌렀을 때
+            setIsCreateModalOpen(true);
           },
         }}
       />

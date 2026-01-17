@@ -22,7 +22,7 @@ const tabs: TabItem[] = [
     end: true,
   },
   {
-    to: "/photolab-list",
+    to: "/photolab",
     label: "현상소 보기",
     icon: PhotoLabIcon,
     activeIcon: PhotoLabFillIcon,
@@ -34,7 +34,7 @@ const tabs: TabItem[] = [
     activeIcon: ChatFillIcon,
   },
   {
-    to: "/development-manage",
+    to: "/photoManage/main",
     label: "현상 관리",
     icon: ManageIcon,
     activeIcon: ManageFillIcon,
