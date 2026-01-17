@@ -36,13 +36,15 @@ export default function BottomSheet({
   const [snap, setSnap] = useState<Snap>(initialSnap);
   const [dragging, setDragging] = useState(false);
 
+  // ✅ vh를 state로 관리
+  const [vh, setVh] = useState(() => getViewportH());
+
   // 스냅별 "목표 높이(px)" (bottom 고정 + height만 바꿈)
-  const { vh, expandedH, collapsedH } = useMemo(() => {
-    const vh = getViewportH();
+  const { expandedH, collapsedH } = useMemo(() => {
     const exp = (vh * expandedVh) / 100;
     const col = vh * collapsedRatio;
-    return { vh: vh, expandedH: exp, collapsedH: col };
-  }, [collapsedRatio, expandedVh]);
+    return { expandedH: exp, collapsedH: col };
+  }, [vh, collapsedRatio, expandedVh]);
 
   // 현재 시트 높이(px) (드래그로 변함)
   const [sheetH, setSheetH] = useState(() =>
@@ -54,9 +56,11 @@ export default function BottomSheet({
     if (!open) return;
 
     const handleResize = () => {
-      const vh = getViewportH();
-      const nextExpandedH = (vh * expandedVh) / 100;
-      const nextCollapsedH = vh * collapsedRatio;
+      const nextVh = getViewportH();
+      setVh(nextVh);
+
+      const nextExpandedH = (nextVh * expandedVh) / 100;
+      const nextCollapsedH = nextVh * collapsedRatio;
       setSheetH(snap === "expanded" ? nextExpandedH : nextCollapsedH);
 
       const isTyping =
