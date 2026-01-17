@@ -1,5 +1,3 @@
-// src/pages/development/types.ts
-
 export interface DevelopmentLog {
   id: number;
   shopName: string; // 예: 파인더스 상도점
