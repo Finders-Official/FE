@@ -13,7 +13,6 @@ const MOCK_DATA = {
   schedule: "2025. 12. 12(금) 오전 11:00",
   estimatedCompletion: "2025. 12. 12(금) 오후 3:00",
   taskSummary: "현상 • 스캔 • 2롤",
-  memo: "안녕하세요. 처음으로 현상 맡깁니다.\n친절하게 안내해주세요!",
   labMessage:
     "예약이 확정되었습니다. 당일취소 불가능하며 1시간 전 연락주시면 일정 변경 가능합니다. 감사합니다:)",
   location: {
@@ -28,6 +27,7 @@ const MOCK_DATA = {
 
 interface LocationState {
   labName?: string;
+  requestMemo?: string;
 }
 
 export default function ReservationCompletePage() {
@@ -37,6 +37,7 @@ export default function ReservationCompletePage() {
 
   const state = location.state as LocationState | null;
   const labName = state?.labName ?? "파인더스 상도점";
+  const memo = state?.requestMemo;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -64,7 +65,7 @@ export default function ReservationCompletePage() {
           schedule={MOCK_DATA.schedule}
           estimatedCompletion={MOCK_DATA.estimatedCompletion}
           taskSummary={MOCK_DATA.taskSummary}
-          memo={MOCK_DATA.memo}
+          memo={memo}
           labMessage={MOCK_DATA.labMessage}
           labName={labName}
         />
