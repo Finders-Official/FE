@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation, useParams } from "react-router";
 import {
   Header,
   Checkbox,
@@ -36,6 +36,7 @@ interface LocationState {
 export default function ReservationPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { photoLabId } = useParams();
   const state = location.state as LocationState | null;
 
   const labName = state?.labName ?? "현상소";
@@ -149,14 +150,22 @@ export default function ReservationPage() {
       return;
     }
 
-    console.log("예약하기", {
-      selectedDate,
-      selectedTime,
-      selectedTasks,
-      filmRollCount,
-      requestMemo,
+    // 예약 완료 페이지로 넘기기
+    navigate(`/photolab/${photoLabId}/reservation/complete`, {
+      state: {
+        labName,
+        selectedDate,
+        selectedTime,
+        selectedTasks,
+        filmRollCount,
+        requestMemo,
+      },
+      replace: true,
     });
   }, [
+    navigate,
+    photoLabId,
+    labName,
     selectedDate,
     selectedTime,
     selectedTasks,

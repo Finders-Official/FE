@@ -95,3 +95,6 @@ export { default as TabHomeFillIcon } from "./tab-home-fill.svg?react";
 export { default as TicketFillIcon } from "./ticket-fill.svg?react";
 export { default as TruckFillIcon } from "./truck-fill.svg?react";
 export { default as TruckIcon } from "./truck.svg?react";
+
+// 예약 완료
+export { default as ConfirmationIcon } from "./confirmation.svg?react";
