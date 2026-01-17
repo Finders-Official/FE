@@ -1,6 +1,12 @@
 import { useNavigate, useLocation, useParams } from "react-router";
 import { Header } from "@/components/common";
-import { XMarkIcon, ConfirmationIcon } from "@/assets/icon";
+import {
+  XMarkIcon,
+  ConfirmationIcon,
+  CalendarIcon,
+  ClockIcon,
+  BriefcaseIcon,
+} from "@/assets/icon";
 
 interface LocationState {
   labName?: string;
@@ -41,6 +47,60 @@ export default function ReservationCompletePage() {
             <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-500">
               정성을 담아 소중한 추억을 현상해드릴게요
             </p>
+          </div>
+        </section>
+
+        {/* 예약 내역 */}
+        <section className="flex flex-col gap-[1.125rem] py-[1.875rem]">
+          <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
+            예약 내역
+          </h2>
+
+          <div className="flex flex-col gap-5">
+            {/* 일정 */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <div className="flex h-6 w-6 items-center justify-center">
+                  <CalendarIcon className="h-3.5 w-3.5 text-neutral-200" />
+                </div>
+                <span className="text-base leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                  일정
+                </span>
+              </div>
+              <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+                2025. 12. 12(금) 오전 11:00
+              </span>
+            </div>
+
+            {/* 예상 완료 시점 */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <div className="flex h-6 w-6 items-center justify-center">
+                  <ClockIcon className="h-3.5 w-3.5 text-neutral-200" />
+                </div>
+                <span className="text-base leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                  예상 완료 시점
+                </span>
+              </div>
+              <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+                2025. 12. 12(금) 오후 3:00
+              </span>
+            </div>
+
+            {/* 작업 옵션 */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <div className="flex h-6 w-6 items-center justify-center">
+                  <BriefcaseIcon className="h-3.5 w-3.5 text-neutral-200" />
+                </div>
+                <span className="text-base leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                  작업 옵션
+                </span>
+              </div>
+              <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+                현상 • 스캔 • 2롤
+              </span>
+            </div>
           </div>
         </section>
       </main>
