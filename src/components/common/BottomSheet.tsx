@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 const ANIMATION_MS = 150;
+const CLOSE_THRESHOLD_RATIO = 0.4;
 
 type Snap = "collapsed" | "expanded"; // "2/3" | "전체"
 
@@ -10,8 +11,8 @@ type BottomSheetProps = {
   onClose: () => void;
   title?: string;
   children?: ReactNode;
-  collapsedRatio?: number; // default: 0.66 (2/3)
-  expandedVh?: number; // default: 92vh
+  collapsedRatio?: number;
+  expandedVh?: number;
   initialSnap?: Snap; // 바텀시트 처음 크기 (collapsed면 2/3에서, expanded면 전체화면으로 시작)
 };
 
@@ -121,7 +122,7 @@ export default function BottomSheet({
 
     // 스냅 판정
     // 1) 너무 아래로 끌면 닫기
-    if (sheetH <= vh * 0.4) {
+    if (sheetH <= vh * CLOSE_THRESHOLD_RATIO) {
       onClose();
       return;
     }
