@@ -20,6 +20,12 @@ import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import TestPage from "@/pages/TestPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
+import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
+import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
+import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
+import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
+import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
+import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
 
 const router = createBrowserRouter([
   {
@@ -87,6 +93,38 @@ const router = createBrowserRouter([
       },
       //마이페이지 전용 레이아웃
       {
+        Component: PhotoManageLayout,
+        children: [
+          {
+            path: "/photoManage/print-request",
+            Component: PrintRequestPage,
+            handle: { title: "인화 요청하기" },
+          },
+          {
+            path: "/photoManage/pickup-method",
+            Component: PickUpMethodPage,
+            handle: { title: "인화 요청하기" },
+          },
+          {
+            path: "/photoManage/select-address",
+            Component: SelectAddressPage,
+            handle: { title: "주소 입력하기" },
+          },
+          {
+            path: "/photoManage/select-address/detail",
+            Component: DetailInfoPage,
+            handle: { title: "상세 정보 입력하기" },
+          },
+          {
+            path: "/photoManage/print-option",
+            Component: PrintOptionPage,
+            handle: { title: "결제 내역" },
+          },
+        ],
+      },
+      {
+        //HeaderFooteryLayout 사용하는 페이지
+
         path: "/mypage",
         element: <MyPageLayout />,
         children: [
