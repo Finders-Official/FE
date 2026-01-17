@@ -9,10 +9,11 @@ export const OptionLink = ({
   infoColor,
   Icon,
 }: OptionLinkItem) => {
-  const infoColorClass = infoColor === "gray" ? "text-neutral-500" : "";
+  const infoColorClass =
+    infoColor === "gray" ? "text-neutral-500" : "text-orange-500";
   return (
     <Link to={to} className="flex h-[4rem] w-full items-center gap-3 px-[1rem]">
-      {Icon && <Icon className="h-[1rem] w-[1.125rem]" />}
+      {Icon && <Icon className="h-[1.125rem] w-[1.125rem]" />}
       <div className="flex flex-1 justify-between">
         <p>{text}</p>
         {info ? <p className={`${infoColorClass}`}>{info}</p> : null}
