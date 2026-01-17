@@ -93,7 +93,7 @@ export default function PmMainPage() {
           ? "인화여부를 확정해야 다음 단계로 넘어가요!"
           : "고해상도 디지털 파일로 변환",
       buttons: (
-        <div className="mb-[14px] flex flex-col gap-[0.625rem]">
+        <div className="flex flex-col gap-[0.625rem]">
           <ActionButton
             leftIcon={<PrinterIcon />}
             message="인화 여부 확정하기"
