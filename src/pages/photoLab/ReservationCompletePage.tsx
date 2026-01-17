@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router";
 import { Header } from "@/components/common";
 import { LabLocationSection } from "@/components/photoLab/detail";
@@ -36,6 +37,10 @@ export default function ReservationCompletePage() {
 
   const state = location.state as LocationState | null;
   const labName = state?.labName ?? "파인더스 상도점";
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleClose = () => {
     navigate(`/photolab/${photoLabId}`, { replace: true });
