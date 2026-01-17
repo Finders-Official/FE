@@ -34,7 +34,7 @@ const tabs: TabItem[] = [
     activeIcon: ChatFillIcon,
   },
   {
-    to: "/development-manage",
+    to: "/photoManage/main",
     label: "현상 관리",
     icon: ManageIcon,
     activeIcon: ManageFillIcon,

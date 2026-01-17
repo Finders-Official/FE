@@ -51,10 +51,6 @@ const router = createBrowserRouter([
         Component: PhotoDownloadPage,
       },
       {
-        path: "/photoManage/main",
-        Component: PmMainPage,
-      },
-      {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
@@ -91,6 +87,10 @@ const router = createBrowserRouter([
           {
             path: "/mypage/edit-info",
             Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
+          },
+          {
+            path: "/photoManage/main",
+            Component: PmMainPage,
           },
         ],
       },

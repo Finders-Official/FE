@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { FlimIcon, ScanIcon, PrinterIcon, PackageIcon } from "@/assets/icon";
-
-type Step = "DEVELOP" | "SCAN" | "PRINT_DELIVERY" | "PRINT_PICKUP" | "DELIVERY";
+import type { Status, ReceiptMethod } from "@/types/process";
 
 type ProcessProps = {
-  step: Step;
+  step: Status;
+  receiptMethod?: ReceiptMethod;
   isCurrent: boolean;
   title: string;
   subComment?: ReactNode;
@@ -18,13 +18,12 @@ type ProcessProps = {
 };
 
 const ICON_BY_STEP: Record<
-  Step,
+  Status,
   React.ComponentType<{ className?: string }>
 > = {
   DEVELOP: FlimIcon,
   SCAN: ScanIcon,
-  PRINT_DELIVERY: PrinterIcon,
-  PRINT_PICKUP: PrinterIcon,
+  PRINT: PrinterIcon,
   DELIVERY: PackageIcon,
 };
 
@@ -32,7 +31,7 @@ type LineVariant = "DONE" | "CURRENT" | "TODO";
 
 function getLineVariant(index: number, currentIndex: number): LineVariant {
   if (index < currentIndex) return "DONE"; // 완료 단계의 아래 선
-  if (index === currentIndex) return "CURRENT"; // 현재→다음 선(그라데이션)
+  if (index === currentIndex) return "CURRENT"; // 현재 → 다음 선(그라데이션)
   return "TODO"; // 이후 단계의 아래 선
 }
 
@@ -65,8 +64,8 @@ export default function Process({
     ? "text-white text-4"
     : "text-neutral-600 text-4";
   const contentClass = isCurrent
-    ? "text-white text-[0.8125rem]"
-    : "text-neutral-600 text-[0.8125rem]";
+    ? "text-white text-[0.8125rem] font-light"
+    : "text-neutral-600 text-[0.8125rem] font-light";
   const iconClass = [
     "h-[1.5625rem] w-[1.5625rem]",
     isCurrent ? "text-orange-500" : "text-neutral-600",
@@ -76,14 +75,12 @@ export default function Process({
   const lineVariant = getLineVariant(index, currentIndex);
 
   const lineClass = [
-    "w-[0.125rem] min-h-8 rounded-full",
+    "w-[0.125rem] h-full rounded-full",
+    // 색상
     lineVariant === "DONE" && "bg-orange-500",
     lineVariant === "TODO" && "bg-neutral-700",
     lineVariant === "CURRENT" &&
       "bg-gradient-to-b from-orange-500 to-neutral-700",
-    lineVariant === "CURRENT" && step === "PRINT_DELIVERY" && "h-58",
-    // 인화 단계이고 직접 수령인 경우
-    lineVariant === "CURRENT" && step === "PRINT_PICKUP" && "h-38",
   ]
     .filter(Boolean)
     .join(" ");
@@ -91,9 +88,9 @@ export default function Process({
   return (
     <div className="flex items-start gap-5">
       {/* 아이콘 + 아래 선 (개별) */}
-      <div className="flex w-[3.125rem] flex-col items-center">
-        <div className={iconWrapperClass}>
-          <Icon className={iconClass} />
+      <div className="flex w-[3.125rem] flex-col items-center self-stretch">
+        <div className={`${iconWrapperClass} shrink-0`}>
+          <Icon className={`${iconClass} shrink-0`} />
         </div>
 
         {/* 마지막 단계는 선 없음 */}
@@ -101,7 +98,7 @@ export default function Process({
       </div>
 
       {/* 카드 */}
-      <div className="flex flex-col gap-[0.625rem]">
+      <div className="mb-5 flex flex-col gap-[0.625rem]">
         <div className={cardClass}>
           <h3 className={titleClass}>{title}</h3>
 

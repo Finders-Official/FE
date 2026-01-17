@@ -1,6 +1,6 @@
-type Status = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
-type SpecStep = "BEFORE" | "AFTER";
-type ReceiptMethod = "PICKUP" | "DELIVERY";
+export type Status = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
+export type SpecStep = "BEFORE" | "AFTER";
+export type ReceiptMethod = "PICKUP" | "DELIVERY";
 
 export type Process = {
   status: Status;
@@ -14,15 +14,10 @@ export const developMock: Process = {
 export const scanMock: Process = {
   status: "SCAN",
 };
-export const printDeliveryMock: Process = {
+export const printMock: Process = {
   status: "PRINT",
   specStep: "BEFORE",
   receiptMethod: "DELIVERY",
-};
-export const printPickupMock: Process = {
-  status: "PRINT",
-  specStep: "BEFORE",
-  receiptMethod: "PICKUP",
 };
 export const deliveryMock: Process = {
   status: "DELIVERY",

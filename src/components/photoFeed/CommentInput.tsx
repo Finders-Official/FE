@@ -25,6 +25,7 @@ export default function CommentInput({
   // 하단 고정 UI
   const ui = (
     <div className="bg-neutral-875 pointer-events-none fixed inset-x-0 bottom-0 z-[50] px-4 pt-3 pb-7">
+
       <div className="bg-neutral-875 pointer-events-auto flex items-center rounded-[3.125rem] border border-neutral-600 px-4 py-3">
         <input
           type="text"
