@@ -169,15 +169,7 @@ export default function PhotoLabSearchPage() {
     }
   };
 
-  const handleLabPreviewClick = (photoLabId: number) => {
-    navigate(`/photolab/${photoLabId}`);
-  };
-
-  const handlePopularLabClick = (photoLabId: number) => {
-    navigate(`/photolab/${photoLabId}`);
-  };
-
-  const handleCardClick = (photoLabId: number) => {
+  const handleLabClick = (photoLabId: number) => {
     navigate(`/photolab/${photoLabId}`);
   };
 
@@ -226,7 +218,7 @@ export default function PhotoLabSearchPage() {
           />
           <PopularLabSection
             labs={MOCK_POPULAR_LABS}
-            onLabClick={handlePopularLabClick}
+            onLabClick={handleLabClick}
           />
         </div>
       )}
@@ -240,7 +232,7 @@ export default function PhotoLabSearchPage() {
           />
           <LabPreviewSection
             labs={filteredLabPreviews}
-            onLabClick={handleLabPreviewClick}
+            onLabClick={handleLabClick}
           />
         </div>
       )}
@@ -268,7 +260,7 @@ export default function PhotoLabSearchPage() {
           <LabList
             labs={filteredLabs}
             onFavoriteToggle={handleFavoriteToggle}
-            onCardClick={handleCardClick}
+            onCardClick={handleLabClick}
             emptyMessage="검색 결과가 없어요"
           />
 
