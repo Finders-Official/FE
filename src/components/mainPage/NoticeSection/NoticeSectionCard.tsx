@@ -17,15 +17,15 @@ export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
   return (
     <Link
       to={`/lab/${notice.labId}`}
-      className="group bg-neutral-875/50 flex h-[219px] w-[200px] flex-col justify-between overflow-hidden rounded-[10px] border border-neutral-800 p-5"
+      className="group bg-neutral-875/50 flex h-[13.6875rem] w-[12.5rem] flex-col justify-between overflow-hidden rounded-[0.625rem] border border-neutral-800 p-5"
     >
       <div className="flex flex-col items-start gap-3">
-        <span className="flex items-center justify-center rounded-[100px] bg-orange-500 px-2.5 py-1 text-[10px] font-semibold text-neutral-100">
+        <span className="flex items-center justify-center rounded-[6.25rem] bg-orange-500 px-2.5 py-1 text-[0.625rem] font-semibold text-neutral-100">
           {notice.type}
         </span>
 
         {/* 제목 */}
-        <h3 className="line-clamp-3 text-[16px] leading-[155%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
+        <h3 className="line-clamp-3 text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
           {notice.title}
         </h3>
       </div>
@@ -56,7 +56,7 @@ export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
               strokeLinejoin="round"
             />
           </svg>
-          <span className="text-[12px] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">
+          <span className="text-[0.75rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">
             {notice.labName}
           </span>
         </div>
@@ -86,7 +86,7 @@ export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
               strokeLinejoin="round"
             />
           </svg>
-          <span className="text-[12px] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">
+          <span className="text-[0.75rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">
             {notice.period}
           </span>
         </div>

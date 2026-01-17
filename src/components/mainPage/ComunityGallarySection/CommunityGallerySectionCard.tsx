@@ -112,6 +112,3 @@ export default function CommunityGallerySectionCard({
     </div>
   );
 }
-
-// 아이콘 수정
-// w-66.25 수정

@@ -18,7 +18,7 @@ export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
   return (
     <div className="flex w-full items-center justify-between py-5">
       {/* 타이틀 */}
-      <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
+      <h2 className="text-[20px] leading-[128%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
         {title}
       </h2>
 
@@ -27,7 +27,7 @@ export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
         <button
           onClick={handleMoreClick}
           type="button"
-          className="font-regular flex shrink-0 items-center gap-0.5 text-[0.938rem] leading-[155%] tracking-[-0.02em] whitespace-nowrap text-neutral-200"
+          className="font-regular flex shrink-0 items-center gap-0.5 text-[15.008px] leading-[155%] tracking-[-0.02em] whitespace-nowrap text-neutral-200"
         >
           더보기
           <ChevronLeftIcon className="h-4 w-4 -scale-x-100 text-neutral-200" />

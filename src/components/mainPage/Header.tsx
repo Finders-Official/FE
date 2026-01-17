@@ -6,7 +6,7 @@ export default function Header() {
       <div>
         <Link
           to="/"
-          className="font-ydestreet text-[26px] leading-[132%] font-bold text-neutral-100"
+          className="font-ydestreet text-[1.625rem] leading-[132%] font-bold text-neutral-100"
         >
           Finders
         </Link>
