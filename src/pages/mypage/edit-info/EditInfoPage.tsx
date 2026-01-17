@@ -1,5 +1,6 @@
 import { CheckCircleIcon } from "@/assets/icon";
 import { ToastItem } from "@/components/common";
+import { DialogBox } from "@/components/common/DialogBox";
 import { OptionLink } from "@/components/mypage/OptionLink";
 import { info } from "@/constants/mypage/info.constant";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -32,6 +33,18 @@ export function EditInfoPage() {
   const state = (location.state as LocationState) ?? null;
   const [showToast, setShowToast] = useState(false);
   const [message, setMessage] = useState("");
+
+  //모달 오픈 상태값
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isWithDraqModalOpen, setIsWithDrawModalOpen] = useState(false);
+
+  const handleLogout = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const handleWithDraw = () => {
+    setIsWithDrawModalOpen(true);
+  };
 
   useEffect(() => {
     const toast = state?.toast;
@@ -152,7 +165,34 @@ export function EditInfoPage() {
           info="카카오톡"
           infoColor="gray"
         />
-        <button className="p-4">로그아웃</button>
+        <section className="flex flex-col">
+          <button onClick={handleLogout} className="p-4 text-left">
+            로그아웃
+          </button>
+          <button onClick={handleWithDraw} className="p-4 text-left">
+            탈퇴하기
+          </button>
+        </section>
+        {/* 로그아웃 모달 */}
+        <DialogBox
+          isOpen={isLogoutModalOpen}
+          title="로그아웃"
+          description="정말로 로그아웃하시겠어요?"
+          confirmText="로그아웃"
+          onConfirm={() => setIsLogoutModalOpen(false)}
+          cancelText="뒤로 가기"
+          onCancel={() => setIsLogoutModalOpen(false)}
+        />
+        {/* 회원탈퇴 모달 */}
+        <DialogBox
+          isOpen={isWithDraqModalOpen}
+          title="탈퇴하기"
+          description="정말로 탈퇴하시겠어요?"
+          confirmText="탈퇴하기"
+          onConfirm={() => setIsWithDrawModalOpen(false)}
+          cancelText="뒤로 가기"
+          onCancel={() => setIsWithDrawModalOpen(false)}
+        />
       </main>
       {showToast ? (
         <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
