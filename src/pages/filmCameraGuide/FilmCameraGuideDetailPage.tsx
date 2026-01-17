@@ -34,7 +34,7 @@ const FilmCameraGuideDetailPage = () => {
         >
           <ChevronLeftIcon className="h-6 w-6 text-neutral-200" />
         </button>
-        <h1 className="mx-auto truncate text-[16px] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+        <h1 className="mx-auto truncate text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
           {data.title}
         </h1>
       </header>
@@ -49,10 +49,10 @@ const FilmCameraGuideDetailPage = () => {
 
         {/* 히어로 텍스트 */}
         <div className="absolute bottom-6 left-0 px-4">
-          <h2 className="mb-2 text-[18px] leading-tight font-semibold text-neutral-100">
+          <h2 className="mb-2 text-[1.125rem] leading-tight font-semibold text-neutral-100">
             {data.title}
           </h2>
-          <p className="font-regular text-[16px] text-neutral-100">
+          <p className="font-regular text-[1rem] text-neutral-100">
             {data.summary}
           </p>
         </div>
@@ -66,9 +66,9 @@ const FilmCameraGuideDetailPage = () => {
             {data.toc.map((item, index) => (
               <div
                 key={index}
-                className="font-regular text-[14px] leading-[155%] tracking-[-0.02%] text-neutral-200"
+                className="font-regular text-[0.875rem] leading-[155%] tracking-[-0.02%] text-neutral-200"
               >
-                <span className="font-regular mr-1 text-[14px] leading-[155%] tracking-[-0.02%] text-neutral-200">
+                <span className="font-regular mr-1 text-[0.875rem] leading-[155%] tracking-[-0.02%] text-neutral-200">
                   {index + 1}.
                 </span>
                 {item}
@@ -79,7 +79,7 @@ const FilmCameraGuideDetailPage = () => {
 
         {/* 3-2. 인트로 텍스트 */}
         {data.introText && (
-          <div className="mb-12 text-[15px] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
+          <div className="mb-12 text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
             {data.introText}
           </div>
         )}
@@ -92,28 +92,28 @@ const FilmCameraGuideDetailPage = () => {
               <div>
                 {/* Case 1: Heading */}
                 {section.heading && (
-                  <h3 className="mb-1 text-[16px] leading-[155%] font-bold tracking-[-0.02%] whitespace-pre-wrap text-orange-500">
+                  <h3 className="mb-1 text-[1rem] leading-[155%] font-bold tracking-[-0.02%] whitespace-pre-wrap text-orange-500">
                     {section.heading}
                   </h3>
                 )}
 
                 {/* Case 2: LocationHeading */}
                 {section.locationHeading && (
-                  <h3 className="mb-1 text-[15px] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
+                  <h3 className="mb-1 text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
                     {section.locationHeading}
                   </h3>
                 )}
 
                 {/* 서브 헤딩 */}
                 {section.subHeading && (
-                  <p className="text-[14px] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-500">
+                  <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-500">
                     {section.subHeading}
                   </p>
                 )}
               </div>
 
               {/* 섹션 이미지 */}
-              <div className="overflow-hidden rounded-[10px]">
+              <div className="overflow-hidden rounded-[0.625rem]">
                 <img
                   src={section.imageUrl}
                   alt={section.heading || section.locationHeading}
@@ -122,7 +122,7 @@ const FilmCameraGuideDetailPage = () => {
               </div>
 
               {/* 설명글 */}
-              <p className="text-[15px] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
+              <p className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
                 {section.description}
               </p>
             </article>
