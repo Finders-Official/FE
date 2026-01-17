@@ -1,27 +1,37 @@
 <svg width="49" height="50" viewBox="0 0 49 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="29.7939" height="29.7939" rx="8" fill="#E94E16"/>
-<foreignObject x="-13.6953" y="-12.9629" width="82.1787" height="82.1787"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(10px);clip-path:url(#bgblur_0_3215_17077_clip_path);height:100%;width:100%"></div></foreignObject><g data-figma-bg-blur-radius="20">
-<rect x="7.30469" y="8.03711" width="40.1791" height="40.1791" rx="10" fill="white" fill-opacity="0.2"/>
-<rect x="6.80469" y="7.53711" width="41.1791" height="41.1791" rx="10.5" stroke="url(#paint0_linear_3215_17077)" stroke-opacity="0.5"/>
-</g>
-<g filter="url(#filter1_d_3215_17077)">
-<path d="M20.0176 30.6827L26.1966 35.1423L37.0633 21.3389" stroke="#D9D9D9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
-<defs>
-<clipPath id="bgblur_0_3215_17077_clip_path" transform="translate(13.6953 12.9629)"><rect x="7.30469" y="8.03711" width="40.1791" height="40.1791" rx="10"/>
-</clipPath><filter id="filter1_d_3215_17077" x="14.0176" y="19.3389" width="29.0459" height="25.8037" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="4"/>
-<feGaussianBlur stdDeviation="2"/>
-<feComposite in2="hardAlpha" operator="out"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
-<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3215_17077"/>
-<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3215_17077" result="shape"/>
-</filter>
-<linearGradient id="paint0_linear_3215_17077" x1="7.30469" y1="8.03711" x2="61.0442" y2="70.3147" gradientUnits="userSpaceOnUse">
-<stop stop-opacity="0"/>
-<stop offset="1" stop-color="white"/>
-</linearGradient>
-</defs>
+  <defs>
+    <filter id="checkShadow" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="4" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+
+    <linearGradient id="glassGradient" x1="7.30469" y1="8.03711" x2="61.0442" y2="70.3147" gradientUnits="userSpaceOnUse">
+      <stop stop-opacity="0"/>
+      <stop offset="1" stop-color="white"/>
+    </linearGradient>
+
+    <filter id="subtleBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+
+    <clipPath id="overlapClip">
+      <rect x="7.30469" y="8.03711" width="22.5" height="21.75" rx="8"/>
+    </clipPath>
+  </defs>
+
+  <rect width="29.7939" height="29.7939" rx="8" fill="#E94E16"/>
+
+  <g clip-path="url(#overlapClip)">
+    <rect width="29.7939" height="29.7939" rx="8" fill="#E94E16" filter="url(#subtleBlur)" opacity="0.4"/>
+  </g>
+
+  <rect x="7.30469" y="8.03711" width="40.1791" height="40.1791" rx="10" fill="white" fill-opacity="0.15"/>
+  <rect x="6.80469" y="7.53711" width="41.1791" height="41.1791" rx="10.5" stroke="url(#glassGradient)" stroke-opacity="0.5"/>
+  <path
+    d="M20.0176 30.6827L26.1966 35.1423L37.0633 21.3389"
+    stroke="#D9D9D9"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#checkShadow)"
+  />
 </svg>

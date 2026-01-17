@@ -1,8 +1,7 @@
 import { useNavigate, useLocation, useParams } from "react-router";
-import { Header } from "@/components/common";
+import { Header, ConfirmationIcon } from "@/components/common";
 import {
   XMarkIcon,
-  ConfirmationIcon,
   CalendarIcon,
   ClockIcon,
   BriefcaseIcon,
