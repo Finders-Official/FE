@@ -2,6 +2,7 @@
 
 export { default as ArrowLeftIcon } from "./arrow-left.svg?react";
 export { default as ArrowTurnUpLeftIcon } from "./arrow-turn-up-left.svg?react";
+export { default as ArrowTurnUpRightIcon } from "./arrow-turn-up-right.svg?react";
 export { default as BellIcon } from "./bell.svg?react";
 export { default as BriefcaseIcon } from "./briefcase.svg?react";
 export { default as CalendarIcon } from "./calendar.svg?react";
@@ -91,3 +92,4 @@ export { default as TabHomeFillIcon } from "./tab-home-fill.svg?react";
 export { default as TicketFillIcon } from "./ticket-fill.svg?react";
 export { default as TruckFillIcon } from "./truck-fill.svg?react";
 export { default as TruckIcon } from "./truck.svg?react";
+export { default as PaintBrushIcon } from "./paint-brush.svg?react";
