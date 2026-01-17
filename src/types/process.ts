@@ -1,6 +1,6 @@
-type Status = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
-type SpecStep = "BEFORE" | "AFTER";
-type ReceiptMethod = "PICKUP" | "DELIVERY";
+export type Status = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
+export type SpecStep = "BEFORE" | "AFTER";
+export type ReceiptMethod = "PICKUP" | "DELIVERY";
 
 export type Process = {
   status: Status;

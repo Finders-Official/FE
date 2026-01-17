@@ -15,18 +15,12 @@ import { useNavigate } from "react-router";
 import { DialogBox } from "@/components/common/DialogBox";
 import { useState } from "react";
 import { scanMock } from "@/types/process";
-
-type Status = "DEVELOP" | "SCAN" | "PRINT" | "DELIVERY";
-type StepId =
-  | "DEVELOP"
-  | "SCAN"
-  | "PRINT_DELIVERY"
-  | "PRINT_PICKUP"
-  | "DELIVERY";
+import type { Status, ReceiptMethod } from "@/types/process";
 
 type StepConfig = {
   key: string;
-  step: StepId;
+  step: Status;
+  receiptMethod?: ReceiptMethod;
   isCurrent: boolean;
   title: string;
   content: React.ReactNode;
@@ -122,8 +116,8 @@ export default function PmMainPage() {
     },
     {
       key: "PRINT",
-      step:
-        mock.receiptMethod === "DELIVERY" ? "PRINT_DELIVERY" : "PRINT_PICKUP",
+      step: "PRINT",
+      receiptMethod: mock.receiptMethod,
       isCurrent: status === "PRINT",
       title: "사진 인화",
       subComment: (
@@ -141,6 +135,7 @@ export default function PmMainPage() {
     {
       key: "DELIVERY",
       step: "DELIVERY",
+      receiptMethod: mock.receiptMethod,
       isCurrent: status === "DELIVERY",
       title: "수령/배송",
       subComment: (
@@ -213,17 +208,20 @@ export default function PmMainPage() {
           작업 진행 상황
         </p>
         <div className="flex flex-col">
-          {steps.map(({ key, subComment, buttons, isLast, ...rest }) => (
-            <div key={key}>
-              <ProcessStep
-                {...rest}
-                currentIndex={currentIndex}
-                subComment={subComment}
-                buttons={buttons}
-                isLast={isLast}
-              />
-            </div>
-          ))}
+          {steps.map(
+            ({ key, receiptMethod, subComment, buttons, isLast, ...rest }) => (
+              <div key={key}>
+                <ProcessStep
+                  {...rest}
+                  receiptMethod={receiptMethod}
+                  currentIndex={currentIndex}
+                  subComment={subComment}
+                  buttons={buttons}
+                  isLast={isLast}
+                />
+              </div>
+            ),
+          )}
         </div>
       </main>
     </div>

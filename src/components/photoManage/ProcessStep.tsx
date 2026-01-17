@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { FlimIcon, ScanIcon, PrinterIcon, PackageIcon } from "@/assets/icon";
-
-type Step = "DEVELOP" | "SCAN" | "PRINT_DELIVERY" | "PRINT_PICKUP" | "DELIVERY";
+import type { Status, ReceiptMethod } from "@/types/process";
 
 type ProcessProps = {
-  step: Step;
+  step: Status;
+  receiptMethod?: ReceiptMethod;
   isCurrent: boolean;
   title: string;
   subComment?: ReactNode;
@@ -18,13 +18,12 @@ type ProcessProps = {
 };
 
 const ICON_BY_STEP: Record<
-  Step,
+  Status,
   React.ComponentType<{ className?: string }>
 > = {
   DEVELOP: FlimIcon,
   SCAN: ScanIcon,
-  PRINT_DELIVERY: PrinterIcon,
-  PRINT_PICKUP: PrinterIcon,
+  PRINT: PrinterIcon,
   DELIVERY: PackageIcon,
 };
 
@@ -38,6 +37,7 @@ function getLineVariant(index: number, currentIndex: number): LineVariant {
 
 export default function Process({
   step,
+  receiptMethod,
   isCurrent,
   title,
   subComment,
@@ -82,9 +82,15 @@ export default function Process({
     lineVariant === "CURRENT" &&
       "bg-gradient-to-b from-orange-500 to-neutral-700",
     lineVariant === "CURRENT" && step === "SCAN" && "h-39",
-    lineVariant === "CURRENT" && step === "PRINT_DELIVERY" && "h-58",
+    lineVariant === "CURRENT" &&
+      step === "PRINT" &&
+      receiptMethod === "DELIVERY" &&
+      "h-58",
     // 인화 단계이고 직접 수령인 경우
-    lineVariant === "CURRENT" && step === "PRINT_PICKUP" && "h-38",
+    lineVariant === "CURRENT" &&
+      step === "PRINT" &&
+      receiptMethod === "PICKUP" &&
+      "h-38",
   ]
     .filter(Boolean)
     .join(" ");
