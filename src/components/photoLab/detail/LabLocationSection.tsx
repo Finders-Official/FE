@@ -40,21 +40,23 @@ export default function LabLocationSection({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
+    let marker: { setMap: (map: unknown) => void } | null = null;
+
     const initMap = () => {
       const { kakao } = window;
-      if (!kakao?.maps) return;
+      if (!kakao?.maps || !mapContainerRef.current) return;
 
       const position = new kakao.maps.LatLng(
         location.latitude,
         location.longitude,
       );
 
-      const map = new kakao.maps.Map(mapContainerRef.current!, {
+      const map = new kakao.maps.Map(mapContainerRef.current, {
         center: position,
         level: 3,
       });
 
-      const marker = new kakao.maps.Marker({
+      marker = new kakao.maps.Marker({
         position: position,
       });
 
@@ -64,6 +66,12 @@ export default function LabLocationSection({
     if (window.kakao?.maps) {
       window.kakao.maps.load(initMap);
     }
+
+    return () => {
+      if (marker) {
+        marker.setMap(null);
+      }
+    };
   }, [location.latitude, location.longitude]);
 
   const handleCopyAddress = async () => {
