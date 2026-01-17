@@ -1,4 +1,4 @@
-import type { FilmCameraGuide } from "@/pages/filmCameraGuide/types";
+import type { FilmCameraGuide } from "@/types/filmCameraGuide";
 
 interface Props {
   content: FilmCameraGuide;

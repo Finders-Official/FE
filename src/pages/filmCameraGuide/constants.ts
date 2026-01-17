@@ -1,4 +1,4 @@
-import type { FilmCameraGuide } from "./types";
+import type { FilmCameraGuide } from "../../types/filmCameraGuide";
 
 export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
   {
