@@ -30,11 +30,11 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/film-camera-guide",
+        path: "/filmCameraGuide",
         Component: FilmCameraGuidePage,
       },
       {
-        path: `/film-camera-guide/:id`,
+        path: `/filmCameraGuide/:id`,
         Component: FilmCameraGuideDetailPage,
       },
       {
