@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { FILM_CAMERA_GUIDE_DATA } from "./constants";
-import { ChevronLeftIcon } from "@/assets/icon";
+import Header from "@/components/common/Header";
 
 const FilmCameraGuideDetailPage = () => {
   const { id } = useParams();
@@ -25,19 +25,13 @@ const FilmCameraGuideDetailPage = () => {
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-md bg-neutral-900 pb-20 text-neutral-100">
-      {/* 1. 헤더 (Navigation Bar) */}
-      <header className="sticky top-0 z-20 flex h-15.25 w-full items-center gap-5 bg-neutral-900 px-4 py-4.5">
-        <button
-          onClick={() => navigate(-1)}
-          className="-ml-1 flex items-center justify-center"
-          aria-label="뒤로가기"
-        >
-          <ChevronLeftIcon className="h-6 w-6 text-neutral-200" />
-        </button>
-        <h1 className="mx-auto truncate text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
-          {data.title}
-        </h1>
-      </header>
+      {/* 1. 헤더 (공용 컴포넌트 적용) */}
+      <Header
+        title={data.title}
+        showBack={true}
+        onBack={() => navigate(-1)}
+        className="sticky top-0 z-20 bg-neutral-900 px-4"
+      />
 
       {/* 2. 히어로 이미지 섹션 */}
       <section className="h-54.74 relative w-full">
