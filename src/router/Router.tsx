@@ -17,12 +17,19 @@ import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
 import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
 import { SocialPage } from "@/pages/mypage/edit-info/SocialPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
+import TestPage from "@/pages/TestPage";
+import PmMainPage from "@/pages/photoManage/PmMainPage";
 
 const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
       { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
+      {
+        path: "/test",
+        Component: TestPage,
+      },
       {
         path: "/auth/login",
         Component: LoginPage,
@@ -48,6 +55,10 @@ const router = createBrowserRouter([
         Component: PhotoDownloadPage,
       },
       {
+        path: "/photoManage/main",
+        Component: PmMainPage,
+      },
+      {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
@@ -59,6 +70,18 @@ const router = createBrowserRouter([
           {
             path: "/photoFeed",
             Component: PhotoFeedPage,
+          },
+          {
+            path: "/photolab",
+            Component: PhotoLabPage,
+          },
+          {
+            path: "/mypage",
+            Component: MyPage, // HeaderFooterLayout으로 이동 예정
+          },
+          {
+            path: "/mypage/edit-info",
+            Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
           },
         ],
       },

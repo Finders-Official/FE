@@ -1,3 +1,48 @@
+// 현상소 아이템
+export interface PhotoLabItem {
+  photoLabId: number;
+  name: string;
+  keywords: string[];
+  address: string;
+  distanceKm: number;
+  workCount: number;
+  avgWorkTimeMinutes: number | null;
+  imageUrls: string[];
+  isFavorite: boolean;
+}
+
+// 필터 태그
+export type FilterTag =
+  | "따뜻한 색감"
+  | "청량한"
+  | "빈티지한"
+  | "영화용 필름"
+  | "택배 접수";
+
+// 현상소 공지
+export interface LabNews {
+  id: number;
+  type: "공지" | "이벤트" | "할인";
+  labName: string;
+  content: string;
+}
+
+// 필터 상태 (바텀시트용)
+export interface FilterState {
+  date?: string; // "2026-1-xx" 형식
+  time?: string; // "오전 10:00" 형식
+  region?: string; // "서울"
+  subRegion?: string; // "동작구"
+}
+
+// 지역 정보
+export interface Region {
+  name: string;
+  count: number;
+  subRegions: string[];
+}
+
+// 기존 타입 (FindPhotoLabPage에서 사용)
 export type PhotoLab = {
   id: number;
   name: string;
