@@ -24,7 +24,6 @@ import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
 import ReservationPage from "@/pages/photoLab/ReservationPage";
 import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
-import TestPage from "@/pages/TestPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
@@ -38,10 +37,6 @@ const router = createBrowserRouter([
     Component: RootLayout,
     children: [
       { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
-      {
-        path: "/test",
-        Component: TestPage,
-      },
       {
         path: "/auth/login",
         Component: LoginPage,
