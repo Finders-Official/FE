@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowLeftIcon } from "@/assets/icon";
-import Icon from "./Icon";
+import { ChevronLeftIcon } from "@/assets/icon";
 
 type RightAction =
   | { type: "icon"; icon: ReactNode; onClick: () => void }
@@ -38,9 +37,7 @@ export default function Header({
         className="flex h-6 w-6 items-center justify-center"
         aria-label="뒤로 가기"
       >
-        <Icon className="text-neutral-200">
-          <ArrowLeftIcon />
-        </Icon>
+        <ChevronLeftIcon className="h-6 w-6 text-neutral-200" />
       </button>
     );
   };
@@ -62,31 +59,27 @@ export default function Header({
       );
     }
 
-    if (rightAction.type === "text") {
-      const isDisabled = rightAction.disabled || rightAction.loading;
-      return (
-        <button
-          type="button"
-          onClick={rightAction.onClick}
-          disabled={isDisabled}
-          className={`text-[0.9375rem] font-normal ${
-            isDisabled ? "text-neutral-600" : "text-orange-500"
-          }`}
-        >
-          {rightAction.loading ? "..." : rightAction.text}
-        </button>
-      );
-    }
-
-    return <div className="h-6 w-6" />;
+    const isDisabled = rightAction.disabled || rightAction.loading;
+    return (
+      <button
+        type="button"
+        onClick={rightAction.onClick}
+        disabled={isDisabled}
+        className={`text-[0.9375rem] font-normal ${
+          isDisabled ? "text-neutral-600" : "text-orange-500"
+        }`}
+      >
+        {rightAction.loading ? "..." : rightAction.text}
+      </button>
+    );
   };
 
   return (
     <header
-      className={`flex h-15.25 items-center gap-5 px-[1rem] py-4.5 ${className}`}
+      className={`relative flex h-15.25 items-center justify-between py-4.5 ${className}`}
     >
       {renderLeft()}
-      <h1 className="flex-1 text-center text-base font-semibold tracking-[-0.02em] text-neutral-100">
+      <h1 className="absolute left-1/2 -translate-x-1/2 text-base font-semibold tracking-[-0.02em] text-neutral-100">
         {title}
       </h1>
       {renderRight()}

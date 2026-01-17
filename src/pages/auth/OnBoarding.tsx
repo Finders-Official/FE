@@ -76,7 +76,7 @@ export function OnBoardingPage() {
             size="medium"
             className="focus:border-orange-500"
             value={phone}
-            onChange={(e) => handlePhoneChange(e)}
+            onChange={handlePhoneChange}
           />
           {/* 인증하기 버튼 누르고 발송되면 재발송으로 코멘트 바꾸기 */}
           <ActionButton

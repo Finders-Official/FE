@@ -1,6 +1,4 @@
-import React from "react";
-
-export type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+import type { IconComponent } from "./icon";
 
 export type TabItem = {
   to: string;

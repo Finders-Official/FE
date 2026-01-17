@@ -8,7 +8,7 @@ interface ToastItemProps {
 
 export const ToastItem = ({ message, icon }: ToastItemProps) => {
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-5 bg-neutral-875/70 flex min-h-[3.75rem] w-[20.3125rem] items-center gap-[1rem] rounded-[1.125rem] border border-neutral-800 px-[1.25rem] py-[1rem] shadow-lg duration-300">
+    <div className="animate-in fade-in slide-in-from-bottom-5 bg-neutral-875/70 flex min-h-[3.75rem] w-[20.3125rem] items-center gap-[1rem] rounded-[1.125rem] border border-neutral-800 px-[1.25rem] py-[1rem] shadow-lg backdrop-blur-3xl duration-300">
       {/* 아이콘 영역 */}
       {icon && (
         <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center text-neutral-400">

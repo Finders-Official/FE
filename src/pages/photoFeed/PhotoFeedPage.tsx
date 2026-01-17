@@ -2,13 +2,24 @@ import { useState } from "react";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
 import { photoMock } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
-import { FloatingIcon } from "@/assets/icon";
+import { FloatingIcon, SearchIcon } from "@/assets/icon";
+import { Header } from "@/components/common";
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
     <main className="mx-auto max-w-6xl py-6">
+      <Header
+        title="사진수다"
+        rightAction={{
+          type: "icon",
+          icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
+          onClick: () => {
+            setIsCreateModalOpen(true);
+          },
+        }}
+      />
       {/* Masonry 레이아웃 */}
       <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
         {photoMock.map((photo) => (

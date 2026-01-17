@@ -1,6 +1,7 @@
+import type { IconComponent } from "@/types/icon";
 import { useNavigate } from "react-router";
 
-type CTA_ButtonColor = "orange" | "black" | "transparent";
+type CTA_ButtonColor = "orange" | "black" | "transparent" | "gray";
 type CTA_ButtonSize =
   | "xsmall"
   | "small"
@@ -16,6 +17,7 @@ interface CTA_ButtonProps {
   color: CTA_ButtonColor;
   onClick?: () => void;
   disabled?: boolean;
+  icon?: IconComponent;
 }
 
 // link 이동 시 endpoint 설정 ex link="/home"
@@ -30,6 +32,7 @@ export const CTA_Button = ({
   size,
   onClick,
   disabled = false,
+  icon: Icon,
 }: CTA_ButtonProps) => {
   const router = useNavigate();
   const baseClass =
@@ -47,6 +50,7 @@ export const CTA_Button = ({
     orange: "bg-orange-500 border-orange-200 ",
     black: "bg-neutral-900 border-neutral-500 ",
     transparent: "bg-transparent border-neutral-500",
+    gray: "bg-neutral-850 border-neutral-850",
   };
 
   const handleClick = () => {
@@ -60,10 +64,11 @@ export const CTA_Button = ({
       type="button"
       disabled={disabled}
       aria-disabled={disabled}
-      className={`${baseClass} ${sizeClass[size]} ${colorClass[color]}`}
+      className={`${baseClass} ${sizeClass[size]} ${colorClass[color]} flex gap-3`}
       onClick={handleClick}
     >
-      {text}
+      {Icon ? <Icon className="h-4 w-4" /> : null}
+      <p>{text}</p>
     </button>
   );
 };
