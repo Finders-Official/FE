@@ -6,12 +6,16 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import { MyPage } from "@/pages/mypage/MyPage";
-import { EditInfoPage } from "@/pages/mypage/EditInfoPage";
-import { LikedPostPage } from "@/pages/mypage/Liked-PostPage";
-import { Liked_PhotoLabPage } from "@/pages/mypage/Liked-PhotoLabPage";
+import { EditInfoPage } from "@/pages/mypage/edit-info/EditInfoPage";
+import { LikedPostPage } from "@/pages/mypage/LikedPostPage";
+import { LikedPhotoLabPage } from "@/pages/mypage/LikedPhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+import MyPageLayout from "@/layouts/MyPageLayout";
+import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
+import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
+import { SocialPage } from "@/pages/mypage/edit-info/SocialPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import TestPage from "@/pages/TestPage";
@@ -54,19 +58,6 @@ const router = createBrowserRouter([
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
-      // HeaderLayout.tsx로 이동 예정
-      {
-        path: "/mypage/liked-posts",
-        Component: LikedPostPage,
-      },
-      {
-        path: "/mypage/liked-photolabs",
-        Component: Liked_PhotoLabPage,
-      },
-      {
-        path: "/mypage/my-posts",
-        Component: MyPostPage,
-      },
 
       // FooterLayout 적용 필요한 페이지들
       {
@@ -94,11 +85,52 @@ const router = createBrowserRouter([
           },
         ],
       },
+      //마이페이지 전용 레이아웃
       {
-        // HeaderLayout만 사용하는 페이지
-      },
-      {
-        //HeaderFooteryLayout 사용하는 페이지
+        path: "/mypage",
+        element: <MyPageLayout />,
+        children: [
+          {
+            index: true,
+            Component: MyPage,
+            handle: { isTab: true, showBack: false },
+          },
+          {
+            path: "edit-info",
+            Component: EditInfoPage,
+            handle: { title: "내정보 수정", isTab: true },
+          },
+          {
+            path: "edit-info/nickname",
+            Component: NickNameEditPage,
+            handle: { title: "닉네임 변경" },
+          },
+          {
+            path: "edit-info/phone",
+            Component: PhoneEditPage,
+            handle: { title: "전화번호 변경" },
+          },
+          {
+            path: "edit-info/social",
+            Component: SocialPage,
+            handle: { title: "연동된 소셜계정" },
+          },
+          {
+            path: "liked-posts",
+            Component: LikedPostPage,
+            handle: { title: "관심 게시글" },
+          },
+          {
+            path: "liked-photolabs",
+            Component: LikedPhotoLabPage,
+            handle: { title: "관심 현상소" },
+          },
+          {
+            path: "my-posts",
+            Component: MyPostPage,
+            handle: { title: "내가 쓴 글" },
+          },
+        ],
       },
     ],
   },
