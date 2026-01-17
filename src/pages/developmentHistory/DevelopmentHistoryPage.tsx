@@ -24,11 +24,11 @@ const DevelopmentHistoryPage = () => {
       {/* 1. 데이터가 없을 때 (PM-000-1) */}
       {!hasData ? (
         // 레이아웃 중앙 정렬 (탭바 높이 등을 고려해 시각적 중앙 배치)
-        <div className="flex h-[calc(100vh-100px)] w-full flex-col items-center justify-center">
+        <div className="flex h-[calc(100vh-6.25rem)] w-full flex-col items-center justify-center">
           {/* 컨텐츠 래퍼 */}
           <div className="flex flex-col items-center gap-5">
             {/* 텍스트 */}
-            <h2 className="text-center text-[19px] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
+            <h2 className="text-center text-[1.1875rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
               아직 맡기신 현상 작업이 없어요
             </h2>
 
@@ -41,7 +41,7 @@ const DevelopmentHistoryPage = () => {
       ) : (
         /* 2. 데이터가 있을 때 (PM-000-2) */
         <div className="px-5 pt-6 pb-24">
-          <h2 className="mb-4 text-[20px] font-bold text-neutral-100">
+          <h2 className="mb-4 text-[1.25rem] font-bold text-neutral-100">
             지난 작업
           </h2>
 
@@ -52,7 +52,7 @@ const DevelopmentHistoryPage = () => {
                 className="flex flex-col gap-4.5 rounded-2xl border border-neutral-800 bg-neutral-900 px-5 py-6"
               >
                 {/* 날짜 · 상태 */}
-                <div className="flex justify-start gap-1 text-[13px] font-normal tracking-[-0.02em] text-neutral-200">
+                <div className="flex justify-start gap-1 text-[0.8125rem] font-normal tracking-[-0.02em] text-neutral-200">
                   <span>{item.date}</span>
                   <span>·</span>
                   <span>{item.status}</span>
@@ -60,7 +60,7 @@ const DevelopmentHistoryPage = () => {
 
                 {/* 업체 정보 */}
                 <div className="flex items-center gap-5">
-                  <div className="h-15 w-15 shrink-0 overflow-hidden rounded-[10px] bg-[#333]">
+                  <div className="h-15 w-15 shrink-0 overflow-hidden rounded-[0.625rem] bg-[#333]">
                     <img
                       src={item.thumbnailUrl}
                       alt={item.shopName}
@@ -68,10 +68,10 @@ const DevelopmentHistoryPage = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-0.5">
-                    <h3 className="text-[16px] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200">
+                    <h3 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200">
                       {item.shopName}
                     </h3>
-                    <p className="text-[14px] leading-[155%] font-normal tracking-[-0.02em] text-neutral-600">
+                    <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-600">
                       {item.shopAddress}
                     </p>
                   </div>
@@ -81,20 +81,20 @@ const DevelopmentHistoryPage = () => {
                 <div className="bg-neutral-875 flex flex-col gap-3 rounded-2xl p-5">
                   {/* 맡기신 작업 */}
                   <div className="flex items-start justify-between gap-5">
-                    <span className="shrink-0 text-[15px] font-semibold tracking-[-0.02em] text-neutral-200">
+                    <span className="shrink-0 text-[0.9375rem] font-semibold tracking-[-0.02em] text-neutral-200">
                       맡기신 작업
                     </span>
-                    <span className="text-right text-[15px] leading-[155%] font-normal tracking-[-0.02em] break-keep text-neutral-400">
+                    <span className="text-right text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] break-keep text-neutral-400">
                       {item.tags}
                     </span>
                   </div>
 
                   {/* 총액 */}
                   <div className="flex items-start justify-between gap-5">
-                    <span className="shrink-0 text-[15px] font-semibold tracking-[-0.02em] text-neutral-200">
+                    <span className="shrink-0 text-[0.9375rem] font-semibold tracking-[-0.02em] text-neutral-200">
                       총액
                     </span>
-                    <span className="text-right text-[15px] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400">
+                    <span className="text-right text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400">
                       {item.price.toLocaleString()}원
                     </span>
                   </div>
@@ -102,10 +102,10 @@ const DevelopmentHistoryPage = () => {
                   {/* 배송지 (조건부 렌더링) */}
                   {item.status === "배송" && item.deliveryAddress && (
                     <div className="flex items-start justify-between gap-5">
-                      <span className="shrink-0 text-[15px] font-semibold tracking-[-0.02em] text-neutral-200">
+                      <span className="shrink-0 text-[0.9375rem] font-semibold tracking-[-0.02em] text-neutral-200">
                         배송지
                       </span>
-                      <span className="text-right text-[15px] leading-[155%] font-normal tracking-[-0.02em] break-keep text-neutral-400">
+                      <span className="text-right text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] break-keep text-neutral-400">
                         {item.deliveryAddress}
                       </span>
                     </div>
@@ -119,14 +119,14 @@ const DevelopmentHistoryPage = () => {
                     onClick={() => handleOpenViewer(item.resultImageUrls)}
                     className="mb-3 flex w-full items-center justify-between"
                   >
-                    <span className="text-[14px] font-medium text-[#F0F0F0]">
+                    <span className="text-[0.875rem] font-medium text-[#F0F0F0]">
                       스캔 사진 결과 보기
                     </span>
                     <ChevronLeftIcon className="h-4 w-4 rotate-180 text-[#888]" />
                   </button>
 
                   {/* 저장 만료일 - 데이터가 없다면 하드코딩 혹은 제외 */}
-                  <div className="text-[14px] font-normal tracking-[-0.02em] text-neutral-600">
+                  <div className="text-[0.875rem] font-normal tracking-[-0.02em] text-neutral-600">
                     26/1/10 저장 만료
                   </div>
 
@@ -135,7 +135,7 @@ const DevelopmentHistoryPage = () => {
                     {item.resultImageUrls.map((url, idx) => (
                       <div
                         key={idx}
-                        className="h-19 w-24 shrink-0 overflow-hidden rounded-[10px] bg-[#333]"
+                        className="h-19 w-24 shrink-0 overflow-hidden rounded-[0.625rem] bg-[#333]"
                       >
                         <img
                           src={url}

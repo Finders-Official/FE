@@ -78,11 +78,11 @@ const ScanResultViewer = ({
   };
 
   const handleDownload = () => {
-    console.log(`Downloading image: ${currentImage}`);
+    console.log(`이미지 다운로드: ${currentImage}`);
   };
 
   const handleDownloadAll = () => {
-    console.log("Downloading all images...");
+    console.log("모든 이미지 다운로드");
     setIsMenuOpen(false);
   };
 
@@ -112,7 +112,7 @@ const ScanResultViewer = ({
             >
               <button
                 onClick={handleDownloadAll}
-                className="hover:text-neutral-0 w-full text-center text-[15px] font-normal tracking-[-0.02em] text-neutral-100"
+                className="hover:text-neutral-0 w-full text-center text-[0.9375rem] font-normal tracking-[-0.02em] text-neutral-100"
               >
                 사진 전체 다운로드
               </button>
@@ -156,7 +156,7 @@ const ScanResultViewer = ({
             <button
               key={img}
               onClick={() => setCurrentIndex(idx)}
-              className={`relative h-15 w-15 shrink-0 overflow-hidden rounded-[10px] border transition-all ${
+              className={`relative h-15 w-15 shrink-0 overflow-hidden rounded-[10] border transition-all ${
                 currentIndex === idx
                   ? "border-neutral-100 opacity-100"
                   : "border-transparent opacity-50 hover:opacity-80"
