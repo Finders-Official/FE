@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CloseIcon } from "@/assets/icon";
 import { EllipsisVerticalIcon } from "@/assets/icon";
 import { DownloadIcon } from "@/assets/icon";
@@ -19,11 +19,33 @@ const ScanResultViewer = ({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [touchStart, setTouchStart] = useState<number>(0);
-  const [touchEnd, setTouchEnd] = useState<number>(0);
+  // 렌더링 유발 방지를 위해 useRef 사용
+  const touchStart = useRef<number>(0);
+  const touchEnd = useRef<number>(0);
   const minSwipeDistance = 50;
 
-  if (!isOpen) return null;
+  // 메뉴 외부 클릭 감지를 위한 Ref
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  // [Defensive] 이미지가 없으면 렌더링하지 않음
+  if (!isOpen || !images || images.length === 0) return null;
 
   const currentImage = images[currentIndex];
 
@@ -36,17 +58,18 @@ const ScanResultViewer = ({
   };
 
   const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(0);
-    setTouchStart(e.targetTouches[0].clientX);
+    touchEnd.current = 0; // 초기화
+    touchStart.current = e.targetTouches[0].clientX;
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    touchEnd.current = e.targetTouches[0].clientX;
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
+    if (!touchStart.current || !touchEnd.current) return;
+
+    const distance = touchStart.current - touchEnd.current;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
@@ -83,7 +106,10 @@ const ScanResultViewer = ({
           </button>
 
           {isMenuOpen && (
-            <div className="bg-neutral-875/90 absolute top-full right-0 mt-2 w-36.25 rounded-2xl border border-neutral-800 p-4 backdrop-blur-md transition-all">
+            <div
+              ref={menuRef}
+              className="bg-neutral-875/90 absolute top-full right-0 mt-2 w-36.25 rounded-2xl border border-neutral-800 p-4 backdrop-blur-md transition-all"
+            >
               <button
                 onClick={handleDownloadAll}
                 className="hover:text-neutral-0 w-full text-center text-[15px] font-normal tracking-[-0.02em] text-neutral-100"
@@ -128,7 +154,7 @@ const ScanResultViewer = ({
         <div className="scrollbar-hide flex gap-2.75 overflow-x-auto px-5">
           {images.map((img, idx) => (
             <button
-              key={idx}
+              key={img}
               onClick={() => setCurrentIndex(idx)}
               className={`relative h-15 w-15 shrink-0 overflow-hidden rounded-[10px] border transition-all ${
                 currentIndex === idx
