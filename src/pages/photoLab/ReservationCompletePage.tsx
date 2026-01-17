@@ -1,11 +1,17 @@
 import { useNavigate, useLocation, useParams } from "react-router";
-import { Header, ConfirmationIcon } from "@/components/common";
+import { Header, ConfirmationIcon, TextArea } from "@/components/common";
 import {
   XMarkIcon,
   CalendarIcon,
   ClockIcon,
   BriefcaseIcon,
+  ChatBubbleIcon,
+  PencilLineIcon,
 } from "@/assets/icon";
+
+const MOCK_MEMO = "안녕하세요. 처음으로 현상 맡깁니다.\n친절하게 안내해주세요!";
+const DEFAULT_LAB_MESSAGE =
+  "예약이 확정되었습니다. 당일취소 불가능하며 1시간 전 연락주시면 일정 변경 가능합니다. 감사합니다:)";
 
 interface LocationState {
   labName?: string;
@@ -99,6 +105,38 @@ export default function ReservationCompletePage() {
               <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
                 현상 • 스캔 • 2롤
               </span>
+            </div>
+
+            {/* 요청사항 - 없으면 안보임 */}
+            {MOCK_MEMO && (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-1">
+                  <div className="flex h-6 w-6 items-center justify-center">
+                    <ChatBubbleIcon className="h-3.5 w-3.5 text-neutral-200" />
+                  </div>
+                  <span className="text-base leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                    요청사항
+                  </span>
+                </div>
+                <TextArea value={MOCK_MEMO} onChange={() => {}} disabled />
+              </div>
+            )}
+
+            {/* 현상소에서 드리는 글 - 없으면 안보임 */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-1">
+                <div className="flex h-6 w-6 items-center justify-center">
+                  <PencilLineIcon className="h-3.5 w-3.5 text-neutral-200" />
+                </div>
+                <span className="text-base leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                  {labName}에서 드리는 글
+                </span>
+              </div>
+              <TextArea
+                value={DEFAULT_LAB_MESSAGE}
+                onChange={() => {}}
+                disabled
+              />
             </div>
           </div>
         </section>
