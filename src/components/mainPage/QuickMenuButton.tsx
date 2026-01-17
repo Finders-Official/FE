@@ -23,7 +23,7 @@ export default function QuickActionGrid() {
         className="flex flex-col items-center justify-center gap-2 bg-[#1C1C1E]"
       >
         <div className="flex size-[32px] items-center justify-center rounded-full bg-orange-500">
-          <MainSparkle className="size-5 fill-orange-500" strokeWidth={0} />
+          <MainSparkle className="size-12 fill-white" strokeWidth={0} />
         </div>
         <span className="text-[16px] font-semibold text-neutral-100">
           사진 복원하기
