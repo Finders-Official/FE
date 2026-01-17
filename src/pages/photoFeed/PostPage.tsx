@@ -140,7 +140,7 @@ export default function PostPage() {
           >
             <ToastItem
               message="게시글이 성공적으로 업로드 되었어요 :)"
-              icon={<CheckCircleIcon />}
+              icon={<CheckCircleIcon className="h-5 w-5" />}
             />
           </div>
         </div>
@@ -153,29 +153,35 @@ export default function PostPage() {
           onClose={() => setCommentVisible(false)}
           title="댓글"
         >
-          <div className="mb-4 flex flex-col gap-5">
-            {commentMock.map(({ id, user, content, createdAt }) => (
-              <Profile
-                key={id}
-                type="comment"
-                userName={user?.username}
-                avatarUrl={user?.avatarUrl}
-                comment={content}
-                time={timeAgo(createdAt)}
-                isOwner={mock.user?.id === user?.id}
+          <div className="flex h-full flex-col gap-1">
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="flex flex-col gap-5">
+                {commentMock.map(({ id, user, content, createdAt }) => (
+                  <Profile
+                    key={id}
+                    type="comment"
+                    userName={user?.username}
+                    avatarUrl={user?.avatarUrl}
+                    comment={content}
+                    time={timeAgo(createdAt)}
+                    isOwner={mock.user?.id === user?.id}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="bg-neutral-875 h-10 shrink-0">
+              <CommentInput
+                value={comment}
+                onChange={setComment}
+                onSubmit={() => {
+                  // API 호출
+                  // 성공하면 초기화
+                  setComment("");
+                }}
+                placeholder="이 현상에 대한 이야기를 남겨보세요!"
               />
-            ))}
+            </div>
           </div>
-          <CommentInput
-            value={comment}
-            onChange={setComment}
-            onSubmit={() => {
-              // API 호출
-              // 성공하면 초기화
-              setComment("");
-            }}
-            placeholder="이 현상에 대한 이야기를 남겨보세요!"
-          />
         </BottomSheet>
       )}
     </div>

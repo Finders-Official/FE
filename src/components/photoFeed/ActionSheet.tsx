@@ -41,7 +41,7 @@ export default function ActionSheet({
       />
 
       {/* sheet */}
-      <div className="absolute inset-x-0 bottom-0 gap-4">
+      <div className="absolute inset-x-0 bottom-0 gap-4 px-4">
         <div className="bg-neutral-875 overflow-hidden rounded-3xl border border-neutral-800">
           <div className="divide-y divide-white/10">
             {actions.map((a) => (
