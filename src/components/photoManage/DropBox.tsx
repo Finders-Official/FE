@@ -56,7 +56,7 @@ export function DropBox({
       {/* 펼쳐졌을 때 옵션 리스트 */}
       {isOpen && (
         <div className="border-neutral-850 mt-2 overflow-hidden rounded-[0.625rem] border">
-          <ul className="divide-neutral-850 divide-y">
+          <ul>
             {category.options.map((opt) => {
               const selected = value?.value === opt.value;
 
