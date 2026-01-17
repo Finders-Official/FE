@@ -1,19 +1,9 @@
 import { PlusIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { AddressCard } from "@/components/photoManage/AddressCard";
+import { mockAddresses } from "@/types/photomanage/address";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-
-type Address = {
-  id: number;
-  address: string;
-  // 필요한 필드가 있으면 추가
-};
-
-const mockAddresses: Address[] = [
-  { id: 1, address: "동작구 상도동 229-80" },
-  { id: 2, address: "동작구 상도동 299-80" },
-];
 
 export function SelectAddressPage() {
   const navigate = useNavigate();
@@ -27,7 +17,6 @@ export function SelectAddressPage() {
   );
 
   const handleComplete = () => {
-    if (selectedAddressId === null) return;
     // TODO: 선택한 주소 저장(zustand 등)하고 다음으로 이동
     navigate("./detail");
   };
@@ -49,6 +38,7 @@ export function SelectAddressPage() {
             key={addr.id}
             isSelected={selectedAddressId === addr.id}
             onClick={() => setSelectedAddressId(addr.id)}
+            address={addr}
           />
         ))}
       </main>

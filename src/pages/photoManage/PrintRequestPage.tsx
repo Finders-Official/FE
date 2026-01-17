@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { CTA_Button } from "@/components/common";
 import { photoMock } from "@/types/photo";
-import { PhotoQuantityStepper } from "../../components/photoManage/PhotoQuantityStepper";
 import { useNavigate } from "react-router";
+import { PhotoQuantityStepper } from "@/components/photoManage/PhotoQuantityStepper";
 
 type QtyMap = Record<number, number>;
 

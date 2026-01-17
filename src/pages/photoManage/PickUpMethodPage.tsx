@@ -1,7 +1,7 @@
 import { ShoeIcon, TruckIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { BigButton } from "@/components/photoManage/BigButton";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 type PickUpMethod = "pickup" | "delivery";
@@ -12,10 +12,7 @@ export function PickUpMethodPage() {
     null,
   );
 
-  const isNextEnabled = useMemo(
-    () => selectedMethod !== null,
-    [selectedMethod],
-  );
+  const isNextEnabled = selectedMethod;
 
   const handleNext = () => {
     if (!selectedMethod) return;

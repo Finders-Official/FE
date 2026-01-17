@@ -1,11 +1,17 @@
 import { MapPinIcon } from "@/assets/icon";
+import type { Address } from "@/types/photomanage/address";
 
 interface AddressCardProps {
   isSelected: boolean;
   onClick: () => void;
+  address: Address;
 }
 
-export function AddressCard({ isSelected, onClick }: AddressCardProps) {
+export function AddressCard({
+  isSelected,
+  onClick,
+  address,
+}: AddressCardProps) {
   return (
     <button
       type="button"
@@ -20,7 +26,7 @@ export function AddressCard({ isSelected, onClick }: AddressCardProps) {
         <MapPinIcon className="h-4 w-4" />
         <p>우리집</p>
       </section>
-      <p>서울특별시 동작구 흑석동 123-123</p>
+      <p>{address.address}</p>
       <p>123호</p>
     </button>
   );

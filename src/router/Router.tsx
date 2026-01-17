@@ -18,10 +18,10 @@ import TestPage from "@/pages/TestPage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
-import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethoPage";
 import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
 import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
 import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
+import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
 
 const router = createBrowserRouter([
   {
