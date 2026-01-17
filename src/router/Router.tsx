@@ -78,14 +78,6 @@ const router = createBrowserRouter([
             Component: PhotoLabPage,
           },
           {
-            path: "/mypage",
-            Component: MyPage, // HeaderFooterLayout으로 이동 예정
-          },
-          {
-            path: "/mypage/edit-info",
-            Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
-          },
-          {
             path: "/photoManage/main",
             Component: PmMainPage,
           },
