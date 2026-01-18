@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { AccountInfoCard } from "@/components/photoManage/AccountInfoCard";
 import { DepositorInput } from "@/components/photoManage/DepositorInput";
 import { BankSelectDropdown } from "@/components/photoManage/BankSelectDropdown";
+import { PaymentProofUpload } from "@/components/photoManage/PaymentProofUpload";
 import { ToastItem, ToastList } from "@/components/common/ToastMessage";
+import { CTA_Button } from "@/components/common";
 import { CopyFillIcon } from "@/assets/icon";
 import type {
   TransactionRouteState,
@@ -25,12 +27,25 @@ const MOCK_STATE: TransactionRouteState = {
 
 export default function TransactionPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const routeState = (location.state as TransactionRouteState) || MOCK_STATE;
   const { totalPrice, labAccountInfo } = routeState;
 
   const [showToast, setShowToast] = useState(false);
   const [depositorName, setDepositorName] = useState("");
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
+  const [proofImage, setProofImage] = useState<File | null>(null);
+  const [proofPreview, setProofPreview] = useState<string | null>(null);
+
+  // 폼 유효성 검사
+  const isFormValid =
+    depositorName.trim() !== "" && selectedBank !== null && proofImage !== null;
+
+  const handleSubmit = () => {
+    if (!isFormValid) return;
+    // 나중에 여기서 API 호출
+    navigate("/photoManage/main");
+  };
 
   const handleCopyAccount = async () => {
     try {
@@ -65,6 +80,26 @@ export default function TransactionPage() {
       <div className="mt-4">
         <BankSelectDropdown value={selectedBank} onChange={setSelectedBank} />
       </div>
+
+      {/* 입금 증빙 업로드 */}
+      <PaymentProofUpload
+        preview={proofPreview}
+        onFileSelect={(file, preview) => {
+          setProofImage(file);
+          setProofPreview(preview);
+        }}
+      />
+
+      {/* CTA 버튼 */}
+      <footer className="border-neutral-850 mt-auto border-t py-5">
+        <CTA_Button
+          text="인화 신청 완료"
+          size="xlarge"
+          color={isFormValid ? "orange" : "black"}
+          disabled={!isFormValid}
+          onClick={handleSubmit}
+        />
+      </footer>
 
       {/* Toast, http에선 IOS 클립보드 복사 안됨 */}
       {showToast && (
