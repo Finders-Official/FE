@@ -63,6 +63,7 @@ export type Process = {
   specStep?: SpecStep;
   receiptMethod?: ReceiptMethod;
   print?: PrintProgressResponse;
+  delivery?: DeliveryProgressResponse;
   deliveryInfo?: DeliveryInfo;
 };
 
@@ -80,7 +81,12 @@ export const printMock: Process = {
 export const deliveryMock: Process = {
   status: "DELIVERY",
   specStep: "BEFORE",
-  receiptMethod: "PICKUP",
+  receiptMethod: "DELIVERY",
+  deliveryInfo: {
+    recipientName: "김필름",
+    recipientPhone: "010-1234-5678",
+    address: "서울 동작구 흑석로 123-123 (123호)",
+  },
 };
 
 // PM-070-1: 현상소 확인 중
@@ -121,6 +127,44 @@ export const printConfirmedMock: Process = {
   },
 };
 
+// 배송중
+export const deliveryShippedMock: Process = {
+  status: "DELIVERY",
+  receiptMethod: "DELIVERY",
+  delivery: {
+    deliveryId: 1,
+    status: "SHIPPED",
+    carrier: "우체국 택배",
+    trackingNumber: "123412341234",
+    shippedAt: "2026-01-17T10:00:00+09:00",
+    deliveredAt: null,
+  },
+  deliveryInfo: {
+    recipientName: "파인더스 상도점",
+    recipientPhone: "010-1234-5678",
+    address: "서울 동작구 흑석로 123-123 (123호)",
+  },
+};
+
+// 배송 완료
+export const deliveryCompletedMock: Process = {
+  status: "DELIVERY",
+  receiptMethod: "DELIVERY",
+  delivery: {
+    deliveryId: 1,
+    status: "DELIVERED",
+    carrier: "우체국 택배",
+    trackingNumber: "123412341234",
+    shippedAt: "2026-01-17T10:00:00+09:00",
+    deliveredAt: "2026-01-19T14:30:00+09:00",
+  },
+  deliveryInfo: {
+    recipientName: "파인더스 상도점",
+    recipientPhone: "010-1234-5678",
+    address: "서울 동작구 흑석로 123-123 (123호)",
+  },
+};
+
 export const mocks = {
   develop: developMock,
   scan: scanMock,
@@ -128,4 +172,6 @@ export const mocks = {
   delivery: deliveryMock,
   printPending: printPendingMock,
   printConfirmed: printConfirmedMock,
+  deliveryShipped: deliveryShippedMock,
+  deliveryCompleted: deliveryCompletedMock,
 } as const;

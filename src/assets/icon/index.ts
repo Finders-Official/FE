@@ -11,6 +11,7 @@ export { default as ChatBubbleIcon } from "./chat-bubble.svg?react";
 export { default as ChatIcon } from "./tab-chat-bubble.svg?react";
 export { default as ChatSquareIcon } from "./chat-square.svg?react";
 export { default as CheckIcon } from "./check.svg?react";
+export { default as CheckEmptyIcon } from "./check-empty.svg?react";
 export { default as ChevronLeftIcon } from "./chevron-left.svg?react";
 export { default as ClockIcon } from "./clock.svg?react";
 export { default as CloseIcon } from "./close.svg?react";
