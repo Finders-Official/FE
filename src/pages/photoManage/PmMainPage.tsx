@@ -7,15 +7,18 @@ import {
   DeliveryPicIcon,
   MenuIcon,
   DownloadIcon,
+  PencilLineIcon,
+  ClockIcon,
 } from "@/assets/icon";
 import Banner from "@/components/photoManage/Banner";
 import { Header } from "@/components/common";
 import { ActionButton } from "@/components/photoManage/ActionButton";
+import { RecipientInfoCard } from "@/components/photoManage/RecipientInfoCard";
 import { useNavigate } from "react-router";
 import { DialogBox } from "@/components/common/DialogBox";
 import { useState } from "react";
 import { mocks } from "@/types/process";
-import type { Status, ReceiptMethod } from "@/types/process";
+import type { Status, ReceiptMethod, PrintOrderStatus } from "@/types/process";
 
 type StepConfig = {
   key: string;
@@ -42,9 +45,37 @@ export default function PmMainPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogStep, setDialogStep] = useState(1);
 
-  const mock = mocks.print; // mocks.develop, mocks.scan, mocks.print, mocks.delivery
+  // mocks.develop, mocks.scan, mocks.print, mocks.delivery, mocks.printPending, mocks.printConfirmed
+  const mock = mocks.printConfirmed;
   const status = mock.status as Status;
   const currentIndex = STATUS_INDEX_MAP[status];
+
+  // 예상 완료 시간 포맷
+  const formatEstimatedTime = (isoDate: string | null): string => {
+    if (!isoDate) return "현재 확인 중";
+    const date = new Date(isoDate);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+    const period = hour >= 12 ? "오후" : "오전";
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    return `${month}월 ${day}일 ${period} ${displayHour}시`;
+  };
+
+  const getPrintBannerContent = (printStatus?: PrintOrderStatus) => {
+    if (!printStatus || printStatus === "PENDING") {
+      return {
+        icon: <PrintPicIcon />,
+        title: "현상소에서 인화신청을 확인 중이에요",
+        content: "인화가 확인되면 완료 시간을 알 수 있어요!",
+      };
+    }
+    return {
+      icon: <PrintPicIcon />,
+      title: "인화 작업이 진행 중이에요",
+      content: "배송이 시작되면 알려드릴게요!",
+    };
+  };
 
   const bannerContent = {
     DEVELOP: {
@@ -57,11 +88,6 @@ export default function PmMainPage() {
       title: "현상된 필름이 스캔 완료되었어요",
       content: "인화 신청과 사진 다운로드를 해주세요!",
     },
-    PRINT: {
-      icon: <PrintPicIcon />,
-      title: "현상소에서 인화신청을 확인 중이에요",
-      content: "인화가 확인되면 완료 시간을 알 수 있어요",
-    },
     DELIVERY: {
       icon: <DeliveryPicIcon />,
       title: "사진을 배송하고 있어요",
@@ -69,7 +95,11 @@ export default function PmMainPage() {
     },
   } as const;
 
-  const currentBanner = bannerContent[status];
+  // PRINT 상태는 인화 주문 상태에 따라 동적으로
+  const currentBanner =
+    status === "PRINT"
+      ? getPrintBannerContent(mock.print?.status)
+      : bannerContent[status as keyof typeof bannerContent];
 
   const steps: StepConfig[] = [
     {
@@ -122,14 +152,33 @@ export default function PmMainPage() {
       title: "사진 인화",
       subComment: (
         <div>
-          <p className="mb-[0.125rem] text-[0.8125rem] text-[#EC602D]">
-            예상 작업 완료 시간: 현재 확인 중
+          <p className="mb-[0.125rem] flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+            <ClockIcon className="h-3 w-3" />
+            예상 작업 완료 시간:{" "}
+            {formatEstimatedTime(mock.print?.estimatedAt ?? null)}
           </p>
           <hr className="mb-[0.375rem] border-orange-500/30" />
         </div>
       ),
-      content: <p>배송지 정보</p>,
-      buttons: <p>Action 버튼 컴포넌트들</p>,
+      content: mock.deliveryInfo ? (
+        <RecipientInfoCard
+          items={[
+            { label: "배송자명", value: mock.deliveryInfo.recipientName },
+            { label: "연락처", value: mock.deliveryInfo.recipientPhone },
+            { label: "주소", value: mock.deliveryInfo.address },
+          ]}
+        />
+      ) : (
+        <p>수령 방법: 직접 수령</p>
+      ),
+      buttons: (
+        <ActionButton
+          leftIcon={<PencilLineIcon className="h-4 w-4" />}
+          message="인화하는 동안 사진 자랑하러 가기"
+          showNext={true}
+          onClick={() => navigate("/photoFeed")}
+        />
+      ),
       index: 3,
     },
     {
