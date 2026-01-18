@@ -163,18 +163,18 @@ export default function BottomSheet({
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
-        <div className="bg-neutral-875 mx-auto flex h-full w-full max-w-[32rem] flex-col rounded-t-4xl shadow-[0_-12px_40px_rgba(0,0,0,0.4)]">
+        <div className="bg-neutral-875 mx-auto flex h-full w-full max-w-[32rem] flex-col rounded-t-4xl shadow-[0_-0.75rem_2.5rem_rgba(0,0,0,0.4)]">
           {/* Handle + Header */}
           <div
-            className="flex shrink-0 cursor-grab touch-none flex-col items-center gap-3 px-4 py-[10px] select-none"
+            className="flex shrink-0 cursor-grab touch-none flex-col items-center gap-3 px-4 py-[0.625rem] select-none"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
           >
-            <div className="mx-auto h-[3px] w-[41px] rounded-full bg-neutral-500" />
+            <div className="mx-auto h-[0.1875rem] w-[2.5625rem] rounded-full bg-neutral-500" />
             {title && (
-              <h2 className="text-[16px] font-bold text-neutral-200">
+              <h2 className="text-[1rem] font-bold text-neutral-200">
                 {title}
               </h2>
             )}
