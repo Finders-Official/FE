@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "react-router";
 import { AccountInfoCard } from "@/components/photoManage/AccountInfoCard";
+import { DepositorInput } from "@/components/photoManage/DepositorInput";
 import { ToastItem, ToastList } from "@/components/common/ToastMessage";
 import { CopyFillIcon } from "@/assets/icon";
 import type { TransactionRouteState } from "@/types/photomanage/transaction";
@@ -24,6 +25,7 @@ export default function TransactionPage() {
   const { totalPrice, labAccountInfo } = routeState;
 
   const [showToast, setShowToast] = useState(false);
+  const [depositorName, setDepositorName] = useState("");
 
   const handleCopyAccount = async () => {
     try {
@@ -50,6 +52,9 @@ export default function TransactionPage() {
           />
         </div>
       </section>
+
+      {/* 입금자 입력 */}
+      <DepositorInput value={depositorName} onChange={setDepositorName} />
 
       {/* Toast, http에선 IOS 클립보드 복사 안됨 */}
       {showToast && (
