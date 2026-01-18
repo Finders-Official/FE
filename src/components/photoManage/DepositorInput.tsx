@@ -14,7 +14,7 @@ export function DepositorInput({ value, onChange }: DepositorInputProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="입금자명을 입력해주세요"
-        className="border-neutral-850 w-full rounded-[0.625rem] border bg-transparent px-4 py-[0.875rem] text-[0.9375rem] leading-[1.55] tracking-[-0.01875rem] text-neutral-100 placeholder:text-neutral-600 focus:outline-none"
+        className="border-neutral-850 w-full rounded-[0.625rem] border bg-transparent px-4 py-[0.875rem] text-[1rem] leading-[1.55] tracking-[-0.02rem] text-neutral-100 placeholder:text-neutral-600 focus:outline-none"
       />
     </div>
   );
