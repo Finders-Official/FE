@@ -180,7 +180,7 @@ export default function PmMainPage() {
             confirmText="네"
             onConfirm={() => {
               setIsDialogOpen(false);
-              navigate("/"); // TODO: 인화페이지로 이동
+              navigate("/photoManage/print-request");
             }}
             cancelText="아니오"
             onCancel={() => setDialogStep(2)}
@@ -195,7 +195,7 @@ export default function PmMainPage() {
             confirmText="지금 인화 할게요"
             onConfirm={() => {
               setIsDialogOpen(false);
-              navigate("/"); // TODO: 인화페이지로 이동
+              navigate("/photoManage/print-request");
             }}
             cancelText="다음에 할게요"
             onCancel={() => {
