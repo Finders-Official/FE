@@ -15,6 +15,7 @@ export { default as ChevronLeftIcon } from "./chevron-left.svg?react";
 export { default as ClockIcon } from "./clock.svg?react";
 export { default as CloseIcon } from "./close.svg?react";
 export { default as CopyIcon } from "./copy.svg?react";
+export { default as CopyFillIcon } from "./copy-flled.svg?react";
 export { default as DownloadIcon } from "./download.svg?react";
 export { default as EmptyBoxIcon } from "./empty-box.svg?react";
 export { default as EmptyCheckCircleIcon } from "./empty-check-circle.svg?react";
