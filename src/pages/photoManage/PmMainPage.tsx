@@ -252,6 +252,7 @@ export default function PmMainPage() {
               {
                 label: "송장 번호",
                 value: mock.delivery.trackingNumber ?? "-",
+                copyValue: mock.delivery.trackingNumber ?? undefined,
               },
             ]}
           />
