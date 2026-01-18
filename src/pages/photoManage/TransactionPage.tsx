@@ -2,9 +2,13 @@ import { useState } from "react";
 import { useLocation } from "react-router";
 import { AccountInfoCard } from "@/components/photoManage/AccountInfoCard";
 import { DepositorInput } from "@/components/photoManage/DepositorInput";
+import { BankSelectDropdown } from "@/components/photoManage/BankSelectDropdown";
 import { ToastItem, ToastList } from "@/components/common/ToastMessage";
 import { CopyFillIcon } from "@/assets/icon";
-import type { TransactionRouteState } from "@/types/photomanage/transaction";
+import type {
+  TransactionRouteState,
+  BankInfo,
+} from "@/types/photomanage/transaction";
 
 // 테스트용 mock 데이터
 const MOCK_STATE: TransactionRouteState = {
@@ -26,6 +30,7 @@ export default function TransactionPage() {
 
   const [showToast, setShowToast] = useState(false);
   const [depositorName, setDepositorName] = useState("");
+  const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
 
   const handleCopyAccount = async () => {
     try {
@@ -55,6 +60,11 @@ export default function TransactionPage() {
 
       {/* 입금자 입력 */}
       <DepositorInput value={depositorName} onChange={setDepositorName} />
+
+      {/* 은행 선택 */}
+      <div className="mt-4">
+        <BankSelectDropdown value={selectedBank} onChange={setSelectedBank} />
+      </div>
 
       {/* Toast, http에선 IOS 클립보드 복사 안됨 */}
       {showToast && (
