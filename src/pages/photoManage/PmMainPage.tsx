@@ -14,7 +14,7 @@ import { ActionButton } from "@/components/photoManage/ActionButton";
 import { useNavigate } from "react-router";
 import { DialogBox } from "@/components/common/DialogBox";
 import { useState } from "react";
-import { scanMock } from "@/types/process";
+import { mocks } from "@/types/process";
 import type { Status, ReceiptMethod } from "@/types/process";
 
 type StepConfig = {
@@ -42,7 +42,7 @@ export default function PmMainPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogStep, setDialogStep] = useState(1);
 
-  const mock = scanMock;
+  const mock = mocks.print; // mocks.develop, mocks.scan, mocks.print, mocks.delivery
   const status = mock.status as Status;
   const currentIndex = STATUS_INDEX_MAP[status];
 

@@ -24,3 +24,10 @@ export const deliveryMock: Process = {
   specStep: "BEFORE",
   receiptMethod: "PICKUP",
 };
+
+export const mocks = {
+  develop: developMock,
+  scan: scanMock,
+  print: printMock,
+  delivery: deliveryMock,
+} as const;
