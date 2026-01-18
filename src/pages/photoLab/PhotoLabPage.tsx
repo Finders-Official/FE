@@ -157,27 +157,25 @@ export default function PhotoLabPage() {
   return (
     <div className="flex w-full flex-col">
       {/* 헤더 */}
-      <div className="px-4">
-        <Header
-          title="현상 맡기기"
-          showBack={showBack}
-          onBack={() => navigate(-1)}
-          rightAction={{
-            type: "icon",
-            icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
-            onClick: handleSearchClick,
-          }}
-        />
-      </div>
+      <Header
+        title="현상 맡기기"
+        showBack={showBack}
+        onBack={() => navigate(-1)}
+        rightAction={{
+          type: "icon",
+          icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
+          onClick: handleSearchClick,
+        }}
+      />
 
       {/* 현상소 소식 배너 */}
-      <div className="px-4 pb-4">
+      <div className="pb-4">
         <LabNewsBanner newsList={mockNews} />
       </div>
 
       {/* 필터 섹션 - 스크롤 시 상단 고정 */}
-      <div className="sticky top-0 z-10 bg-neutral-900">
-        <div className="flex flex-col gap-4 px-4 pb-6">
+      <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
+        <div className="flex flex-col gap-4 pb-6">
           <FilterContainer
             label="날짜 / 지역"
             value={filterValue}

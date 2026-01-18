@@ -192,7 +192,7 @@ export default function PhotoLabSearchPage() {
   return (
     <div className="flex w-full flex-col">
       {/* SearchBar */}
-      <div className="px-4 py-3">
+      <div className="py-3">
         <SearchBar
           value={displayQuery}
           onChange={handleQueryChange}
@@ -207,7 +207,7 @@ export default function PhotoLabSearchPage() {
 
       {/* PL-011-1: 검색어 입력 전 */}
       {!isResultsState && !query.trim() && (
-        <div className="flex flex-col gap-8 px-4 pt-4">
+        <div className="flex flex-col gap-8 pt-4">
           <RecentSearchSection
             searches={recentSearches}
             isExpanded={isRecentExpanded}
@@ -225,7 +225,7 @@ export default function PhotoLabSearchPage() {
 
       {/* PL-011-2: 검색어 입력 중 */}
       {!isResultsState && query.trim() && (
-        <div className="flex flex-col gap-[1.875rem] px-4 pt-5">
+        <div className="flex flex-col gap-[1.875rem] pt-5">
           <KeywordSuggestionSection
             keywords={filteredKeywords}
             onKeywordClick={handleKeywordClick}
@@ -242,7 +242,7 @@ export default function PhotoLabSearchPage() {
         <>
           {/* 필터 섹션 */}
           <div className="sticky top-0 z-10 bg-neutral-900">
-            <div className="flex flex-col gap-4 px-4 pb-6">
+            <div className="flex flex-col gap-4 pb-6">
               <FilterContainer
                 label="날짜 / 지역"
                 value={formatFilterValue()}
