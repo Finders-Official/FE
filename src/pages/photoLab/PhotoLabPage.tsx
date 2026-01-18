@@ -141,8 +141,7 @@ export default function PhotoLabPage() {
 
   // 검색 클릭
   const handleSearchClick = () => {
-    // TODO: 검색 페이지로 이동
-    console.log("Search clicked");
+    navigate("/photolab/search");
   };
 
   // 날짜/지역 필터 클릭
