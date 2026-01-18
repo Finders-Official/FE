@@ -28,6 +28,7 @@ import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
 import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
 import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
 import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
+import TransactionPage from "@/pages/photoManage/TransactionPage";
 
 const router = createBrowserRouter([
   {
@@ -133,6 +134,11 @@ const router = createBrowserRouter([
             path: "/photoManage/print-option",
             Component: PrintOptionPage,
             handle: { title: "결제 내역" },
+          },
+          {
+            path: "/photoManage/transaction",
+            Component: TransactionPage,
+            handle: { title: "송금하기" },
           },
         ],
       },
