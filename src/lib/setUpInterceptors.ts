@@ -7,7 +7,6 @@ import type {
 } from "axios";
 import axios from "axios";
 
-// 서버 스펙에 맞게 조정 가능
 type RefreshResponse = {
   accessToken: string;
   refreshToken?: string;
@@ -43,10 +42,9 @@ async function requestRefreshToken(baseURL: string) {
   const refreshToken = tokenStorage.getRefreshToken();
   if (!refreshToken) throw new Error("No refresh token");
 
-  // ✅ 너희 백엔드 스펙에 맞게 path/body만 바꾸면 됨
   // 예) POST /auth/refresh { refreshToken }
   const res = await axios.post<RefreshResponse>(
-    `${baseURL}/auth/refresh`,
+    `${baseURL}/auth/reissue`,
     { refreshToken },
     { headers: { "Content-Type": "application/json" }, timeout: 15000 },
   );
