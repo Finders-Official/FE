@@ -23,12 +23,14 @@ const RestorationCanvas = ({ file, onBack }: RestorationCanvasProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   // 파일 -> URL
+  // 파일 -> URL
   useEffect(() => {
     const url = URL.createObjectURL(file);
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageUrl(url);
     setIsImageLoaded(false);
+
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
@@ -61,31 +63,13 @@ const RestorationCanvas = ({ file, onBack }: RestorationCanvasProps) => {
     }
   }, [imageUrl, isImageLoaded]);
 
-  // 드로잉 로직
+  // 드로잉 시작 (클릭 시 점 찍기 포함)
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
-    setIsDrawing(true);
-    draw(e);
-  };
-
-  const stopDrawing = () => {
-    if (!isDrawing) return;
-    setIsDrawing(false);
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (canvas && ctx) {
-      ctx.beginPath();
-      const newState = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const newHistory = history.slice(0, historyStep + 1);
-      setHistory([...newHistory, newState]);
-      setHistoryStep(newHistory.length);
-    }
-  };
-
-  const draw = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDrawing) return;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
+
+    setIsDrawing(true);
 
     const rect = canvas.getBoundingClientRect();
     let clientX, clientY;
@@ -106,10 +90,52 @@ const RestorationCanvas = ({ file, onBack }: RestorationCanvasProps) => {
     ctx.lineJoin = "round";
     ctx.strokeStyle = "rgba(233, 78, 22, 0.5)";
 
-    ctx.lineTo(x, y);
-    ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
+    ctx.lineTo(x, y); // 클릭 시 점을 찍기 위함
+    ctx.stroke();
+  };
+
+  // 드로잉 중 (선 잇기)
+  const draw = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
+
+    if ("touches" in e) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = (e as React.MouseEvent).clientX;
+      clientY = (e as React.MouseEvent).clientY;
+    }
+
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  // 드로잉 종료 (히스토리 저장)
+  const stopDrawing = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (canvas && ctx) {
+      const newState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const newHistory = history.slice(0, historyStep + 1);
+      setHistory([...newHistory, newState]);
+      setHistoryStep(newHistory.length);
+
+      ctx.beginPath(); // 다음 드로잉을 위해 경로 초기화
+    }
   };
 
   const handleUndo = () => {
@@ -154,7 +180,7 @@ const RestorationCanvas = ({ file, onBack }: RestorationCanvasProps) => {
         className="z-20 px-4"
         rightAction={{
           type: "text",
-          text: "",
+          text: "복원하기",
           onClick: handleGenerate,
           loading: isGenerating,
           disabled: isGenerating,
