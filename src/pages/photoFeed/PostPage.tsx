@@ -46,9 +46,9 @@ export default function PostPage() {
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
       {/** TODO: 상황별로 다른 곳으로 navigate 되어야 함  */}
       <Header title="" showBack onBack={() => navigate("/photoFeed")} />
-      <section className="flex flex-col gap-[10px] pb-10">
+      <section className="flex flex-col gap-[0.625rem] pb-10">
         {/** 상단 */}
-        <div className="flex flex-col gap-[10px]">
+        <div className="flex flex-col gap-[0.625rem]">
           <Profile
             type="post"
             userName={mock.user?.username}
@@ -66,12 +66,12 @@ export default function PostPage() {
                 onClick={() => setIsLiked((prev) => !prev)}
               >
                 {isLiked ? (
-                  <HeartFillIcon className="h-[20px] w-[22.5px] text-orange-500" />
+                  <HeartFillIcon className="h-[1.25rem] w-[1.40625rem] text-orange-500" />
                 ) : (
-                  <HeartIcon className="h-[20px] w-[22.5px] text-white/80" />
+                  <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
                 )}
               </button>
-              <p className="text-[13px]">{mock.likes}</p>
+              <p className="text-[0.8125rem]">{mock.likes}</p>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -81,9 +81,9 @@ export default function PostPage() {
                   setCommentVisible(true);
                 }}
               >
-                <ChatBubbleEmptyIcon className="h-[20px] w-[20px]" />
+                <ChatBubbleEmptyIcon className="h-[1.25rem] w-[1.25rem]" />
               </button>
-              <p className="text-[13px]">{mock.comments}</p>
+              <p className="text-[0.8125rem]">{mock.comments}</p>
             </div>
           </div>
         </div>
@@ -92,10 +92,10 @@ export default function PostPage() {
         <div className="flex flex-col gap-4">
           {/** 게시글 제목 및 내용 */}
           <div className="flex flex-col gap-2">
-            <p className="text-semi-bold text-[17px] text-neutral-100">
+            <p className="text-semi-bold text-[1.0625rem] text-neutral-100">
               {mock.title}
             </p>
-            <p className="text-[15px] text-neutral-300">{mock.content}</p>
+            <p className="text-[0.9375rem] text-neutral-300">{mock.content}</p>
           </div>
 
           {/** 현상소 후기 */}
@@ -108,7 +108,7 @@ export default function PostPage() {
             {mock.isSelfProcessed ? (
               <div className="flex items-center gap-2">
                 <HomeIcon className="h-4 w-4 font-semibold" />
-                <p className="text-[16px] font-semibold text-neutral-200">
+                <p className="text-[1rem] font-semibold text-neutral-200">
                   자가 현상했어요
                 </p>
               </div>
@@ -116,11 +116,11 @@ export default function PostPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <HomeIcon className="h-4 w-4 font-semibold" />
-                  <p className="text-[16px] font-semibold text-neutral-200">
+                  <p className="text-[1rem] font-semibold text-neutral-200">
                     {mock.lab.name} 이용
                   </p>
                 </div>
-                <p className="text-[14px] text-neutral-200">
+                <p className="text-[0.875rem] text-neutral-200">
                   {mock.lab.review}
                 </p>
               </div>
@@ -140,7 +140,7 @@ export default function PostPage() {
           >
             <ToastItem
               message="게시글이 성공적으로 업로드 되었어요 :)"
-              icon={<CheckCircleIcon />}
+              icon={<CheckCircleIcon className="h-5 w-5" />}
             />
           </div>
         </div>
@@ -153,29 +153,35 @@ export default function PostPage() {
           onClose={() => setCommentVisible(false)}
           title="댓글"
         >
-          <div className="mb-4 flex flex-col gap-5">
-            {commentMock.map(({ id, user, content, createdAt }) => (
-              <Profile
-                key={id}
-                type="comment"
-                userName={user?.username}
-                avatarUrl={user?.avatarUrl}
-                comment={content}
-                time={timeAgo(createdAt)}
-                isOwner={mock.user?.id === user?.id}
+          <div className="flex h-full flex-col gap-1">
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="flex flex-col gap-5">
+                {commentMock.map(({ id, user, content, createdAt }) => (
+                  <Profile
+                    key={id}
+                    type="comment"
+                    userName={user?.username}
+                    avatarUrl={user?.avatarUrl}
+                    comment={content}
+                    time={timeAgo(createdAt)}
+                    isOwner={mock.user?.id === user?.id}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="bg-neutral-875 h-10 shrink-0">
+              <CommentInput
+                value={comment}
+                onChange={setComment}
+                onSubmit={() => {
+                  // API 호출
+                  // 성공하면 초기화
+                  setComment("");
+                }}
+                placeholder="이 현상에 대한 이야기를 남겨보세요!"
               />
-            ))}
+            </div>
           </div>
-          <CommentInput
-            value={comment}
-            onChange={setComment}
-            onSubmit={() => {
-              // API 호출
-              // 성공하면 초기화
-              setComment("");
-            }}
-            placeholder="이 현상에 대한 이야기를 남겨보세요!"
-          />
         </BottomSheet>
       )}
     </div>

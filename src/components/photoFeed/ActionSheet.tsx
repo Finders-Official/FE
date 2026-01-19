@@ -41,7 +41,7 @@ export default function ActionSheet({
       />
 
       {/* sheet */}
-      <div className="absolute inset-x-0 bottom-0 gap-4">
+      <div className="absolute inset-x-0 bottom-0 gap-4 px-4">
         <div className="bg-neutral-875 overflow-hidden rounded-3xl border border-neutral-800">
           <div className="divide-y divide-white/10">
             {actions.map((a) => (
@@ -52,7 +52,7 @@ export default function ActionSheet({
                   a.onClick();
                   onClose();
                 }}
-                className={`w-full py-4 text-center text-[15px] ${
+                className={`w-full py-4 text-center text-[0.9375rem] ${
                   a.variant === "danger" ? "text-red-400" : "text-neutral-100"
                 }`}
               >
@@ -65,7 +65,7 @@ export default function ActionSheet({
         <button
           type="button"
           onClick={onClose}
-          className="bg-neutral-875 my-4 w-full rounded-3xl border border-neutral-800 py-4 text-center text-[15px] text-neutral-100"
+          className="bg-neutral-875 my-4 w-full rounded-3xl border border-neutral-800 py-4 text-center text-[0.9375rem] text-neutral-100"
         >
           취소
         </button>

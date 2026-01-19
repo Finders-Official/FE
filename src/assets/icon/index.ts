@@ -3,11 +3,13 @@
 export { default as ArrowLeftIcon } from "./arrow-left.svg?react";
 export { default as ArrowTurnUpLeftIcon } from "./arrow-turn-up-left.svg?react";
 export { default as BellIcon } from "./bell.svg?react";
+export { default as BookMarkEmptyIcon } from "./bookmark-empty.svg?react";
 export { default as BriefcaseIcon } from "./briefcase.svg?react";
 export { default as CalendarIcon } from "./calendar.svg?react";
 export { default as ChatBubbleEmptyIcon } from "./chat-bubble-empty.svg?react";
 export { default as ChatBubbleIcon } from "./chat-bubble.svg?react";
 export { default as ChatIcon } from "./tab-chat-bubble.svg?react";
+export { default as ChatSquareIcon } from "./chat-square.svg?react";
 export { default as CheckIcon } from "./check.svg?react";
 export { default as ChevronLeftIcon } from "./chevron-left.svg?react";
 export { default as ClockIcon } from "./clock.svg?react";
@@ -23,6 +25,7 @@ export { default as HomeIcon } from "./home.svg?react";
 export { default as MagnifyingGlassIcon } from "./magnifying-glass.svg?react";
 export { default as ManageIcon } from "./tab-camera.svg?react";
 export { default as MapPinIcon } from "./map-pin.svg?react";
+export { default as MenuIcon } from "./menu.svg?react";
 export { default as MinusIcon } from "./minus.svg?react";
 export { default as MyPageIcon } from "./mypage.svg?react";
 export { default as PencilLineIcon } from "./pencil-line.svg?react";
@@ -33,6 +36,7 @@ export { default as ScanIcon } from "./scan.svg?react";
 export { default as SearchIcon } from "./search.svg?react";
 export { default as StarIcon } from "./star.svg?react";
 export { default as TabHomeIcon } from "./tab-home.svg?react";
+export { default as TicketIcon } from "./ticket.svg?react";
 export { default as ToDoListIcon } from "./to-do-list.svg?react";
 export { default as UploadIcon } from "./upload.svg?react";
 export { default as XMarkIcon } from "./x-mark.svg?react";
@@ -45,6 +49,12 @@ export { default as LikedPostIcon } from "./liked-heart.svg?react";
 // 소셜 / 브랜드
 export { default as AppleIcon } from "./Apple.svg?react";
 export { default as KakaoIcon } from "./Kakao.svg?react";
+
+// 배너 사진
+export { default as DevelopPicIcon } from "./develop.svg?react";
+export { default as ScanPicIcon } from "./scanPic.svg?react";
+export { default as PrintPicIcon } from "./print.svg?react";
+export { default as DeliveryPicIcon } from "./delivery.svg?react";
 
 // Fill 아이콘
 export { default as BellFillIcon } from "./bell-fill.svg?react";
@@ -67,6 +77,7 @@ export { default as FlimImageIcon } from "./flim-image.svg?react";
 export { default as FloatingIcon } from "./floating.svg?react";
 export { default as HeadsetFillIcon } from "./headset-fill.svg?react";
 export { default as HeartFillIcon } from "./heart-fill.svg?react";
+export { default as KakaoFillIcon } from "./kakao-fill.svg?react";
 export { default as ManageFillIcon } from "./tab-camera-fill.svg?react";
 export { default as MapPinFillIcon } from "./map-pin-fill.svg?react";
 export { default as MyPageFillIcon } from "./mypage-fill.svg?react";
@@ -79,6 +90,7 @@ export { default as PhotoLabFillIcon } from "./photolab-fill.svg?react";
 export { default as ShareIcon } from "./share.svg?react";
 export { default as ShoeIcon } from "./shoe.svg?react";
 export { default as SparklesFillIcon } from "./sparkles-fill.svg?react";
+export { default as StarFillIcon } from "./star-fill.svg?react";
 export { default as TabHomeFillIcon } from "./tab-home-fill.svg?react";
 export { default as TicketFillIcon } from "./ticket-fill.svg?react";
 export { default as TruckFillIcon } from "./truck-fill.svg?react";

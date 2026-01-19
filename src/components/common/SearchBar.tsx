@@ -13,7 +13,7 @@ interface SearchBarProps {
   className?: string;
   debounceMs?: number;
   rightIcon?: RightIconType;
-  onSearch?: () => void;
+  onSearch?: (value: string) => void;
   inputRef?: RefObject<HTMLInputElement | null>;
   onFocus?: () => void;
 }
@@ -54,9 +54,9 @@ export default function SearchBar({
 
   return (
     <div
-      className={`flex h-12.5 items-center gap-5 rounded-[3.125rem] border border-neutral-600 px-[1rem] py-3 ${className}`}
+      className={`flex h-12.5 items-center gap-5 overflow-hidden rounded-[3.125rem] border border-neutral-600 px-[1rem] py-3 ${className}`}
     >
-      <div className="flex flex-1 items-center gap-2.5">
+      <div className="flex min-w-0 flex-1 items-center gap-2.5">
         {showBack && (
           <button
             type="button"
@@ -73,6 +73,13 @@ export default function SearchBar({
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
           onFocus={onFocus}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && onSearch) {
+              e.preventDefault();
+              e.currentTarget.blur();
+              onSearch(localValue);
+            }
+          }}
           placeholder={placeholder}
           className="flex-1 bg-transparent text-[1.0625rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200 placeholder:text-neutral-700 focus:outline-none"
         />
@@ -92,7 +99,7 @@ export default function SearchBar({
       {rightIcon === "search" && onSearch && (
         <button
           type="button"
-          onClick={onSearch}
+          onClick={() => onSearch(localValue)}
           className="flex h-6 w-6 items-center justify-center"
           aria-label="검색"
         >

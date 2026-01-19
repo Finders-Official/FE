@@ -4,35 +4,39 @@ import { OptionLink } from "@/components/mypage/OptionLink";
 import { info } from "@/constants/mypage/info.constant";
 import {
   managelist,
-  servielist,
+  servicelist,
 } from "@/constants/mypage/servicelist.constant";
 
 export function MyPage() {
+  // 내 정보 조희 api 연동 -> 데이터 값 캐싱 활용 예정 (zustand 사용 x)
   const { member, roleData } = info;
   const { user } = roleData;
   return (
-    <div className="w-full pt-[5rem]">
-      <header className="border-neutral-875 border-b-[0.4rem] p-[1rem]">
-        <InfoBar name={member.name} nickname={user?.nickname} />
+    <div>
+      <header className="rounded-tl-lg rounded-tr-lg bg-orange-500 p-[1rem]">
+        <InfoBar
+          name={member.name}
+          nickname={user?.nickname}
+          profile={user?.profileImage}
+        />
         <MyPageTabs />
       </header>
       <main>
-        <section className="border-neutral-875 border-b">
+        <section className="border-neutral-875 border-b py-4">
           {managelist.map((item) => (
             <OptionLink
               key={item.text}
               {...item}
               info={
                 item.text === "티켓 충전"
-                  ? `${user?.tokenBalance ?? 0}장`
+                  ? `${user?.creditBalance ?? 0}개`
                   : undefined
               }
             />
           ))}
         </section>
         <section>
-          <h1 className="p-[1rem]">고객 지원</h1>
-          {servielist.map(({ to, text, Icon }) => (
+          {servicelist.map(({ to, text, Icon }) => (
             <OptionLink key={text} to={to} text={text} Icon={Icon} />
           ))}
         </section>
@@ -40,9 +44,3 @@ export function MyPage() {
     </div>
   );
 }
-
-// 1. 라우팅 별 페이지 만들기
-// 2. 헤더는 나중에 pull 받아서 사용 예정
-// 3. 관심 현상소 mock data 4개 렌더링 예정 -> UR 030.
-// 4. 관심 게시글 mock data 사용 예정 -> UR 040.
-// 5. 내가 쓴 글 mock data 4개 사용 예정 -> UR 050.
