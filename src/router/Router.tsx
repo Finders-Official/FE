@@ -84,12 +84,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-      {
-        // HeaderLayout만 사용하는 페이지
-      },
-      {
-        //HeaderFooteryLayout 사용하는 페이지
-      },
     ],
   },
 ]);
