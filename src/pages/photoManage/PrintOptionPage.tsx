@@ -56,7 +56,7 @@ export function PrintOptionPage() {
   const formatPlusWon = (n: number) => `+ ${n.toLocaleString("ko-KR")}원`;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col pt-7">
+    <div className="flex h-full flex-1 flex-col pt-7">
       <header className="leading-[128%] tracking-[-0.025rem]">
         <p className="mb-3 text-[1.25rem]">
           입금 전에 인화 옵션을 확인해 주세요
