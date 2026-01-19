@@ -23,7 +23,6 @@ const RestorationCanvas = ({ file, onBack }: RestorationCanvasProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   // 파일 -> URL
-  // 파일 -> URL
   useEffect(() => {
     const url = URL.createObjectURL(file);
 
