@@ -17,6 +17,8 @@ import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
 import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
 import { SocialPage } from "@/pages/mypage/edit-info/SocialPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import FilmCameraGuidePage from "@/pages/filmCameraGuide/FilmCameraGuidePage";
+import FilmCameraGuideDetailPage from "@/pages/filmCameraGuide/FilmCameraGuideDetailPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
@@ -45,6 +47,14 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/filmCameraGuide",
+        Component: FilmCameraGuidePage,
+      },
+      {
+        path: `/filmCameraGuide/:id`,
+        Component: FilmCameraGuideDetailPage,
       },
       {
         path: "/photoFeed/lab/find",
