@@ -4,7 +4,7 @@ import { DialogBox } from "@/components/common/DialogBox";
 import { OptionLink } from "@/components/mypage";
 import { info } from "@/constants/mypage/info.constant";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 type LocationState = { toast?: string } | null;
 
@@ -36,14 +36,9 @@ export function EditInfoPage() {
 
   //모달 오픈 상태값
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [isWithDraqModalOpen, setIsWithDrawModalOpen] = useState(false);
 
   const handleLogout = () => {
     setIsLogoutModalOpen(true);
-  };
-
-  const handleWithDraw = () => {
-    setIsWithDrawModalOpen(true);
   };
 
   useEffect(() => {
@@ -169,9 +164,9 @@ export function EditInfoPage() {
           <button onClick={handleLogout} className="p-4 text-left">
             로그아웃
           </button>
-          <button onClick={handleWithDraw} className="p-4 text-left">
+          <Link to="./withdraw" className="p-4 text-left">
             탈퇴하기
-          </button>
+          </Link>
         </section>
         {/* 로그아웃 모달 */}
         <DialogBox
@@ -182,16 +177,6 @@ export function EditInfoPage() {
           onConfirm={() => setIsLogoutModalOpen(false)}
           cancelText="뒤로 가기"
           onCancel={() => setIsLogoutModalOpen(false)}
-        />
-        {/* 회원탈퇴 모달 */}
-        <DialogBox
-          isOpen={isWithDraqModalOpen}
-          title="탈퇴하기"
-          description="정말로 탈퇴하시겠어요?"
-          confirmText="탈퇴하기"
-          onConfirm={() => setIsWithDrawModalOpen(false)}
-          cancelText="뒤로 가기"
-          onCancel={() => setIsWithDrawModalOpen(false)}
         />
       </main>
       {showToast ? (
