@@ -52,6 +52,8 @@ const router = createBrowserRouter([
       {
         path: "/development-history",
         Component: DevelopmentHistoryPage,
+      },
+      {
         path: "/filmCameraGuide",
         Component: FilmCameraGuidePage,
       },
