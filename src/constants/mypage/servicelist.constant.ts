@@ -3,6 +3,7 @@ import {
   ChatSquareIcon,
   HeadsetIcon,
   MapPinIcon,
+  SecurityIcon,
   TicketIcon,
 } from "@/assets/icon";
 import type { OptionLinkItem } from "@/types/mypage/optionlink";
@@ -16,5 +17,5 @@ export const managelist: OptionLinkItem[] = [
 export const servicelist: OptionLinkItem[] = [
   { to: "/, ", text: "공지사항", Icon: HeadsetIcon },
   { to: "/, ", text: "1:1 문의 게시판", Icon: ChatSquareIcon },
-  { to: "/, ", text: "개인정보 처리방침", Icon: ChatSquareIcon },
+  { to: "/, ", text: "개인정보 처리방침", Icon: SecurityIcon },
 ];
