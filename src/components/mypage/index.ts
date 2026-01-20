@@ -3,3 +3,4 @@ export { MyPageTabs } from "./MyPageTab";
 export { OptionLink } from "./OptionLink";
 export { PhotoLabCard } from "./PhotoLabCard";
 export { PostCard } from "./PostCard";
+export { NoticeCard } from "./NoticeCard";
