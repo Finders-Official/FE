@@ -42,7 +42,7 @@ async function requestRefreshToken(baseURL: string) {
   const refreshToken = tokenStorage.getRefreshToken();
   if (!refreshToken) throw new Error("No refresh token");
 
-  // 예) POST /auth/refresh { refreshToken }
+  // 예) POST /auth/reissue { refreshToken }
   const res = await axios.post<RefreshResponse>(
     `${baseURL}/auth/reissue`,
     { refreshToken },
