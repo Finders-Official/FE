@@ -1,5 +1,5 @@
+import { PostCard } from "@/components/mypage";
 import { posts } from "@/constants/mypage/post.constant";
-import { PostCard } from "@/components/mypage/PostCard";
 
 export function MyPostPage() {
   return (

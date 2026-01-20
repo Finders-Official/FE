@@ -50,3 +50,5 @@ export const PHOTO_LABS: PhotoLab[] = [
   PHOTO_LAB_GUNDAE,
   PHOTO_LAB_HONGDAE,
 ];
+
+//삭제 예정

@@ -1,7 +1,7 @@
 import { CheckCircleIcon } from "@/assets/icon";
 import { ToastItem } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
-import { OptionLink } from "@/components/mypage/OptionLink";
+import { OptionLink } from "@/components/mypage";
 import { info } from "@/constants/mypage/info.constant";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";

@@ -5,17 +5,9 @@ import PostPage from "@/pages/photoFeed/PostPage";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
-import { MyPage } from "@/pages/mypage/MyPage";
-import { EditInfoPage } from "@/pages/mypage/edit-info/EditInfoPage";
-import { LikedPostPage } from "@/pages/mypage/tab/LikedPostPage";
-import { LikedPhotoLabPage } from "@/pages/mypage/tab/LikedPhotoLabPage";
-import { MyPostPage } from "@/pages/mypage/tab/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import MyPageLayout from "@/layouts/MyPageLayout";
-import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
-import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
-import { SocialPage } from "@/pages/mypage/edit-info/SocialPage";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import TestPage from "@/pages/TestPage";
@@ -26,6 +18,17 @@ import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
 import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
 import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
 import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
+import {
+  EditInfoPage,
+  LikedPhotoLabPage,
+  LikedPostPage,
+  MyPage,
+  MyPostPage,
+  NickNameEditPage,
+  PhoneEditPage,
+  SocialPage,
+  WithDrawPage,
+} from "@/pages/mypage";
 
 const router = createBrowserRouter([
   {
@@ -115,8 +118,6 @@ const router = createBrowserRouter([
         ],
       },
       {
-        //HeaderFooteryLayout 사용하는 페이지
-
         path: "/mypage",
         element: <MyPageLayout />,
         children: [
@@ -159,6 +160,11 @@ const router = createBrowserRouter([
             path: "my-posts",
             Component: MyPostPage,
             handle: { title: "내가 쓴 글" },
+          },
+          {
+            path: "edit-info/withdraw",
+            Component: WithDrawPage,
+            handle: { title: "회원 탈퇴" },
           },
         ],
       },

@@ -1,6 +1,4 @@
-import { InfoBar } from "@/components/mypage/InfoBar";
-import { MyPageTabs } from "@/components/mypage/MyPageTab";
-import { OptionLink } from "@/components/mypage/OptionLink";
+import { InfoBar, MyPageTabs, OptionLink } from "@/components/mypage";
 import { info } from "@/constants/mypage/info.constant";
 import {
   managelist,
