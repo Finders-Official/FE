@@ -7,6 +7,8 @@ type TextAreaProps = {
   placeholder?: string;
   maxLength?: number;
   minLength?: number;
+  /** 입력 전 힌트: "min" = 최소 N자 이상 (기본), "max" = 최대 N자 이내 */
+  emptyHint?: "min" | "max";
 
   className?: string;
   textareaClassName?: string;
@@ -19,6 +21,7 @@ export function TextArea({
   placeholder = "",
   maxLength,
   minLength,
+  emptyHint = "min",
   className = "",
   textareaClassName = "",
   disabled = false,
@@ -55,9 +58,13 @@ export function TextArea({
         }}
       />
 
-      {/* 우측 하단: 입력 전에는 최소 글자 안내 / 입력 후에는 카운터 */}
+      {/* 우측 하단: 입력 전에는 안내 / 입력 후에는 카운터 */}
       <div className="flex justify-end text-[0.75rem]">
-        {!hasTyped && typeof minLength === "number" ? (
+        {!hasTyped && emptyHint === "max" && typeof maxLength === "number" ? (
+          <span className="text-neutral-500">최대 {maxLength}자 이내</span>
+        ) : !hasTyped &&
+          emptyHint === "min" &&
+          typeof minLength === "number" ? (
           <span className="text-neutral-500">최소 {minLength}자 이상</span>
         ) : typeof maxLength === "number" ? (
           <span className={isOverMax ? "text-orange-500" : "text-neutral-400"}>

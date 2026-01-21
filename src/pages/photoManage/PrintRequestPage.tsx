@@ -41,7 +41,7 @@ export function PrintRequestPage() {
   const isNextEnabled = totalQty > 0;
 
   return (
-    <div className="flex h-dvh flex-col pt-7">
+    <div className="flex h-full flex-col pt-7">
       <header className="leading-[128%] tracking-[-0.025rem] text-neutral-100">
         <p className="mb-3 text-[1.25rem]">이 사진들로 인화할까요?</p>
         <p className="text-[0.9375rem] font-light">

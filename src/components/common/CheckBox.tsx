@@ -3,9 +3,14 @@ import { EmptyBoxIcon, CheckBoxIcon } from "@/assets/icon";
 type CheckboxProps = {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  iconClassName?: string;
 };
 
-export function Checkbox({ checked, onChange }: CheckboxProps) {
+export function Checkbox({
+  checked,
+  onChange,
+  iconClassName = "h-4 w-4",
+}: CheckboxProps) {
   return (
     <button
       type="button"
@@ -14,9 +19,9 @@ export function Checkbox({ checked, onChange }: CheckboxProps) {
       className="inline-flex items-center justify-center"
     >
       {checked ? (
-        <CheckBoxIcon className="h-4 w-4" />
+        <CheckBoxIcon className={iconClassName} />
       ) : (
-        <EmptyBoxIcon className="h-4 w-4" />
+        <EmptyBoxIcon className={iconClassName} />
       )}
     </button>
   );
