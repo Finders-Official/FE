@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useNavigate, useLocation, useParams } from "react-router";
 import {
   Header,
@@ -49,6 +49,7 @@ export default function ReservationPage() {
   const [cautionConfirmed, setCautionConfirmed] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastIcon, setToastIcon] = useState<React.ReactNode | null>(null);
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -114,11 +115,17 @@ export default function ReservationPage() {
     cautionConfirmed;
 
   const showToast = useCallback((message: string, icon?: React.ReactNode) => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+
     setToastMessage(message);
     setToastIcon(icon ?? null);
-    setTimeout(() => {
+
+    toastTimeoutRef.current = setTimeout(() => {
       setToastMessage(null);
       setToastIcon(null);
+      toastTimeoutRef.current = null;
     }, 3000);
   }, []);
 
