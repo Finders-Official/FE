@@ -22,7 +22,8 @@ import FilmCameraGuideDetailPage from "@/pages/filmCameraGuide/FilmCameraGuideDe
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
-import TestPage from "@/pages/TestPage";
+import ReservationPage from "@/pages/photoLab/ReservationPage";
+import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
@@ -36,10 +37,6 @@ const router = createBrowserRouter([
     Component: RootLayout,
     children: [
       { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
-      {
-        path: "/test",
-        Component: TestPage,
-      },
       {
         path: "/auth/login",
         Component: LoginPage,
@@ -79,6 +76,14 @@ const router = createBrowserRouter([
       {
         path: "/photolab/:photoLabId",
         Component: PhotoLabDetailPage,
+      },
+      {
+        path: "/photolab/:photoLabId/reservation",
+        Component: ReservationPage,
+      },
+      {
+        path: "/photolab/:photoLabId/reservation/complete",
+        Component: ReservationCompletePage,
       },
       {
         path: "/photoManage/main",
