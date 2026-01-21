@@ -74,10 +74,8 @@ export function BankSelectDropdown({
                   <button
                     type="button"
                     onClick={() => handleSelect(bank)}
-                    className={`w-full px-4 py-3 text-left text-[0.9375rem] leading-[1.55] tracking-[-0.01875rem] ${
-                      selected
-                        ? "bg-neutral-850 text-neutral-100"
-                        : "text-neutral-100"
+                    className={`w-full px-4 py-3 text-left text-[0.9375rem] leading-[1.55] tracking-[-0.01875rem] text-neutral-100 ${
+                      selected ? "bg-neutral-850" : ""
                     }`}
                   >
                     {bank.name}

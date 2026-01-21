@@ -267,7 +267,7 @@ export default function PmMainPage() {
               message="배송 조회하러 가기"
               showNext={true}
               onClick={() => {
-                // 배송 조회 페이지로 이동
+                // TODO: 배송 조회 페이지로 이동
               }}
             />
             {mock.delivery?.status === "DELIVERED" && (
@@ -276,7 +276,7 @@ export default function PmMainPage() {
                 message="수령 확정 하기"
                 showNext={true}
                 onClick={() => {
-                  //수령 확정 처리
+                  // TODO: 수령 확정 처리
                 }}
               />
             )}
