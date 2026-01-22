@@ -22,7 +22,7 @@ export function SelectAddressPage() {
   };
 
   return (
-    <div className="y-scroll-hidden flex h-dvh flex-col">
+    <div className="flex h-full flex-col">
       <header className="border-b-[0.8125rem] border-neutral-800 py-4 text-neutral-100">
         <CTA_Button
           text="배송지 신규 등록"

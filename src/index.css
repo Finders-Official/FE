@@ -79,3 +79,19 @@
     opacity: 1;
   }
 }
+
+/* 토스트 애니메이션 */
+@keyframes toast-in {
+  from {
+    transform: translateY(1.25rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-toast-in {
+  animation: toast-in 0.3s ease-out;
+}

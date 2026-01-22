@@ -25,7 +25,7 @@ export function DetailInfoPage() {
   };
 
   return (
-    <div className="y-scroll-hidden flex h-dvh flex-col">
+    <div className="flex h-full flex-col">
       <main className="flex flex-1 flex-col gap-10 py-10">
         <InputForm
           name="받는 분"

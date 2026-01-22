@@ -63,7 +63,10 @@ export default function FilterBottomSheet({
     const filter: FilterState = {};
 
     if (selectedDate) {
-      filter.date = selectedDate.toISOString().split("T")[0];
+      const y = selectedDate.getFullYear();
+      const m = String(selectedDate.getMonth() + 1).padStart(2, "0");
+      const d = String(selectedDate.getDate()).padStart(2, "0");
+      filter.date = `${y}-${m}-${d}`;
     }
     if (selectedTime) {
       filter.time = selectedTime;

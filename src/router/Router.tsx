@@ -9,8 +9,14 @@ import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import MyPageLayout from "@/layouts/MyPageLayout";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
+import DevelopmentHistoryPage from "@/pages/developmentHistory/DevelopmentHistoryPage";
+import FilmCameraGuidePage from "@/pages/filmCameraGuide/FilmCameraGuidePage";
+import FilmCameraGuideDetailPage from "@/pages/filmCameraGuide/FilmCameraGuideDetailPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
-import TestPage from "@/pages/TestPage";
+import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
+import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
+import ReservationPage from "@/pages/photoLab/ReservationPage";
+import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
 import PmMainPage from "@/pages/photoManage/PmMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
@@ -36,16 +42,24 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
       {
-        path: "/test",
-        Component: TestPage,
-      },
-      {
         path: "/auth/login",
         Component: LoginPage,
       },
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/development-history",
+        Component: DevelopmentHistoryPage,
+      },
+      {
+        path: "/filmCameraGuide",
+        Component: FilmCameraGuidePage,
+      },
+      {
+        path: `/filmCameraGuide/:id`,
+        Component: FilmCameraGuideDetailPage,
       },
       {
         path: "/photoFeed/lab/find",
@@ -62,6 +76,26 @@ const router = createBrowserRouter([
       {
         path: "/photoManage/download",
         Component: PhotoDownloadPage,
+      },
+      {
+        path: "/photolab/search",
+        Component: PhotoLabSearchPage,
+      },
+      {
+        path: "/photolab/:photoLabId",
+        Component: PhotoLabDetailPage,
+      },
+      {
+        path: "/photolab/:photoLabId/reservation",
+        Component: ReservationPage,
+      },
+      {
+        path: "/photolab/:photoLabId/reservation/complete",
+        Component: ReservationCompletePage,
+      },
+      {
+        path: "/photoManage/main",
+        Component: PmMainPage,
       },
       {
         path: "/photoFeed/post/new",
