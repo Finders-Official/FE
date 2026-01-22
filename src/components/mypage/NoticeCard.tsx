@@ -8,7 +8,7 @@ export const WITHDRAW_NOTICES = [
 export function NoticeCard() {
   return (
     <div className="bg-neutral-875 mt-6 rounded-[1rem] px-4 py-6">
-      <ul className="gap-1">
+      <ul className="flex flex-col gap-1">
         {WITHDRAW_NOTICES.map((t) => (
           <li
             key={t}
