@@ -16,8 +16,6 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      // 필요하면 추가
-      // staleTime: 30_000,
     },
     mutations: {
       retry: 0,
