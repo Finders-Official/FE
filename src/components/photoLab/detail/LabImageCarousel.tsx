@@ -41,7 +41,7 @@ export default function LabImageCarousel({
         }}
       >
         {images.map((src, i) => (
-          <div key={src} className="w-full flex-none snap-center">
+          <div key={`${src}-${i}`} className="w-full flex-none snap-center">
             <img
               src={src}
               alt={`${altPrefix}-${i + 1}`}
