@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CopyIcon, MapPinIcon } from "@/assets/icon";
+import customPinUrl from "@/assets/icon/custom-pin.svg";
 import type { PhotoLabLocation } from "@/types/photoLab";
 
 declare global {
@@ -12,8 +13,22 @@ declare global {
           options: { center: unknown; level: number },
         ) => unknown;
         LatLng: new (lat: number, lng: number) => unknown;
-        Marker: new (options: { position: unknown }) => {
+        Marker: new (options: { position: unknown; image?: unknown }) => {
           setMap: (map: unknown) => void;
+        };
+        MarkerImage: new (
+          src: string,
+          size: unknown,
+          options?: { offset: unknown },
+        ) => unknown;
+        Size: new (width: number, height: number) => unknown;
+        Point: new (x: number, y: number) => unknown;
+        CustomOverlay: new (options: {
+          content: string;
+          position: unknown;
+          yAnchor?: number;
+        }) => {
+          setMap: (map: unknown | null) => void;
         };
       };
     };
@@ -40,7 +55,7 @@ export default function LabLocationSection({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    let marker: { setMap: (map: unknown) => void } | null = null;
+    let overlay: { setMap: (map: unknown | null) => void } | null = null;
 
     const initMap = () => {
       const { kakao } = window;
@@ -56,11 +71,23 @@ export default function LabLocationSection({
         level: 3,
       });
 
-      marker = new kakao.maps.Marker({
+      // 커스텀 오버레이 콘텐츠 (핀 아이콘 + 현상소명)
+      const content = `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+          <img src="${customPinUrl}" style="width:42px;height:42px;" />
+          <span style="font-family:Pretendard;font-size:10px;font-weight:600;color:#131313;text-align:center;letter-spacing:-0.2px;white-space:nowrap;">
+            ${labName}
+          </span>
+        </div>
+      `;
+
+      overlay = new kakao.maps.CustomOverlay({
+        content: content,
         position: position,
+        yAnchor: 1,
       });
 
-      marker.setMap(map);
+      overlay.setMap(map);
     };
 
     if (window.kakao?.maps) {
