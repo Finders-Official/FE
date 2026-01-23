@@ -51,3 +51,19 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome/Safari */
 }
+
+/* 스크롤 영역 오른쪽 fade-out, webkit은 부분 지원 브라우저를 위해 */
+.scroll-fade-right {
+  mask-image: linear-gradient(
+    to right,
+    black 0%,
+    black calc(100% - 1rem),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    black 0%,
+    black calc(100% - 1rem),
+    transparent 100%
+  );
+}
