@@ -7,7 +7,7 @@ export interface SocialSignupCompleteReq {
 }
 export type EmptyObject = Record<string, never>;
 
-export type SocialSignupCompleteData = EmptyObject;
+export type SocialSignupCompleteData = EmptyObject; // 나중에 타입 나오면 정의하기
 
 //소셜 로그인 (웹 브라우저용)
 export async function oauth(
