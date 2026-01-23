@@ -1,0 +1,68 @@
+import { useEffect, useRef, useState } from "react";
+
+type Props = {
+  images: string[];
+  altPrefix?: string;
+};
+
+export default function LabImageCarousel({
+  images,
+  altPrefix = "lab-image",
+}: Props) {
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const w = el.clientWidth;
+      if (w === 0) return;
+      const next = Math.round(el.scrollLeft / w);
+      setIndex(next);
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  if (images.length === 0) return null;
+
+  return (
+    <div className="relative w-full overflow-hidden">
+      {/* 이미지 스크롤 영역 */}
+      <div
+        ref={scrollerRef}
+        className="flex w-full snap-x snap-mandatory overflow-x-auto scroll-smooth"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+        }}
+      >
+        {images.map((src, i) => (
+          <div key={src} className="w-full flex-none snap-center">
+            <img
+              src={src}
+              alt={`${altPrefix}-${i + 1}`}
+              className="h-[13.6875rem] w-full object-cover"
+              draggable={false}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* 우상단 카운터 */}
+      {images.length > 1 && (
+        <div className="absolute top-3 right-3 rounded-full bg-black/60 px-2 py-1">
+          <span className="text-xs font-semibold text-neutral-100">
+            {index + 1}
+          </span>
+          <span className="text-xs font-normal text-neutral-100">
+            /{images.length}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
