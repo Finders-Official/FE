@@ -4,6 +4,7 @@ import { Header } from "@/components/common";
 import {
   LabBasicInfo,
   LabBottomBar,
+  LabImageCarousel,
   LabLocationSection,
   LabNoticeSection,
   LabWorkResultsSection,
@@ -33,23 +34,19 @@ export default function PhotoLabDetailPage() {
     });
   };
 
-  const mainImage = lab.images.find((img) => img.isMain) || lab.images[0];
+  const imageUrls = lab.images
+    .sort((a, b) => a.displayOrder - b.displayOrder)
+    .map((img) => img.imageUrl);
 
   return (
     <div className="flex w-full flex-col">
       <Header title="파인더스 상도점" showBack onBack={handleBack} />
 
       <main className="pb-32">
-        {/* 메인 이미지 */}
-        {mainImage && (
-          <div className="-mx-4">
-            <img
-              src={mainImage.imageUrl}
-              alt={lab.name}
-              className="h-[13.6875rem] w-full object-cover"
-            />
-          </div>
-        )}
+        {/* 메인 이미지 캐러셀 */}
+        <div className="-mx-4">
+          <LabImageCarousel images={imageUrls} altPrefix={lab.name} />
+        </div>
 
         {/* 기본 정보 */}
         <LabBasicInfo lab={lab} onFavoriteToggle={handleFavoriteToggle} />
