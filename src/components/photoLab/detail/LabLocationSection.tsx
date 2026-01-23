@@ -95,11 +95,11 @@ export default function LabLocationSection({
     }
 
     return () => {
-      if (marker) {
-        marker.setMap(null);
+      if (overlay) {
+        overlay.setMap(null);
       }
     };
-  }, [location.latitude, location.longitude]);
+  }, [location.latitude, location.longitude, labName]);
 
   const handleCopyAddress = async () => {
     await navigator.clipboard.writeText(address);
