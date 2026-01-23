@@ -127,13 +127,20 @@ export function LoginPage() {
       </header>
 
       {/* 버튼 영역 */}
-      <footer className="mt-auto w-full pb-15">
+      <footer
+        className={`mt-auto w-full py-5 ${isSignedUp ? "border-neutral-850 border-t" : ""}`}
+      >
         {isSignedUp ? (
           <div
             key={footerKey}
             className={`mx-auto flex w-full max-w-sm ${footerAnim}`}
           >
-            <CTA_Button text="홈으로" link="/" color="orange" size="compact" />
+            <CTA_Button
+              text="홈으로"
+              link="../mainpage"
+              color="orange"
+              size="compact"
+            />
           </div>
         ) : isSplash ? (
           <p

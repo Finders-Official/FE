@@ -53,7 +53,7 @@ export function OnBoardingPage() {
   };
 
   return (
-    <div className="mt-[3.4375rem] flex w-full flex-col items-center">
+    <div className="flex w-full flex-col items-center">
       <header className="w-full max-w-sm pt-[2.5rem]">
         <p className="text-[1rem] font-normal">소셜 로그인 연동한 정보 중</p>
         <p className="text-[1.375rem] font-semibold">
@@ -110,7 +110,7 @@ export function OnBoardingPage() {
         )}
       </form>
       {isVerified && (
-        <footer className="mx-auto mt-auto w-full max-w-sm pb-15">
+        <footer className="border-neutral-850 mx-auto mt-auto w-full max-w-sm border-t py-5">
           <CTA_Button text="가입하기" color="orange" size="xlarge" />
         </footer>
       )}
