@@ -57,13 +57,13 @@
   mask-image: linear-gradient(
     to right,
     black 0%,
-    black calc(100% - 1rem),
+    black calc(100% - 1.5rem),
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to right,
     black 0%,
-    black calc(100% - 1rem),
+    black calc(100% - 1.5rem),
     transparent 100%
   );
 }
