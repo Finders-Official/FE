@@ -7,6 +7,7 @@ import { FooterLayout } from "@/layouts/FooterLayout";
 import NewPostPage from "@/pages/photoFeed/NewPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+import MainPage from "@/pages/mainPage/MainPage";
 import MyPageLayout from "@/layouts/MyPageLayout";
 import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import DevelopmentHistoryPage from "@/pages/developmentHistory/DevelopmentHistoryPage";
@@ -35,6 +36,7 @@ import {
   SocialPage,
   WithDrawPage,
 } from "@/pages/mypage";
+import TransactionPage from "@/pages/photoManage/TransactionPage";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/mainpage",
+        Component: MainPage,
       },
       {
         path: "/development-history",
@@ -148,6 +154,11 @@ const router = createBrowserRouter([
             path: "/photoManage/print-option",
             Component: PrintOptionPage,
             handle: { title: "결제 내역" },
+          },
+          {
+            path: "/photoManage/transaction",
+            Component: TransactionPage,
+            handle: { title: "송금하기" },
           },
         ],
       },
