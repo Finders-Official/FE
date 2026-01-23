@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { useOauth } from "./useOauth";
 import { consumeAndValidateKakaoState } from "@/utils/auth/kakaoOauth";
+import { tokenStorage } from "@/utils/tokenStorage";
 
 type Props = {
   onExistingMember: () => void;
@@ -23,6 +24,11 @@ export function useKakaoOauth({
 
   const { mutate, isPending } = useOauth({
     onSuccess: (res) => {
+      tokenStorage.setTokens({
+        accessToken: res.data.accessToken ?? tokenStorage.getAccessToken(),
+        refreshToken: res.data.refreshToken ?? tokenStorage.getRefreshToken(),
+        signupToken: res.data.signupToken ?? tokenStorage.getSignupToken(),
+      });
       if (res.data.isExistingMember) onExistingMember();
       else onNewMember();
     },

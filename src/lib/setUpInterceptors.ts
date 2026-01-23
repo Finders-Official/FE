@@ -32,17 +32,21 @@ function processQueue(error: unknown, newAccessToken: string | null) {
 }
 
 function shouldSkipAuth(config: AxiosRequestConfig) {
-  // refresh 호출 자체는 Authorization 붙이면 꼬일 수 있어서 제외
   const url = config.url ?? "";
-  return url.includes("/auth/refresh");
+  // refresh/reissue 계열은 Authorization 붙이면 꼬일 수 있어서 제외
+  return url.includes("/auth/refresh") || url.includes("/auth/reissue");
 }
+
+type AttachedAuth = "access" | "signup" | "none";
+type AuthMetaConfig = InternalAxiosRequestConfig & {
+  _authAttached?: AttachedAuth;
+};
 
 async function requestRefreshToken(baseURL: string) {
   // refresh는 별도 axios로 호출(인터셉터 영향 X)
   const refreshToken = tokenStorage.getRefreshToken();
   if (!refreshToken) throw new Error("No refresh token");
 
-  // 예) POST /auth/reissue { refreshToken }
   const res = await axios.post<RefreshResponse>(
     `${baseURL}/auth/reissue`,
     { refreshToken },
@@ -53,39 +57,64 @@ async function requestRefreshToken(baseURL: string) {
 }
 
 export function setupInterceptors(instance: AxiosInstance) {
-  // Request: accessToken 자동 첨부
+  // Request: accessToken 우선, 없으면 signupToken 첨부
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      if (!shouldSkipAuth(config)) {
-        const accessToken = tokenStorage.getAccessToken();
-        if (accessToken) {
-          config.headers = config.headers ?? {};
-          config.headers.Authorization = `Bearer ${accessToken}`;
-        }
+      const cfg = config as AuthMetaConfig;
+
+      if (shouldSkipAuth(cfg)) {
+        cfg._authAttached = "none";
+        return cfg;
       }
-      return config;
+
+      const accessToken = tokenStorage.getAccessToken();
+      const signupToken = tokenStorage.getSignupToken();
+
+      if (accessToken) {
+        cfg.headers = cfg.headers ?? {};
+        cfg.headers.Authorization = `Bearer ${accessToken}`;
+        cfg._authAttached = "access";
+      } else if (signupToken) {
+        cfg.headers = cfg.headers ?? {};
+        cfg.headers.Authorization = `Bearer ${signupToken}`;
+        cfg._authAttached = "signup";
+      } else {
+        cfg._authAttached = "none";
+      }
+
+      return cfg;
     },
     (error) => Promise.reject(error),
   );
 
-  // Response: 401 -> refresh -> 원요청 재시도
+  // Response: 401 -> (access token 붙였던 요청만) refresh -> 원요청 재시도
   instance.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
       const status = error.response?.status;
-      const originalConfig = error.config as RetryableConfig | undefined;
+      const originalConfig = error.config as
+        | (RetryableConfig & AuthMetaConfig)
+        | undefined;
 
       if (!originalConfig) return Promise.reject(error);
 
       // 401 아닌 경우 그냥 패스
       if (status !== 401) return Promise.reject(error);
 
-      // refresh 요청이 401이면 더 이상 재시도하지 말고 로그아웃 처리
+      // refresh/reissue 요청이 401이면 더 이상 재시도하지 말고 토큰 정리
       if (shouldSkipAuth(originalConfig)) {
         tokenStorage.clear();
         return Promise.reject(error);
       }
 
+      // ✅ signupToken으로 붙였던 요청은 refresh 대상이 아님
+      // (온보딩 토큰 만료/무효면 서버가 401 줄 수 있음 -> 그대로 실패 처리 or signupToken만 제거)
+      if (originalConfig._authAttached === "signup") {
+        tokenStorage.setSignupToken(null); // 토큰스토리지에 이 메서드 없으면 clear에서 제거만 하거나 직접 remove
+        return Promise.reject(error);
+      }
+
+      // ✅ accessToken을 붙였던 요청만 refresh 시도
       // 무한 루프 방지
       if (originalConfig._retry) {
         tokenStorage.clear();
@@ -118,10 +147,11 @@ export function setupInterceptors(instance: AxiosInstance) {
       try {
         const data = await requestRefreshToken(baseURL);
 
-        // 토큰 저장
+        // 토큰 저장 (signupToken은 그대로 유지)
         tokenStorage.setTokens({
           accessToken: data.accessToken,
           refreshToken: data.refreshToken ?? tokenStorage.getRefreshToken(),
+          signupToken: tokenStorage.getSignupToken(),
         });
 
         // 대기 중인 요청들 처리
@@ -130,6 +160,7 @@ export function setupInterceptors(instance: AxiosInstance) {
         // 원요청 재시도
         originalConfig.headers = originalConfig.headers ?? {};
         originalConfig.headers.Authorization = `Bearer ${data.accessToken}`;
+        originalConfig._authAttached = "access";
 
         return instance(originalConfig);
       } catch (refreshErr) {
