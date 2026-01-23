@@ -54,16 +54,12 @@
 
 /* 스크롤 영역 오른쪽 fade-out, webkit은 부분 지원 브라우저를 위해 */
 .scroll-fade-right {
-  mask-image: linear-gradient(
+  --scroll-fade-gradient: linear-gradient(
     to right,
     black 0%,
     black calc(100% - 1.5rem),
     transparent 100%
   );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    black 0%,
-    black calc(100% - 1.5rem),
-    transparent 100%
-  );
+  -webkit-mask-image: var(--scroll-fade-gradient);
+  mask-image: var(--scroll-fade-gradient);
 }
