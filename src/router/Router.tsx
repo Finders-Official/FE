@@ -12,6 +12,7 @@ import { LikedPhotoLabPage } from "@/pages/mypage/LikedPhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+import MainPage from "@/pages/mainPage/MainPage";
 import MyPageLayout from "@/layouts/MyPageLayout";
 import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
 import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/mainpage",
+        Component: MainPage,
       },
       {
         path: "/development-history",
