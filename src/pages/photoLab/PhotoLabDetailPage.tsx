@@ -35,6 +35,7 @@ export default function PhotoLabDetailPage() {
   };
 
   const imageUrls = lab.images
+    .slice()
     .sort((a, b) => a.displayOrder - b.displayOrder)
     .map((img) => img.imageUrl);
 
