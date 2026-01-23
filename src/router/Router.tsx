@@ -12,6 +12,7 @@ import { LikedPhotoLabPage } from "@/pages/mypage/LikedPhotoLabPage";
 import { MyPostPage } from "@/pages/mypage/MyPostPage";
 import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
 import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+import MainPage from "@/pages/mainPage/MainPage";
 import MyPageLayout from "@/layouts/MyPageLayout";
 import { NickNameEditPage } from "@/pages/mypage/edit-info/NickNameEditPage";
 import { PhoneEditPage } from "@/pages/mypage/edit-info/PhoneEditPage";
@@ -32,6 +33,7 @@ import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
 import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
 import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
 import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
+import TransactionPage from "@/pages/photoManage/TransactionPage";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/mainpage",
+        Component: MainPage,
       },
       {
         path: "/development-history",
@@ -153,6 +159,11 @@ const router = createBrowserRouter([
             path: "/photoManage/print-option",
             Component: PrintOptionPage,
             handle: { title: "결제 내역" },
+          },
+          {
+            path: "/photoManage/transaction",
+            Component: TransactionPage,
+            handle: { title: "송금하기" },
           },
         ],
       },
