@@ -73,18 +73,20 @@ export default function LabLocationSection({
 
       // 커스텀 오버레이 콘텐츠 (핀 아이콘 + 현상소명)
       const content = `
-        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
-          <img src="${customPinUrl}" style="width:42px;height:42px;" />
-          <span style="font-family:Pretendard;font-size:10px;font-weight:600;color:#131313;text-align:center;letter-spacing:-0.2px;white-space:nowrap;">
-            ${labName}
-          </span>
+        <div style="position:relative;">
+          <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;">
+            <img src="${customPinUrl}" style="width:42px;height:42px;" />
+            <span style="font-family:Pretendard;font-size:10px;font-weight:600;color:#131313;text-align:center;letter-spacing:-0.2px;white-space:nowrap;">
+              ${labName}
+            </span>
+          </div>
         </div>
       `;
 
       overlay = new kakao.maps.CustomOverlay({
         content: content,
         position: position,
-        yAnchor: 1,
+        yAnchor: 0.5,
       });
 
       overlay.setMap(map);
