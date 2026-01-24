@@ -1,14 +1,14 @@
 import {
   oauth,
-  type SocialSignupCompleteData,
-  type SocialSignupCompleteReq,
+  type SocialoginCompleteData,
+  type SocialoginCompleteReq,
 } from "@/api/auth";
 import type { ApiResponse } from "@/types/common/apiResponse";
 
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 
-type Variables = SocialSignupCompleteReq;
-type Response = ApiResponse<SocialSignupCompleteData>;
+type Variables = SocialoginCompleteReq;
+type Response = ApiResponse<SocialoginCompleteData>;
 
 export function useOauth(
   options?: UseMutationOptions<Response, unknown, Variables>,

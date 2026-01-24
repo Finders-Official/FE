@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
-import { useOauth } from "./useOauth";
 import { consumeAndValidateKakaoState } from "@/utils/auth/kakaoOauth";
 import { tokenStorage } from "@/utils/tokenStorage";
+import { useOauth } from "./useOauth";
 
 type Props = {
   onExistingMember: () => void;
