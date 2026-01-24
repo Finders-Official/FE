@@ -1,20 +1,40 @@
 import { KakaoButton } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
+import { useEffect, useMemo } from "react";
 
-import { useLoginIntroUi } from "@/hooks/auth/useLoginIntroUi";
+import { useLoginIntroUi } from "@/hooks/auth/login/useLoginIntroUi";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
 
+const WELCOME_ONCE_KEY = "finders:welcomeOnceShown";
+
 export function LoginPage() {
-  const {
-    isSignedUp,
-    isSplash,
-    headerKey,
-    footerKey,
-    headerAnim,
-    taglineAnim,
-    footerAnim,
-  } = useLoginIntroUi();
+  const [sp, setSp] = useSearchParams();
+  const welcome = sp.get("welcome") === "1";
+
+  const ui = useLoginIntroUi();
+
+  // welcome=1이면 축하 화면을 강제로 띄우고, 한 번만 보여주기 처리
+  const forceSignedUp = useMemo(() => {
+    if (!welcome) return false;
+
+    // 이미 보여줬으면 welcome=1 무시
+    const shown = sessionStorage.getItem(WELCOME_ONCE_KEY) === "1";
+    return !shown;
+  }, [welcome]);
+
+  useEffect(() => {
+    if (!welcome) return;
+    if (!forceSignedUp) return;
+
+    sessionStorage.setItem(WELCOME_ONCE_KEY, "1");
+
+    // URL 깔끔하게: /auth/login?welcome=1 -> /auth/login
+    sp.delete("welcome");
+    setSp(sp, { replace: true });
+  }, [welcome, forceSignedUp, sp, setSp]);
+
+  const isSignedUpView = forceSignedUp ? true : ui.isSignedUp;
 
   const handleKakaoLogin = () => {
     window.location.assign(buildKakaoAuthorizeUrl());
@@ -23,7 +43,7 @@ export function LoginPage() {
   return (
     <main className="flex w-full flex-1 flex-col items-center">
       <header
-        className={`mt-60 flex flex-col items-center text-center ${headerAnim}`}
+        className={`mt-60 flex flex-col items-center text-center ${ui.headerAnim}`}
       >
         <img
           src="/MainLogo.svg"
@@ -31,9 +51,9 @@ export function LoginPage() {
           className="h-28 w-42 sm:h-32 sm:w-46"
         />
 
-        <div key={headerKey}>
-          {isSignedUp ? (
-            <div className={headerAnim}>
+        <div key={ui.headerKey}>
+          {isSignedUpView ? (
+            <div className={ui.headerAnim}>
               <p className="mt-3 text-[1.375rem] font-bold">
                 회원가입을 축하드려요!
               </p>
@@ -46,8 +66,8 @@ export function LoginPage() {
               <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold sm:text-[3rem]">
                 Finders
               </p>
-              {!isSplash && (
-                <p className={`text-md mt-2 sm:text-base ${taglineAnim}`}>
+              {!ui.isSplash && (
+                <p className={`text-md mt-2 sm:text-base ${ui.taglineAnim}`}>
                   뷰파인더 너머, 취향을 찾다
                 </p>
               )}
@@ -57,12 +77,12 @@ export function LoginPage() {
       </header>
 
       <footer
-        className={`mt-auto w-full py-5 ${isSignedUp ? "border-neutral-850 border-t" : ""}`}
+        className={`mt-auto w-full py-5 ${isSignedUpView ? "border-neutral-850 border-t" : ""}`}
       >
-        {isSignedUp ? (
+        {isSignedUpView ? (
           <div
-            key={footerKey}
-            className={`mx-auto flex w-full max-w-sm ${footerAnim}`}
+            key={ui.footerKey}
+            className={`mx-auto flex w-full max-w-sm ${ui.footerAnim}`}
           >
             <CTA_Button
               text="홈으로"
@@ -71,15 +91,18 @@ export function LoginPage() {
               size="compact"
             />
           </div>
-        ) : isSplash ? (
+        ) : ui.isSplash ? (
           <p
-            key={footerKey}
-            className={`text-md mt-auto text-center text-neutral-100 sm:text-base ${footerAnim}`}
+            key={ui.footerKey}
+            className={`text-md mt-auto text-center text-neutral-100 sm:text-base ${ui.footerAnim}`}
           >
             뷰파인더 너머, 취향을 찾다
           </p>
         ) : (
-          <section key={footerKey} className={`mx-auto max-w-sm ${footerAnim}`}>
+          <section
+            key={ui.footerKey}
+            className={`mx-auto max-w-sm ${ui.footerAnim}`}
+          >
             <div className="flex flex-col gap-2">
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
