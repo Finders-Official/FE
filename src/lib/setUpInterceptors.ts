@@ -107,14 +107,14 @@ export function setupInterceptors(instance: AxiosInstance) {
         return Promise.reject(error);
       }
 
-      // ✅ signupToken으로 붙였던 요청은 refresh 대상이 아님
+      // signupToken으로 붙였던 요청은 refresh 대상이 아님
       // (온보딩 토큰 만료/무효면 서버가 401 줄 수 있음 -> 그대로 실패 처리 or signupToken만 제거)
       if (originalConfig._authAttached === "signup") {
         tokenStorage.setSignupToken(null); // 토큰스토리지에 이 메서드 없으면 clear에서 제거만 하거나 직접 remove
         return Promise.reject(error);
       }
 
-      // ✅ accessToken을 붙였던 요청만 refresh 시도
+      // accessToken을 붙였던 요청만 refresh 시도
       // 무한 루프 방지
       if (originalConfig._retry) {
         tokenStorage.clear();
