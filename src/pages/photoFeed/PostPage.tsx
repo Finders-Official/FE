@@ -6,8 +6,8 @@ import {
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
 import { Header, ToastItem } from "@/components/common";
-import { postSelfMock } from "@/types/post";
-import { commentMock } from "@/types/comment";
+import { postSelfMock } from "@/types/photoFeed/post";
+import { commentMock } from "@/types/photoFeed/comment";
 import { timeAgo } from "@/utils/timeAgo";
 import PhotoCarousel from "@/components/photoFeed/PhotoCarousel";
 import { useEffect, useState } from "react";

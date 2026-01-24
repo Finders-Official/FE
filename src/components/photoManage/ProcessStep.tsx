@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { FlimIcon, ScanIcon, PrinterIcon, PackageIcon } from "@/assets/icon";
-import type { Status, ReceiptMethod } from "@/types/process";
+import type { Status, ReceiptMethod } from "@/types/photomanage/process";
 
 type ProcessProps = {
   step: Status;

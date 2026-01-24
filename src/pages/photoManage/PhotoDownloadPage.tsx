@@ -1,7 +1,7 @@
 import { CTA_Button, Header, ImageCard } from "@/components/common";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { photoMock } from "@/types/photo";
+import { photoMock } from "@/types/photoFeed/postPreview";
 import { PhotoCardPreview } from "@/components/photoManage/PhotoCardPreview";
 import { EmptyCheckCircleIcon } from "@/assets/icon";
 
@@ -22,7 +22,7 @@ export default function PhotoDownload() {
 
   const photoById = useMemo(() => {
     const m = new Map<number, (typeof photoMock)[number]>();
-    photoMock.forEach((p) => m.set(p.id, p));
+    photoMock.forEach((p) => m.set(p.postId, p));
     return m;
   }, []);
 
@@ -44,7 +44,7 @@ export default function PhotoDownload() {
     if (selectedIds.length === photoMock.length) {
       setSelectedIds([]); // 모두 선택된 상태면 전체 해제
     } else {
-      setSelectedIds(photoMock.map((p) => p.id)); // 전체 선택
+      setSelectedIds(photoMock.map((p) => p.postId)); // 전체 선택
     }
   };
 
@@ -109,7 +109,7 @@ export default function PhotoDownload() {
                   return (
                     <PhotoCardPreview
                       key={id}
-                      src={photo.src}
+                      src={photo.image.imageUrl}
                       showClose={true}
                       alt=""
                       onClose={() => toggle(id)}
@@ -121,21 +121,21 @@ export default function PhotoDownload() {
             {/* 사진 그리드 */}
             <div className="mt-[0.9375rem] grid grid-cols-3 gap-1">
               {photoMock.map((p) => {
-                const isSelected = selectedSet.has(p.id);
+                const isSelected = selectedSet.has(p.postId);
                 const selectionIndex = isSelected
-                  ? selectedIndexMap.get(p.id)
+                  ? selectedIndexMap.get(p.postId)
                   : undefined;
 
                 return (
                   <ImageCard
-                    key={p.id}
-                    src={p.src}
+                    key={p.postId}
+                    src={p.image.imageUrl}
                     mode="multi"
                     isSelected={isSelected}
                     selectionIndex={selectionIndex}
-                    onToggle={() => toggle(p.id)}
+                    onToggle={() => toggle(p.postId)}
                     onOpen={() => {
-                      setCurrentPhotoId(p.id);
+                      setCurrentPhotoId(p.postId);
                     }}
                     className="mx-auto"
                   />
@@ -196,7 +196,7 @@ export default function PhotoDownload() {
                 <div className="w-full max-w-full">
                   <div className="relative mb-8 h-[23.6875rem] w-full overflow-hidden">
                     <img
-                      src={currentPhoto.src}
+                      src={currentPhoto.image.imageUrl}
                       alt=""
                       className="absolute inset-0 h-full w-full object-contain"
                     />
@@ -228,7 +228,7 @@ export default function PhotoDownload() {
                   className="shrink-0"
                 >
                   <PhotoCardPreview
-                    src={photo.src}
+                    src={photo.image.imageUrl}
                     showClose={false}
                     className={id === currentPhotoId ? "scale-110" : ""}
                   />

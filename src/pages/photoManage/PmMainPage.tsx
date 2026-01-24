@@ -14,8 +14,8 @@ import { ActionButton } from "@/components/photoManage/ActionButton";
 import { useNavigate } from "react-router";
 import { DialogBox } from "@/components/common/DialogBox";
 import { useState } from "react";
-import { scanMock } from "@/types/process";
-import type { Status, ReceiptMethod } from "@/types/process";
+import { scanMock } from "@/types/photomanage/process";
+import type { Status, ReceiptMethod } from "@/types/photomanage/process";
 
 type StepConfig = {
   key: string;

@@ -1,12 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
-import { photoMock } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
 import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
+import { getPosts } from "@/apis/photoFeed/feed.api";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import type { PostPreview } from "@/types/photoFeed/postPreview";
+
+const PAGE_SIZE = 20;
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const {
+    data,
+    fetchNextPage,
+    isLoading,
+    isError,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<PostPreview[], Error>({
+    queryKey: ["photoFeed"],
+    queryFn: () => getPosts(),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length < PAGE_SIZE ? undefined : allPages.length + 1,
+  });
+
+  const posts = data?.pages.flat() ?? [];
+
+  // Intersection Observer 설정
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const first = entries[0]; // 관찰 중인 요소의 상태
+      if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    });
+
+    observer.observe(el); // 센티널 요소 관찰 시작
+    return () => observer.disconnect(); // 컴포넌트 언마운트 시 관찰 중지
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
     <main className="mx-auto max-w-6xl py-6">
@@ -20,10 +58,17 @@ export default function PhotoFeedPage() {
           },
         }}
       />
+
+      {/* 로딩/에러 처리 (최소) */}
+      {isLoading && <div className="py-6 text-neutral-300">로딩 중…</div>}
+      {isError && (
+        <div className="py-6 text-red-400">불러오기에 실패했어요.</div>
+      )}
+
       {/* Masonry 레이아웃 */}
       <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
-        {photoMock.map((photo) => (
-          <PhotoCard key={photo.id} photo={photo} />
+        {posts.map((postPreview) => (
+          <PhotoCard key={postPreview.postId} photo={postPreview} />
         ))}
       </section>
 
@@ -43,6 +88,9 @@ export default function PhotoFeedPage() {
           onClose={() => setIsCreateModalOpen(false)}
         />
       )}
+
+      {/* 센티널 요소 */}
+      <div ref={sentinelRef} style={{ height: 1 }} />
     </main>
   );
 }

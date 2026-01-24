@@ -2,7 +2,7 @@ import { CTA_Button } from "@/components/common/CTA_Button";
 import { PencilLineFillIcon, XMarkIcon } from "@/assets/icon";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
-import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
+import { useNewPostState } from "@/store/useNewPostState.store";
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,7 +12,6 @@ interface ModalProps {
 export default function NewPostModal({ isOpen, onClose }: ModalProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
-  const setFiles = useSelectedPhotos((s) => s.setFiles);
 
   if (!isOpen) return null;
 
@@ -60,15 +59,15 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
             accept="image/*"
             multiple
             hidden
-            onChange={(e) => {
+            onChange={async (e) => {
               const files = Array.from(e.target.files ?? []);
-              if (files.length === 0) return; // 사용자가 취소한 경우
+              if (files.length === 0) return;
 
-              setFiles(files); // 전역에 저장
               e.currentTarget.value = ""; // 같은 파일 재선택 대비
-
               onClose();
-              navigate("/photoFeed/post/new"); // 바로 다음 페이지로
+              navigate("/photoFeed/post/new");
+
+              void useNewPostState.getState().setFiles(files); // 저장은 비동기 처리
             }}
           />
 
