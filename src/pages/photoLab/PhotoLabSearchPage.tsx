@@ -263,6 +263,7 @@ export default function PhotoLabSearchPage() {
             onFavoriteToggle={handleFavoriteToggle}
             onCardClick={handleLabClick}
             emptyMessage="검색 결과가 없어요"
+            className="pt-4"
           />
 
           {/* 필터 바텀시트 */}

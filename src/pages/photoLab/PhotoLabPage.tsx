@@ -200,7 +200,7 @@ export default function PhotoLabPage() {
             ? "검색 조건에 맞는 현상소가 없어요"
             : "아직 현상소가 없어요" //말투는 추후 확인 필요
         }
-        className="pb-(--tabbar-height)"
+        className="pt-4 pb-(--tabbar-height)"
       />
 
       {/* 필터 바텀시트 */}
