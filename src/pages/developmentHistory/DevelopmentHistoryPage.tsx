@@ -1,6 +1,5 @@
 import { DEVELOPMENT_HISTORY_DATA } from "./constants";
-import { ChevronLeftIcon, CloseIcon } from "@/assets/icon";
-import { FlimImageIcon } from "@/assets/icon";
+import { ChevronLeftIcon, CloseIcon, FlimImageIcon } from "@/assets/icon";
 import { useState } from "react";
 import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
 import { useLocation, useNavigate } from "react-router";
