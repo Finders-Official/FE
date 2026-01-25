@@ -43,7 +43,7 @@ export default function PhotoFeedSearchPage() {
 
   // 필터링 변경 핸들러
   const handleConfirm = () => {
-    // 쿼리 파라미터 변경
+    // TODO: 필터 적용 API
   };
 
   // 검색어 변경 핸들러
