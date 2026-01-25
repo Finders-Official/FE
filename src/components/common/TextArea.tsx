@@ -1,6 +1,20 @@
 import { useRef, useEffect } from "react";
 
+type TextAreaType = "title" | "content";
+
+const HEIGHT_BY_TYPE: Record<TextAreaType, { min: string; max: string }> = {
+  title: {
+    min: "2.25rem",
+    max: "5.5rem",
+  },
+  content: {
+    min: "5.5rem",
+    max: "11.4375rem",
+  },
+};
+
 type TextAreaProps = {
+  type?: TextAreaType;
   value: string;
   onChange: (value: string) => void;
 
@@ -16,6 +30,7 @@ type TextAreaProps = {
 };
 
 export function TextArea({
+  type,
   value,
   onChange,
   placeholder = "",
@@ -31,6 +46,17 @@ export function TextArea({
   const length = value.length;
   const hasTyped = length > 0; // 한 글자라도 입력했는가
   const isOverMax = typeof maxLength === "number" && length > maxLength;
+
+  const heightStyle =
+    type && HEIGHT_BY_TYPE[type]
+      ? {
+          minHeight: HEIGHT_BY_TYPE[type].min,
+          maxHeight: HEIGHT_BY_TYPE[type].max,
+        }
+      : {
+          minHeight: "5.5rem",
+          maxHeight: "11.4375rem",
+        };
 
   // 내용에 따라 높이 자동 조절
   useEffect(() => {
@@ -52,10 +78,7 @@ export function TextArea({
         placeholder={placeholder}
         disabled={disabled}
         className={`textarea-scrollbar placeholder:text-neutral-750 w-full resize-none overflow-y-auto bg-transparent text-[1rem] text-neutral-200 outline-none ${textareaClassName} `}
-        style={{
-          minHeight: "5.5rem",
-          maxHeight: "11.4375rem",
-        }}
+        style={heightStyle}
       />
 
       {/* 우측 하단: 입력 전에는 안내 / 입력 후에는 카운터 */}
