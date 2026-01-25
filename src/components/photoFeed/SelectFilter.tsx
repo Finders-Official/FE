@@ -1,35 +1,34 @@
-import { useState } from "react";
-import SearchFilter from "@/components/photoFeed/SearchFilter";
+import SearchFilterItem from "@/components/photoFeed/SearchFilterItem";
 
-export default function SelectFilter() {
-  const [selectedFilter, setSelectedFilter] = useState(1);
+export type FilterKey = "TITLE" | "TITLE_CONTENT" | "LAB_NAME" | "LAB_REVIEW";
 
+const FILTER_OPTIONS: Array<{ key: FilterKey; label: string }> = [
+  { key: "TITLE", label: "제목만" },
+  { key: "TITLE_CONTENT", label: "제목 + 본문" },
+  { key: "LAB_NAME", label: "현상소 이름" },
+  { key: "LAB_REVIEW", label: "현상소 리뷰 내용" },
+];
+
+type SelectFilterProps = {
+  value: FilterKey;
+  onChange: (value: FilterKey) => void;
+};
+
+export default function SelectFilter({ value, onChange }: SelectFilterProps) {
   return (
-    <div className="flex flex-col items-center gap-5 p-6">
-      <div>
-        <div>
-          <SearchFilter
-            text="제목만"
-            isSelected={selectedFilter === 1}
-            onClick={() => setSelectedFilter(1)}
-          />
-          <SearchFilter
-            text="제목 + 본문"
-            isSelected={selectedFilter === 2}
-            onClick={() => setSelectedFilter(2)}
-          />
-          <SearchFilter
-            text="현상소 이름"
-            isSelected={selectedFilter === 3}
-            onClick={() => setSelectedFilter(3)}
-          />
-          <SearchFilter
-            text="현상소 리뷰 내용"
-            isSelected={selectedFilter === 4}
-            onClick={() => setSelectedFilter(4)}
-          />
-        </div>
-      </div>
+    <div
+      className="flex w-full flex-col gap-5 p-6"
+      role="radiogroup"
+      aria-label="필터링 기준"
+    >
+      {FILTER_OPTIONS.map((opt) => (
+        <SearchFilterItem
+          key={opt.key}
+          text={opt.label}
+          selected={value === opt.key}
+          onSelect={() => onChange(opt.key)}
+        />
+      ))}
     </div>
   );
 }

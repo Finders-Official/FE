@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { CTA_Button } from "@/components/common";
-import { photoMock } from "@/types/photo";
+import { mockPreviewList } from "@/types/photo";
 import { useNavigate } from "react-router";
 import { PhotoQuantityStepper } from "@/components/photoManage/PhotoQuantityStepper";
 
@@ -12,7 +12,7 @@ export function PrintRequestPage() {
   //수량 초기화 -> 사진 id 별로 초기 수량을 0으로 세팅
   const [qtyById, setQtyById] = useState<QtyMap>(() => {
     const init: QtyMap = {};
-    for (const p of photoMock) init[p.id] = 0;
+    for (const p of mockPreviewList.previewList) init[p.postId] = 0;
     return init;
   });
 
@@ -50,20 +50,20 @@ export function PrintRequestPage() {
       </header>
 
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] grid flex-1 grid-cols-2 gap-4 overflow-y-auto">
-        {photoMock.map((photo) => {
-          const qty = qtyById[photo.id] ?? 0;
+        {mockPreviewList.previewList.map((photo) => {
+          const qty = qtyById[photo.postId] ?? 0;
 
           return (
-            <div key={photo.id} className="flex flex-col items-center">
+            <div key={photo.postId} className="flex flex-col items-center">
               <img
-                src={photo.src}
+                src={photo.image.imageUrl}
                 alt={photo.title}
                 className="h-40 w-40 rounded-[0.625rem]"
               />
               <PhotoQuantityStepper
                 qty={qty}
-                onDec={() => decrease(photo.id)}
-                onInc={() => increase(photo.id)}
+                onDec={() => decrease(photo.postId)}
+                onInc={() => increase(photo.postId)}
                 min={0}
                 // max={99} // 필요하면
               />

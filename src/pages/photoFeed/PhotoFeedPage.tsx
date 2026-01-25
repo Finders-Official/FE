@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
-import { photoMock } from "@/types/photo";
+import { mockPreviewList } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
 import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
@@ -23,9 +23,9 @@ export default function PhotoFeedPage() {
         }}
       />
       {/* Masonry 레이아웃 */}
-      <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
-        {photoMock.map((photo) => (
-          <PhotoCard key={photo.id} photo={photo} />
+      <section className="mb-20 columns-2 gap-4 md:columns-3 xl:columns-4">
+        {mockPreviewList.previewList.map((photo) => (
+          <PhotoCard key={photo.postId} photo={photo} />
         ))}
       </section>
 

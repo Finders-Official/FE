@@ -5,16 +5,29 @@ import { KeywordSuggestionSection } from "@/components/photoLab/search";
 import { useRecentSearches } from "@/hooks/useRecentSearches";
 import { MOCK_KEYWORD_SUGGESTIONS } from "@/constants/photoLab";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
-import { ChevronLeftIcon, FloatingIcon } from "@/assets/icon";
+import { ChevronLeftIcon, FloatingIcon, LogoIcon } from "@/assets/icon";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
-import { photoMock } from "@/types/photo";
+import { mockPreviewList } from "@/types/photo";
 import RecentSearchKeyword from "@/components/photoFeed/RecentSearchKeyword";
 import BottomSheet from "@/components/common/BottomSheet";
-import SelectFilter from "@/components/photoFeed/SelectFilter";
+import SelectFilter, {
+  type FilterKey,
+} from "@/components/photoFeed/SelectFilter";
+import { TabBar } from "@/components/common/TabBar";
+
+const FILTER_LABEL: Record<FilterKey, string> = {
+  TITLE: "제목만",
+  TITLE_CONTENT: "제목 + 본문",
+  LAB_NAME: "현상소 이름",
+  LAB_REVIEW: "현상소 리뷰 내용",
+};
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [filter, setFilter] = useState<FilterKey>("TITLE");
+
+  const [isTabBar, setIsTabBar] = useState(false);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
@@ -27,6 +40,11 @@ export default function PhotoLabSearchPage() {
 
   // SearchBar에 표시할 값 (results 상태에서는 URL 파라미터, 입력 상태에서는 local state)
   const displayQuery = isResultsState ? searchQuery : searchText;
+
+  // 필터링 변경 핸들러
+  const handleConfirm = () => {
+    // 쿼리 파라미터 변경
+  };
 
   // 검색어 변경 핸들러
   const handleQueryChange = (newQuery: string) => {
@@ -59,6 +77,7 @@ export default function PhotoLabSearchPage() {
     const trimmed = searchValue.trim();
     if (trimmed) {
       addSearch(trimmed);
+      setIsTabBar(true);
       navigate(`/photoFeed/search?keyword=${encodeURIComponent(trimmed)}`, {
         replace: true,
       });
@@ -67,6 +86,7 @@ export default function PhotoLabSearchPage() {
 
   const handleRecentSearchClick = (keyword: string) => {
     addSearch(keyword);
+    setIsTabBar(true);
     navigate(`/photoFeed/search?keyword=${encodeURIComponent(keyword)}`, {
       replace: true,
     });
@@ -74,6 +94,7 @@ export default function PhotoLabSearchPage() {
 
   const handleKeywordClick = (keyword: string) => {
     addSearch(keyword);
+    setIsTabBar(true);
     navigate(`/photoFeed/search?keyword=${encodeURIComponent(keyword)}`, {
       replace: true,
     });
@@ -87,7 +108,7 @@ export default function PhotoLabSearchPage() {
   };
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
       <div className="py-3">
         <SearchBar
@@ -124,25 +145,48 @@ export default function PhotoLabSearchPage() {
         </div>
       )}
 
+      {/* 검색 결과가 없는 경우 */}
+      {isResultsState && mockPreviewList.totalCount <= 0 && (
+        <div className="absolute inset-0 flex h-full flex-col items-center justify-center gap-4">
+          <LogoIcon className="h-[94px] w-[94px]" />
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-[16px] text-neutral-200">
+              검색 결과가 없습니다.
+            </p>
+            <p className="text-[16px] text-neutral-200">
+              다른 키워드로 검색해보세요.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* 검색 결과 출력 */}
-      {isResultsState && (
-        <div className="flex flex-col gap-4">
+      {isResultsState && mockPreviewList.totalCount > 0 && (
+        <div className="mt-4 flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
-              검색 결과 {}개
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                검색 결과
+              </h2>
+              <p className="text-[1rem] font-light text-neutral-100">
+                {mockPreviewList.totalCount}개
+              </p>
+            </div>
             <button
               type="button"
-              onClick={() => setBottomSheetOpen(true)}
+              onClick={() => {
+                setBottomSheetOpen(true);
+                setIsTabBar(false);
+              }}
               className="flex items-center gap-[6px] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
             >
-              <span>제목만</span>
+              <span>{FILTER_LABEL[filter]}</span>
               <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
             </button>
           </div>
-          <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
-            {photoMock.map((photo) => (
-              <PhotoCard key={photo.id} photo={photo} />
+          <section className="mb-25 columns-2 gap-4 md:columns-3 xl:columns-4">
+            {mockPreviewList.previewList.map((photo) => (
+              <PhotoCard key={photo.postId} photo={photo} />
             ))}
           </section>
 
@@ -167,29 +211,42 @@ export default function PhotoLabSearchPage() {
       {bottomSheetOpen && (
         <BottomSheet
           open={bottomSheetOpen}
-          onClose={() => setBottomSheetOpen(false)}
-          title="필터링"
+          collapsedRatio={0.44}
+          onClose={() => {
+            setBottomSheetOpen(false);
+            setIsTabBar(true);
+          }}
+          title="필터링 기준"
         >
-          <p>필터링 기준</p>
-          <div>
-            <SelectFilter />
-          </div>
-          <div className="fixed right-0 bottom-0 left-0 flex justify-center gap-3 px-5 py-5">
-            <CTA_Button
-              text="취소"
-              size="medium"
-              color="black"
-              onClick={() => setBottomSheetOpen(false)}
-            />
-            <CTA_Button
-              text="확인"
-              size="medium"
-              color="orange"
-              onClick={() => {}} // TODO 필터링 바뀌서 다시 요청
-            />
+          <div className="flex w-full flex-col items-center">
+            <div className="flex w-full">
+              <SelectFilter value={filter} onChange={setFilter} />
+            </div>
+            <div className="fixed right-0 bottom-0 left-0 flex justify-center gap-3 px-5 py-5">
+              <CTA_Button
+                text="취소"
+                size="medium"
+                color="black"
+                onClick={() => {
+                  setBottomSheetOpen(false);
+                  setIsTabBar(true);
+                }}
+              />
+              <CTA_Button
+                text="확인"
+                size="medium"
+                color="orange"
+                onClick={() => {
+                  setBottomSheetOpen(false);
+                  setIsTabBar(true);
+                  handleConfirm();
+                }}
+              />
+            </div>
           </div>
         </BottomSheet>
       )}
+      {isTabBar && <TabBar />}
     </div>
   );
 }

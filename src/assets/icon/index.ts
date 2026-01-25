@@ -26,6 +26,7 @@ export { default as ExclamationCircleIcon } from "./exclamation-circle.svg?react
 export { default as HeadsetIcon } from "./headset.svg?react";
 export { default as HeartIcon } from "./heart.svg?react";
 export { default as HomeIcon } from "./home.svg?react";
+export { default as LogoIcon } from "./logo.svg?react";
 export { default as MagnifyingGlassIcon } from "./magnifying-glass.svg?react";
 export { default as ManageIcon } from "./tab-camera.svg?react";
 export { default as MapPinIcon } from "./map-pin.svg?react";
