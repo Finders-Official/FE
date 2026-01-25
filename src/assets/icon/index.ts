@@ -21,6 +21,7 @@ export { default as CopyFillIcon } from "./copy-filled.svg?react";
 export { default as DownloadIcon } from "./download.svg?react";
 export { default as EmptyBoxIcon } from "./empty-box.svg?react";
 export { default as EmptyCheckCircleIcon } from "./empty-check-circle.svg?react";
+export { default as EmptyCircleIcon } from "./empty-circle.svg?react";
 export { default as ExclamationCircleIcon } from "./exclamation-circle.svg?react";
 export { default as HeadsetIcon } from "./headset.svg?react";
 export { default as HeartIcon } from "./heart.svg?react";
@@ -72,6 +73,7 @@ export { default as ChatBubbleDoubleFillIcon } from "./chat-bubble-double-fill.s
 export { default as ChatFillIcon } from "./tab-chat-bubble-fill.svg?react";
 export { default as CheckCircleIcon } from "./check-circle.svg?react";
 export { default as CheckBoxIcon } from "./check-box-fill.svg?react";
+export { default as CircleFillIcon } from "./circle-fill.svg?react";
 export { default as CircleGlareFillIcon } from "./circle-glare-fill.svg?react";
 export { default as DeleteIcon } from "./delete.svg?react";
 export { default as EllipsisVerticalIcon } from "./ellipsis-vertical.svg?react";

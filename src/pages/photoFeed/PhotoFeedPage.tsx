@@ -4,9 +4,11 @@ import { photoMock } from "@/types/photo";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
 import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
+import { useNavigate } from "react-router";
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <main className="mx-auto max-w-6xl py-6">
@@ -16,7 +18,7 @@ export default function PhotoFeedPage() {
           type: "icon",
           icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
           onClick: () => {
-            setIsCreateModalOpen(true);
+            navigate("/photoFeed/search");
           },
         }}
       />
