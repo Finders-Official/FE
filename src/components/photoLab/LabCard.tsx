@@ -130,9 +130,9 @@ export default function LabCard({
           </div>
         </div>
 
-        {/* Images Section - 오른쪽 패딩 밖으로 확장해서 다음 이미지 살짝 보이게, 혹은 추후에 화면 끝까지 */}
+        {/* Images Section */}
         {lab.imageUrls.length > 0 && (
-          <div className="scrollbar-hide -mr-4 flex gap-2 overflow-x-auto pr-4">
+          <div className="scrollbar-hide scroll-fade-right flex gap-2 overflow-x-auto">
             {lab.imageUrls.map((url, index) => (
               <img
                 key={index}
