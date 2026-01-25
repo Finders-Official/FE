@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCarousel } from "@/hooks/useCarousel";
 
 type Props = {
   images: string[];
@@ -9,23 +9,7 @@ export default function LabImageCarousel({
   images,
   altPrefix = "lab-image",
 }: Props) {
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      const w = el.clientWidth;
-      if (w === 0) return;
-      const next = Math.round(el.scrollLeft / w);
-      setIndex(next);
-    };
-
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
+  const { index, scrollerRef } = useCarousel(images.length);
 
   if (images.length === 0) return null;
 
