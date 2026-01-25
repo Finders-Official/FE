@@ -10,8 +10,16 @@ import type {
   DropDownSelection,
 } from "@/types/photomanage/category";
 import { useMemo, useState } from "react";
+import { useLocation } from "react-router";
+
+type PickUpMethod = "pickup" | "delivery";
+type LocationState = { pickupMethod?: PickUpMethod };
 
 export function PrintOptionPage() {
+  const location = useLocation();
+  const pickupMethod: PickUpMethod =
+    (location.state as LocationState | null)?.pickupMethod ?? "delivery"; // 기본값
+
   const initialSelection = useMemo<DropDownSelection>(
     () => ({
       FILM: null,
@@ -35,25 +43,29 @@ export function PrintOptionPage() {
 
   const handleSelect = (key: CategoryKey, option: DropDownOption) => {
     setSelection((prev) => ({ ...prev, [key]: option }));
-    setOpenKey(null); // 선택하면 닫히게(원하면 제거)
+    setOpenKey(null);
   };
 
-  //옵션 합계 = 선택된 옵션들의 priceWon 합산
   const optionsTotalWon = useMemo(() => {
     return (Object.values(selection) as (DropDownOption | null)[])
       .filter((v): v is DropDownOption => v !== null)
       .reduce((sum, opt) => sum + opt.priceWon, 0);
   }, [selection]);
 
-  //총 금액 = 옵션 합계 + 배송비
+  //배송비: 배송이면 3000, 직접수령이면 0
+  const shippingFeeWon = pickupMethod === "delivery" ? DELIVERY_FEE_WON : 0;
+
+  //총 금액 = 옵션 합계 + (조건부 배송비)
   const totalWon = useMemo(
-    () => optionsTotalWon + DELIVERY_FEE_WON,
-    [optionsTotalWon],
+    () => optionsTotalWon + shippingFeeWon,
+    [optionsTotalWon, shippingFeeWon],
   );
 
-  //표시용 포맷
   const formatWon = (n: number) => `${n.toLocaleString("ko-KR")}원`;
   const formatPlusWon = (n: number) => `+ ${n.toLocaleString("ko-KR")}원`;
+
+  //표시 문구
+  const shippingLabel = pickupMethod === "delivery" ? "배송" : "직접수령";
 
   return (
     <div className="flex h-full flex-1 flex-col pt-7">
@@ -84,9 +96,10 @@ export function PrintOptionPage() {
 
         <section className="shrink-0">
           <div className="border-neutral-875 flex justify-between border-b-[0.5rem] py-5">
-            <p>배송</p>
-            <p>{formatPlusWon(DELIVERY_FEE_WON)}</p>
+            <p>{shippingLabel}</p>
+            <p>{formatPlusWon(shippingFeeWon)}</p>
           </div>
+
           <div className="mt-4 mb-4 flex justify-between text-[1.1875rem]">
             <p>총 금액</p>
             <p className="text-orange-500">{formatWon(totalWon)}</p>

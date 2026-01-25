@@ -21,7 +21,9 @@ export function DetailInfoPage() {
 
   const handleComplete = () => {
     // TODO: 선택한 주소 저장(zustand 등)하고 다음으로 이동
-    navigate("../photoManage/print-option");
+    navigate("../photoManage/print-option", {
+      state: { pickupMethod: "delivery" as const },
+    });
   };
 
   return (
