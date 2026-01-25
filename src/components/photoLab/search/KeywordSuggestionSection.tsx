@@ -2,7 +2,7 @@ import { SearchItem } from "@/components/common";
 
 interface KeywordSuggestionSectionProps {
   keywords: string[];
-  query: string;
+  query?: string;
   onKeywordClick: (keyword: string) => void;
 }
 
