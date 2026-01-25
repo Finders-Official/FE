@@ -309,21 +309,21 @@ export default function PmMainPage() {
         {/* 상단 배너 */}
         <div className="relative mt-15 flex justify-center">
           {/* Circle 배경 */}
-          <CircleIcon className="h-[231px] w-[231px]" />
+          <CircleIcon className="h-[14.4375rem] w-[14.4375rem]" />
 
           {/* Circle 위 콘텐츠 */}
           <div className="absolute top-0 flex flex-col items-center text-center">
             {/* 아이콘 */}
-            <div className="flex h-[81px] w-[72px] -translate-y-1/2">
+            <div className="flex h-[5.0625rem] w-[4.5rem] -translate-y-1/2">
               {currentBanner.icon}
             </div>
 
             {/* 텍스트 */}
             <div className="flex -translate-y-1/2 flex-col gap-2">
-              <h2 className="text-[20px] font-semibold text-neutral-100">
+              <h2 className="text-[1.25rem] font-semibold text-neutral-100">
                 {currentBanner.title}
               </h2>
-              <p className="text-[15px] text-neutral-100">
+              <p className="text-[0.9375rem] text-neutral-100">
                 {currentBanner.content}
               </p>
             </div>

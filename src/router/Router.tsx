@@ -125,10 +125,6 @@ const router = createBrowserRouter([
             path: "/mypage/edit-info",
             Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
           },
-          {
-            path: "/photoManage/main",
-            Component: PmMainPage,
-          },
         ],
       },
       //마이페이지 전용 레이아웃

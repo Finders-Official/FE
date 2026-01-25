@@ -173,8 +173,10 @@ export default function BottomSheet({
           className={[
             "mx-auto flex h-full w-full max-w-[32rem] flex-col rounded-t-4xl shadow-[0_-0.75rem_2.5rem_rgba(0,0,0,0.4)]",
             "bg-neutral-875",
-            sheetClassName ?? "",
-          ].join(" ")}
+            sheetClassName,
+          ]
+            .filter(Boolean)
+            .join(" ")}
         >
           {/* Handle + Header */}
           <div

@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from "react-router";
 const DevelopmentHistoryPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMenu = location.state;
+  const isMenu = location.state?.isMenu;
 
   const data = DEVELOPMENT_HISTORY_DATA;
   const hasData = data.length > 0;
@@ -24,8 +24,6 @@ const DevelopmentHistoryPage = () => {
 
   const newLocal =
     "mx-auto min-h-screen w-full max-w-md bg-neutral-900 text-neutral-100";
-
-  if (!open) return null;
 
   return (
     <div className={newLocal}>
