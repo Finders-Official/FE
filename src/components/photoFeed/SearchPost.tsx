@@ -1,7 +1,7 @@
-import { XMarkIcon } from "@/assets/icon";
+import { LogoIcon, XMarkIcon } from "@/assets/icon";
 
 export type SearchPostProps = {
-  image: string;
+  image?: string;
   text: string;
   onClick?: () => void;
   onDelete?: () => void;
@@ -27,11 +27,17 @@ export default function SearchPost({
     >
       {/* 사진 + 텍스트 */}
       <div className="flex items-center gap-[18px]">
-        <img
-          src={image}
-          alt={text}
-          className="h-21 w-21 rounded-2xl object-cover"
-        />
+        {image ? (
+          <img
+            src={image}
+            alt={text}
+            className="h-21 w-21 rounded-2xl object-cover"
+          />
+        ) : (
+          <div className="flex h-21 w-21 items-center justify-center rounded-2xl">
+            <LogoIcon className="h-8 w-8" />
+          </div>
+        )}
         <span className="text-4 leading-[155%] tracking-[-0.02em] text-neutral-200">
           {text}
         </span>

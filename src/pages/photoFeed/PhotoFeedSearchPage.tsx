@@ -2,18 +2,18 @@ import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import { KeywordSuggestionSection } from "@/components/photoLab/search";
-import { useRecentSearches } from "@/hooks/useRecentSearches";
+import { mockHistoryList } from "@/types/photoFeed/SearchHistory";
 import { MOCK_KEYWORD_SUGGESTIONS } from "@/constants/photoLab";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
 import { ChevronLeftIcon, FloatingIcon, LogoIcon } from "@/assets/icon";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
 import { mockPreviewList } from "@/types/photo";
-import RecentSearchKeyword from "@/components/photoFeed/RecentSearchKeyword";
 import BottomSheet from "@/components/common/BottomSheet";
 import SelectFilter, {
   type FilterKey,
 } from "@/components/photoFeed/SelectFilter";
 import { TabBar } from "@/components/common/TabBar";
+import SearchPost from "@/components/photoFeed/SearchPost";
 
 const FILTER_LABEL: Record<FilterKey, string> = {
   TITLE: "제목만",
@@ -22,12 +22,10 @@ const FILTER_LABEL: Record<FilterKey, string> = {
   LAB_REVIEW: "현상소 리뷰 내용",
 };
 
-export default function PhotoLabSearchPage() {
+export default function PhotoFeedSearchPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<FilterKey>("TITLE");
-
-  const [isTabBar, setIsTabBar] = useState(false);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
@@ -35,6 +33,8 @@ export default function PhotoLabSearchPage() {
   // URL에서 검색어 가져오기 (results 상태 판단)
   const searchQuery = searchParams.get("keyword") || "";
   const isResultsState = !!searchQuery;
+
+  const showTabBar = isResultsState && !bottomSheetOpen;
 
   const [searchText, setSearchText] = useState(""); // 입력 중인 검색어
 
@@ -54,10 +54,6 @@ export default function PhotoLabSearchPage() {
     }
   };
 
-  // 최근 검색어
-  const { recentSearches, addSearch, removeSearch, clearAll } =
-    useRecentSearches();
-
   // 자동완성 필터링
   const filteredKeywords = useMemo(() => {
     if (!searchText.trim()) return [];
@@ -76,25 +72,13 @@ export default function PhotoLabSearchPage() {
   const handleSearch = (searchValue: string) => {
     const trimmed = searchValue.trim();
     if (trimmed) {
-      addSearch(trimmed);
-      setIsTabBar(true);
       navigate(`/photoFeed/search?keyword=${encodeURIComponent(trimmed)}`, {
         replace: true,
       });
     }
   };
 
-  const handleRecentSearchClick = (keyword: string) => {
-    addSearch(keyword);
-    setIsTabBar(true);
-    navigate(`/photoFeed/search?keyword=${encodeURIComponent(keyword)}`, {
-      replace: true,
-    });
-  };
-
   const handleKeywordClick = (keyword: string) => {
-    addSearch(keyword);
-    setIsTabBar(true);
     navigate(`/photoFeed/search?keyword=${encodeURIComponent(keyword)}`, {
       replace: true,
     });
@@ -125,13 +109,38 @@ export default function PhotoLabSearchPage() {
 
       {/* 검색어 입력 전: 최근 검색어 출력 */}
       {!isResultsState && !searchText.trim() && (
-        <div className="flex flex-col gap-8 pt-4">
-          <RecentSearchKeyword
-            searches={recentSearches}
-            onSearchClick={handleRecentSearchClick}
-            onDelete={removeSearch}
-            onClearAll={clearAll}
-          />
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                최근 검색어
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  // TODO: 최근 검색어 전체 삭제 API
+                }}
+                className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
+              >
+                전체 삭제
+              </button>
+            </div>
+
+            {/* 검색어 리스트 */}
+            <div className="flex flex-col gap-4">
+              {mockHistoryList.historyList.map((search) => (
+                <SearchPost
+                  key={search.historyId}
+                  image={search.imageUrl}
+                  text={search.keyword}
+                  onClick={() => handleKeywordClick(search.keyword)}
+                  onDelete={() => {
+                    // TODO: 해당 검색어 삭제 API
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -147,7 +156,7 @@ export default function PhotoLabSearchPage() {
 
       {/* 검색 결과가 없는 경우 */}
       {isResultsState && mockPreviewList.totalCount <= 0 && (
-        <div className="absolute inset-0 flex h-full flex-col items-center justify-center gap-4">
+        <div className="pointer-events-none absolute inset-0 flex h-full flex-col items-center justify-center gap-4">
           <LogoIcon className="h-[94px] w-[94px]" />
           <div className="flex flex-col items-center justify-center">
             <p className="text-[16px] text-neutral-200">
@@ -176,7 +185,6 @@ export default function PhotoLabSearchPage() {
               type="button"
               onClick={() => {
                 setBottomSheetOpen(true);
-                setIsTabBar(false);
               }}
               className="flex items-center gap-[6px] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
             >
@@ -214,7 +222,6 @@ export default function PhotoLabSearchPage() {
           collapsedRatio={0.44}
           onClose={() => {
             setBottomSheetOpen(false);
-            setIsTabBar(true);
           }}
           title="필터링 기준"
         >
@@ -229,7 +236,6 @@ export default function PhotoLabSearchPage() {
                 color="black"
                 onClick={() => {
                   setBottomSheetOpen(false);
-                  setIsTabBar(true);
                 }}
               />
               <CTA_Button
@@ -238,7 +244,6 @@ export default function PhotoLabSearchPage() {
                 color="orange"
                 onClick={() => {
                   setBottomSheetOpen(false);
-                  setIsTabBar(true);
                   handleConfirm();
                 }}
               />
@@ -246,7 +251,7 @@ export default function PhotoLabSearchPage() {
           </div>
         </BottomSheet>
       )}
-      {isTabBar && <TabBar />}
+      {showTabBar && <TabBar />}
     </div>
   );
 }
