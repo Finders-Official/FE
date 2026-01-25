@@ -104,7 +104,7 @@ export default function Process({
 
           {isCurrent && <div>{subComment}</div>}
 
-          <p className={contentClass}>{content}</p>
+          <div className={contentClass}>{content}</div>
         </div>
 
         {/** Action 버튼들 */}

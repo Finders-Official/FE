@@ -7,12 +7,14 @@ interface CalendarProps {
   selectedDate?: Date;
   onDateSelect: (date: Date) => void;
   minDate?: Date; // 선택 가능한 최소 날짜 (기본: 오늘)
+  isDateDisabled?: (date: Date) => boolean;
 }
 
 export default function Calendar({
   selectedDate,
   onDateSelect,
   minDate,
+  isDateDisabled,
 }: CalendarProps) {
   const today = useMemo(() => {
     const d = new Date();
@@ -95,7 +97,9 @@ export default function Calendar({
 
   // 날짜가 비활성화되어야 하는지
   const isDisabled = (date: Date) => {
-    return date < effectiveMinDate;
+    if (date < effectiveMinDate) return true;
+    if (isDateDisabled?.(date)) return true;
+    return false;
   };
 
   // 오늘인지 확인

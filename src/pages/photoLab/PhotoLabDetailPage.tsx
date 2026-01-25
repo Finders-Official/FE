@@ -27,6 +27,12 @@ export default function PhotoLabDetailPage() {
     setLab((prev) => ({ ...prev, isFavorite: !prev.isFavorite }));
   };
 
+  const handleReservation = () => {
+    navigate(`/photolab/${lab.photoLabId}/reservation`, {
+      state: { labName: lab.name },
+    });
+  };
+
   const mainImage = lab.images.find((img) => img.isMain) || lab.images[0];
 
   return (
@@ -67,7 +73,7 @@ export default function PhotoLabDetailPage() {
         />
       </main>
 
-      <LabBottomBar />
+      <LabBottomBar onReservationClick={handleReservation} />
     </div>
   );
 }

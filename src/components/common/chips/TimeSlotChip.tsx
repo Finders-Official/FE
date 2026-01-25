@@ -28,7 +28,7 @@ export default function TimeSlotChip({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex h-[2.625rem] w-[5rem] items-center justify-center rounded-[0.625rem] px-[1.25rem] py-[0.625rem] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] transition-colors ${getStyles()} ${className}`}
+      className={`flex h-[3rem] w-full items-center justify-center rounded-[0.625rem] px-[1.25rem] py-[0.625rem] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] transition-colors ${getStyles()} ${className}`}
     >
       {time}
     </button>
