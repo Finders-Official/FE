@@ -55,7 +55,7 @@ export default function LabLocationSection({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    let overlay: { setMap: (map: unknown | null) => void } | null = null;
+    let marker: { setMap: (map: unknown | null) => void } | null = null;
 
     const initMap = () => {
       const { kakao } = window;
@@ -71,25 +71,21 @@ export default function LabLocationSection({
         level: 3,
       });
 
-      // 커스텀 오버레이 콘텐츠 (핀 아이콘 + 현상소명)
-      const content = `
-        <div style="position:relative;">
-          <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;">
-            <img src="${customPinUrl}" style="width:42px;height:42px;" />
-            <span style="font-family:Pretendard;font-size:10px;font-weight:600;color:#131313;text-align:center;letter-spacing:-0.2px;white-space:nowrap;">
-              ${labName}
-            </span>
-          </div>
-        </div>
-      `;
+      // 커스텀 마커 이미지
+      const imageSize = new kakao.maps.Size(63, 63);
+      const imageOption = { offset: new kakao.maps.Point(31, 31) };
+      const markerImage = new kakao.maps.MarkerImage(
+        customPinUrl,
+        imageSize,
+        imageOption,
+      );
 
-      overlay = new kakao.maps.CustomOverlay({
-        content: content,
+      marker = new kakao.maps.Marker({
         position: position,
-        yAnchor: 0.5,
+        image: markerImage,
       });
 
-      overlay.setMap(map);
+      marker.setMap(map);
     };
 
     if (window.kakao?.maps) {
@@ -97,11 +93,11 @@ export default function LabLocationSection({
     }
 
     return () => {
-      if (overlay) {
-        overlay.setMap(null);
+      if (marker) {
+        marker.setMap(null);
       }
     };
-  }, [location.latitude, location.longitude, labName]);
+  }, [location.latitude, location.longitude]);
 
   const handleCopyAddress = async () => {
     await navigator.clipboard.writeText(address);
