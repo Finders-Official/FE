@@ -10,7 +10,7 @@ export async function nicknameCheck(
   nickname: string,
 ): Promise<ApiResponse<NicknameCheckData>> {
   const res = await axiosInstance.get<ApiResponse<NicknameCheckData>>(
-    "/api/users/nickname/check",
+    "/users/nickname/check",
     { params: { nickname } },
   );
 

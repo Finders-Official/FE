@@ -37,7 +37,9 @@ export function LoginPage() {
   const isSignedUpView = forceSignedUp ? true : ui.isSignedUp;
 
   const handleKakaoLogin = () => {
-    window.location.assign(buildKakaoAuthorizeUrl());
+    const url = buildKakaoAuthorizeUrl();
+    console.log(url);
+    window.location.assign(url);
   };
 
   return (

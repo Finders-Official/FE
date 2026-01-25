@@ -33,8 +33,7 @@ function processQueue(error: unknown, newAccessToken: string | null) {
 
 function shouldSkipAuth(config: AxiosRequestConfig) {
   const url = config.url ?? "";
-  // refresh/reissue 계열은 Authorization 붙이면 꼬일 수 있어서 제외
-  return url.includes("/auth/refresh") || url.includes("/auth/reissue");
+  return url.startsWith("/auth/reissue") || url.startsWith("/auth/refresh");
 }
 
 type AttachedAuth = "access" | "signup" | "none";

@@ -1,5 +1,5 @@
+import { useKakaoOauth } from "@/hooks/auth/login/useKakaoOAuth";
 import { useNavigate } from "react-router";
-import { useKakaoOauth } from "@/hooks/auth/useKakaoOAuth";
 
 export function KakaoCallbackPage() {
   const navigate = useNavigate();

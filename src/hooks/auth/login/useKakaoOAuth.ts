@@ -29,7 +29,7 @@ export function useKakaoOauth({
         refreshToken: res.data.refreshToken ?? tokenStorage.getRefreshToken(),
         signupToken: res.data.signupToken ?? tokenStorage.getSignupToken(),
       });
-      if (res.data.isExistingMember) onExistingMember();
+      if (!res.data.isNewMember) onExistingMember();
       else onNewMember();
     },
     onError: () => onFail?.(),
