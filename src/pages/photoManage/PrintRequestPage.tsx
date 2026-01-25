@@ -77,7 +77,7 @@ export function PrintRequestPage() {
       </section>
 
       <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900">
-        <div className="flex h-full items-center px-4">
+        <div className="flex h-full items-center">
           <CTA_Button
             text="다음"
             size="xlarge"
