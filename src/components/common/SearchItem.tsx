@@ -5,6 +5,7 @@ type SearchItemType = "recent" | "search";
 interface SearchItemProps {
   type: SearchItemType;
   text: string;
+  highlightText?: string;
   onClick?: () => void;
   onDelete?: () => void;
   className?: string;
@@ -13,6 +14,7 @@ interface SearchItemProps {
 export default function SearchItem({
   type,
   text,
+  highlightText,
   onClick,
   onDelete,
   className = "",
@@ -22,6 +24,28 @@ export default function SearchItem({
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete?.();
+  };
+
+  const renderHighlightedText = () => {
+    if (!highlightText) return text;
+
+    const lowerText = text.toLowerCase();
+    const lowerHighlight = highlightText.toLowerCase();
+    const index = lowerText.indexOf(lowerHighlight);
+
+    if (index === -1) return text;
+
+    const before = text.slice(0, index);
+    const match = text.slice(index, index + highlightText.length);
+    const after = text.slice(index + highlightText.length);
+
+    return (
+      <>
+        {before}
+        <span className="font-semibold">{match}</span>
+        {after}
+      </>
+    );
   };
 
   return (
@@ -35,7 +59,7 @@ export default function SearchItem({
           <IconComponent className="h-3.75 w-3.75 text-neutral-400" />
         </span>
         <span className="min-w-0 flex-1 truncate text-base leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-          {text}
+          {renderHighlightedText()}
         </span>
       </div>
 

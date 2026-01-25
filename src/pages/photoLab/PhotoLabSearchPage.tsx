@@ -228,6 +228,7 @@ export default function PhotoLabSearchPage() {
         <div className="flex flex-col gap-[1.875rem] pt-5">
           <KeywordSuggestionSection
             keywords={filteredKeywords}
+            query={query}
             onKeywordClick={handleKeywordClick}
           />
           <LabPreviewSection
