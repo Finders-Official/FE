@@ -50,10 +50,6 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/mainpage",
-        Component: MainPage,
-      },
-      {
         path: "/development-history",
         Component: DevelopmentHistoryPage,
       },
@@ -102,10 +98,6 @@ const router = createBrowserRouter([
         Component: ReservationCompletePage,
       },
       {
-        path: "/photoManage/main",
-        Component: PmMainPage,
-      },
-      {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
@@ -115,6 +107,10 @@ const router = createBrowserRouter([
         Component: FooterLayout,
         children: [
           {
+            path: "/mainpage",
+            Component: MainPage,
+          },
+          {
             path: "/photoFeed",
             Component: PhotoFeedPage,
           },
@@ -123,16 +119,16 @@ const router = createBrowserRouter([
             Component: PhotoLabPage,
           },
           {
+            path: "/photoManage/main",
+            Component: PmMainPage,
+          },
+          {
             path: "/mypage",
             Component: MyPage, // HeaderFooterLayout으로 이동 예정
           },
           {
             path: "/mypage/edit-info",
             Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
-          },
-          {
-            path: "/photoManage/main",
-            Component: PmMainPage,
           },
         ],
       },
