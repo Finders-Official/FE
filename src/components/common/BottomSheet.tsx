@@ -14,6 +14,8 @@ type BottomSheetProps = {
   collapsedRatio?: number;
   expandedVh?: number;
   initialSnap?: Snap; // 바텀시트 처음 크기 (collapsed면 2/3에서, expanded면 전체화면으로 시작)
+  sheetClassName?: string;
+  isBackDrop?: boolean;
 };
 
 // clamp 유틸
@@ -30,13 +32,15 @@ export default function BottomSheet({
   collapsedRatio = 0.66,
   expandedVh = 92,
   initialSnap = "collapsed",
+  sheetClassName,
+  isBackDrop = true,
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement | null>(null);
 
   const [snap, setSnap] = useState<Snap>(initialSnap);
   const [dragging, setDragging] = useState(false);
 
-  // ✅ vh를 state로 관리
+  // vh를 state로 관리
   const [vh, setVh] = useState(() => getViewportH());
 
   // 스냅별 "목표 높이(px)" (bottom 고정 + height만 바꿈)
@@ -145,12 +149,14 @@ export default function BottomSheet({
   return (
     <>
       {/* Backdrop */}
-      <button
-        type="button"
-        aria-label="닫기"
-        onClick={onClose}
-        className="fixed inset-0 z-40 bg-black/80"
-      />
+      {isBackDrop && (
+        <button
+          type="button"
+          aria-label="닫기"
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/80"
+        />
+      )}
 
       {/* Sheet */}
       <div
@@ -163,7 +169,13 @@ export default function BottomSheet({
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
-        <div className="bg-neutral-875 mx-auto flex h-full w-full max-w-[32rem] flex-col rounded-t-4xl shadow-[0_-0.75rem_2.5rem_rgba(0,0,0,0.4)]">
+        <div
+          className={[
+            "mx-auto flex h-full w-full max-w-[32rem] flex-col rounded-t-4xl shadow-[0_-0.75rem_2.5rem_rgba(0,0,0,0.4)]",
+            "bg-neutral-875",
+            sheetClassName ?? "",
+          ].join(" ")}
+        >
           {/* Handle + Header */}
           <div
             className="flex shrink-0 cursor-grab touch-none flex-col items-center gap-3 px-4 py-[0.625rem] select-none"

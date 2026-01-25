@@ -1,10 +1,15 @@
 import { DEVELOPMENT_HISTORY_DATA } from "./constants";
-import { ChevronLeftIcon } from "@/assets/icon";
+import { ChevronLeftIcon, CloseIcon } from "@/assets/icon";
 import { FlimImageIcon } from "@/assets/icon";
 import { useState } from "react";
 import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
+import { useLocation, useNavigate } from "react-router";
 
 const DevelopmentHistoryPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isMenu = location.state;
+
   const data = DEVELOPMENT_HISTORY_DATA;
   const hasData = data.length > 0;
 
@@ -19,6 +24,9 @@ const DevelopmentHistoryPage = () => {
 
   const newLocal =
     "mx-auto min-h-screen w-full max-w-md bg-neutral-900 text-neutral-100";
+
+  if (!open) return null;
+
   return (
     <div className={newLocal}>
       {/* 1. 데이터가 없을 때 (PM-000-1) */}
@@ -41,9 +49,22 @@ const DevelopmentHistoryPage = () => {
       ) : (
         /* 2. 데이터가 있을 때 (PM-000-2) */
         <div className="px-5 pt-6 pb-24">
-          <h2 className="mb-4 text-[1.25rem] font-bold text-neutral-100">
-            지난 작업
-          </h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[1.25rem] font-bold text-neutral-100">
+              지난 작업
+            </h2>
+
+            {isMenu && (
+              <button
+                type="button"
+                aria-label="닫기"
+                onClick={() => navigate(-1)}
+                className="flex h-9 w-9 items-center justify-center text-neutral-200 active:opacity-70"
+              >
+                <CloseIcon className="h-3 w-3 text-neutral-200" />
+              </button>
+            )}
+          </div>
 
           <div className="flex flex-col gap-4">
             {data.map((item) => (

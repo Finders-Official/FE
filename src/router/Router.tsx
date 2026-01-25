@@ -49,10 +49,6 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/mainpage",
-        Component: MainPage,
-      },
-      {
         path: "/development-history",
         Component: DevelopmentHistoryPage,
       },
@@ -97,10 +93,6 @@ const router = createBrowserRouter([
         Component: ReservationCompletePage,
       },
       {
-        path: "/photoManage/main",
-        Component: PmMainPage,
-      },
-      {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
@@ -110,12 +102,20 @@ const router = createBrowserRouter([
         Component: FooterLayout,
         children: [
           {
+            path: "/mainpage",
+            Component: MainPage,
+          },
+          {
             path: "/photoFeed",
             Component: PhotoFeedPage,
           },
           {
             path: "/photolab",
             Component: PhotoLabPage,
+          },
+          {
+            path: "/photoManage/main",
+            Component: PmMainPage,
           },
           {
             path: "/mypage",
