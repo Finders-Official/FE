@@ -34,6 +34,7 @@ import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
 import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
 import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
 import TransactionPage from "@/pages/photoManage/TransactionPage";
+import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
       {
         path: `/filmCameraGuide/:id`,
         Component: FilmCameraGuideDetailPage,
+      },
+      {
+        path: "/photoFeed/search",
+        Component: PhotoFeedSearchPage,
       },
       {
         path: "/photoFeed/lab/find",
