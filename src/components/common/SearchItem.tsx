@@ -30,11 +30,11 @@ export default function SearchItem({
       onClick={onClick}
     >
       {/* 아이콘 + 텍스트 */}
-      <div className="flex items-center gap-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-800">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-800">
           <IconComponent className="h-3.75 w-3.75 text-neutral-400" />
         </span>
-        <span className="text-base leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+        <span className="min-w-0 flex-1 truncate text-base leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
           {text}
         </span>
       </div>
