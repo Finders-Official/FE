@@ -11,8 +11,8 @@ import {
   ClockIcon,
   TruckIcon,
   CheckEmptyIcon,
+  CircleIcon,
 } from "@/assets/icon";
-import Banner from "@/components/photoManage/Banner";
 import { Header } from "@/components/common";
 import { ActionButton } from "@/components/photoManage/ActionButton";
 import { RecipientInfoCard } from "@/components/photoManage/RecipientInfoCard";
@@ -26,6 +26,7 @@ import type {
   PrintOrderStatus,
   DeliveryStatus,
 } from "@/types/process";
+import BottomSheet from "@/components/common/BottomSheet";
 
 type StepConfig = {
   key: string;
@@ -160,8 +161,8 @@ export default function PmMainPage() {
             message="인화 여부 확정하기"
             showNext={true}
             onClick={() => {
-              setIsDialogOpen(true);
-            }} // 모달창 열기
+              setIsDialogOpen(true); // 모달창 열기
+            }}
           />
           <ActionButton
             leftIcon={<DownloadIcon />}
@@ -289,21 +290,46 @@ export default function PmMainPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl overflow-x-hidden pt-6">
-      <div>
-        <Header
-          title=""
-          rightAction={{
-            type: "icon",
-            icon: <MenuIcon />,
-            onClick: () => {
-              // TODO 메뉴 눌렀을 때
-            },
-          }}
-        />
-      </div>
+      <div className="flex flex-col">
+        <div>
+          <Header
+            title=""
+            rightAction={{
+              type: "icon",
+              icon: <MenuIcon className="h-6 w-6 text-neutral-200" />,
+              onClick: () => {
+                navigate("/development-history", {
+                  state: { isMenu: true },
+                });
+              },
+            }}
+          />
+        </div>
 
-      {/** 배너 */}
-      <div>{currentBanner && <Banner {...currentBanner} />}</div>
+        {/* 상단 배너 */}
+        <div className="relative mt-15 flex justify-center">
+          {/* Circle 배경 */}
+          <CircleIcon className="h-[14.4375rem] w-[14.4375rem]" />
+
+          {/* Circle 위 콘텐츠 */}
+          <div className="absolute top-0 flex flex-col items-center text-center">
+            {/* 아이콘 */}
+            <div className="flex h-[5.0625rem] w-[4.5rem] -translate-y-1/2">
+              {currentBanner.icon}
+            </div>
+
+            {/* 텍스트 */}
+            <div className="flex -translate-y-1/2 flex-col gap-2">
+              <h2 className="text-[1.25rem] font-semibold text-neutral-100">
+                {currentBanner.title}
+              </h2>
+              <p className="text-[0.9375rem] text-neutral-100">
+                {currentBanner.content}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <main className="flex flex-col gap-[0.875rem] py-4">
         {isDialogOpen && dialogStep === 1 && (
@@ -338,25 +364,44 @@ export default function PmMainPage() {
             }}
           />
         )}
-        <p className="flex justify-start text-[0.8125rem] text-white">
-          작업 진행 상황
-        </p>
-        <div className="flex flex-col">
-          {steps.map(
-            ({ key, receiptMethod, subComment, buttons, isLast, ...rest }) => (
-              <div key={key}>
-                <ProcessStep
-                  {...rest}
-                  receiptMethod={receiptMethod}
-                  currentIndex={currentIndex}
-                  subComment={subComment}
-                  buttons={buttons}
-                  isLast={isLast}
-                />
-              </div>
-            ),
-          )}
-        </div>
+
+        {/* 작업 진행 상황 바텀 시트*/}
+        <BottomSheet
+          open
+          onClose={() => {}}
+          sheetClassName="bg-neutral-900/60 backdrop-blur-3xl"
+          isBackDrop={false}
+        >
+          <div className="flex h-full flex-col gap-4 p-4">
+            <p className="mb-1 flex justify-start text-[0.8125rem] text-white">
+              작업 진행 상황
+            </p>
+            <div className="flex flex-1 flex-col overflow-y-auto">
+              {steps.map(
+                ({
+                  key,
+                  receiptMethod,
+                  subComment,
+                  buttons,
+                  isLast,
+                  ...rest
+                }) => (
+                  <div key={key}>
+                    <ProcessStep
+                      {...rest}
+                      receiptMethod={receiptMethod}
+                      currentIndex={currentIndex}
+                      subComment={subComment}
+                      buttons={buttons}
+                      isLast={isLast}
+                    />
+                  </div>
+                ),
+              )}
+            </div>
+            <div className="h-10 shrink-0 bg-transparent"></div>
+          </div>
+        </BottomSheet>
       </main>
     </div>
   );
