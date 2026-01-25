@@ -6,8 +6,7 @@ import { Header } from "@/components/common";
 import { getPosts } from "@/apis/photoFeed/feed.api";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
-
-const PAGE_SIZE = 20;
+import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -21,9 +20,10 @@ export default function PhotoFeedPage() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<PostPreview[], Error>({
-    queryKey: ["photoFeed"],
-    queryFn: () => getPosts(),
-    initialPageParam: 1,
+    queryKey: ["photoFeed", PAGE_SIZE],
+    queryFn: ({ pageParam = 0 }) =>
+      getPosts({ pageParam: pageParam as number }),
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length < PAGE_SIZE ? undefined : allPages.length + 1,
   });

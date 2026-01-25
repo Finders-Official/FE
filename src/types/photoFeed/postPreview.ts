@@ -1,3 +1,6 @@
+/** 조회할 데이터 사이즈 */
+export const PAGE_SIZE = 20;
+
 export type PostPreview = {
   postId: number;
   image: PostImage;

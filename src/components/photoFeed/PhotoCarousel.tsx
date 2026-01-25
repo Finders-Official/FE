@@ -1,7 +1,8 @@
+import type { PostImage } from "@/types/photoFeed/postPreview";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
-  images: string[];
+  images: PostImage[];
   altPrefix?: string;
 };
 
@@ -33,6 +34,9 @@ export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
     setIndex(clamped);
   };
 
+  // 빈 배열이면 렌더링 안 함
+  if (!images || images.length === 0) return null;
+
   return (
     <div className="relative w-full overflow-hidden rounded-xl">
       {/* 이미지 스크롤 영역 */}
@@ -44,13 +48,13 @@ export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
           scrollbarWidth: "none",
         }}
       >
-        {images.map((src, i) => (
+        {images.map((img, i) => (
           <div
-            key={src}
+            key={`${img.imageUrl}-${i}`}
             className="hide-scrollbar w-full flex-none snap-center"
           >
             <img
-              src={src}
+              src={img.imageUrl}
               alt={`${altPrefix}-${i + 1}`}
               className="h-[361px] w-full object-cover"
               draggable={false}

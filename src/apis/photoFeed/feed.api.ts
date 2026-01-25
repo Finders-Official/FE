@@ -1,13 +1,15 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import type { PhotoFeedResponse } from "@/types/photoFeed/postPreview";
+import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
 
 /**
  * 사진수다 메인 피드 게시글 조회 API
  */
-export async function getPosts() {
-  const res =
-    await axiosInstance.get<ApiResponse<PhotoFeedResponse>>("/api/posts");
+export async function getPosts({ pageParam = 0 }: { pageParam?: number }) {
+  const res = await axiosInstance.get<ApiResponse<PhotoFeedResponse>>(
+    `/api/posts?page=${pageParam}&size=${PAGE_SIZE}`,
+  );
 
   return res.data.data.previewList;
 }
