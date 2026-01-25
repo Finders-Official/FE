@@ -43,7 +43,7 @@ export default function LabWorkResultsSection({
       </div>
 
       {/* 이미지 masonry 스크롤 - CSS columns로 세로 스택 후 가로 스크롤, 일단 최선.. */}
-      <div className="scrollbar-hide -mr-4 h-[16rem] overflow-x-auto overflow-y-hidden pr-4">
+      <div className="scrollbar-hide scroll-fade-right h-[16rem] overflow-x-auto overflow-y-hidden">
         <div className="flex h-full flex-col flex-wrap content-start gap-3">
           {previewImageUrls.map((url, index) => (
             <img

@@ -25,7 +25,7 @@ export default function FilterContainer({
       <span className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
         {displayText}
       </span>
-      <Icon className="-rotate-90 text-neutral-200">
+      <Icon size="lg" className="-rotate-90 text-neutral-200">
         <ChevronLeftIcon />
       </Icon>
     </button>
