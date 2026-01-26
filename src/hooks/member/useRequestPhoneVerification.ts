@@ -1,10 +1,10 @@
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 import type { ApiResponse } from "@/types/common/apiResponse";
-import {
-  requestPhoneVerification,
-  type PhoneVerifyRequestData,
-  type PhoneVerifyRequestReq,
-} from "@/api/member";
+import { requestPhoneVerification } from "@/api/member";
+import type {
+  PhoneVerifyRequestData,
+  PhoneVerifyRequestReq,
+} from "@/types/member";
 
 type Variables = PhoneVerifyRequestReq;
 type Response = ApiResponse<PhoneVerifyRequestData>;

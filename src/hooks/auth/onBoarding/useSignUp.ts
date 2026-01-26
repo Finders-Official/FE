@@ -1,10 +1,10 @@
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 import type { ApiResponse } from "@/types/common/apiResponse";
-import {
-  socialSignup,
-  type SocialSignupCompleteData,
-  type SocialSignupCompleteReq,
-} from "@/api/auth";
+import { socialSignup } from "@/api/auth";
+import type {
+  SocialSignupCompleteData,
+  SocialSignupCompleteReq,
+} from "@/types/auth";
 
 type Variables = SocialSignupCompleteReq;
 type Response = ApiResponse<SocialSignupCompleteData>;

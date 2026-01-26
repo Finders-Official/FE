@@ -1,26 +1,9 @@
 import { axiosInstance } from "@/lib/axiosInstance";
+import type {
+  SocialSignupCompleteData,
+  SocialSignupCompleteReq,
+} from "@/types/auth";
 import type { ApiResponse } from "@/types/common/apiResponse";
-
-export type AgreementItem = {
-  termsId: number;
-  isAgreed: boolean;
-};
-
-export interface SocialSignupCompleteReq {
-  nickname: string;
-  phone: string;
-  verifiedPhoneToken: string;
-  agreements: AgreementItem[];
-}
-
-export type SocialSignupCompleteData = {
-  accessToken: string;
-  refreshToken: string;
-  member: {
-    memberId: number;
-    nickname: string;
-  };
-};
 
 // 소셜 회원가입 완료
 export async function socialSignup(

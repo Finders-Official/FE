@@ -1,10 +1,6 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import type { ApiResponse } from "@/types/common/apiResponse";
-
-export interface NicknameCheckData {
-  nickname: string;
-  available: boolean;
-}
+import type { NicknameCheckData } from "@/types/member";
 
 export async function nicknameCheck(
   nickname: string,

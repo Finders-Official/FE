@@ -1,17 +1,9 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import type { ApiResponse } from "@/types/common/apiResponse";
-
-export interface PhoneVerifyConfirmReq {
-  requestId: string;
-  code: string;
-}
-
-export interface PhoneVerifyConfirmData {
-  phoneVerified: boolean;
-  verifiedPhoneToken: string;
-  phone: string;
-  expiresIn: number;
-}
+import type {
+  PhoneVerifyConfirmData,
+  PhoneVerifyConfirmReq,
+} from "@/types/member";
 
 // 휴대폰 인증번호 확인
 export async function confirmPhoneVerification(
