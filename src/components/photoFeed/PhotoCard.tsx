@@ -1,9 +1,9 @@
 import { HeartIcon } from "@/assets/icon";
-import type { Photo } from "@/types/photo";
+import type { PhotoPreview } from "@/types/photo";
 import { Link } from "react-router";
 
 type Props = {
-  photo: Photo;
+  photo: PhotoPreview;
   isLiked?: boolean;
   onToggleLike?: (id: number) => void; // 좋아요 해제 및 등록 api에 사용 예정
 };
@@ -15,11 +15,11 @@ export default function PhotoCard({ photo, isLiked }: Props) {
   return (
     <div className="mb-4 [break-inside:avoid]">
       <div className="group relative">
-        <Link to={`/photoFeed/post/${photo.id}`} className="w-[10.125rem]">
+        <Link to={`/photoFeed/post/${photo.postId}`} className="w-[10.125rem]">
           {/* 이미지 */}
           <div className="relative overflow-hidden rounded-2xl">
             <img
-              src={photo.src}
+              src={photo.image.imageUrl}
               alt={photo.title}
               loading="lazy"
               className="block h-auto w-full"

@@ -37,6 +37,7 @@ import {
   WithDrawPage,
 } from "@/pages/mypage";
 import TransactionPage from "@/pages/photoManage/TransactionPage";
+import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: `/filmCameraGuide/:id`,
         Component: FilmCameraGuideDetailPage,
+      },
+      {
+        path: "/photoFeed/search",
+        Component: PhotoFeedSearchPage,
       },
       {
         path: "/photoFeed/lab/find",
