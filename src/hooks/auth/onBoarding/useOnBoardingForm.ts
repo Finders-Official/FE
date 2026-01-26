@@ -109,7 +109,10 @@ export function useOnBoardingForm() {
         refreshToken: res.data.refreshToken,
         signupToken: null,
       });
-      navigate("/auth/login?welcome=1", { replace: true });
+      navigate(`/auth/login?welcome=1&nonce=${crypto.randomUUID()}`, {
+        replace: true,
+      });
+      //로그인 페이지로 welcome 값과 nonce 값을 넘겨줌 (애니메이션 분기 처리 위함)
     },
     onError: (e) => console.error(e.message),
   });
@@ -150,7 +153,10 @@ export function useOnBoardingForm() {
       nickname: nicknameTrimmed,
       phone,
       verifiedPhoneToken,
-      agreements: [{ termsId: 0, isAgreed: true }],
+      agreements: [
+        { termsId: 1, isAgreed: true },
+        { termsId: 2, isAgreed: true },
+      ],
     });
   };
 

@@ -1,46 +1,73 @@
 import { KakaoButton } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { Link, useSearchParams } from "react-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useLoginIntroUi } from "@/hooks/auth/login/useLoginIntroUi";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
 
-const WELCOME_ONCE_KEY = "finders:welcomeOnceShown";
+const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
+const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
 
 export function LoginPage() {
   const [sp, setSp] = useSearchParams();
+
   const welcome = sp.get("welcome") === "1";
+  const nonce = sp.get("nonce");
 
-  const ui = useLoginIntroUi();
-
-  // welcome=1이면 축하 화면을 강제로 띄우고, 한 번만 보여주기 처리
-  const forceSignedUp = useMemo(() => {
+  //이번 요청에서 welcome을 보여줘야 하는지(세션스토리지 기준)
+  const shouldForceNow = useMemo(() => {
     if (!welcome) return false;
+    if (typeof window === "undefined") return false;
 
-    // 이미 보여줬으면 welcome=1 무시
-    const shown = sessionStorage.getItem(WELCOME_ONCE_KEY) === "1";
+    if (nonce) {
+      const shownNonce = sessionStorage.getItem(WELCOME_NONCE_SHOWN_KEY);
+      return shownNonce !== nonce;
+    }
+
+    const shown = sessionStorage.getItem(WELCOME_ONCE_FALLBACK_KEY) === "1";
     return !shown;
-  }, [welcome]);
+  }, [welcome, nonce]);
 
+  // 핵심: ref 없이 "초기값으로만" latch (렌더 중 ref 접근 금지 룰 회피)
+  const [forceWelcomeOnce] = useState<boolean>(() => shouldForceNow);
+
+  // latch가 true인 케이스에서만: 기록 + URL 정리
   useEffect(() => {
-    if (!welcome) return;
-    if (!forceSignedUp) return;
+    if (!forceWelcomeOnce) return;
+    if (typeof window === "undefined") return;
 
-    sessionStorage.setItem(WELCOME_ONCE_KEY, "1");
+    if (nonce) sessionStorage.setItem(WELCOME_NONCE_SHOWN_KEY, nonce);
+    else sessionStorage.setItem(WELCOME_ONCE_FALLBACK_KEY, "1");
 
-    // URL 깔끔하게: /auth/login?welcome=1 -> /auth/login
-    sp.delete("welcome");
-    setSp(sp, { replace: true });
-  }, [welcome, forceSignedUp, sp, setSp]);
+    setSp(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("welcome");
+        next.delete("nonce");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [forceWelcomeOnce, nonce, setSp]);
 
-  const isSignedUpView = forceSignedUp ? true : ui.isSignedUp;
+  const ui = useLoginIntroUi({
+    forceWelcomeOnce,
+    splashMs: 2000,
+  });
 
   const handleKakaoLogin = () => {
     const url = buildKakaoAuthorizeUrl();
-    console.log(url);
     window.location.assign(url);
   };
+
+  //화면 정책
+  //1.mode=welcome : 축하 화면만
+  //2.mode=normal & isSplash=true : "뷰파인더..." 문구만 2초
+  //3.mode=normal & isSplash=false : 버튼(카카오/둘러보기)
+  const showWelcome = ui.mode === "welcome";
+  const showSplash = ui.mode === "normal" && ui.isSplash;
+  const showLogin = ui.mode === "normal" && !ui.isSplash;
 
   return (
     <main className="flex w-full flex-1 flex-col items-center">
@@ -54,7 +81,7 @@ export function LoginPage() {
         />
 
         <div key={ui.headerKey}>
-          {isSignedUpView ? (
+          {showWelcome ? (
             <div className={ui.headerAnim}>
               <p className="mt-3 text-[1.375rem] font-bold">
                 회원가입을 축하드려요!
@@ -63,25 +90,29 @@ export function LoginPage() {
                 뷰파인더 너머 병국님의 취향을 찾아보세요
               </p>
             </div>
+          ) : showSplash ? (
+            <div className={ui.taglineAnim}>
+              <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold sm:text-[3rem]">
+                Finders
+              </p>
+              <p className="text-md mt-2 text-neutral-100 sm:text-base">
+                뷰파인더 너머, 취향을 찾다
+              </p>
+            </div>
           ) : (
             <div>
               <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold sm:text-[3rem]">
                 Finders
               </p>
-              {!ui.isSplash && (
-                <p className={`text-md mt-2 sm:text-base ${ui.taglineAnim}`}>
-                  뷰파인더 너머, 취향을 찾다
-                </p>
-              )}
             </div>
           )}
         </div>
       </header>
 
       <footer
-        className={`mt-auto w-full py-5 ${isSignedUpView ? "border-neutral-850 border-t" : ""}`}
+        className={`mt-auto w-full py-5 ${showWelcome ? "border-neutral-850 border-t" : ""}`}
       >
-        {isSignedUpView ? (
+        {showWelcome ? (
           <div
             key={ui.footerKey}
             className={`mx-auto flex w-full max-w-sm ${ui.footerAnim}`}
@@ -93,14 +124,12 @@ export function LoginPage() {
               size="compact"
             />
           </div>
-        ) : ui.isSplash ? (
-          <p
+        ) : showSplash ? (
+          <div
             key={ui.footerKey}
-            className={`text-md mt-auto text-center text-neutral-100 sm:text-base ${ui.footerAnim}`}
-          >
-            뷰파인더 너머, 취향을 찾다
-          </p>
-        ) : (
+            className={`mx-auto w-full max-w-sm ${ui.footerAnim}`}
+          />
+        ) : showLogin ? (
           <section
             key={ui.footerKey}
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
@@ -116,7 +145,7 @@ export function LoginPage() {
               로그인 없이 둘러보기
             </Link>
           </section>
-        )}
+        ) : null}
       </footer>
     </main>
   );
