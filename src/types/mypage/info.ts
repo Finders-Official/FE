@@ -1,10 +1,4 @@
-export interface ApiResponse<T> {
-  success: boolean;
-  code: string;
-  message: string;
-  timestamp: string;
-  data: T;
-}
+import type { ApiResponse } from "../common/apiResponse";
 
 export type Role = "USER" | "OWNER" | "ADMIN";
 export type MemberStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED" | "DELETED";
