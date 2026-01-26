@@ -34,7 +34,7 @@ export function useKakaoOauth({
     },
     onError: () => onFail?.(),
   });
-
+  //이미 존재하는 회원인지 신규 회원인지에 따른 분기 처리
   useEffect(() => {
     if (didRun.current) return;
     if (error) return;

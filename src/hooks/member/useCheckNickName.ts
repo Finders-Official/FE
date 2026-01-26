@@ -19,7 +19,7 @@ export function useNicknameCheck(
     queryKey: ["users", "nicknameCheck", trimmed],
     queryFn: () => nicknameCheck(trimmed),
     enabled: trimmed.length > 0, // 닉네임 입력 전엔 요청 안 함
-    retry: 0, // 중복확인은 보통 retry 끔(선택)
+    retry: 0,
     ...options,
   });
 }
