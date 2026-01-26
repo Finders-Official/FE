@@ -2,7 +2,7 @@
 import { formatMMSS } from "@/utils/time";
 import { ActionButton, InputForm } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
-import { useOnBoardingForm } from "@/hooks/auth/onBoarding/useOnBoardingForm";
+import { useOnBoardingForm } from "@/hooks/auth/onBoarding";
 
 export function OnBoardingPage() {
   const f = useOnBoardingForm();

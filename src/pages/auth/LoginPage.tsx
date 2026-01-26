@@ -2,9 +2,8 @@ import { KakaoButton } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { Link, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
-
-import { useLoginIntroUi } from "@/hooks/auth/login/useLoginIntroUi";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
+import { useLoginIntroUi } from "@/hooks/auth/login";
 
 const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
 const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";

@@ -25,7 +25,6 @@ export function buildKakaoAuthorizeUrl() {
   });
 
   const url = `${base}?${qs.toString()}`;
-  console.log("[KAKAO] authorize url =", url);
 
   return url;
 }

@@ -8,7 +8,7 @@ import {
   useRequestPhoneVerification,
 } from "@/hooks/member";
 import { tokenStorage } from "@/utils/tokenStorage";
-import { useSocialSignup } from "@/hooks/auth/onBoarding/useSignUp";
+import { useSocialSignup } from "./useSignUp";
 
 function isValidNickname(n: string) {
   return /^[a-zA-Z0-9가-힣]{2,8}$/.test(n);
@@ -114,7 +114,7 @@ export function useOnBoardingForm() {
       });
       //로그인 페이지로 welcome 값과 nonce 값을 넘겨줌 (애니메이션 분기 처리 위함)
     },
-    onError: (e) => console.error(e.message),
+    onError: (e) => console.error(e.message), //TODO: 토스트 문구나 그런 걸로 바꿀 예정
   });
 
   const handleSend = () => requestCode({ phone, purpose: "SIGNUP" });

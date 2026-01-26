@@ -13,7 +13,7 @@ type Response = ApiResponse<SocialoginCompleteData>;
 export function useOauth(
   options?: UseMutationOptions<Response, unknown, Variables>,
 ) {
-  return useMutation<Response, unknown, Variables>({
+  return useMutation<Response, Error, Variables>({
     mutationKey: ["auth", "completeSocialSignup"],
     mutationFn: (vars) => oauth(vars),
     ...options,
