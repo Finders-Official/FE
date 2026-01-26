@@ -22,7 +22,7 @@ export default function FilterTagList({
 }: FilterTagListProps) {
   return (
     <div
-      className={`scrollbar-hide -mr-4 flex gap-2 overflow-x-auto pr-4 ${className}`}
+      className={`scrollbar-hide scroll-fade-right flex gap-2 overflow-x-auto ${className}`}
     >
       {FILTER_TAGS.map((tag) => (
         <FilterChip

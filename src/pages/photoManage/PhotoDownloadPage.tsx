@@ -41,7 +41,7 @@ export default function PhotoDownload() {
   }, [currentPhotoId]);
 
   const handleAllSelect = () => {
-    if (selectedIds.length === photoMock.length) {
+    if (selectedIds.length === photoMock.totalCount) {
       setSelectedIds([]); // 모두 선택된 상태면 전체 해제
     } else {
       setSelectedIds(photoMock.map((p) => p.postId)); // 전체 선택
@@ -76,7 +76,7 @@ export default function PhotoDownload() {
             rightAction={{
               type: "text",
               text:
-                selectedIds.length === photoMock.length
+                selectedIds.length === photoMock.totalCount
                   ? "전체 해제"
                   : "전체 선택",
               onClick: handleAllSelect,

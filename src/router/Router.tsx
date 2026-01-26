@@ -34,6 +34,7 @@ import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
 import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
 import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
 import TransactionPage from "@/pages/photoManage/TransactionPage";
+import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
 
 const router = createBrowserRouter([
   {
@@ -49,10 +50,6 @@ const router = createBrowserRouter([
         Component: OnBoardingPage,
       },
       {
-        path: "/mainpage",
-        Component: MainPage,
-      },
-      {
         path: "/development-history",
         Component: DevelopmentHistoryPage,
       },
@@ -63,6 +60,10 @@ const router = createBrowserRouter([
       {
         path: `/filmCameraGuide/:id`,
         Component: FilmCameraGuideDetailPage,
+      },
+      {
+        path: "/photoFeed/search",
+        Component: PhotoFeedSearchPage,
       },
       {
         path: "/photoFeed/lab/find",
@@ -97,10 +98,6 @@ const router = createBrowserRouter([
         Component: ReservationCompletePage,
       },
       {
-        path: "/photoManage/main",
-        Component: PmMainPage,
-      },
-      {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
       },
@@ -110,6 +107,10 @@ const router = createBrowserRouter([
         Component: FooterLayout,
         children: [
           {
+            path: "/mainpage",
+            Component: MainPage,
+          },
+          {
             path: "/photoFeed",
             Component: PhotoFeedPage,
           },
@@ -118,16 +119,16 @@ const router = createBrowserRouter([
             Component: PhotoLabPage,
           },
           {
+            path: "/photoManage/main",
+            Component: PmMainPage,
+          },
+          {
             path: "/mypage",
             Component: MyPage, // HeaderFooterLayout으로 이동 예정
           },
           {
             path: "/mypage/edit-info",
             Component: EditInfoPage, // HeaderFooterLayout으로 이동 예정
-          },
-          {
-            path: "/photoManage/main",
-            Component: PmMainPage,
           },
         ],
       },

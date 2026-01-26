@@ -7,6 +7,7 @@ import { getPosts } from "@/apis/photoFeed/feed.api";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
+import { useNavigate } from "react-router";
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -45,6 +46,7 @@ export default function PhotoFeedPage() {
     observer.observe(el); // 센티널 요소 관찰 시작
     return () => observer.disconnect(); // 컴포넌트 언마운트 시 관찰 중지
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  const navigate = useNavigate();
 
   return (
     <main className="mx-auto max-w-6xl py-6">
@@ -54,7 +56,7 @@ export default function PhotoFeedPage() {
           type: "icon",
           icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
           onClick: () => {
-            setIsCreateModalOpen(true);
+            navigate("/photoFeed/search");
           },
         }}
       />
@@ -66,7 +68,7 @@ export default function PhotoFeedPage() {
       )}
 
       {/* Masonry 레이아웃 */}
-      <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
+      <section className="mb-20 columns-2 gap-4 md:columns-3 xl:columns-4">
         {posts.map((postPreview) => (
           <PhotoCard key={postPreview.postId} photo={postPreview} />
         ))}

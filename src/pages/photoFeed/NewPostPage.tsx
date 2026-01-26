@@ -87,6 +87,7 @@ export default function NewPostPage() {
         <section className="flex flex-col gap-[0.5rem]">
           <p className="text-[0.875rem] text-white">제목</p>
           <TextArea
+            type="title"
             value={titleText}
             onChange={setTitleText}
             placeholder="제목을 입력해주세요."
@@ -98,6 +99,7 @@ export default function NewPostPage() {
         <section className="flex flex-col gap-[0.5rem]">
           <p className="text-[0.875rem] text-white">설명</p>
           <TextArea
+            type="content"
             value={contentText}
             onChange={setContentText}
             placeholder="나만의 필름 사진 이야기를 공유해주세요."
