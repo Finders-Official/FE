@@ -24,14 +24,19 @@ export function DropBox({
   //미선택이면: 왼쪽(흰색)은 카테고리 title
   const leftText = value ? value.label : category.title;
 
-  const leftTextClass = value ? "text-neutral-100" : "text-neutral-400";
+  const leftTextClass = value ? "text-neutral-100" : "text-neutral-600";
 
   // 선택되면: 오른쪽(회색)은 가격/배수(priceText)
   // 미선택이면: placeholder
   const rightText = value ? value.priceText : category.placeholder;
 
   return (
-    <div className="w-full">
+    <button
+      type="button"
+      onClick={() => onToggle(category.key)}
+      aria-expanded={isOpen}
+      className="w-full"
+    >
       {/* 상단 박스(첫번째 스크린샷) */}
       <div className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3">
         <div className="flex flex-1 justify-between">
@@ -39,18 +44,13 @@ export function DropBox({
           <p className="text-neutral-400">{rightText}</p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => onToggle(category.key)}
-          aria-expanded={isOpen}
-          className="shrink-0"
-        >
+        <div className="shrink-0">
           <ChevronLeftIcon
             className={`h-4 w-4 text-neutral-200 transition-transform ${
               isOpen ? "rotate-90" : "rotate-270"
             }`}
           />
-        </button>
+        </div>
       </div>
 
       {/* 펼쳐졌을 때 옵션 리스트 */}
@@ -78,6 +78,6 @@ export function DropBox({
           </ul>
         </div>
       )}
-    </div>
+    </button>
   );
 }
