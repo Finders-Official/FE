@@ -80,6 +80,7 @@ export function useLoginIntroUi(options?: Options) {
   const footerAnim = shouldAnimate
     ? "animate-[finders-fade-in_1500ms_ease-in-out_forwards]"
     : "";
+  //TODO: 하나의 애니메이션으로 묶기
 
   return {
     mode,
