@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCarousel } from "@/hooks/useCarousel";
 
 type Props = {
   images: string[];
@@ -6,32 +6,7 @@ type Props = {
 };
 
 export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const [index, setIndex] = useState(0);
-
-  // 스크롤 위치로 현재 인덱스 계산 (스와이프/드래그/휠 전부 대응)
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      const w = el.clientWidth;
-      if (w === 0) return;
-      const next = Math.round(el.scrollLeft / w);
-      setIndex(next);
-    };
-
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollTo = (to: number) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const clamped = Math.max(0, Math.min(images.length - 1, to));
-    el.scrollTo({ left: el.clientWidth * clamped, behavior: "smooth" });
-    setIndex(clamped);
-  };
+  const { index, scrollerRef, scrollTo } = useCarousel(images.length);
 
   return (
     <div className="relative w-full overflow-hidden rounded-xl">
@@ -46,7 +21,7 @@ export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
       >
         {images.map((src, i) => (
           <div
-            key={src}
+            key={`${src}-${i}`}
             className="hide-scrollbar w-full flex-none snap-center"
           >
             <img
