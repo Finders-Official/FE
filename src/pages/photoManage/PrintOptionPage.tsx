@@ -5,6 +5,7 @@ import {
   DELIVERY_FEE_WON,
   DROPBOX_CATEGORIES,
 } from "@/constants/photomanage/category.constant";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import type {
   CategoryKey,
   DropDownOption,
@@ -15,10 +16,8 @@ import { useLocation } from "react-router";
 
 type PickUpMethod = "pickup" | "delivery";
 
-// ✅ 이전 페이지에서 총 인화 매수도 넘겨받는다고 가정
 type LocationState = {
   pickupMethod?: PickUpMethod;
-  totalPrintCount?: number; // 총 인화 매수(장수)
 };
 
 function floorToHundreds(n: number) {
@@ -43,8 +42,7 @@ export function PrintOptionPage() {
   const pickupMethod: PickUpMethod =
     (location.state as LocationState | null)?.pickupMethod ?? "delivery";
 
-  const totalPrintCount =
-    (location.state as LocationState | null)?.totalPrintCount ?? 10; // ✅ 임시 기본값 10장
+  const totalPrintCount = usePrintOrderStore((s) => s.totalPrintCount);
 
   const initialSelection = useMemo<DropDownSelection>(
     () => ({
@@ -81,7 +79,7 @@ export function PrintOptionPage() {
   const shippingLabel = pickupMethod === "delivery" ? "배송" : "직접수령";
 
   /**
-   * ✅ 핵심 계산
+   * 핵심 계산
    * - SIZE / PAPER / FILM: 장당(per print)
    * - PRINT_METHOD: 고정(flat)
    */
@@ -124,7 +122,7 @@ export function PrintOptionPage() {
     };
   }, [selection, totalPrintCount, shippingFeeWon]);
 
-  // ✅ SIZE 선택되었을 때 상단 오른쪽 표시는 “기본1400 + 추가금”을 보여주기
+  // SIZE 선택되었을 때 상단 오른쪽 표시는 “기본1400 + 추가금”을 보여주기
   const selectionForView = useMemo(() => {
     const size = selection.SIZE;
     if (!size) return selection;
@@ -135,7 +133,7 @@ export function PrintOptionPage() {
       ...selection,
       SIZE: {
         ...size,
-        priceText: formatPlusWon(sizeTotal), // 예: 6*8이면 +2,600원
+        priceText: formatPlusWon(sizeTotal),
       },
     };
   }, [selection]);
@@ -166,7 +164,6 @@ export function PrintOptionPage() {
             />
           ))}
 
-          {/* ✅ 총 인화 매수(이전 페이지에서 받은 값) */}
           <li className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3">
             <p className="text-neutral-300">총 인화 매수</p>
             <p className="text-neutral-300">{totalPrintCount}장</p>

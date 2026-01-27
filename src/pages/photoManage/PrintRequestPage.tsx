@@ -3,6 +3,7 @@ import { CTA_Button } from "@/components/common";
 import { mockPreviewList } from "@/types/photo";
 import { useNavigate } from "react-router";
 import { PhotoQuantityStepper } from "@/components/photoManage/PhotoQuantityStepper";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 
 type QtyMap = Record<number, number>;
 
@@ -14,6 +15,8 @@ export function PrintRequestPage() {
     for (const p of mockPreviewList.previewList) init[p.postId] = 0;
     return init;
   });
+
+  const setTotalPrintCount = usePrintOrderStore((s) => s.setTotalPrintCount);
 
   const totalQty = useMemo(() => {
     return Object.values(qtyById).reduce((sum, v) => sum + v, 0);
@@ -31,6 +34,7 @@ export function PrintRequestPage() {
   };
 
   const handleNext = () => {
+    setTotalPrintCount(totalQty);
     navigate("../photoManage/pickup-method");
   };
 
