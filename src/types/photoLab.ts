@@ -11,6 +11,11 @@ export interface PhotoLabItem {
   isFavorite: boolean;
 }
 
+// 즐겨찾기 응답
+export interface PhotoLabFavoriteStatus {
+  isFavorite: boolean;
+}
+
 // 페이지네이션 정보
 export interface PaginationInfo {
   page: number;
