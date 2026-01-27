@@ -2,7 +2,7 @@
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import type { MyPageDataDto } from "@/types/mypage/info";
-import { me } from "@/api/member";
+import { me } from "@/apis/member";
 
 export type MeResponse = ApiResponse<MyPageDataDto>;
 type Data = MyPageDataDto;

@@ -1,6 +1,6 @@
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 import type { ApiResponse } from "@/types/common/apiResponse";
-import { confirmPhoneVerification } from "@/api/member/confirmPhoneVerification.api";
+import { confirmPhoneVerification } from "@/apis/member/confirmPhoneVerification.api";
 import type {
   PhoneVerifyConfirmData,
   PhoneVerifyConfirmReq,

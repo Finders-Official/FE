@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { ApiResponse } from "@/types/common/apiResponse";
-import { nicknameCheck } from "@/api/member";
+import { nicknameCheck } from "@/apis/member";
 import type { NicknameCheckData } from "@/types/member";
 
 type QueryKey = readonly ["users", "nicknameCheck", string];
