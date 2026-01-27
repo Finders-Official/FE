@@ -39,7 +39,6 @@ export async function getRecentSearches(): Promise<SearchHistory[]> {
   const res = await axiosInstance.get<ApiResponse<SearchHistory[]>>(
     `/posts/search/history`,
   );
-  console.log("recentSearches raw:", res.data);
 
   return res.data.data; // 최근 검색어 리스트 return
 }

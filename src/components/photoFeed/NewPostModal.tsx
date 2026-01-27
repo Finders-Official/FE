@@ -67,7 +67,7 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
               onClose();
               navigate("/photoFeed/post/new");
 
-              void useNewPostState.getState().setFiles(files); // 저장은 비동기 처리
+              await useNewPostState.getState().setFiles(files); // 저장은 비동기 처리
             }}
           />
 

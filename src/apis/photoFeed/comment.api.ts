@@ -25,7 +25,7 @@ export async function postComment(
 ): Promise<PostComment> {
   const res = await axiosInstance.post<ApiResponse<PostComment>>(
     `/posts/${postId}/comments`,
-    content,
+    { content },
   );
 
   return res.data.data; // 작성한 댓글 정보 return
