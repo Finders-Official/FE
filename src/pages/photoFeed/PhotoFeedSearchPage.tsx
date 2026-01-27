@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
@@ -56,6 +56,7 @@ export default function PhotoFeedSearchPage() {
     data: recentSearches = [],
     isPending: isRecentPending,
     isError: isRecentError,
+    refetch: refetchRecentSearches,
   } = useRecentSearches();
 
   // 최근 검색어 개별 삭제 API
@@ -97,6 +98,13 @@ export default function PhotoFeedSearchPage() {
     // 그 외(예: focus만 껐다 켰다) -> 최근으로 처리
     return "recent" as const;
   }, [inputTrimmed, isSearching, searchTrimmed]);
+
+  // mode가 recent로 바뀔 때마다 refetch
+  useEffect(() => {
+    if (mode === "recent") {
+      refetchRecentSearches();
+    }
+  }, [mode, refetchRecentSearches]);
 
   const showTabBar = mode === "result" && !bottomSheetOpen;
 
@@ -144,6 +152,11 @@ export default function PhotoFeedSearchPage() {
           onSearch={handleSearch}
           onFocus={() => setIsSearching(true)}
           rightIcon="clear"
+          onClear={() => {
+            setInputText("");
+            setSearchText("");
+            setIsSearching(false);
+          }}
         />
       </div>
 

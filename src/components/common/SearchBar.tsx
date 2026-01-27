@@ -16,6 +16,7 @@ interface SearchBarProps {
   onSearch?: (value: string) => void;
   inputRef?: RefObject<HTMLInputElement | null>;
   onFocus?: () => void;
+  onClear?: () => void;
 }
 
 export default function SearchBar({
@@ -30,6 +31,7 @@ export default function SearchBar({
   onSearch,
   inputRef,
   onFocus,
+  onClear,
 }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
 
@@ -50,6 +52,8 @@ export default function SearchBar({
   const handleClear = () => {
     setLocalValue("");
     onChange("");
+    onClear?.();
+    inputRef?.current?.blur();
   };
 
   return (
