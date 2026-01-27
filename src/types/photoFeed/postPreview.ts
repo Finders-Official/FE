@@ -1,6 +1,8 @@
-/** 조회할 데이터 사이즈 */
 export const PAGE_SIZE = 20;
 
+/**
+ * 사진수다 메인 피드 조회 응답 (CO-010, CO-013)
+ */
 export type PostPreview = {
   postId: number;
   image: PostImage;
@@ -23,44 +25,48 @@ export type PhotoFeedResponse = {
 };
 
 // Mock 데이터
-export const photoMock: PostPreview[] = [
-  {
-    postId: 7,
-    image: {
-      imageUrl:
-        "https://storage.googleapis.com/finders-public/temp/test-image-1.jpg",
-      width: 1080,
-      height: 1080,
+export const photoMock: PhotoFeedResponse = {
+  previewList: [
+    {
+      postId: 7,
+      image: {
+        imageUrl:
+          "https://storage.googleapis.com/finders-public/temp/test-image-1.jpg",
+        width: 1080,
+        height: 1080,
+      },
+      title: "테스트 5",
+      likeCount: 0,
+      commentCount: 0,
+      isLiked: false,
     },
-    title: "테스트 5",
-    likeCount: 0,
-    commentCount: 0,
-    isLiked: false,
-  },
-  {
-    postId: 6,
-    image: {
-      imageUrl:
-        "https://storage.googleapis.com/finders-public/temp/test-image-2.jpg",
-      width: 1080,
-      height: 1350,
+    {
+      postId: 6,
+      image: {
+        imageUrl:
+          "https://storage.googleapis.com/finders-public/temp/test-image-2.jpg",
+        width: 1080,
+        height: 1350,
+      },
+      title: "겨울 바다",
+      likeCount: 12,
+      commentCount: 3,
+      isLiked: true,
     },
-    title: "겨울 바다",
-    likeCount: 12,
-    commentCount: 3,
-    isLiked: true,
-  },
-  {
-    postId: 5,
-    image: {
-      imageUrl:
-        "https://storage.googleapis.com/finders-public/temp/test-image-3.jpg",
-      width: 1080,
-      height: 720,
+    {
+      postId: 5,
+      image: {
+        imageUrl:
+          "https://storage.googleapis.com/finders-public/temp/test-image-3.jpg",
+        width: 1080,
+        height: 720,
+      },
+      title: "필름 스캔 테스트",
+      likeCount: 4,
+      commentCount: 1,
+      isLiked: false,
     },
-    title: "필름 스캔 테스트",
-    likeCount: 4,
-    commentCount: 1,
-    isLiked: false,
-  },
-];
+  ],
+  totalCount: 5,
+  isLast: true,
+};
