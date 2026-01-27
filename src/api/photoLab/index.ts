@@ -1,1 +1,1 @@
-export { getPhotoLabList } from "./photoLab.api";
+export { getPhotoLabList, addFavorite, removeFavorite } from "./photoLab.api";
