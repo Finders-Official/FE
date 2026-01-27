@@ -6,6 +6,7 @@ import type {
   PhotoLabFavoriteStatus,
   PagedApiResponse,
 } from "@/types/photoLab";
+import type { PopularLab } from "@/types/photoLabSearch";
 
 // 현상소 목록 조회
 export async function getPhotoLabList(
@@ -59,6 +60,23 @@ export async function removeFavorite(
 ): Promise<ApiResponse<PhotoLabFavoriteStatus>> {
   const res = await axiosInstance.delete<ApiResponse<PhotoLabFavoriteStatus>>(
     `/photo-labs/${photoLabId}/favorites`,
+  );
+
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
+}
+
+// 인기 현상소 조회
+export async function getPopularPhotoLabs(): Promise<
+  ApiResponse<PopularLab[]>
+> {
+  const res = await axiosInstance.get<ApiResponse<PopularLab[]>>(
+    "/photo-labs/popular",
   );
 
   const body = res.data;
