@@ -21,8 +21,8 @@ export default function PhotoDownload() {
   const previewRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   const photoById = useMemo(() => {
-    const m = new Map<number, (typeof photoMock)[number]>();
-    photoMock.forEach((p) => m.set(p.postId, p));
+    const m = new Map<number, (typeof photoMock.previewList)[number]>();
+    photoMock.previewList.forEach((p) => m.set(p.postId, p));
     return m;
   }, []);
 
@@ -44,7 +44,7 @@ export default function PhotoDownload() {
     if (selectedIds.length === photoMock.totalCount) {
       setSelectedIds([]); // 모두 선택된 상태면 전체 해제
     } else {
-      setSelectedIds(photoMock.map((p) => p.postId)); // 전체 선택
+      setSelectedIds(photoMock.previewList.map((p) => p.postId)); // 전체 선택
     }
   };
 
@@ -120,7 +120,7 @@ export default function PhotoDownload() {
             )}
             {/* 사진 그리드 */}
             <div className="mt-[0.9375rem] grid grid-cols-3 gap-1">
-              {photoMock.map((p) => {
+              {photoMock.previewList.map((p) => {
                 const isSelected = selectedSet.has(p.postId);
                 const selectionIndex = isSelected
                   ? selectedIndexMap.get(p.postId)
