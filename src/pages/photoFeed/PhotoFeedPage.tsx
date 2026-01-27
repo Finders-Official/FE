@@ -1,17 +1,19 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import PhotoCard from "@/components/photoFeed/PhotoCard";
 import NewPostModal from "@/components/photoFeed/NewPostModal";
 import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
-import { getPosts } from "@/apis/photoFeed/feed.api";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import type { PostPreview } from "@/types/photoFeed/postPreview";
-import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
 import { useNavigate } from "react-router";
+import { useInfinitePosts } from "@/hooks/photoFeed/posts/useInfinitePosts";
+import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import PhotoCardSkeleton from "@/components/photoFeed/PhotoCardSkeleton";
+
+const SKELETON_COUNT = 8;
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   const {
     data,
@@ -20,36 +22,20 @@ export default function PhotoFeedPage() {
     isError,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<PostPreview[], Error>({
-    queryKey: ["photoFeed", PAGE_SIZE],
-    queryFn: ({ pageParam = 0 }) =>
-      getPosts({ pageParam: pageParam as number }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.length < PAGE_SIZE ? undefined : allPages.length + 1,
+  } = useInfinitePosts();
+
+  const onIntersect = () => fetchNextPage();
+
+  useInfiniteScroll({
+    target: sentinelRef,
+    enabled: hasNextPage && !isFetchingNextPage,
+    onIntersect: onIntersect,
   });
 
-  const posts = data?.pages.flat() ?? [];
-
-  // Intersection Observer 설정
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      const first = entries[0]; // 관찰 중인 요소의 상태
-      if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    });
-
-    observer.observe(el); // 센티널 요소 관찰 시작
-    return () => observer.disconnect(); // 컴포넌트 언마운트 시 관찰 중지
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-  const navigate = useNavigate();
+  const posts = data?.pages.flatMap((p) => p.previewList) ?? [];
 
   return (
-    <main className="mx-auto max-w-6xl py-6">
+    <main className="mx-auto w-full max-w-6xl py-6">
       <Header
         title="사진수다"
         rightAction={{
@@ -61,17 +47,22 @@ export default function PhotoFeedPage() {
         }}
       />
 
-      {/* 로딩/에러 처리 (최소) */}
-      {isLoading && <div className="py-6 text-neutral-300">로딩 중…</div>}
+      {/* 에러 처리 */}
       {isError && (
-        <div className="py-6 text-red-400">불러오기에 실패했어요.</div>
+        <div className="flex items-center justify-center py-6 text-red-400">
+          불러오기에 실패했어요.
+        </div>
       )}
 
       {/* Masonry 레이아웃 */}
       <section className="mb-20 columns-2 gap-4 md:columns-3 xl:columns-4">
-        {posts.map((postPreview) => (
-          <PhotoCard key={postPreview.postId} photo={postPreview} />
-        ))}
+        {isLoading
+          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+              <PhotoCardSkeleton key={`skeleton-${i}`} />
+            ))
+          : posts.map((postPreview) => (
+              <PhotoCard key={postPreview.postId} photo={postPreview} />
+            ))}
       </section>
 
       {/* 새 게시물 작성 플로팅 버튼 */}
