@@ -1,13 +1,13 @@
 // 메인 페이지 연결하고 삭제할 파일 입니다.
 
 import type { ChangeEvent } from "react";
-import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
+import { useNewPostState } from "@/store/useNewPostState.store";
 interface PhotoSelectProps {
   onSelect: () => void;
 }
 
 const PhotoSelectPage = ({ onSelect }: PhotoSelectProps) => {
-  const { setFiles } = useSelectedPhotos();
+  const { setFiles } = useNewPostState();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
