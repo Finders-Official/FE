@@ -13,8 +13,8 @@ import {
   LabPreviewSection,
 } from "@/components/photoLab/search";
 import { useRecentSearches } from "@/hooks/useRecentSearches";
+import { usePopularPhotoLabs } from "@/hooks/photoLab";
 import {
-  MOCK_POPULAR_LABS,
   MOCK_KEYWORD_SUGGESTIONS,
   MOCK_LAB_PREVIEWS,
 } from "@/constants/photoLab";
@@ -69,6 +69,9 @@ export default function PhotoLabSearchPage() {
       navigate("/photolab/search");
     }
   };
+
+  // 인기 현상소
+  const { data: popularLabs = [] } = usePopularPhotoLabs();
 
   // 최근 검색어
   const { recentSearches, addSearch, removeSearch, clearAll } =
@@ -216,10 +219,7 @@ export default function PhotoLabSearchPage() {
             onDelete={removeSearch}
             onClearAll={clearAll}
           />
-          <PopularLabSection
-            labs={MOCK_POPULAR_LABS}
-            onLabClick={handleLabClick}
-          />
+          <PopularLabSection labs={popularLabs} onLabClick={handleLabClick} />
         </div>
       )}
 
