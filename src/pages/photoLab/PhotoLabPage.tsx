@@ -9,7 +9,11 @@ import {
 } from "@/components/photoLab";
 import { SearchIcon } from "@/assets/icon";
 import { WEEKDAYS } from "@/constants/date";
-import { useGeolocation, usePhotoLabList } from "@/hooks/photoLab";
+import {
+  useGeolocation,
+  usePhotoLabList,
+  useFavoriteToggle,
+} from "@/hooks/photoLab";
 import type { LabNews, FilterState } from "@/types/photoLab";
 
 // Mock 데이터 (추후 API 연동)
@@ -99,9 +103,17 @@ export default function PhotoLabPage() {
     );
   }, []);
 
-  // TODO: 즐겨찾기 API 연동
-  // const handleFavoriteToggle = (photoLabId: number) => {
-  // };
+  // 즐겨찾기 토글
+  const { mutate: toggleFavorite } = useFavoriteToggle();
+
+  const handleFavoriteToggle = useCallback(
+    (photoLabId: number) => {
+      const lab = labs.find((l) => l.photoLabId === photoLabId);
+      if (!lab) return;
+      toggleFavorite({ photoLabId, isFavorite: lab.isFavorite });
+    },
+    [labs, toggleFavorite],
+  );
 
   // 카드 클릭
   const handleCardClick = (photoLabId: number) => {
