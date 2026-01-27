@@ -10,6 +10,14 @@ import PhotoCardSkeleton from "@/components/photoFeed/PhotoCardSkeleton";
 
 const SKELETON_COUNT = 8;
 
+const SKELETON_HEIGHTS = [
+  "h-[180px]",
+  "h-[220px]",
+  "h-[260px]",
+  "h-[300px]",
+  "h-[340px]",
+];
+
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -57,9 +65,16 @@ export default function PhotoFeedPage() {
       {/* Masonry 레이아웃 */}
       <section className="mb-20 columns-2 gap-4 md:columns-3 xl:columns-4">
         {isLoading
-          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <PhotoCardSkeleton key={`skeleton-${i}`} />
-            ))
+          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
+              const heightClass = SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
+
+              return (
+                <PhotoCardSkeleton
+                  key={`skeleton-${i}`}
+                  className={heightClass}
+                />
+              );
+            })
           : posts.map((postPreview) => (
               <PhotoCard key={postPreview.postId} photo={postPreview} />
             ))}

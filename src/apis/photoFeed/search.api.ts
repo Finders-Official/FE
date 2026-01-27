@@ -4,7 +4,6 @@ import type { PhotoFeedResponse } from "@/types/photoFeed/postPreview";
 import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
 import type {
   SearchRequest,
-  SearchHistoryList,
   SearchHistory,
 } from "@/types/photoFeed/postSearch";
 import type {
@@ -20,12 +19,13 @@ export async function getPostSearches({
   keyword,
   filter,
   page,
+  size = PAGE_SIZE,
   sort,
 }: SearchRequest): Promise<PhotoFeedResponse> {
   const res = await axiosInstance.get<ApiResponse<PhotoFeedResponse>>(
-    "/api/posts/search",
+    "/posts/search",
     {
-      params: { keyword, filter, page, size: PAGE_SIZE, sort },
+      params: { keyword, filter, page, size, sort },
     },
   );
 
@@ -36,11 +36,12 @@ export async function getPostSearches({
  * 사진수다 최근 검색어 조회
  */
 export async function getRecentSearches(): Promise<SearchHistory[]> {
-  const res = await axiosInstance.get<ApiResponse<SearchHistoryList>>(
-    `/api/posts/search/history`,
+  const res = await axiosInstance.get<ApiResponse<SearchHistory[]>>(
+    `/posts/search/history`,
   );
+  console.log("recentSearches raw:", res.data);
 
-  return res.data.data.historyList; // 최근 검색어 리스트 return
+  return res.data.data; // 최근 검색어 리스트 return
 }
 
 /**
@@ -48,7 +49,7 @@ export async function getRecentSearches(): Promise<SearchHistory[]> {
  */
 export async function deleteRecentSearch(historyId: number) {
   const res = await axiosInstance.delete<ApiResponse<void>>(
-    `/api/posts/search/history/${historyId}`,
+    `/posts/search/history/${historyId}`,
   );
 
   return res.data.success; // 성공 여부 return
@@ -59,7 +60,7 @@ export async function deleteRecentSearch(historyId: number) {
  */
 export async function deleteAllRecentSearch() {
   const res = await axiosInstance.delete<ApiResponse<void>>(
-    `/api/posts/search/history/all`,
+    `/posts/search/history/all`,
   );
 
   return res.data.success; // 성공 여부 return
@@ -70,7 +71,7 @@ export async function deleteAllRecentSearch() {
  */
 export async function getRelatedSearches(keyword: string): Promise<string[]> {
   const res = await axiosInstance.get<ApiResponse<string[]>>(
-    `/api/posts/search/autocomplete`,
+    `/posts/search/autocomplete`,
     { params: { keyword } },
   );
 
@@ -87,7 +88,7 @@ export async function getLabSearches({
   locationAgreed,
 }: LabSearchRequest): Promise<LabSearchResponse[]> {
   const res = await axiosInstance.get<ApiResponse<LabSearchResponseList>>(
-    "/api/photo-labs/search",
+    "/photo-labs/search",
     {
       params: {
         keyword,

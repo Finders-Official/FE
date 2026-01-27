@@ -1,8 +1,7 @@
 import SearchFilterItem from "@/components/photoFeed/SearchFilterItem";
+import type { Filter } from "@/types/photoFeed/postSearch";
 
-export type FilterKey = "TITLE" | "TITLE_CONTENT" | "LAB_NAME" | "LAB_REVIEW";
-
-const FILTER_OPTIONS: Array<{ key: FilterKey; label: string }> = [
+const FILTER_OPTIONS: Array<{ key: Filter; label: string }> = [
   { key: "TITLE", label: "제목만" },
   { key: "TITLE_CONTENT", label: "제목 + 본문" },
   { key: "LAB_NAME", label: "현상소 이름" },
@@ -10,8 +9,8 @@ const FILTER_OPTIONS: Array<{ key: FilterKey; label: string }> = [
 ];
 
 type SelectFilterProps = {
-  value: FilterKey;
-  onChange: (value: FilterKey) => void;
+  value: Filter;
+  onChange: (value: Filter) => void;
 };
 
 export default function SelectFilter({ value, onChange }: SelectFilterProps) {

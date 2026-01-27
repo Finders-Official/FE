@@ -1,7 +1,8 @@
 import { useCarousel } from "@/hooks/useCarousel";
+import type { PostImage } from "@/types/photoFeed/postPreview";
 
 type Props = {
-  images: string[];
+  images: PostImage[];
   altPrefix?: string;
 };
 
@@ -19,13 +20,13 @@ export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
           scrollbarWidth: "none",
         }}
       >
-        {images.map((src, i) => (
+        {images.map((img, i) => (
           <div
-            key={`${src}-${i}`}
+            key={`${img.imageUrl}-${i}`}
             className="hide-scrollbar w-full flex-none snap-center"
           >
             <img
-              src={src}
+              src={img.imageUrl}
               alt={`${altPrefix}-${i + 1}`}
               className="h-[361px] w-full object-cover"
               draggable={false}

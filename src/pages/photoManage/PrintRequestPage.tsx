@@ -12,7 +12,7 @@ export function PrintRequestPage() {
   //수량 초기화 -> 사진 id 별로 초기 수량을 0으로 세팅
   const [qtyById, setQtyById] = useState<QtyMap>(() => {
     const init: QtyMap = {};
-    for (const p of photoMock) init[p.postId] = 0;
+    for (const p of photoMock.previewList) init[p.postId] = 0;
     return init;
   });
 
@@ -50,7 +50,7 @@ export function PrintRequestPage() {
       </header>
 
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] grid flex-1 grid-cols-2 gap-4 overflow-y-auto">
-        {photoMock.map((photo) => {
+        {photoMock.previewList.map((photo) => {
           const qty = qtyById[photo.postId] ?? 0;
 
           return (

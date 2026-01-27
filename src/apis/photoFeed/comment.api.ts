@@ -10,7 +10,7 @@ import type {
  */
 export async function getComments(postId: number): Promise<PostCommentList> {
   const res = await axiosInstance.get<ApiResponse<PostCommentList>>(
-    `/api/posts/${postId}/comments`,
+    `/posts/${postId}/comments`,
   );
 
   return res.data.data; // 게시글 댓글 리스트 return
@@ -24,7 +24,7 @@ export async function postComment(
   content: string,
 ): Promise<PostComment> {
   const res = await axiosInstance.post<ApiResponse<PostComment>>(
-    `/api/posts/${postId}/comments`,
+    `/posts/${postId}/comments`,
     content,
   );
 
@@ -36,7 +36,7 @@ export async function postComment(
  */
 export async function deleteComment(commentId: number): Promise<boolean> {
   const res = await axiosInstance.delete<ApiResponse<void>>(
-    `/api/posts/comments/${commentId}`,
+    `/posts/comments/${commentId}`,
   );
 
   return res.data.success; // 댓글 삭제 성공 여부 return

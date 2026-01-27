@@ -18,7 +18,7 @@ export async function getPosts({
   pageParam?: number;
 }): Promise<PhotoFeedResponse> {
   const res = await axiosInstance.get<ApiResponse<PhotoFeedResponse>>(
-    "/api/posts",
+    "/posts",
     {
       params: {
         page: pageParam,
@@ -34,10 +34,7 @@ export async function getPosts({
  * 게시물 작성
  */
 export async function createPost(payload: PostUploadRequest): Promise<number> {
-  const res = await axiosInstance.post<ApiResponse<number>>(
-    "/api/posts",
-    payload,
-  );
+  const res = await axiosInstance.post<ApiResponse<number>>("/posts", payload);
 
   return res.data.data; // postId return
 }
@@ -49,7 +46,7 @@ export async function getPostDetail(
   postId: number,
 ): Promise<PostDetailResponse> {
   const res = await axiosInstance.get<ApiResponse<PostDetailResponse>>(
-    `/api/posts/${postId}`,
+    `/posts/${postId}`,
   );
 
   return res.data.data; // 게시글 상세 정보 return
@@ -59,9 +56,7 @@ export async function getPostDetail(
  * 게시글 삭제
  */
 export async function deletePost(postId: number): Promise<boolean> {
-  const res = await axiosInstance.delete<ApiResponse<void>>(
-    `/api/posts/${postId}`,
-  );
+  const res = await axiosInstance.delete<ApiResponse<void>>(`/posts/${postId}`);
 
   return res.data.success; // 게시글 삭제 성공 여부 return
 }

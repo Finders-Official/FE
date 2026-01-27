@@ -6,7 +6,7 @@ import { DialogBox } from "@/components/common/DialogBox";
 import { useNavigate, useLocation } from "react-router";
 import { Header } from "@/components/common";
 import { useMutation } from "@tanstack/react-query";
-import type { PostRequest } from "@/types/photoFeed/post";
+import type { PostUploadRequest } from "@/types/photoFeed/postDetail";
 import { createPost } from "@/apis/photoFeed/post.api";
 
 export default function ReviewPhotoLabPage() {
@@ -30,7 +30,7 @@ export default function ReviewPhotoLabPage() {
   const canSave = reviewText.length === 0 ? false : !isTooShort && !isTooLong;
 
   const createMutation = useMutation({
-    mutationFn: (payload: PostRequest) => createPost(payload),
+    mutationFn: (payload: PostUploadRequest) => createPost(payload),
     onSuccess: (data) => {
       // 성공 시 생성된 게시글로 이동
       navigate(`/photoFeed/post/${data}`);
@@ -42,7 +42,7 @@ export default function ReviewPhotoLabPage() {
   });
 
   const handleSubmit = () => {
-    const payload: PostRequest = {
+    const payload: PostUploadRequest = {
       title: title,
       content: content,
       image: files,
