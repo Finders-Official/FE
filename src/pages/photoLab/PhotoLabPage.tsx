@@ -39,6 +39,7 @@ export default function PhotoLabPage() {
   // 뒤로가기 버튼 표시 여부
   const showBack = !!location.state?.from || window.history.length > 2;
 
+  // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
   // 필터 상태
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);

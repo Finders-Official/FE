@@ -78,6 +78,7 @@ export default function PhotoLabSearchPage() {
     useRecentSearches();
   const [isRecentExpanded, setIsRecentExpanded] = useState(false);
 
+  // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
   // 필터 상태 (results 화면용)
   const [selectedTags, setSelectedTags] = useState<FilterTag[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -86,6 +87,7 @@ export default function PhotoLabSearchPage() {
   // 검색 결과
   const [labs, setLabs] = useState<PhotoLabItem[]>(mockSearchResults);
 
+  // TODO: 검색 API 연동 (키워드 자동완성 + 현상소 프리뷰)
   // 자동완성 필터링
   const filteredKeywords = useMemo(() => {
     if (!query.trim()) return [];
