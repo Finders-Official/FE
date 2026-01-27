@@ -1,14 +1,21 @@
 import { CheckCircleIcon } from "@/assets/icon";
 import { ToastItem } from "@/components/common";
 import { OptionLink } from "@/components/mypage/OptionLink";
-import { info } from "@/constants/mypage/info.constant";
+import { ME_QUERY_KEY, type MeResponse } from "@/hooks/member";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
-  const { member, roleData } = info;
+  const qc = useQueryClient();
+
+  const cached = useMemo(() => {
+    return qc.getQueryData<MeResponse>(ME_QUERY_KEY);
+  }, [qc]);
+
+  const me = cached?.data;
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -19,9 +26,9 @@ export function EditInfoPage() {
 
   //서버에서 온 초기 프로필 URL (string 고정)
   const serverProfileUrl = useMemo(() => {
-    const url = roleData.user?.profileImage;
+    const url = me?.roleData.user?.profileImage;
     return typeof url === "string" ? url : "";
-  }, [roleData.user?.profileImage]);
+  }, [me?.roleData.user?.profileImage]);
 
   //실제 화면에서 쓸 src: 파일 선택 시 objectUrl, 아니면 serverProfileUrl
   const previewSrc = objectUrl ?? serverProfileUrl;
@@ -133,17 +140,17 @@ export function EditInfoPage() {
         <OptionLink
           to="./nickname"
           text="닉네임"
-          info={roleData.user?.nickname}
+          info={me?.roleData.user?.nickname}
           infoColor="gray"
         />
         <div className="flex justify-between p-4">
           <p>이름</p>
-          <p className="mr-8 text-neutral-500">{member.name}</p>
+          <p className="mr-8 text-neutral-500">{me?.member.name}</p>
         </div>
         <OptionLink
           to="./phone"
           text="연락처"
-          info={member.phone}
+          info={me?.member.phone}
           infoColor="gray"
         />
         <OptionLink
