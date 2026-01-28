@@ -57,10 +57,10 @@ export default function LabBasicInfo({
         {/* 상세 정보 */}
         <div className="flex flex-col gap-1.5">
           {/* 태그 */}
-          {lab.keywords.length > 0 && (
+          {lab.tags.length > 0 && (
             <div className="flex items-center gap-1 px-1">
-              {lab.keywords.map((keyword) => (
-                <TagBadge key={keyword} label={keyword} />
+              {lab.tags.map((tag) => (
+                <TagBadge key={tag} label={tag} />
               ))}
             </div>
           )}
@@ -95,7 +95,7 @@ export default function LabBasicInfo({
               </div>
 
               {/* 소요시간 */}
-              {lab.avgWorkTimeMinutes !== null && (
+              {lab.avgWorkTime !== null && (
                 <div className="flex items-center gap-1">
                   <div className="flex items-center">
                     <div className="flex h-6 w-6 items-center justify-center">
@@ -106,7 +106,7 @@ export default function LabBasicInfo({
                     </span>
                   </div>
                   <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                    {lab.avgWorkTimeMinutes}분
+                    {lab.avgWorkTime}분
                   </span>
                 </div>
               )}

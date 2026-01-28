@@ -38,7 +38,7 @@ declare global {
 interface LabLocationSectionProps {
   address: string;
   distanceKm: number;
-  location: PhotoLabLocation;
+  location?: PhotoLabLocation;
   labName: string;
   className?: string;
 }
