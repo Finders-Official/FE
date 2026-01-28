@@ -15,7 +15,7 @@ const NEWS_LIST: NewsData[] = [
     title: "현상소 사장님이 답해주는 초보자를 위한 질문 5가지",
     description: "사진이 여전히 어렵다면...? 🥹",
     thumbnail:
-      "https://mblogthumb-phinf.pstatic.net/MjAxODA4MjlfMTIy/MDAxNTM1NDk4MjgwNjc3.0VdqWGg4rxG29LFDIAxO0GZ3OV6P2PZM69Y7gqN9moIg.3l7uVUJGl_nrSKa2a94Ikg0M2KJ9tf9couNLHDiAV9kg.JPEG.ju4349/IMG_1834.JPG?type=w800",
+      "https://img.freepik.com/free-psd/transparent-background-image-blank-canvas-creativity_191095-80818.jpg?semt=ais_hybrid&w=740&q=80",
     link: "/contents/2", // hm-032
   },
   {
@@ -23,7 +23,7 @@ const NEWS_LIST: NewsData[] = [
     title: "내 카메라랑 더 친해지기",
     description: "카메라 부품별 기능들을 알려드립니다! 😎",
     thumbnail:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80",
+      "https://img.freepik.com/free-psd/transparent-background-image-blank-canvas-creativity_191095-80818.jpg?semt=ais_hybrid&w=740&q=80",
     link: "/contents/3", // hm-033
   },
 ];
