@@ -1,14 +1,17 @@
 import { CheckCircleIcon } from "@/assets/icon";
 import { ToastItem } from "@/components/common";
+import { DialogBox } from "@/components/common/DialogBox";
 import { OptionLink } from "@/components/mypage/OptionLink";
 import { useMe } from "@/hooks/member";
+import { formatPhoneKorea } from "@/utils/formatPhoneKorea";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
   const { data: me } = useMe({ refetchOnMount: "always" });
+  const phone = formatPhoneKorea(me?.member.phone);
 
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -33,6 +36,12 @@ export function EditInfoPage() {
   const state = (location.state as LocationState) ?? null;
   const [showToast, setShowToast] = useState(false);
   const [message, setMessage] = useState("");
+
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const handleLogout = () => {
+    setIsLogoutModalOpen(true);
+  };
 
   useEffect(() => {
     const toast = state?.toast;
@@ -142,19 +151,30 @@ export function EditInfoPage() {
           <p>이름</p>
           <p className="mr-8 text-neutral-500">{me?.member.name}</p>
         </div>
-        <OptionLink
-          to="./phone"
-          text="연락처"
-          info={me?.member.phone}
-          infoColor="gray"
-        />
+        <OptionLink to="./phone" text="연락처" info={phone} infoColor="gray" />
         <OptionLink
           to="./social"
           text="연동된 소셜 계정"
           info="카카오톡"
           infoColor="gray"
         />
-        <button className="p-4">로그아웃</button>
+        <section className="flex flex-col">
+          <button onClick={handleLogout} className="p-4 text-left">
+            로그아웃
+          </button>
+          <Link to="./withdraw" className="p-4 text-left">
+            탈퇴하기
+          </Link>
+        </section>
+        <DialogBox
+          isOpen={isLogoutModalOpen}
+          title="로그아웃"
+          description="정말로 로그아웃하시겠어요?"
+          confirmText="로그아웃"
+          onConfirm={() => setIsLogoutModalOpen(false)}
+          cancelText="뒤로 가기"
+          onCancel={() => setIsLogoutModalOpen(false)}
+        />
       </main>
 
       {showToast ? (
