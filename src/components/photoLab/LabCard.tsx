@@ -138,6 +138,7 @@ export default function LabCard({
                 key={index}
                 src={url}
                 alt={`${lab.name} 이미지 ${index + 1}`}
+                loading="lazy"
                 className="h-[8.875rem] w-[14.5rem] shrink-0 rounded-[0.625rem] object-cover"
               />
             ))}

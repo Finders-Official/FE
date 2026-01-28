@@ -6,5 +6,7 @@ export function usePopularPhotoLabs() {
     queryKey: ["photoLab", "popular"],
     queryFn: getPopularPhotoLabs,
     select: (res) => res.data,
+    staleTime: 1000 * 60 * 30,
+    gcTime: 1000 * 60 * 60,
   });
 }

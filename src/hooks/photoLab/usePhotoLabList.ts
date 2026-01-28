@@ -20,5 +20,7 @@ export function usePhotoLabList(params: Params, enabled = true) {
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : undefined,
     enabled,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
   });
 }
