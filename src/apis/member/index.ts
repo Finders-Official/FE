@@ -4,4 +4,4 @@ export { requestPhoneVerification } from "./requestPhoneVerification.api";
 
 export { confirmPhoneVerification } from "./confirmPhoneVerification.api";
 
-export { me } from "./me.api";
+export { me, editMe } from "./me.api";
