@@ -54,3 +54,10 @@ export interface MyPageDataDto {
 }
 
 export type MyPageResponse = ApiResponse<MyPageDataDto>;
+
+export type EditMeReqDto = {
+  nickname?: string;
+  phone?: string;
+  verifiedPhoneToken?: string;
+  profileImageUrl?: string;
+};

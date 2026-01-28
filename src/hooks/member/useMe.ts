@@ -1,4 +1,3 @@
-// src/hooks/member/useMe.ts (경로는 너 프로젝트 컨벤션에 맞춰)
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import type { MyPageDataDto } from "@/types/mypage/info";
@@ -20,7 +19,6 @@ export function useMe(
     queryFn: () => me(),
     select: (res) => res.data,
     staleTime: 1000 * 30 * 60,
-    refetchInterval: 1000 * 6 * 5,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
