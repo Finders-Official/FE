@@ -17,7 +17,7 @@ export default function MyPageLayout() {
   const showBack = handle.showBack ?? true;
 
   return (
-    <div className="flex min-h-0 w-full flex-col pt-[3.75rem]">
+    <div className="flex min-h-0 w-full flex-col">
       <Header title={title} showBack={showBack} onBack={() => navigate(-1)} />
       <main className="flex-1">
         <Outlet />

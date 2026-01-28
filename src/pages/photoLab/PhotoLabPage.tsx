@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Header, FilterContainer } from "@/components/common";
 import {
@@ -9,13 +9,12 @@ import {
 } from "@/components/photoLab";
 import { SearchIcon } from "@/assets/icon";
 import { WEEKDAYS } from "@/constants/date";
-import type {
-  PhotoLabItem,
-  FilterTag,
-  LabNews,
-  FilterState,
-} from "@/types/photoLab";
-import PLmock from "@/assets/mocks/PLmock.png";
+import {
+  useGeolocation,
+  usePhotoLabList,
+  useFavoriteToggle,
+} from "@/hooks/photoLab";
+import type { LabNews, FilterState } from "@/types/photoLab";
 
 // Mock 데이터 (추후 API 연동)
 const mockNews: LabNews[] = [
@@ -33,42 +32,6 @@ const mockNews: LabNews[] = [
   },
 ];
 
-const mockLabs: PhotoLabItem[] = [
-  {
-    photoLabId: 1,
-    name: "파인더스 현상소 상도점",
-    keywords: ["따뜻한 색감", "빈티지한", "택배 접수"],
-    address: "서울 동작구 상도 1동 OOO",
-    distanceKm: 1.5,
-    workCount: 52,
-    avgWorkTimeMinutes: 30,
-    imageUrls: [PLmock, PLmock],
-    isFavorite: false,
-  },
-  {
-    photoLabId: 2,
-    name: "파인더스 현상소 흑석점",
-    keywords: ["청량한", "영화용 필름"],
-    address: "서울 동작구 흑석동 OOO",
-    distanceKm: 3.2,
-    workCount: 128,
-    avgWorkTimeMinutes: 45,
-    imageUrls: [PLmock, PLmock],
-    isFavorite: true,
-  },
-  {
-    photoLabId: 3,
-    name: "파인더스 현상소 홍대점",
-    keywords: ["따뜻한 색감", "영화용 필름", "택배 접수"],
-    address: "서울 마포구 서교동 OOO",
-    distanceKm: 5.1,
-    workCount: 203,
-    avgWorkTimeMinutes: 60,
-    imageUrls: [PLmock],
-    isFavorite: false,
-  },
-];
-
 export default function PhotoLabPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,10 +39,37 @@ export default function PhotoLabPage() {
   // 뒤로가기 버튼 표시 여부
   const showBack = !!location.state?.from || window.history.length > 2;
 
+  // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
   // 필터 상태
-  const [selectedTags, setSelectedTags] = useState<FilterTag[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filter, setFilter] = useState<FilterState>({});
+
+  // 위치 정보
+  const {
+    latitude,
+    longitude,
+    isLoading: isLocationLoading,
+  } = useGeolocation();
+
+  // 현상소 목록 조회
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    usePhotoLabList(
+      {
+        tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+        regionId: filter.regionId,
+        date: filter.date,
+        lat: latitude ?? undefined,
+        lng: longitude ?? undefined,
+      },
+      !isLocationLoading,
+    );
+
+  // 페이지 데이터 평탄화
+  const labs = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data],
+  );
 
   // 필터 값 표시 문자열 계산
   const formatFilterValue = (): string | undefined => {
@@ -105,34 +95,24 @@ export default function PhotoLabPage() {
 
   const filterValue = formatFilterValue();
 
-  // 현상소 목록 상태
-  const [labs, setLabs] = useState<PhotoLabItem[]>(mockLabs);
-
-  // 필터링된 목록 (AND 조건: 선택한 모든 태그를 포함해야 하도록)
-  const filteredLabs =
-    selectedTags.length > 0
-      ? labs.filter((lab) =>
-          selectedTags.every((tag) => lab.keywords.includes(tag)),
-        )
-      : labs;
-
   // 태그 토글
-  const handleTagToggle = (tag: FilterTag) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+  const handleTagToggle = useCallback((tagId: number) => {
+    setSelectedTagIds((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
     );
-  };
+  }, []);
 
   // 즐겨찾기 토글
-  const handleFavoriteToggle = (photoLabId: number) => {
-    setLabs((prev) =>
-      prev.map((lab) =>
-        lab.photoLabId === photoLabId
-          ? { ...lab, isFavorite: !lab.isFavorite }
-          : lab,
-      ),
-    );
-  };
+  const { mutate: toggleFavorite } = useFavoriteToggle();
+
+  const handleFavoriteToggle = useCallback(
+    (photoLabId: number, isFavorite: boolean) => {
+      toggleFavorite({ photoLabId, isFavorite });
+    },
+    [toggleFavorite],
+  );
 
   // 카드 클릭
   const handleCardClick = (photoLabId: number) => {
@@ -153,6 +133,13 @@ export default function PhotoLabPage() {
   const handleFilterApply = (newFilter: FilterState) => {
     setFilter(newFilter);
   };
+
+  // 무한스크롤
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div className="flex w-full flex-col">
@@ -182,7 +169,7 @@ export default function PhotoLabPage() {
             onClick={handleFilterClick}
           />
           <FilterTagList
-            selectedTags={selectedTags}
+            selectedTagIds={selectedTagIds}
             onTagToggle={handleTagToggle}
           />
         </div>
@@ -192,13 +179,17 @@ export default function PhotoLabPage() {
 
       {/* 현상소 목록 */}
       <LabList
-        labs={filteredLabs}
+        labs={labs}
+        isLoading={isLoading || isLocationLoading}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage ?? false}
+        onLoadMore={handleLoadMore}
         onFavoriteToggle={handleFavoriteToggle}
         onCardClick={handleCardClick}
         emptyMessage={
-          selectedTags.length > 0
+          selectedTagIds.length > 0
             ? "검색 조건에 맞는 현상소가 없어요"
-            : "아직 현상소가 없어요" //말투는 추후 확인 필요
+            : "아직 현상소가 없어요"
         }
         className="pb-(--tabbar-height)"
       />

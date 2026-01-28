@@ -1,14 +1,16 @@
 import { LogoIcon, XMarkIcon } from "@/assets/icon";
 
 export type SearchPostProps = {
+  historyId: number;
   image?: string;
   text: string;
   onClick?: () => void;
-  onDelete?: () => void;
+  onDelete?: (historyId: number) => void;
   className?: string;
 };
 
 export default function SearchPost({
+  historyId,
   image,
   text,
   onClick,
@@ -17,7 +19,7 @@ export default function SearchPost({
 }: SearchPostProps) {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onDelete?.();
+    onDelete?.(historyId);
   };
 
   return (

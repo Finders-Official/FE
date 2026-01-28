@@ -1,7 +1,7 @@
 import { CTA_Button, Header, ImageCard } from "@/components/common";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { mockPreviewList } from "@/types/photo";
+import { photoMock } from "@/types/photoFeed/postPreview";
 import { PhotoCardPreview } from "@/components/photoManage/PhotoCardPreview";
 import { EmptyCheckCircleIcon } from "@/assets/icon";
 
@@ -21,8 +21,8 @@ export default function PhotoDownload() {
   const previewRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   const photoById = useMemo(() => {
-    const m = new Map<number, (typeof mockPreviewList.previewList)[number]>();
-    mockPreviewList.previewList.forEach((p) => m.set(p.postId, p));
+    const m = new Map<number, (typeof photoMock.previewList)[number]>();
+    photoMock.previewList.forEach((p) => m.set(p.postId, p));
     return m;
   }, []);
 
@@ -41,10 +41,10 @@ export default function PhotoDownload() {
   }, [currentPhotoId]);
 
   const handleAllSelect = () => {
-    if (selectedIds.length === mockPreviewList.totalCount) {
+    if (selectedIds.length === photoMock.totalCount) {
       setSelectedIds([]); // 모두 선택된 상태면 전체 해제
     } else {
-      setSelectedIds(mockPreviewList.previewList.map((p) => p.postId)); // 전체 선택
+      setSelectedIds(photoMock.previewList.map((p) => p.postId)); // 전체 선택
     }
   };
 
@@ -76,7 +76,7 @@ export default function PhotoDownload() {
             rightAction={{
               type: "text",
               text:
-                selectedIds.length === mockPreviewList.totalCount
+                selectedIds.length === photoMock.totalCount
                   ? "전체 해제"
                   : "전체 선택",
               onClick: handleAllSelect,
@@ -120,7 +120,7 @@ export default function PhotoDownload() {
             )}
             {/* 사진 그리드 */}
             <div className="mt-[0.9375rem] grid grid-cols-3 gap-1">
-              {mockPreviewList.previewList.map((p) => {
+              {photoMock.previewList.map((p) => {
                 const isSelected = selectedSet.has(p.postId);
                 const selectionIndex = isSelected
                   ? selectedIndexMap.get(p.postId)
