@@ -9,7 +9,7 @@ interface LabListProps {
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
   onLoadMore: () => void;
-  onFavoriteToggle?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
   onCardClick?: (photoLabId: number) => void;
   emptyMessage?: string;
   className?: string;

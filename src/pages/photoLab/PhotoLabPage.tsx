@@ -108,12 +108,10 @@ export default function PhotoLabPage() {
   const { mutate: toggleFavorite } = useFavoriteToggle();
 
   const handleFavoriteToggle = useCallback(
-    (photoLabId: number) => {
-      const lab = labs.find((l) => l.photoLabId === photoLabId);
-      if (!lab) return;
-      toggleFavorite({ photoLabId, isFavorite: lab.isFavorite });
+    (photoLabId: number, isFavorite: boolean) => {
+      toggleFavorite({ photoLabId, isFavorite });
     },
-    [labs, toggleFavorite],
+    [toggleFavorite],
   );
 
   // 카드 클릭

@@ -10,7 +10,7 @@ import TagBadge from "./TagBadge";
 
 interface LabCardProps {
   lab: PhotoLabItem;
-  onFavoriteToggle?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
   onCardClick?: (photoLabId: number) => void;
   className?: string;
 }
@@ -33,7 +33,7 @@ export default function LabCard({
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId);
+    onFavoriteToggle?.(lab.photoLabId, lab.isFavorite);
   };
 
   const handleCardClick = () => {
