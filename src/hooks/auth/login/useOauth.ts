@@ -1,4 +1,4 @@
-import { oauth } from "@/api/auth";
+import { oauth } from "@/apis/auth";
 import type {
   SocialoginCompleteData,
   SocialoginCompleteReq,

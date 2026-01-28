@@ -19,13 +19,13 @@ import { RecipientInfoCard } from "@/components/photoManage/RecipientInfoCard";
 import { useNavigate } from "react-router";
 import { DialogBox } from "@/components/common/DialogBox";
 import { useState } from "react";
-import { mocks } from "@/types/process";
+import { mocks } from "@/types/photomanage/process";
 import type {
   Status,
   ReceiptMethod,
   PrintOrderStatus,
   DeliveryStatus,
-} from "@/types/process";
+} from "@/types/photomanage/process";
 import BottomSheet from "@/components/common/BottomSheet";
 
 type StepConfig = {

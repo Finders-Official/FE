@@ -81,7 +81,7 @@ const router = createBrowserRouter([
         Component: ReviewPhotoLabPage,
       },
       {
-        path: "/photoFeed/post/1", //TODO: 임시 postId
+        path: "/photoFeed/post/:postId",
         Component: PostPage,
       },
       {
