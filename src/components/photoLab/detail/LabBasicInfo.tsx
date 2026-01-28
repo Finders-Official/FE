@@ -10,7 +10,7 @@ import TagBadge from "../TagBadge";
 
 interface LabBasicInfoProps {
   lab: PhotoLabDetail;
-  onFavoriteToggle?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
   className?: string;
 }
 
@@ -28,8 +28,9 @@ export default function LabBasicInfo({
   }
 
   const handleFavoriteClick = () => {
+    const currentState = isFavorite;
     setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId);
+    onFavoriteToggle?.(lab.photoLabId, currentState);
   };
 
   return (

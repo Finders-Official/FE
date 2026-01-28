@@ -38,12 +38,8 @@ export default function PhotoLabDetailPage() {
     navigate(-1);
   };
 
-  const handleFavoriteToggle = () => {
-    if (!lab) return;
-    toggleFavorite({
-      photoLabId: lab.photoLabId,
-      isFavorite: lab.isFavorite,
-    });
+  const handleFavoriteToggle = (photoLabId: number, isFavorite: boolean) => {
+    toggleFavorite({ photoLabId, isFavorite });
   };
 
   const handleReservation = () => {
