@@ -67,10 +67,10 @@ export const DROPBOX_CATEGORIES: readonly DropDownCategory[] = [
   {
     key: "SIZE",
     title: "사이즈",
-    // ✅ 선택 전에는 “기본금”이 보이게
+    // 선택 전에는 “기본금”이 보이게
     placeholder: "",
     options: [
-      // ✅ 5*7은 “추가금 0”이 아니라 “기본금 포함 최종 +1,400원”
+      //  5*7은 “추가금 0”이 아니라 “기본금 포함 최종 +1,400원”
       {
         value: "5X7",
         label: "5*7",
