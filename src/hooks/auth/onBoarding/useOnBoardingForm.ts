@@ -183,5 +183,10 @@ export function useOnBoardingForm() {
     handlePhoneChange,
     handleVerifiedNumberChange,
     handleSubmit,
+
+    nicknameTrimmed,
+    nicknameValid,
+    nicknameAvailable,
+    isCheckingNickname,
   };
 }

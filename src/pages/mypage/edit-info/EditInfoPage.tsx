@@ -1,21 +1,15 @@
 import { CheckCircleIcon } from "@/assets/icon";
 import { ToastItem } from "@/components/common";
 import { OptionLink } from "@/components/mypage/OptionLink";
-import { ME_QUERY_KEY, type MeResponse } from "@/hooks/member";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMe } from "@/hooks/member";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
-  const qc = useQueryClient();
+  const { data: me } = useMe({ refetchOnMount: "always" });
 
-  const cached = useMemo(() => {
-    return qc.getQueryData<MeResponse>(ME_QUERY_KEY);
-  }, [qc]);
-
-  const me = cached?.data;
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -44,7 +38,6 @@ export function EditInfoPage() {
     const toast = state?.toast;
     if (!toast) return;
 
-    //  effect 본문에서 setState 동기 호출 금지 룰 대응: "콜백 안에서" setState
     const showId = window.setTimeout(() => {
       setMessage(toast);
       setShowToast(true);
@@ -84,6 +77,7 @@ export function EditInfoPage() {
       setError(msg);
       return;
     }
+
     //기존 objectURL 정리 (blob만)
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current);
@@ -136,6 +130,7 @@ export function EditInfoPage() {
           className="hidden"
         />
       </header>
+
       <main className="py-1">
         <OptionLink
           to="./nickname"
@@ -161,6 +156,7 @@ export function EditInfoPage() {
         />
         <button className="p-4">로그아웃</button>
       </main>
+
       {showToast ? (
         <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
           <ToastItem message={message} icon={<CheckCircleIcon />} />
@@ -171,10 +167,13 @@ export function EditInfoPage() {
 }
 
 // 1. 프로필 이미지 수정 api
+// 5. 로그아웃 api
+// 6. 회원 탈퇴 api
+// 7. 닉네임 변경 api -> 재탕 ✅
+// 8. 전화번호 변경 api -> 재탕
+// -> 로딩 처리 로딩 스피너로
+
 // 2. 관심 현상소 목록 api
 // 3. 찜한 사진 수다 api
 // 4. 내가 쓴 글 api
-// 5. 로그아웃 api
-// 6. 회원 탈퇴 api
-// 7. 닉네임 변경 api -> 재탕
-// 8. 전화번호 변경 api -> 재탕
+// -> 스켈레톤 UI
