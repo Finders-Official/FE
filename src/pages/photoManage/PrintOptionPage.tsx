@@ -25,7 +25,6 @@ function floorToHundreds(n: number) {
 }
 
 function filmRate(value: DropDownOption["value"] | undefined) {
-  // value가 네 타입에서 string이라면 그대로 비교 가능
   switch (value) {
     case "COLOR_NEGATIVE":
       return 0.1;
