@@ -139,42 +139,29 @@ export const results: PhotoLab[] = [
 ];
 
 // 현상소 상세 페이지 타입 (PL-020)
-export interface PhotoLabDetailImage {
-  imageUrl: string;
-  isMain: boolean;
-  displayOrder: number;
-}
-
-export interface PhotoLabNotice {
-  noticeId: number;
-  noticeType: "EVENT" | "NOTICE";
-  title: string;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
-}
-
-export interface PhotoLabWorkResults {
-  count: number;
-  previewImageUrls: string[];
-}
-
 export interface PhotoLabLocation {
   latitude: number;
   longitude: number;
 }
 
+export interface PhotoLabNotice {
+  noticeType: "EVENT" | "NOTICE";
+  title: string;
+}
+
 export interface PhotoLabDetail {
   photoLabId: number;
   name: string;
-  keywords: string[];
-  isFavorite: boolean;
+  imageUrls: string[];
+  tags: string[];
   address: string;
+  addressDetail: string | null;
   distanceKm: number;
-  location: PhotoLabLocation;
+  isFavorite: boolean;
   workCount: number;
-  avgWorkTimeMinutes: number | null;
-  images: PhotoLabDetailImage[];
-  notices: PhotoLabNotice[];
-  workResults: PhotoLabWorkResults;
+  reviewCount: number;
+  avgWorkTime: number | null;
+  mainNotice: PhotoLabNotice | null;
+  postImageUrls: string[];
+  location: PhotoLabLocation;
 }
