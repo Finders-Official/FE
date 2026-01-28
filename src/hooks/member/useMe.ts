@@ -19,7 +19,11 @@ export function useMe(
     queryKey: ME_QUERY_KEY,
     queryFn: () => me(),
     select: (res) => res.data,
-    staleTime: 1000 * 6 * 5,
+    staleTime: 1000 * 30 * 60,
+    refetchInterval: 1000 * 6 * 5,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     ...options,
   });
 }

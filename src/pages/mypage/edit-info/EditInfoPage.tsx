@@ -169,3 +169,12 @@ export function EditInfoPage() {
     </div>
   );
 }
+
+// 1. 프로필 이미지 수정 api
+// 2. 관심 현상소 목록 api
+// 3. 찜한 사진 수다 api
+// 4. 내가 쓴 글 api
+// 5. 로그아웃 api
+// 6. 회원 탈퇴 api
+// 7. 닉네임 변경 api -> 재탕
+// 8. 전화번호 변경 api -> 재탕
