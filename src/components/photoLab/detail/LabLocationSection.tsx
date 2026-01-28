@@ -120,14 +120,12 @@ export default function LabLocationSection({
           <button
             type="button"
             onClick={handleCopyAddress}
-            className="flex items-center gap-1.5"
+            className="flex w-full items-center gap-1.5"
           >
-            <div className="flex h-6 w-6 items-center justify-center">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center">
               <CopyIcon className="h-4 w-4 text-neutral-200" />
             </div>
-            <span className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-              {" "}
-              {/* 유저에게 뭔가 줄 반응이 필요함 */}
+            <span className="min-w-0 flex-1 truncate text-left text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
               {address}
             </span>
           </button>

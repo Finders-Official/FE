@@ -187,6 +187,7 @@ export default function PhotoLabSearchPage() {
         <div className="flex flex-col gap-[1.875rem] pt-5">
           <KeywordSuggestionSection
             keywords={filteredKeywords}
+            query={query}
             onKeywordClick={handleKeywordClick}
           />
           <LabPreviewSection
@@ -225,6 +226,7 @@ export default function PhotoLabSearchPage() {
             onLoadMore={() => {}}
             onCardClick={handleLabClick}
             emptyMessage="검색 결과가 없어요"
+            className="pt-4"
           />
 
           {/* 필터 바텀시트 */}
