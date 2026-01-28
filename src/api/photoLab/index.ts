@@ -3,4 +3,5 @@ export {
   addFavorite,
   removeFavorite,
   getPopularPhotoLabs,
+  getPhotoLabDetail,
 } from "./photoLab.api";

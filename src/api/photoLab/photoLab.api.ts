@@ -4,6 +4,7 @@ import type {
   PhotoLabItem,
   PhotoLabListParams,
   PhotoLabFavoriteStatus,
+  PhotoLabDetail,
   PagedApiResponse,
 } from "@/types/photoLab";
 import type { PopularLab } from "@/types/photoLabSearch";
@@ -66,6 +67,25 @@ export async function getPopularPhotoLabs(): Promise<
 > {
   const res = await axiosInstance.get<ApiResponse<PopularLab[]>>(
     "/photo-labs/popular",
+  );
+
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
+}
+
+// 현상소 상세 조회
+export async function getPhotoLabDetail(
+  photoLabId: number,
+  params?: { lat?: number; lng?: number },
+): Promise<ApiResponse<PhotoLabDetail>> {
+  const res = await axiosInstance.get<ApiResponse<PhotoLabDetail>>(
+    `/photo-labs/${photoLabId}`,
+    { params },
   );
 
   const body = res.data;
