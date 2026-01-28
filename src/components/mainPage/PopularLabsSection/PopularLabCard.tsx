@@ -1,9 +1,9 @@
 import { Link } from "react-router";
 
 export interface Lab {
-  id: number;
+  photoLabId: number;
   name: string;
-  thumbnail: string;
+  mainImageUrl: string;
   workCount: number;
   tags: string[];
 }
@@ -15,11 +15,11 @@ interface PopularLabCardProps {
 export default function PopularLabCard({ lab }: PopularLabCardProps) {
   return (
     <Link
-      to={`/lab/${lab.id}`}
+      to={`/lab/${lab.photoLabId}`}
       className="relative block aspect-163/230 w-full overflow-hidden rounded-[0.625rem] border border-neutral-800"
     >
       <img
-        src={lab.thumbnail}
+        src={lab.mainImageUrl}
         alt={lab.name}
         className="absolute inset-0 h-full w-full object-cover"
       />
