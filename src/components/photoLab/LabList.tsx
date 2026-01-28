@@ -1,6 +1,6 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import type { PhotoLabItem } from "@/types/photoLab";
-import { useIntersectionObserver } from "@/hooks/photoLab";
+import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import LabCard from "./LabCard";
 
 interface LabListProps {
@@ -26,15 +26,20 @@ export default function LabList({
   emptyMessage = "현상소가 없습니다",
   className = "",
 }: LabListProps) {
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
   const handleIntersect = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       onLoadMore();
     }
   }, [hasNextPage, isFetchingNextPage, onLoadMore]);
 
-  const sentinelRef = useIntersectionObserver({
+  useInfiniteScroll({
+    target: sentinelRef,
     enabled: hasNextPage && !isFetchingNextPage,
     onIntersect: handleIntersect,
+    rootMargin: "100px",
+    threshold: 0.1,
   });
 
   // TODO: 스켈레톤 로딩 추가 예정
