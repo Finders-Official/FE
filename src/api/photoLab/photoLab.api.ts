@@ -14,18 +14,7 @@ export async function getPhotoLabList(
 ): Promise<PagedApiResponse<PhotoLabItem[]>> {
   const res = await axiosInstance.get<PagedApiResponse<PhotoLabItem[]>>(
     "/photo-labs",
-    {
-      params: {
-        q: params.q,
-        tagIds: params.tagIds,
-        regionId: params.regionId,
-        date: params.date,
-        page: params.page,
-        size: params.size,
-        lat: params.lat,
-        lng: params.lng,
-      },
-    },
+    { params },
   );
 
   const body = res.data;
