@@ -87,6 +87,7 @@ export interface FilterState {
   time?: string; // "오전 10:00" 형식
   region?: string; // "서울"
   subRegion?: string; // "동작구"
+  regionId?: number; // TODO: BottomSheet API 연동 시 사용
 }
 
 // 지역 정보
