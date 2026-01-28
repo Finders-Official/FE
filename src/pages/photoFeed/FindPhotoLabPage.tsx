@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { HighlightText } from "@/components/photoFeed/highlightText";
 import type { PhotoLab } from "@/types/photoLab";
 import { results } from "@/types/photoLab";
+import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 
@@ -20,6 +21,9 @@ export default function FindPhotoLabPage() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [selectedLab, setSelectedLab] = useState<PhotoLab | null>(null);
+
+  const setIsSelfDeveloped = useNewPostState((s) => s.setIsSelfDeveloped);
+  const setLabInfo = useNewPostState((s) => s.setLabInfo);
 
   const navigate = useNavigate();
 
@@ -38,6 +42,7 @@ export default function FindPhotoLabPage() {
 
   const handleLabSelect = (lab: PhotoLab) => {
     inputRef.current?.blur();
+    setLabInfo(lab.id, lab.name);
     setSelectedLab(lab);
     setSearching(false);
     setStep("confirm");
@@ -73,12 +78,7 @@ export default function FindPhotoLabPage() {
             size="medium"
             color="orange"
             onClick={() => {
-              navigate("/photoFeed/lab/review", {
-                state: {
-                  labName: selectedLab.name,
-                  labId: selectedLab.id,
-                },
-              });
+              navigate("/photoFeed/lab/review");
             }}
           />
         </div>
@@ -115,7 +115,7 @@ export default function FindPhotoLabPage() {
             rightIcon="search"
             onFocus={() => setSearching(true)} // 포커스 되면 검색모드
             onSearch={() => {
-              /* 실제 검색 실행 */
+              /* TODO: 실제 검색 실행 */
             }}
           />
 
@@ -151,7 +151,14 @@ export default function FindPhotoLabPage() {
           {!searching && (
             <>
               <div className="flex items-center gap-2 pr-4 pl-4">
-                <Checkbox checked={checked} onChange={setChecked} />
+                <Checkbox
+                  checked={checked}
+                  onChange={setChecked}
+                  onClick={() => {
+                    setIsSelfDeveloped(true);
+                    // TODO: 현상소 관련 로직 없이 바로 post 요청
+                  }}
+                />
                 <p className="text-[0.875rem] text-white">자가 현상했어요.</p>
               </div>
               <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5">

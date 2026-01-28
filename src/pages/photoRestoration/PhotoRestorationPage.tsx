@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
+import { useNewPostState } from "@/store/useNewPostState.store";
 import PhotoSelectPage from "@/pages/photoRestoration/PhotoSelectPage";
 import RestorationCanvas from "@/components/photoRestoration/RestorationCanvas";
 
 const PhotoRestorationPage = () => {
-  const { files, clear } = useSelectedPhotos();
+  const { files, reset } = useNewPostState();
   const [step, setStep] = useState<"select" | "restore">("select");
 
   const handleSelectComplete = () => {
@@ -12,7 +12,7 @@ const PhotoRestorationPage = () => {
   };
 
   const handleBack = () => {
-    clear();
+    reset();
     setStep("select");
   };
 
