@@ -17,19 +17,19 @@ export default function PopularLabsSection() {
   useEffect(() => {
     const fetchPopularLabs = async () => {
       const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
-      const TEMP_TOKEN =
-        "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidHlwZSI6IkFDQ0VTUyIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzY5NTgxOTAwLCJleHAiOjE3Njk1ODM3MDB9.tXDXejX5m-9rYUdIQVr23-gMDwW8vEgnb4MOmV6U6nXhvZ3kJo8LSyyr_ycQclj2K2BZ5dvwwI_Mfg0jhS-gkA";
+      const token = localStorage.getItem("accessToken");
+
       try {
         const response = await fetch(`${baseUrl}/photo-labs/popular`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${TEMP_TOKEN}`, // 임시 토큰
+            ...(token && { Authorization: `Bearer ${token}` }),
           },
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP 에러! status: ${response.status}`);
         }
 
         const json: ApiResponse = await response.json();
