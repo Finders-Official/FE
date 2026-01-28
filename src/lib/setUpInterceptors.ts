@@ -1,3 +1,4 @@
+import type { ApiResponse } from "@/types/common/apiResponse";
 import { tokenStorage } from "@/utils/tokenStorage";
 import type {
   AxiosError,
@@ -10,6 +11,7 @@ import axios from "axios";
 type RefreshResponse = {
   accessToken: string;
   refreshToken?: string;
+  accessTokenExpiresIn?: number;
 };
 
 // 재시도 플래그를 config에 안전하게 심기 위한 타입 확장
@@ -42,17 +44,31 @@ type AuthMetaConfig = InternalAxiosRequestConfig & {
 };
 
 async function requestRefreshToken(baseURL: string) {
-  // refresh는 별도 axios로 호출(인터셉터 영향 X)
   const refreshToken = tokenStorage.getRefreshToken();
   if (!refreshToken) throw new Error("No refresh token");
 
-  const res = await axios.post<RefreshResponse>(
+  const res = await axios.post<ApiResponse<RefreshResponse>>(
     `${baseURL}/auth/reissue`,
     { refreshToken },
     { headers: { "Content-Type": "application/json" }, timeout: 15000 },
   );
 
-  return res.data;
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message || "Reissue failed");
+  }
+
+  const data = body.data;
+
+  if (!data?.accessToken) {
+    throw new Error("Reissue response missing accessToken");
+  }
+
+  return {
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+  };
 }
 
 export function setupInterceptors(instance: AxiosInstance) {
