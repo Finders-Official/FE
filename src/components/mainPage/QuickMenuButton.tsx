@@ -19,7 +19,7 @@ export default function QuickActionGrid() {
 
       {/* 사진 복원하기 */}
       <ActionCard
-        to="/"
+        to="/photoRestoration"
         className="flex flex-col items-center justify-center gap-2 bg-[#1C1C1E]"
       >
         <div className="flex size-8 items-center justify-center rounded-full bg-orange-500">
