@@ -26,7 +26,7 @@ export function NickNameEditPage() {
           onChange={(e) => setNickname(e.target.value)}
         />
       </form>
-      <footer className="border-neutral-850 mt-auto border-t px-4 py-5">
+      <footer className="border-neutral-850 mt-auto border-t py-5">
         <CTA_Button
           size="xlarge"
           text="변경 완료"

@@ -40,6 +40,7 @@ export { default as PlusIcon } from "./plus.svg?react";
 export { default as PrinterIcon } from "./printer.svg?react";
 export { default as ScanIcon } from "./scan.svg?react";
 export { default as SearchIcon } from "./search.svg?react";
+export { default as SecurityIcon } from "./security.svg?react";
 export { default as StarIcon } from "./star.svg?react";
 export { default as TabHomeIcon } from "./tab-home.svg?react";
 export { default as TicketIcon } from "./ticket.svg?react";

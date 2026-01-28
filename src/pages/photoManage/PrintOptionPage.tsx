@@ -1,17 +1,48 @@
 import { CTA_Button } from "@/components/common";
 import { DropBox } from "@/components/photoManage/DropBox";
 import {
+  BASE_SIZE_WON,
   DELIVERY_FEE_WON,
   DROPBOX_CATEGORIES,
 } from "@/constants/photomanage/category.constant";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import type {
   CategoryKey,
   DropDownOption,
   DropDownSelection,
 } from "@/types/photomanage/category";
 import { useMemo, useState } from "react";
+import { useLocation } from "react-router";
+
+type PickUpMethod = "pickup" | "delivery";
+
+type LocationState = {
+  pickupMethod?: PickUpMethod;
+};
+
+function floorToHundreds(n: number) {
+  return Math.floor(n / 100) * 100;
+}
+
+function filmRate(value: DropDownOption["value"] | undefined) {
+  switch (value) {
+    case "COLOR_NEGATIVE":
+      return 0.1;
+    case "B_W":
+      return 0.1;
+    case "SLIDE":
+    default:
+      return 0;
+  }
+}
 
 export function PrintOptionPage() {
+  const location = useLocation();
+  const pickupMethod: PickUpMethod =
+    (location.state as LocationState | null)?.pickupMethod ?? "delivery";
+
+  const totalPrintCount = usePrintOrderStore((s) => s.totalPrintCount);
+
   const initialSelection = useMemo<DropDownSelection>(
     () => ({
       FILM: null,
@@ -35,25 +66,76 @@ export function PrintOptionPage() {
 
   const handleSelect = (key: CategoryKey, option: DropDownOption) => {
     setSelection((prev) => ({ ...prev, [key]: option }));
-    setOpenKey(null); // 선택하면 닫히게(원하면 제거)
+    setOpenKey(null);
   };
 
-  //옵션 합계 = 선택된 옵션들의 priceWon 합산
-  const optionsTotalWon = useMemo(() => {
-    return (Object.values(selection) as (DropDownOption | null)[])
-      .filter((v): v is DropDownOption => v !== null)
-      .reduce((sum, opt) => sum + opt.priceWon, 0);
-  }, [selection]);
+  //배송비: 배송이면 3000, 직접수령이면 0
+  const shippingFeeWon = pickupMethod === "delivery" ? DELIVERY_FEE_WON : 0;
 
-  //총 금액 = 옵션 합계 + 배송비
-  const totalWon = useMemo(
-    () => optionsTotalWon + DELIVERY_FEE_WON,
-    [optionsTotalWon],
-  );
-
-  //표시용 포맷
   const formatWon = (n: number) => `${n.toLocaleString("ko-KR")}원`;
   const formatPlusWon = (n: number) => `+ ${n.toLocaleString("ko-KR")}원`;
+
+  const shippingLabel = pickupMethod === "delivery" ? "배송" : "직접수령";
+
+  /**
+   * 핵심 계산
+   * - SIZE / PAPER / FILM: 장당(per print)
+   * - PRINT_METHOD: 고정(flat)
+   */
+  const price = useMemo(() => {
+    const size = selection.SIZE; // size.priceWon = "추가금" (예: 6*8이면 1200)
+    const paper = selection.PAPER; // paper.priceWon = 장당 추가금 (예: 50)
+    const film = selection.FILM; // film은 배수(rate)
+    const printMethod = selection.PRINT_METHOD; // 고정 추가금 (예: 잉크젯 1000)
+
+    // 1) 사이즈 장당 기본금 (사이즈 선택이 없으면 계산 불가 -> 0)
+    const sizePerPrint = size ? BASE_SIZE_WON + size.priceWon : 0;
+
+    // 2) 필름 배수 장당 추가금: (사이즈장당 * rate) 후 100원 단위 버림
+    const rate = filmRate(film?.value);
+    const filmExtraPerPrint = size ? floorToHundreds(sizePerPrint * rate) : 0;
+
+    // 3) 인화지 장당 추가금
+    const paperExtraPerPrint = paper ? paper.priceWon : 0;
+
+    // 4) 장당 합계
+    const perPrintWon = sizePerPrint + filmExtraPerPrint + paperExtraPerPrint;
+
+    // 5) 장당 합계 * 총 인화 매수
+    const printsTotalWon = perPrintWon * totalPrintCount;
+
+    // 6) 인화방식 고정 추가금
+    const printMethodFlatWon = printMethod ? printMethod.priceWon : 0;
+
+    // 7) 최종
+    const totalWon = printsTotalWon + printMethodFlatWon + shippingFeeWon;
+
+    return {
+      sizePerPrint,
+      filmExtraPerPrint,
+      paperExtraPerPrint,
+      perPrintWon,
+      printsTotalWon,
+      printMethodFlatWon,
+      totalWon,
+    };
+  }, [selection, totalPrintCount, shippingFeeWon]);
+
+  // SIZE 선택되었을 때 상단 오른쪽 표시는 “기본1400 + 추가금”을 보여주기
+  const selectionForView = useMemo(() => {
+    const size = selection.SIZE;
+    if (!size) return selection;
+
+    const sizeTotal = BASE_SIZE_WON + size.priceWon;
+
+    return {
+      ...selection,
+      SIZE: {
+        ...size,
+        priceText: formatPlusWon(sizeTotal),
+      },
+    };
+  }, [selection]);
 
   return (
     <div className="flex h-full flex-1 flex-col pt-7">
@@ -74,27 +156,35 @@ export function PrintOptionPage() {
             <DropBox
               key={cat.key}
               category={cat}
-              value={selection[cat.key]}
+              value={selectionForView[cat.key]}
               isOpen={openKey === cat.key}
               onToggle={handleToggle}
               onSelect={handleSelect}
             />
           ))}
+
+          <li className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3">
+            <p className="text-neutral-300">총 인화 매수</p>
+            <p className="text-neutral-300">{totalPrintCount}장</p>
+          </li>
         </section>
 
         <section className="shrink-0">
+          {/* 배송비 */}
           <div className="border-neutral-875 flex justify-between border-b-[0.5rem] py-5">
-            <p>배송</p>
-            <p>{formatPlusWon(DELIVERY_FEE_WON)}</p>
+            <p>{shippingLabel}</p>
+            <p>{formatPlusWon(shippingFeeWon)}</p>
           </div>
+
+          {/* 총 금액 */}
           <div className="mt-4 mb-4 flex justify-between text-[1.1875rem]">
             <p>총 금액</p>
-            <p className="text-orange-500">{formatWon(totalWon)}</p>
+            <p className="text-orange-500">{formatWon(price.totalWon)}</p>
           </div>
         </section>
       </main>
 
-      <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900 px-4">
+      <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900">
         <div className="flex h-full items-center">
           <CTA_Button
             text="송금하기"
