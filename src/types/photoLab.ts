@@ -156,12 +156,13 @@ export interface PhotoLabDetail {
   tags: string[];
   address: string;
   addressDetail: string | null;
-  distanceKm: number;
+  distanceKm: number | null;
   isFavorite: boolean;
   workCount: number;
   reviewCount: number;
   avgWorkTime: number | null;
   mainNotice: PhotoLabNotice | null;
   postImageUrls: string[];
-  location: PhotoLabLocation;
+  latitude: number;
+  longitude: number;
 }
