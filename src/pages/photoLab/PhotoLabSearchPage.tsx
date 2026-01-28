@@ -19,34 +19,7 @@ import {
   MOCK_LAB_PREVIEWS,
 } from "@/constants/photoLab";
 import { WEEKDAYS } from "@/constants/date";
-import type { PhotoLabItem, FilterTag, FilterState } from "@/types/photoLab";
-import PLmock from "@/assets/mocks/PLmock.png";
-
-// 검색 결과용 mock 데이터
-const mockSearchResults: PhotoLabItem[] = [
-  {
-    photoLabId: 1,
-    name: "초보자를 위한 현상소 상도점",
-    keywords: ["따뜻한 색감", "빈티지한", "택배 접수"],
-    address: "서울 동작구 상도 1동 OOO",
-    distanceKm: 1.5,
-    workCount: 52,
-    avgWorkTimeMinutes: 30,
-    imageUrls: [PLmock, PLmock],
-    isFavorite: false,
-  },
-  {
-    photoLabId: 2,
-    name: "초보자를 위한 현상소 흑석점",
-    keywords: ["청량한", "영화용 필름"],
-    address: "서울 동작구 흑석동 OOO",
-    distanceKm: 3.2,
-    workCount: 128,
-    avgWorkTimeMinutes: 45,
-    imageUrls: [PLmock, PLmock],
-    isFavorite: true,
-  },
-];
+import type { PhotoLabItem, FilterState } from "@/types/photoLab";
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
@@ -80,12 +53,9 @@ export default function PhotoLabSearchPage() {
 
   // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
   // 필터 상태 (results 화면용)
-  const [selectedTags, setSelectedTags] = useState<FilterTag[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filter, setFilter] = useState<FilterState>({});
-
-  // 검색 결과
-  const [labs, setLabs] = useState<PhotoLabItem[]>(mockSearchResults);
 
   // TODO: 검색 API 연동 (키워드 자동완성 + 현상소 프리뷰)
   // 자동완성 필터링
@@ -107,16 +77,8 @@ export default function PhotoLabSearchPage() {
     ).slice(0, 10);
   }, [query]);
 
-  // 검색 결과 필터링
-  const filteredLabs = useMemo(() => {
-    let result = labs;
-    if (selectedTags.length > 0) {
-      result = result.filter((lab) =>
-        selectedTags.every((tag) => lab.keywords.includes(tag)),
-      );
-    }
-    return result;
-  }, [labs, selectedTags]);
+  // TODO: 검색 결과 API 연동
+  const filteredLabs: PhotoLabItem[] = [];
 
   // 필터 값 포맷
   const formatFilterValue = (): string | undefined => {
@@ -178,19 +140,14 @@ export default function PhotoLabSearchPage() {
     navigate(`/photolab/${photoLabId}`);
   };
 
-  const handleFavoriteToggle = (photoLabId: number) => {
-    setLabs((prev) =>
-      prev.map((lab) =>
-        lab.photoLabId === photoLabId
-          ? { ...lab, isFavorite: !lab.isFavorite }
-          : lab,
-      ),
-    );
-  };
+  // TODO: 즐겨찾기 API 연동
+  // const handleFavoriteToggle = (photoLabId: number) => {};
 
-  const handleTagToggle = (tag: FilterTag) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+  const handleTagToggle = (tagId: number) => {
+    setSelectedTagIds((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
     );
   };
 
@@ -251,17 +208,21 @@ export default function PhotoLabSearchPage() {
                 onClick={() => setIsFilterOpen(true)}
               />
               <FilterTagList
-                selectedTags={selectedTags}
+                selectedTagIds={selectedTagIds}
                 onTagToggle={handleTagToggle}
               />
             </div>
             <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
           </div>
 
+          {/* TODO: 검색 결과 API 연동 */}
           {/* 검색 결과 목록 */}
           <LabList
             labs={filteredLabs}
-            onFavoriteToggle={handleFavoriteToggle}
+            isLoading={false}
+            isFetchingNextPage={false}
+            hasNextPage={false}
+            onLoadMore={() => {}}
             onCardClick={handleLabClick}
             emptyMessage="검색 결과가 없어요"
           />
