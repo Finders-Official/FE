@@ -9,12 +9,12 @@ import { Header, ToastItem } from "@/components/common";
 import { mockSelfPostResponse } from "@/types/photoFeed/postDetail";
 import { commentMock } from "@/types/photoFeed/postDetail";
 import { timeAgo } from "@/utils/timeAgo";
-import PhotoCarousel from "@/components/photoFeed/PhotoCarousel";
+import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
-import Profile from "@/components/photoFeed/Profile";
+import Profile from "@/components/photoFeed/postDetail/Profile";
 import { useNavigate } from "react-router";
-import CommentInput from "@/components/photoFeed/CommentInput";
+import CommentInput from "@/components/photoFeed/postDetail/CommentInput";
 
 export default function PostPage() {
   const mock = mockSelfPostResponse;

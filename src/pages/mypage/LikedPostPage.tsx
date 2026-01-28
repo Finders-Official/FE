@@ -1,4 +1,4 @@
-import PhotoCard from "@/components/photoFeed/PhotoCard";
+import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import { photoMock } from "@/types/photoFeed/postPreview";
 
 export function LikedPostPage() {
