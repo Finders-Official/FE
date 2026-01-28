@@ -1,7 +1,9 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import type { ApiResponse } from "@/types/common/apiResponse";
-import type { PhotoFeedResponse } from "@/types/photoFeed/postPreview";
-import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
+import {
+  PAGE_SIZE,
+  type PhotoFeedResponse,
+} from "@/types/photoFeed/postPreview";
 import type {
   SearchRequest,
   SearchHistory,
