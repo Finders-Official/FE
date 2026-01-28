@@ -22,7 +22,12 @@ export default function CommunityGallerySectionCard({
   post,
 }: CommunityGallerySectionCardProps) {
   const navigate = useNavigate();
+  const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
+
+  // 좋아요 상태와 카운트 모두 로컬 state로 관리
   const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [likeCount, setLikeCount] = useState(post.likeCount);
+
   const imageUrl = post.image.imageUrl;
 
   // 대체 이미지
@@ -33,10 +38,58 @@ export default function CommunityGallerySectionCard({
     navigate(`/community/post/${post.postId}`);
   };
 
-  const handleLikeClick = (e: React.MouseEvent) => {
+  const handleLikeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsLiked((prev) => !prev);
-    // TODO: API 호출
+
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      alert("로그인이 필요한 서비스입니다.");
+      return;
+    }
+
+    const prevIsLiked = isLiked;
+    const prevLikeCount = likeCount;
+
+    setIsLiked(!prevIsLiked);
+    setLikeCount((prev) => (prevIsLiked ? prev - 1 : prev + 1));
+
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      if (!prevIsLiked) {
+        // 좋아요 연동 (POST)
+        const response = await fetch(`${baseUrl}/posts/${post.postId}/likes`, {
+          method: "POST",
+          headers,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          if (errorData.code === "MEMBER_404") {
+            alert("회원 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
+            localStorage.removeItem("accessToken");
+            // navigate("/login");
+          }
+          throw new Error("Like failed");
+        }
+      } else {
+        // 좋아요 취소 동 (DELETE)
+        const response = await fetch(`${baseUrl}/posts/${post.postId}/likes`, {
+          method: "DELETE",
+          headers,
+        });
+
+        if (!response.ok) throw new Error("Unlike failed");
+      }
+    } catch (error) {
+      console.error("좋아요 처리 중 오류 발생:", error);
+      setIsLiked(prevIsLiked);
+      setLikeCount(prevLikeCount);
+    }
   };
 
   const handleCommentClick = (e: React.MouseEvent) => {
@@ -88,9 +141,7 @@ export default function CommunityGallerySectionCard({
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="ml-1 text-xs text-neutral-400">
-              {post.likeCount}
-            </span>
+            <span className="ml-1 text-xs text-neutral-400">{likeCount}</span>
           </button>
 
           {/* 댓글 */}
