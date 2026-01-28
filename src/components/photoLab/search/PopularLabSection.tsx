@@ -16,10 +16,10 @@ export default function PopularLabSection({
         최근 인기 현상소
       </h2>
       <div className="flex flex-col gap-2">
-        {labs.map((lab) => (
+        {labs.map((lab, index) => (
           <PopularLabItem
             key={lab.photoLabId}
-            rank={lab.rank}
+            rank={lab.rank ?? index + 1} // rank 사용할 건지 back이랑 확인 필요
             name={lab.name}
             onClick={() => onLabClick?.(lab.photoLabId)}
           />
