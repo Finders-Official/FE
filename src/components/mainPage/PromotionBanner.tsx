@@ -52,7 +52,7 @@ export default function PromotionBanner() {
   };
 
   return (
-    <div className="promotion-banner-wrapper relative h-[276px] w-full py-2">
+    <div className="promotion-banner-wrapper relative h-69 w-full py-2">
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -64,16 +64,16 @@ export default function PromotionBanner() {
             className="flex h-full min-w-[calc(100%-40px)] shrink-0 snap-center flex-col"
           >
             <Link to={banner.link} className="group block h-full">
-              <div className="relative flex h-full w-full items-center overflow-hidden rounded-[16px] bg-orange-500 px-6 transition-transform duration-200 active:scale-[0.98]">
+              <div className="relative flex h-full w-full items-center overflow-hidden rounded-2xl bg-orange-500 px-6 transition-transform duration-200 active:scale-[0.98]">
                 <div className="z-10 flex max-w-[65%] flex-col gap-3">
-                  <h2 className="absolute top-[120px] text-[22px] leading-tight font-semibold whitespace-pre-wrap text-neutral-100">
+                  <h2 className="absolute top-30 text-[22px] leading-tight font-semibold whitespace-pre-wrap text-neutral-100">
                     {banner.title}
                   </h2>
-                  <p className="absolute top-[180px] text-sm font-medium text-neutral-100">
+                  <p className="absolute top-45 text-sm font-medium text-neutral-100">
                     {banner.description}
                   </p>
                 </div>
-                <div className="absolute top-[29px] right-[30px] h-[137px] w-[114px]">
+                <div className="absolute top-7.25 right-7.5 h-34.25 w-28.5">
                   <img
                     src={banner.Image}
                     alt={banner.imageAlt}
