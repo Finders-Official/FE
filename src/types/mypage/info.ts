@@ -14,9 +14,16 @@ export interface MemberDto {
 export type EditableKey = "nickname" | "phone" | "profileImage";
 export type EditableDto = Record<EditableKey, boolean>;
 
+export type SocialProvider =
+  | "KAKAO"
+  | "APPLE"
+  | "GOOGLE"
+  | "NAVER"
+  | (string & {});
+
 export interface SocialAccountDto {
-  provider: string;
-  email: string;
+  provider: SocialProvider;
+  email: string | null;
 }
 
 export interface UserRoleDto {
@@ -26,22 +33,17 @@ export interface UserRoleDto {
   favoritePhotoLabs: number;
   likedPosts: number;
   myPosts: number;
-  socialAccounts: SocialAccountDto;
+
+  socialAccounts: SocialAccountDto[];
 }
 
-// owner/admin도 생길 거면 똑같이 DTO 정의해두기
 export interface OwnerRoleDto {
   nickname: string;
-  // TODO: 서버 스펙 나오면 채우기
 }
 export interface AdminRoleDto {
   nickname: string;
-  // TODO: 서버 스펙 나오면 채우기
 }
 
-/*
-roleData를 "role"로 좁힐 수 있게(discriminated union) 만들기 member.role에 맞는 것만 채운다고 가정
- */
 export type RoleDataDto =
   | { role: "USER"; user: UserRoleDto; owner: null; admin: null }
   | { role: "OWNER"; user: null; owner: OwnerRoleDto; admin: null }
@@ -61,3 +63,6 @@ export type EditMeReqDto = {
   verifiedPhoneToken?: string;
   profileImageUrl?: string;
 };
+
+export type WithDrawResData = Record<string, never>;
+export type WithDrawResponse = ApiResponse<WithDrawResData>;
