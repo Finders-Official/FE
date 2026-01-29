@@ -15,5 +15,7 @@ export function usePhotoLabDetail(
     queryFn: () => getPhotoLabDetail(photoLabId!, params),
     select: (res) => res.data,
     enabled: !!photoLabId,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 15,
   });
 }
