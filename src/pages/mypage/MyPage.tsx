@@ -9,9 +9,9 @@ import {
 import { useMe } from "@/hooks/member";
 
 export function MyPage() {
-  const { data: me, isLoading } = useMe();
+  const { data: me, isLoading, isPending, isRefetching } = useMe();
 
-  if (isLoading) {
+  if (isLoading || isPending || isRefetching) {
     <LoadingSpinner />;
   }
 
