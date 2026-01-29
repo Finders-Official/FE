@@ -3,3 +3,6 @@ export { usePhotoLabList } from "./usePhotoLabList";
 export { useFavoriteToggle } from "./useFavoriteToggle";
 export { usePopularPhotoLabs } from "./usePopularPhotoLabs";
 export { usePhotoLabDetail } from "./usePhotoLabDetail";
+export { useAvailableTimes } from "./useAvailableTimes";
+export { useCreateReservation } from "./useCreateReservation";
+export { useReservationDetail } from "./useReservationDetail";
