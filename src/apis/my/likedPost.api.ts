@@ -1,15 +1,17 @@
 import { axiosInstance } from "@/lib/axiosInstance";
+import type { PageParams } from "@/types/mypage/params";
 import type { GetPostPreviewPageResponse } from "@/types/mypage/post";
 
-export type GetLikedPostsParams = {
-  page: number;
-  size: number;
-};
-
-export async function getLikedPosts(params: GetLikedPostsParams) {
+export async function getLikedPosts(params: PageParams) {
   const res = await axiosInstance.get<GetPostPreviewPageResponse>(
     "/posts/likes",
     { params },
   );
-  return res.data;
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
 }
