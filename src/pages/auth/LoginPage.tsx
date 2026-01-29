@@ -97,14 +97,14 @@ export function LoginPage() {
               <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold sm:text-[3rem]">
                 Finders
               </p>
-              <p className="text-md mt-2 text-neutral-100 sm:text-base">
-                뷰파인더 너머, 취향을 찾다
-              </p>
             </div>
           ) : (
             <div>
               <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold sm:text-[3rem]">
                 Finders
+              </p>
+              <p className="text-md mt-2 text-neutral-100 sm:text-base">
+                뷰파인더 너머, 취향을 찾다
               </p>
             </div>
           )}
@@ -129,8 +129,12 @@ export function LoginPage() {
         ) : showSplash ? (
           <div
             key={ui.footerKey}
-            className={`mx-auto w-full max-w-sm ${ui.footerAnim}`}
-          />
+            className={`mx-auto mb-10 flex w-full max-w-sm justify-center ${ui.footerAnim}`}
+          >
+            <p className="text-md mt-2 text-neutral-100 sm:text-base">
+              뷰파인더 너머, 취향을 찾다
+            </p>
+          </div>
         ) : showLogin ? (
           <section
             key={ui.footerKey}
