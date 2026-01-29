@@ -1,6 +1,7 @@
 import { CTA_Button } from "@/components/common";
 import { Checkbox } from "@/components/common/CheckBox";
 import { NoticeCard } from "@/components/mypage";
+import { useWithDrawMe } from "@/hooks/member";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -10,6 +11,11 @@ export function WithDrawPage() {
   //체크박스 동의 상태
   const [agreed, setAgreed] = useState(false);
 
+  const { mutate: withdraw } = useWithDrawMe({
+    onSuccess: () => navigate("/auth/login", { replace: true }),
+    onError: (e) => console.error(e.message),
+  });
+
   //체크박스 토글
   const handleAgreeChange = (nextChecked: boolean) => {
     setAgreed(nextChecked);
@@ -18,7 +24,7 @@ export function WithDrawPage() {
   //CTA 클릭 시 로그인으로 리다이렉트
   const handleSubmit = () => {
     if (!agreed) return;
-    navigate("/auth/login", { replace: true });
+    withdraw();
   };
 
   return (

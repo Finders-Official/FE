@@ -3,3 +3,4 @@ export { useRequestPhoneVerification } from "./useRequestPhoneVerification";
 export { useConfirmPhoneVerification } from "./useConfirmPhoneVerification";
 export { useMe, type MeResponse, ME_QUERY_KEY } from "./useMe";
 export { useEditMe } from "./useEditMe";
+export { useWithDrawMe } from "./useWithDraw";
