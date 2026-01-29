@@ -1,3 +1,4 @@
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { InfoBar } from "@/components/mypage/InfoBar";
 import { MyPageTabs } from "@/components/mypage/MyPageTab";
 import { OptionLink } from "@/components/mypage/OptionLink";
@@ -8,7 +9,11 @@ import {
 import { useMe } from "@/hooks/member";
 
 export function MyPage() {
-  const { data: me } = useMe();
+  const { data: me, isLoading } = useMe();
+
+  if (isLoading) {
+    <LoadingSpinner />;
+  }
 
   return (
     <div>
