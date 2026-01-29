@@ -159,10 +159,6 @@ export function useOnBoardingForm() {
       nickname: nicknameTrimmed,
       phone,
       verifiedPhoneToken,
-      agreements: [
-        { termsId: 1, isAgreed: true },
-        { termsId: 2, isAgreed: true },
-      ],
     });
   };
 
