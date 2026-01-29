@@ -1,4 +1,3 @@
-// src/pages/auth/OnBoardingPage/useOnBoardingForm.ts
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDebouncedValue } from "@/hooks/common";
@@ -9,6 +8,7 @@ import {
 } from "@/hooks/member";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useSocialSignup } from "./useSignUp";
+import { useAuthStore } from "@/store/useAuth.store";
 
 function isValidNickname(n: string) {
   return /^[a-zA-Z0-9가-힣]{2,8}$/.test(n);
@@ -46,6 +46,8 @@ export function useOnBoardingForm() {
   } = useNicknameCheck(nicknameTrimmed, { enabled: nicknameValid, retry: 0 });
 
   const nicknameAvailable = nicknameRes?.data.available ?? false;
+
+  const setUser = useAuthStore((s) => s.setUser);
 
   const { mutate: requestCode, isPending: isRequestingCode } =
     useRequestPhoneVerification({
@@ -108,6 +110,10 @@ export function useOnBoardingForm() {
         accessToken: res.data.accessToken,
         refreshToken: res.data.refreshToken,
         signupToken: null,
+      });
+      setUser({
+        memberId: res.data.member.memberId,
+        nickname: res.data.member.nickname,
       });
       navigate(`/auth/login?welcome=1&nonce=${crypto.randomUUID()}`, {
         replace: true,

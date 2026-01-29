@@ -4,12 +4,15 @@ import { Link, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
 import { useLoginIntroUi } from "@/hooks/auth/login";
+import { useAuthStore } from "@/store/useAuth.store";
 
 const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
 const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
 
 export function LoginPage() {
   const [sp, setSp] = useSearchParams();
+
+  const nickname = useAuthStore((s) => s.user?.memberId);
 
   const welcome = sp.get("welcome") === "1";
   const nonce = sp.get("nonce");
@@ -86,7 +89,7 @@ export function LoginPage() {
                 회원가입을 축하드려요!
               </p>
               <p className="text-md mt-2 text-neutral-400">
-                뷰파인더 너머 병국님의 취향을 찾아보세요
+                뷰파인더 너머 {nickname}님의 취향을 찾아보세요
               </p>
             </div>
           ) : showSplash ? (
