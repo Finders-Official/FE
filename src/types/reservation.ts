@@ -26,36 +26,36 @@ export interface TimeSlot {
 // 날짜별 비활성화 시간 (string[] = 특정 시간, "ALL" = 전체 비활성화)
 export type DisabledTimesMap = Record<string, string[] | "ALL">;
 
-// API 요청 타입 (API 연동용)
+// 예약 생성 요청
 export interface CreateReservationRequest {
-  photoLabId: number;
-  reservationDate: string; // "2026-01-20" 형식
-  reservationTime: string; // "9:00" 형식
+  reservationDate: string; // yyyy-MM-dd
+  reservationTime: string; // HH:mm (24시간)
   taskTypes: TaskType[];
   filmCount: number;
   memo?: string;
 }
 
-// API 응답 타입
-export interface CreateReservationResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  timestamp: string;
-  data: {
-    reservationId: number;
-  } | null;
+// 예약 가능 시간 응답
+export interface AvailableTimesResponse {
+  storeId: number;
+  reservationDate: string;
+  availableTimes: string[]; // HH:mm (24시간)
 }
 
-// 예약 조회 응답 타입
-export interface ReservationDetail {
+// 예약 생성 응답
+export interface CreateReservationResponse {
+  reservationId: number;
+}
+
+// 예약 상세 응답
+export interface ReservationDetailResponse {
   reservationId: number;
   storeName: string;
   reservationDate: string;
-  reservationTime: string;
+  reservationTime: string; // HH:mm (24시간)
   taskTypes: TaskType[];
   filmCount: number;
-  memo: string;
+  memo: string | null;
   address: string;
   addressDetail: string | null;
 }
