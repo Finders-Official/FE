@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getReservationDetail } from "@/api/photoLab";
+import { getReservationDetail } from "@/apis/photoLab";
 
 export function useReservationDetail(
   photoLabId: number | undefined,

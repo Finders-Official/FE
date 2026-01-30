@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { createReservation } from "@/api/photoLab";
+import { createReservation } from "@/apis/photoLab";
 import type { CreateReservationRequest } from "@/types/reservation";
 
 interface CreateReservationParams {

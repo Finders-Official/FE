@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAvailableTimes } from "@/api/photoLab";
+import { getAvailableTimes } from "@/apis/photoLab";
 
 export function useAvailableTimes(
   photoLabId: number | undefined,

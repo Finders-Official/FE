@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPhotoLabDetail } from "@/api/photoLab";
+import { getPhotoLabDetail } from "@/apis/photoLab";
 
 interface UsePhotoLabDetailParams {
   lat?: number;
