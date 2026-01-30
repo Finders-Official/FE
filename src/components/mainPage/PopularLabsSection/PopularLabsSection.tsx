@@ -17,14 +17,12 @@ export default function PopularLabsSection() {
   useEffect(() => {
     const fetchPopularLabs = async () => {
       const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
-      const token = localStorage.getItem("accessToken");
 
       try {
         const response = await fetch(`${baseUrl}/photo-labs/popular`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
           },
         });
 
