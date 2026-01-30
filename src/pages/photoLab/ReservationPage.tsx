@@ -60,11 +60,12 @@ export default function ReservationPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastIcon, setToastIcon] = useState<React.ReactNode | null>(null);
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dateKey = selectedDate ? formatDateKey(selectedDate) : undefined;
 
   const { data: availableTimes } = useAvailableTimes(labId, dateKey);
-  const { mutate: createReservation, isPending } = useCreateReservation();
+  const { mutate: createReservation } = useCreateReservation();
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -121,7 +122,7 @@ export default function ReservationPage() {
     selectedTasks.length > 0 &&
     filmRollCount >= 1 &&
     cautionConfirmed &&
-    !isPending;
+    !isSubmitting;
 
   const showToast = useCallback((message: string, icon?: React.ReactNode) => {
     if (toastTimeoutRef.current) {
@@ -166,8 +167,9 @@ export default function ReservationPage() {
       return;
     }
 
-    if (!labId) return;
+    if (!labId || isSubmitting) return;
 
+    setIsSubmitting(true);
     const apiTime = TIME_SLOT_TO_API[selectedTime] ?? selectedTime;
 
     createReservation(
@@ -196,6 +198,7 @@ export default function ReservationPage() {
           });
         },
         onError: () => {
+          setIsSubmitting(false);
           showToast(
             "예약에 실패했습니다. 다시 시도해주세요.",
             <ExclamationCircleIcon className="h-[1.125rem] w-[1.125rem] text-orange-500" />,
@@ -205,6 +208,7 @@ export default function ReservationPage() {
     );
   }, [
     createReservation,
+    isSubmitting,
     labId,
     navigate,
     photoLabId,
