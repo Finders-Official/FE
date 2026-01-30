@@ -94,7 +94,7 @@ export default function ReservationCompletePage() {
           labName={labName}
         />
 
-        {labDetail && (
+        {labDetail && labDetail.distanceKm !== null && (
           <LabLocationSection
             address={labDetail.address}
             distanceKm={labDetail.distanceKm}
