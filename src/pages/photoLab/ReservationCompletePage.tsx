@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useLocation, useParams } from "react-router";
 import { Header } from "@/components/common";
 import { LabLocationSection } from "@/components/photoLab/detail";
@@ -7,26 +7,19 @@ import {
   ReservationDetailSection,
 } from "@/components/photoLab/reservation";
 import { XMarkIcon } from "@/assets/icon";
+import { usePhotoLabDetail } from "@/hooks/photoLab";
+import { TASK_OPTIONS } from "@/constants/photoLab";
+import type { TaskType } from "@/types/reservation";
 
-// Mock data - 추후 API로 연동
-const MOCK_DATA = {
-  schedule: "2025. 12. 12(금) 오전 11:00",
-  estimatedCompletion: "2025. 12. 12(금) 오후 3:00",
-  taskSummary: "현상 • 스캔 • 2롤",
-  labMessage:
-    "예약이 확정되었습니다. 당일취소 불가능하며 1시간 전 연락주시면 일정 변경 가능합니다. 감사합니다:)",
-  location: {
-    address: "서울 동작구 상도로 00길 00",
-    distanceKm: 1.5,
-    coordinates: {
-      latitude: 37.50287963116875,
-      longitude: 126.94790892178148,
-    },
-  },
-};
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 interface LocationState {
+  reservationId?: number;
   labName?: string;
+  selectedDate?: string;
+  selectedTime?: string;
+  selectedTasks?: TaskType[];
+  filmRollCount?: number;
   requestMemo?: string;
 }
 
@@ -34,10 +27,43 @@ export default function ReservationCompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { photoLabId } = useParams();
+  const labId = photoLabId ? Number(photoLabId) : undefined;
 
   const state = location.state as LocationState | null;
-  const labName = state?.labName ?? "파인더스 상도점";
+  const labName = state?.labName ?? "현상소";
   const memo = state?.requestMemo;
+  const selectedDate = state?.selectedDate;
+  const selectedTime = state?.selectedTime;
+  const selectedTasks = state?.selectedTasks;
+  const filmRollCount = state?.filmRollCount;
+
+  const { data: labDetail } = usePhotoLabDetail(labId);
+
+  // 일정
+  const schedule = useMemo(() => {
+    if (!selectedDate || !selectedTime) return "";
+    const date = new Date(selectedDate);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const weekday = WEEKDAYS[date.getDay()];
+
+    const [hour] = selectedTime.split(":").map(Number);
+    const isPM = hour >= 12;
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    const period = isPM ? "오후" : "오전";
+
+    return `${year}. ${month}. ${day}(${weekday}) ${period} ${displayHour}:00`;
+  }, [selectedDate, selectedTime]);
+
+  // 작업 요약
+  const taskSummary = useMemo(() => {
+    if (!selectedTasks || !filmRollCount) return "";
+    const taskLabels = selectedTasks.map(
+      (type) => TASK_OPTIONS.find((opt) => opt.type === type)?.label ?? type,
+    );
+    return [...taskLabels, `${filmRollCount}롤`].join(" • ");
+  }, [selectedTasks, filmRollCount]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -62,20 +88,23 @@ export default function ReservationCompletePage() {
         <ReservationSuccessMessage />
 
         <ReservationDetailSection
-          schedule={MOCK_DATA.schedule}
-          estimatedCompletion={MOCK_DATA.estimatedCompletion}
-          taskSummary={MOCK_DATA.taskSummary}
+          schedule={schedule}
+          taskSummary={taskSummary}
           memo={memo}
-          labMessage={MOCK_DATA.labMessage}
           labName={labName}
         />
 
-        <LabLocationSection
-          address={MOCK_DATA.location.address}
-          distanceKm={MOCK_DATA.location.distanceKm}
-          location={MOCK_DATA.location.coordinates}
-          labName={labName}
-        />
+        {labDetail && (
+          <LabLocationSection
+            address={labDetail.address}
+            distanceKm={labDetail.distanceKm}
+            location={{
+              latitude: labDetail.latitude,
+              longitude: labDetail.longitude,
+            }}
+            labName={labName}
+          />
+        )}
       </main>
     </div>
   );

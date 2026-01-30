@@ -184,9 +184,10 @@ export default function ReservationPage() {
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
           navigate(`/photolab/${photoLabId}/reservation/complete`, {
             state: {
+              reservationId: res.data.reservationId,
               labName,
               selectedDate,
               selectedTime,
