@@ -53,7 +53,7 @@ export default function LabLocationSection({
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!mapContainerRef.current || !location) return;
 
     let marker: { setMap: (map: unknown | null) => void } | null = null;
 
@@ -97,13 +97,14 @@ export default function LabLocationSection({
         marker.setMap(null);
       }
     };
-  }, [location.latitude, location.longitude]);
+  }, [location]);
 
   const handleCopyAddress = async () => {
     await navigator.clipboard.writeText(address);
   };
 
   const handleDirectionsClick = () => {
+    if (!location) return;
     const encodedName = encodeURIComponent(labName);
     const kakaoMapUrl = `https://map.kakao.com/link/to/${encodedName},${location.latitude},${location.longitude}`;
     window.open(kakaoMapUrl, "_blank");

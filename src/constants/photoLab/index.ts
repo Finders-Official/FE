@@ -6,7 +6,6 @@ export {
   MOCK_KEYWORD_SUGGESTIONS,
   MOCK_LAB_PREVIEWS,
 } from "./mockSearchData";
-export { MOCK_LAB_DETAIL } from "./mockDetailData";
 export {
   TASK_OPTIONS,
   FILM_ROLL_MIN,
