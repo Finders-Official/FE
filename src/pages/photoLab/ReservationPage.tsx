@@ -20,17 +20,26 @@ import {
 import {
   AM_TIME_SLOTS,
   PM_TIME_SLOTS,
-  MOCK_DISABLED_TIMES,
+  API_TO_TIME_SLOT,
+  TIME_SLOT_TO_API,
   TASK_OPTIONS,
   FILM_ROLL_MIN,
   FILM_ROLL_MAX,
   REQUEST_MEMO_MAX_LENGTH,
   CAUTION_ITEMS,
 } from "@/constants/photoLab";
+import { useAvailableTimes, useCreateReservation } from "@/hooks/photoLab";
 import type { TaskType } from "@/types/reservation";
 
 interface LocationState {
   labName?: string;
+}
+
+function formatDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export default function ReservationPage() {
@@ -38,6 +47,7 @@ export default function ReservationPage() {
   const location = useLocation();
   const { photoLabId } = useParams();
   const state = location.state as LocationState | null;
+  const labId = photoLabId ? Number(photoLabId) : undefined;
 
   const labName = state?.labName ?? "현상소";
 
@@ -50,6 +60,11 @@ export default function ReservationPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastIcon, setToastIcon] = useState<React.ReactNode | null>(null);
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const dateKey = selectedDate ? formatDateKey(selectedDate) : undefined;
+
+  const { data: availableTimes } = useAvailableTimes(labId, dateKey);
+  const { mutate: createReservation, isPending } = useCreateReservation();
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -78,33 +93,26 @@ export default function ReservationPage() {
     setFilmRollCount((prev) => Math.min(FILM_ROLL_MAX, prev + 1));
   }, []);
 
-  // 날짜가 전체 비활성화인지 확인
-  const isDateDisabled = useCallback((date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const dateKey = `${year}-${month}-${day}`;
-
-    return MOCK_DISABLED_TIMES[dateKey] === "ALL";
-  }, []);
-
-  // 선택된 날짜의 비활성화 시간 데이터
-  const disabledTimesForDate = useMemo(() => {
-    if (!selectedDate) return "ALL" as const;
-
-    const year = selectedDate.getFullYear();
-    const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
-    const day = String(selectedDate.getDate()).padStart(2, "0");
-    const dateKey = `${year}-${month}-${day}`;
-
-    return MOCK_DISABLED_TIMES[dateKey] ?? [];
-  }, [selectedDate]);
+  // API 시간을 프론트 시간으로 변환한 Set
+  const availableTimeSet = useMemo(() => {
+    if (!availableTimes) return null;
+    return new Set(
+      availableTimes.map((apiTime) => {
+        const timeWithoutSeconds = apiTime.slice(0, 5); // 응답엣서 초 제거
+        return API_TO_TIME_SLOT[timeWithoutSeconds] ?? timeWithoutSeconds;
+      }),
+    );
+  }, [availableTimes]);
 
   // 시간 비활성화 여부 확인
-  const isTimeDisabled = (time: string): boolean => {
-    if (disabledTimesForDate === "ALL") return true;
-    return disabledTimesForDate.includes(time);
-  };
+  const isTimeDisabled = useCallback(
+    (time: string): boolean => {
+      if (!selectedDate) return true;
+      if (!availableTimeSet) return true;
+      return !availableTimeSet.has(time);
+    },
+    [selectedDate, availableTimeSet],
+  );
 
   // 예약 버튼 활성화 조건
   const isReservationValid =
@@ -112,7 +120,8 @@ export default function ReservationPage() {
     selectedTime !== null &&
     selectedTasks.length > 0 &&
     filmRollCount >= 1 &&
-    cautionConfirmed;
+    cautionConfirmed &&
+    !isPending;
 
   const showToast = useCallback((message: string, icon?: React.ReactNode) => {
     if (toastTimeoutRef.current) {
@@ -157,19 +166,46 @@ export default function ReservationPage() {
       return;
     }
 
-    // 예약 완료 페이지로 넘기기
-    navigate(`/photolab/${photoLabId}/reservation/complete`, {
-      state: {
-        labName,
-        selectedDate,
-        selectedTime,
-        selectedTasks,
-        filmRollCount,
-        requestMemo,
+    if (!labId) return;
+
+    const apiTime = TIME_SLOT_TO_API[selectedTime] ?? selectedTime;
+
+    createReservation(
+      {
+        photoLabId: labId,
+        data: {
+          reservationDate: formatDateKey(selectedDate),
+          reservationTime: apiTime,
+          taskTypes: selectedTasks,
+          filmCount: filmRollCount,
+          memo: requestMemo || undefined,
+        },
       },
-      replace: true,
-    });
+      {
+        onSuccess: () => {
+          navigate(`/photolab/${photoLabId}/reservation/complete`, {
+            state: {
+              labName,
+              selectedDate,
+              selectedTime,
+              selectedTasks,
+              filmRollCount,
+              requestMemo,
+            },
+            replace: true,
+          });
+        },
+        onError: () => {
+          showToast(
+            "예약에 실패했습니다. 다시 시도해주세요.",
+            <ExclamationCircleIcon className="h-[1.125rem] w-[1.125rem] text-orange-500" />,
+          );
+        },
+      },
+    );
   }, [
+    createReservation,
+    labId,
     navigate,
     photoLabId,
     labName,
@@ -196,7 +232,6 @@ export default function ReservationPage() {
           <Calendar
             selectedDate={selectedDate ?? undefined}
             onDateSelect={handleDateSelect}
-            isDateDisabled={isDateDisabled}
           />
 
           {/* 시간 선택 */}
