@@ -47,7 +47,7 @@ export interface CreateReservationResponse {
   reservationId: number;
 }
 
-// 예약 상세 응답
+// 예약 상세 응답 (API 오타 그대로 사용)
 export interface ReservationDetailResponse {
   reservationId: number;
   storeName: string;
@@ -55,7 +55,9 @@ export interface ReservationDetailResponse {
   reservationTime: string; // HH:mm (24시간)
   taskTypes: TaskType[];
   filmCount: number;
+  photoLabNotice: string | null;
   memo: string | null;
-  address: string;
-  addressDetail: string | null;
+  latitude: number;
+  longtitude: number; // API 오타
+  compltedAt: string | null; // API 오타
 }
