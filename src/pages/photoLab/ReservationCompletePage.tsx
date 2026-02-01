@@ -32,7 +32,7 @@ export default function ReservationCompletePage() {
   // 일정
   const schedule = useMemo(() => {
     if (!reservation) return "";
-    const date = new Date(reservation.reservationDate);
+    const date = new Date(reservation.reservationDate.replace(/-/g, "/"));
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
