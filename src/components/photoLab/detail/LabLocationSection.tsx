@@ -100,6 +100,8 @@ export default function LabLocationSection({
         marker.setMap(null);
       }
     };
+    // 최적화를 위한 원시값 사용
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location?.latitude, location?.longitude]);
 
   const handleCopyAddress = async () => {
