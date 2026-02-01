@@ -1,23 +1,36 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { HomeIcon, ExclamationCircleIcon } from "@/assets/icon";
 import { TextArea } from "@/components/common/TextArea";
 import { DialogBox } from "@/components/common/DialogBox";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
-import { useMutation } from "@tanstack/react-query";
-import type { PostUploadRequest } from "@/types/photoFeed/postDetail";
-import { createPost } from "@/apis/photoFeed/post.api";
+import { useNewPostState } from "@/store/useNewPostState.store";
+import type { PostImage } from "@/types/photoFeed/postPreview";
+import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
+import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
 
-  const { state } = useLocation();
-  const labName = state?.labName;
-  const labId = state?.labId;
-  const files = state?.files;
-  const title = state?.title;
-  const content = state?.content;
+  const labId = useNewPostState((s) => s.labId);
+  const labName = useNewPostState((s) => s.labName);
+
+  const title = useNewPostState((s) => s.title);
+  const content = useNewPostState((s) => s.content);
+
+  const files = useNewPostState((s) => s.files);
+  const imageMetas = useNewPostState((s) => s.imageMetas);
+
+  const postImages: PostImage[] = useMemo(() => {
+    if (files.length !== imageMetas.length) return [];
+
+    return files.map((file, idx) => ({
+      imageUrl: URL.createObjectURL(file),
+      width: imageMetas[idx].width,
+      height: imageMetas[idx].height,
+    }));
+  }, [files, imageMetas]);
 
   const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -29,29 +42,61 @@ export default function ReviewPhotoLabPage() {
   const isTooLong = reviewText.length > MAX;
   const canSave = reviewText.length === 0 ? false : !isTooShort && !isTooLong;
 
-  const createMutation = useMutation({
-    mutationFn: (payload: PostUploadRequest) => createPost(payload),
-    onSuccess: (data) => {
-      // 성공 시 생성된 게시글로 이동
-      navigate(`/photoFeed/post/${data}`);
+  const issuePresigned = useIssuePresignedUrl();
+  const uploadToPresigned = useUploadToPresignedUrl();
+
+  const { mutate: createPost, isPending } = useCreatePost({
+    onSuccess: (postId) => {
+      navigate(`/photoFeed/post/${postId}`);
     },
-    onError: () => {
-      // TODO: 토스트/다이얼로그로 에러 안내
-      alert("리뷰 등록에 실패했어요. 다시 시도해주세요.");
+    onError: (err) => {
+      console.error("게시글 생성 실패", err);
     },
   });
 
-  const handleSubmit = () => {
-    const payload: PostUploadRequest = {
-      title: title,
-      content: content,
-      image: files,
-      isSelfDeveloped: false,
-      labId: labId,
-      reviewContent: reviewText,
-    };
+  const handleSubmit = async () => {
+    try {
+      // 1️. presigned-url 발급 (여러 파일)
+      const presignedResults = await Promise.all(
+        files.map((file) =>
+          issuePresigned.mutateAsync({
+            category: "POST_IMAGE",
+            memberId: 23,
+            fileName: file.name,
+          }),
+        ),
+      );
 
-    createMutation.mutate(payload);
+      // ApiResponse unwrap
+      const presignedList = presignedResults.map((res) => {
+        if (!res.success) throw new Error(res.message);
+        return res.data;
+      });
+
+      // 2️.  GCS 업로드
+      await Promise.all(
+        presignedList.map((p, idx) => {
+          const file = files[idx];
+          return uploadToPresigned.mutateAsync({
+            url: p.url,
+            file,
+            contentType: file.type,
+          });
+        }),
+      );
+
+      // 3. 게시글 생성
+      createPost({
+        title,
+        content,
+        image: postImages,
+        isSelfDeveloped: false,
+        labId,
+        reviewContent: reviewText,
+      });
+    } catch (e) {
+      console.error("게시글 업로드 실패", e);
+    }
   };
 
   return (
@@ -90,7 +135,7 @@ export default function ReviewPhotoLabPage() {
           <CTA_Button
             text="작성 완료"
             size="xlarge"
-            disabled={!canSave}
+            disabled={!canSave || isPending}
             color={canSave ? "orange" : "black"}
             onClick={() => setIsDialogOpen(true)}
           />

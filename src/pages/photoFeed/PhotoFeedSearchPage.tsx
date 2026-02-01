@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
-import { ChevronLeftIcon, FloatingIcon, LogoIcon } from "@/assets/icon";
+import { ChevronLeftIcon, FloatingIcon } from "@/assets/icon";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import BottomSheet from "@/components/common/BottomSheet";
 import SelectFilter from "@/components/photoFeed/mainFeed/SelectFilter";
@@ -19,6 +19,7 @@ import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import SearchItemSkeleton from "@/components/photoFeed/mainFeed/SearchItemSkeleton";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import SearchPostSkeleton from "@/components/photoFeed/mainFeed/SearchPostSkeleton";
+import EmptyView from "@/components/common/EmptyView";
 
 const FILTER_LABEL: Record<Filter, string> = {
   TITLE: "제목만",
@@ -166,16 +167,7 @@ export default function PhotoFeedSearchPage() {
     if (isRecentError) return errorResponse();
 
     if (recentSearches.length === 0) {
-      return (
-        <div className="pointer-events-none absolute inset-0 flex h-full flex-col items-center justify-center gap-4">
-          <LogoIcon className="h-[94px] w-[94px]" />
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-[16px] text-neutral-200">
-              최근 검색 결과가 없습니다.
-            </p>
-          </div>
-        </div>
-      );
+      return <EmptyView content="최근 검색 결과가 없습니다." />;
     }
 
     return (
@@ -268,19 +260,7 @@ export default function PhotoFeedSearchPage() {
     if (isSearchError) return errorResponse();
 
     if (previewList.length === 0) {
-      return (
-        <div className="pointer-events-none absolute inset-0 flex h-full flex-col items-center justify-center gap-4">
-          <LogoIcon className="h-[94px] w-[94px]" />
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-[16px] text-neutral-200">
-              검색 결과가 없습니다.
-            </p>
-            <p className="text-[16px] text-neutral-200">
-              다른 키워드로 검색해보세요.
-            </p>
-          </div>
-        </div>
-      );
+      return <EmptyView />;
     }
 
     if (previewList.length > 0) {

@@ -35,18 +35,18 @@ type NewPostState = {
 
   isSelfDeveloped: boolean;
 
-  labId: number | null;
-  labName: string | null;
+  labId: number | undefined;
+  labName: string | undefined;
 
-  reviewContent: string | null;
+  reviewContent: string | undefined;
 
   /** setters */
   setPostInfo: (title: string, content: string) => void;
 
   setFiles: (files: File[]) => Promise<void>; // setFiles를 async로 바꿔서 metas도 같이 채움
   setIsSelfDeveloped: (isSelfDeveloped: boolean) => void;
-  setLabInfo: (labId: number | null, labName: string | null) => void;
-  setReviewContent: (reviewContent: string | null) => void;
+  setLabInfo: (labId: number | undefined, labName: string | undefined) => void;
+  setReviewContent: (reviewContent: string | undefined) => void;
 
   /** getters */
   getPostInfo: () => { title: string; content: string };
@@ -56,8 +56,8 @@ type NewPostState = {
   getFileWithMetaAt: (idx: number) => { file: File; meta: ImageMeta } | null;
 
   getIsSelfDeveloped: () => boolean;
-  getLabInfo: () => { labId: number | null; labName: string | null };
-  getReviewContent: () => string | null;
+  getLabInfo: () => { labId: number | undefined; labName: string | undefined };
+  getReviewContent: () => string | undefined;
 
   reset: () => void;
 };
@@ -68,9 +68,9 @@ const initialState = {
   files: [] as File[],
   imageMetas: [] as ImageMeta[],
   isSelfDeveloped: false,
-  labId: null,
-  labName: null,
-  reviewContent: null,
+  labId: undefined,
+  labName: undefined,
+  reviewContent: undefined,
 };
 
 export const useNewPostState = create<NewPostState>((set, get) => ({

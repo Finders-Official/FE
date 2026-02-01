@@ -36,7 +36,7 @@ export type User = {
 export type PostUploadRequest = {
   title: string;
   content: string;
-  image: PostImage;
+  image: PostImage[];
   isSelfDeveloped: boolean;
   labId?: number;
   reviewContent?: string;
