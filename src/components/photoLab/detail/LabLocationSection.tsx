@@ -100,7 +100,7 @@ export default function LabLocationSection({
         marker.setMap(null);
       }
     };
-  }, [location]);
+  }, [location?.latitude, location?.longitude]);
 
   const handleCopyAddress = async () => {
     await navigator.clipboard.writeText(fullAddress);
