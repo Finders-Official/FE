@@ -15,12 +15,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
-  const {
-    data: me,
-    isLoading,
-    isRefetching,
-    isPending,
-  } = useMe({ refetchOnMount: "always" });
+  const { data: me, isLoading } = useMe({ refetchOnMount: "always" });
   const phone = formatPhoneKorea(me?.member.phone);
 
   const maxSizeMB = 5;
@@ -206,12 +201,8 @@ export function EditInfoPage() {
     };
   }, []);
 
-  if (isLoading || isRefetching || isPending) {
-    <LoadingSpinner />;
-  }
-
   return (
-    <div className="flex h-full flex-1 flex-col">
+    <div className="relative flex h-full flex-1 flex-col">
       <header className="border-neutral-875 flex flex-col items-center justify-center gap-3 border-b-[0.4rem] pt-8 pb-6">
         <div className="border-radius-100 h-[5rem] w-[5rem] overflow-hidden rounded-full border border-orange-400">
           {previewSrc ? (
@@ -291,6 +282,7 @@ export function EditInfoPage() {
           onCancel={() => setIsLogoutModalOpen(false)}
         />
       </main>
+      <LoadingSpinner open={isLoading} />
 
       {showToast ? (
         <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
