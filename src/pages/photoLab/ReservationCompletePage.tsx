@@ -9,8 +9,7 @@ import {
 import { XMarkIcon } from "@/assets/icon";
 import { useReservationDetail } from "@/hooks/photoLab";
 import { TASK_OPTIONS } from "@/constants/photoLab";
-
-const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+import { formatKoreanDateTime } from "@/utils/dateFormat";
 
 interface LocationState {
   reservationId?: number;
@@ -32,18 +31,10 @@ export default function ReservationCompletePage() {
   // 일정
   const schedule = useMemo(() => {
     if (!reservation) return "";
-    const date = new Date(reservation.reservationDate.replace(/-/g, "/"));
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const weekday = WEEKDAYS[date.getDay()];
-
-    const [hour] = reservation.reservationTime.split(":").map(Number);
-    const isPM = hour >= 12;
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-    const period = isPM ? "오후" : "오전";
-
-    return `${year}. ${month}. ${day}(${weekday}) ${period} ${displayHour}:00`;
+    return formatKoreanDateTime(
+      reservation.reservationDate,
+      reservation.reservationTime,
+    );
   }, [reservation]);
 
   // 작업 요약
@@ -58,18 +49,7 @@ export default function ReservationCompletePage() {
   // 예상 완료 시점
   const estimatedCompletion = useMemo(() => {
     if (!reservation?.estimatedCompletion) return undefined;
-    const date = new Date(reservation.estimatedCompletion);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const weekday = WEEKDAYS[date.getDay()];
-
-    const hour = date.getHours();
-    const isPM = hour >= 12;
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-    const period = isPM ? "오후" : "오전";
-
-    return `${year}. ${month}. ${day}(${weekday}) ${period} ${displayHour}:00`;
+    return formatKoreanDateTime(reservation.estimatedCompletion);
   }, [reservation]);
 
   useEffect(() => {
