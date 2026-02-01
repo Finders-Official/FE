@@ -77,7 +77,7 @@ export default function ReservationCompletePage() {
   }, []);
 
   const handleClose = () => {
-    navigate(`/photolab/${photoLabId}`, { replace: true });
+    navigate(-1);
   };
 
   if (!reservation) {
