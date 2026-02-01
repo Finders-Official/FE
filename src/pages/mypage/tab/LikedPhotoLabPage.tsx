@@ -55,7 +55,7 @@ export function LikedPhotoLabPage() {
 
   if (isLoading) {
     return <div className="px-4 py-6 text-neutral-100">로딩중...</div>;
-  } // 스켈레톤 ui
+  } // 스켈레톤 ui로 처리 예정
 
   if (isError) {
     return (
@@ -71,10 +71,6 @@ export function LikedPhotoLabPage() {
       </div>
     );
   }
-
-  // const totalCount = data?.pages?.[0]?.data.pageInfo
-  //   ? data.pages[0].data.photoLabs.length // 서버가 totalCount 안 줌
-  //   : 0;
 
   return (
     <div>

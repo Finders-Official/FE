@@ -6,7 +6,7 @@ import { me } from "@/apis/member";
 export type MeResponse = ApiResponse<MyPageDataDto>;
 type Data = MyPageDataDto;
 
-export const ME_QUERY_KEY = ["member", "me"] as const; // 얘네도 타입으로 빼야하나..
+export const ME_QUERY_KEY = ["member", "me"] as const;
 
 export function useMe(
   options?: Omit<

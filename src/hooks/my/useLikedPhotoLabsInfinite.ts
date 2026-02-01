@@ -21,7 +21,7 @@ export function useLikedPhotoLabsInfinite(size = 10) {
     getNextPageParam: (lastPage, allPages) => {
       const isLast = lastPage.data.pageInfo.isLast;
       if (isLast) return undefined;
-      return allPages.length; // page가 0부터 시작이면 다음은 pages.length가 딱 맞음
+      return allPages.length; // page가 0부터 시작 -> 다음은 pages.length
     },
   });
 }

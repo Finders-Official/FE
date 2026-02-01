@@ -74,7 +74,7 @@ export function LikedPostPage() {
               key={photo.postId}
               photo={photo}
               isLiked={true}
-              // onToggleLike={...}  // 나중에 좋아요 해제 API 붙일 때 여기 연결
+              // onToggleLike={...}  // 나중에 좋아요 해제 API
             />
           ))}
         </div>

@@ -87,7 +87,7 @@ export function EditInfoPage() {
     return null;
   };
 
-  // presigned + put upload + editMe
+  // presigned -> put upload -> editMe 3단계 프로세스 처리
   const { mutateAsync: issuePresignedUrl } = useIssuePresignedUrl();
   const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
   const { mutateAsync: editMe } = useEditMe();
@@ -111,7 +111,7 @@ export function EditInfoPage() {
     setIsUploadingProfile(true);
 
     try {
-      // 1) presigned 발급
+      //1. presigned 발급
       const presigned = await issuePresignedUrl({
         category: "PROFILE",
         fileName: picked.name,
@@ -120,11 +120,11 @@ export function EditInfoPage() {
 
       console.log("[presigned.data]", presigned.data);
 
-      // 2) PUT URL만 먼저 뽑기 (여기까지만 성공하면 PUT을 '시도'할 수 있음)
+      //2. PUT URL만 먼저 뽑기 (여기까지 성공하면 PUT을 시도 가능)
       const putUrl = pickPresignedPutUrl(presigned.data);
       console.log("[PUT will start]", putUrl);
 
-      // 3) GCS PUT 업로드
+      //3. GCS PUT 업로드
       await uploadToPresignedUrl({
         url: putUrl,
         file: picked,
@@ -133,18 +133,18 @@ export function EditInfoPage() {
 
       console.log("[PUT done]");
 
-      // 4) 저장용 url/key 확보
+      //4. 저장용 url/key 확보
       const publicUrlOrKey = pickUploadedFilePublicUrlOrKey(
         presigned.data,
         putUrl,
       );
       console.log("[publicUrlOrKey]", publicUrlOrKey);
 
-      // 5) 우리 서버에 프로필 저장
+      //5. 우리 서버에 프로필 저장
       await editMe({ profileImageUrl: publicUrlOrKey });
       console.log("[editMe done]");
 
-      // objectUrl 정리
+      //6. objectUrl 정리
       if (objectUrlRef.current) {
         URL.revokeObjectURL(objectUrlRef.current);
         objectUrlRef.current = null;

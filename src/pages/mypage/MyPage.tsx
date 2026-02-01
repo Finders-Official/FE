@@ -9,14 +9,10 @@ import {
 import { useMe } from "@/hooks/member";
 
 export function MyPage() {
-  const { data: me, isLoading, isPending, isRefetching } = useMe();
-
-  if (isLoading || isPending || isRefetching) {
-    <LoadingSpinner />;
-  }
+  const { data: me, isLoading } = useMe();
 
   return (
-    <div>
+    <div className="relative">
       <header className="rounded-tl-lg rounded-tr-lg bg-orange-500 p-[1rem]">
         <InfoBar
           name={me?.member.name}
@@ -45,6 +41,7 @@ export function MyPage() {
           ))}
         </section>
       </main>
+      <LoadingSpinner open={isLoading} />
     </div>
   );
 }
