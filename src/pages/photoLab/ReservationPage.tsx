@@ -33,6 +33,7 @@ import type { TaskType } from "@/types/reservation";
 
 interface LocationState {
   labName?: string;
+  distanceKm?: number;
 }
 
 function formatDateKey(date: Date): string {
@@ -50,6 +51,7 @@ export default function ReservationPage() {
   const labId = photoLabId ? Number(photoLabId) : undefined;
 
   const labName = state?.labName ?? "현상소";
+  const distanceKm = state?.distanceKm ?? null;
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -188,12 +190,7 @@ export default function ReservationPage() {
           navigate(`/photolab/${photoLabId}/reservation/complete`, {
             state: {
               reservationId: res.data.reservationId,
-              labName,
-              selectedDate,
-              selectedTime,
-              selectedTasks,
-              filmRollCount,
-              requestMemo,
+              distanceKm,
             },
             replace: true,
           });
@@ -213,7 +210,7 @@ export default function ReservationPage() {
     labId,
     navigate,
     photoLabId,
-    labName,
+    distanceKm,
     selectedDate,
     selectedTime,
     selectedTasks,

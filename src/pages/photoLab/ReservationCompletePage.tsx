@@ -14,6 +14,7 @@ const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 interface LocationState {
   reservationId?: number;
+  distanceKm?: number | null;
 }
 
 export default function ReservationCompletePage() {
@@ -24,6 +25,7 @@ export default function ReservationCompletePage() {
 
   const state = location.state as LocationState | null;
   const reservationId = state?.reservationId;
+  const distanceKm = state?.distanceKm ?? null;
 
   const { data: reservation } = useReservationDetail(labId, reservationId);
 
@@ -108,7 +110,7 @@ export default function ReservationCompletePage() {
         <LabLocationSection
           address={reservation.address}
           addressDetail={reservation.addressDetail}
-          distanceKm={null}
+          distanceKm={distanceKm}
           location={{
             latitude: reservation.latitude,
             longitude: reservation.longitude,

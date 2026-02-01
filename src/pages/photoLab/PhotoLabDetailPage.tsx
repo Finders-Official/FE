@@ -45,7 +45,7 @@ export default function PhotoLabDetailPage() {
   const handleReservation = () => {
     if (!lab) return;
     navigate(`/photolab/${lab.photoLabId}/reservation`, {
-      state: { labName: lab.name },
+      state: { labName: lab.name, distanceKm: lab.distanceKm },
     });
   };
 
