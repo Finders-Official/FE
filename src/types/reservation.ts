@@ -47,7 +47,7 @@ export interface CreateReservationResponse {
   reservationId: number;
 }
 
-// 예약 상세 응답 (API 오타 그대로 사용)
+// 예약 상세 응답
 export interface ReservationDetailResponse {
   reservationId: number;
   storeName: string;
@@ -58,6 +58,8 @@ export interface ReservationDetailResponse {
   photoLabNotice: string | null;
   memo: string | null;
   latitude: number;
-  longtitude: number; // API 오타
-  compltedAt: string | null; // API 오타
+  longitude: number;
+  estimatedCompletion: string | null;
+  address: string;
+  addressDetail: string;
 }

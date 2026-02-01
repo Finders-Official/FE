@@ -37,7 +37,8 @@ declare global {
 
 interface LabLocationSectionProps {
   address: string;
-  distanceKm: number;
+  addressDetail?: string;
+  distanceKm: number | null;
   location?: PhotoLabLocation;
   labName: string;
   className?: string;
@@ -45,11 +46,13 @@ interface LabLocationSectionProps {
 
 export default function LabLocationSection({
   address,
+  addressDetail,
   distanceKm,
   location,
   labName,
   className = "",
 }: LabLocationSectionProps) {
+  const fullAddress = addressDetail ? `${address} ${addressDetail}` : address;
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -100,7 +103,7 @@ export default function LabLocationSection({
   }, [location]);
 
   const handleCopyAddress = async () => {
-    await navigator.clipboard.writeText(address);
+    await navigator.clipboard.writeText(fullAddress);
   };
 
   const handleDirectionsClick = () => {
@@ -127,7 +130,7 @@ export default function LabLocationSection({
               <CopyIcon className="h-4 w-4 text-neutral-200" />
             </div>
             <span className="min-w-0 flex-1 truncate text-left text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-              {address}
+              {fullAddress}
             </span>
           </button>
           <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-300">

@@ -55,8 +55,8 @@ export default function ReservationCompletePage() {
 
   // 예상 완료 시점
   const estimatedCompletion = useMemo(() => {
-    if (!reservation?.compltedAt) return undefined;
-    const date = new Date(reservation.compltedAt);
+    if (!reservation?.estimatedCompletion) return undefined;
+    const date = new Date(reservation.estimatedCompletion);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -106,11 +106,12 @@ export default function ReservationCompletePage() {
         />
 
         <LabLocationSection
-          address=""
+          address={reservation.address}
+          addressDetail={reservation.addressDetail}
           distanceKm={null}
           location={{
             latitude: reservation.latitude,
-            longitude: reservation.longtitude,
+            longitude: reservation.longitude,
           }}
           labName={reservation.storeName}
         />
