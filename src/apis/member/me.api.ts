@@ -41,7 +41,7 @@ export async function editMe(
 //3. 회원 탈퇴
 export async function withDrawMe(): Promise<ApiResponse<WithDrawResponse>> {
   const res =
-    await axiosInstance.delete<ApiResponse<WithDrawResponse>>("/members/me");
+    await axiosInstance.delete<ApiResponse<WithDrawResponse>>("/users/me");
 
   const body = res.data;
 

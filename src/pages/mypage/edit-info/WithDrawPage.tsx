@@ -1,19 +1,64 @@
-import { CTA_Button } from "@/components/common";
+import { CTA_Button, ToastItem } from "@/components/common";
 import { Checkbox } from "@/components/common/CheckBox";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { NoticeCard } from "@/components/mypage";
 import { useWithDrawMe } from "@/hooks/member";
-import { useState } from "react";
+import type { ApiResponse } from "@/types/common/apiResponse";
+import { tokenStorage } from "@/utils/tokenStorage";
+import { useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+
+function getApiResponseCode(err: unknown): string | undefined {
+  const e = err as AxiosError<ApiResponse<unknown>>;
+  return e?.response?.data?.code;
+}
 
 export function WithDrawPage() {
   const navigate = useNavigate();
 
+  const qc = useQueryClient();
+
+  const toastTimerRef = useRef<number | null>(null);
+
   //체크박스 동의 상태
   const [agreed, setAgreed] = useState(false);
 
-  const { mutate: withdraw } = useWithDrawMe({
-    onSuccess: () => navigate("/auth/login", { replace: true }),
-    onError: (e) => console.error(e.message),
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
+  const showToastWithTimeout = (msg: string) => {
+    setToastMessage(msg);
+    setShowToast(true);
+
+    if (toastTimerRef.current !== null) {
+      window.clearTimeout(toastTimerRef.current);
+    }
+
+    toastTimerRef.current = window.setTimeout(() => {
+      setShowToast(false);
+      toastTimerRef.current = null;
+    }, 2000);
+  };
+
+  const { mutate: withdraw, isPending } = useWithDrawMe({
+    onSuccess: () => {
+      tokenStorage.clear();
+      qc.clear();
+      navigate("/auth/login", { replace: true });
+    },
+    onError: (e) => {
+      const code = getApiResponseCode(e);
+
+      if (code === "MEMBER_400") {
+        showToastWithTimeout("진행 중인 예약이 있어 탈퇴할 수 없어요.");
+        return;
+      }
+
+      // 기타 에러 처리 정책 선택
+      showToastWithTimeout("탈퇴 처리 중 오류가 발생했어요.");
+    },
   });
 
   //체크박스 토글
@@ -28,7 +73,7 @@ export function WithDrawPage() {
   };
 
   return (
-    <div className="flex h-full flex-1 flex-col">
+    <div className="relative flex h-full flex-1 flex-col">
       <main className="py-10">
         <section>
           <p className="text-[1rem] leading-[155%] font-normal tracking-[-0.02rem]">
@@ -58,6 +103,8 @@ export function WithDrawPage() {
           onClick={handleSubmit}
         />
       </footer>
+      <LoadingSpinner open={isPending} />
+      {showToast ? <ToastItem message={toastMessage} /> : null}
     </div>
   );
 }
