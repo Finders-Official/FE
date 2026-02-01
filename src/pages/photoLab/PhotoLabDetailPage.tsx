@@ -98,7 +98,8 @@ export default function PhotoLabDetailPage() {
         {/* 지도 */}
         <LabLocationSection
           address={lab.address}
-          distanceKm={lab.distanceKm ?? 0}
+          addressDetail={lab.addressDetail ?? undefined}
+          distanceKm={lab.distanceKm}
           location={{ latitude: lab.latitude, longitude: lab.longitude }}
           labName={lab.name}
         />
