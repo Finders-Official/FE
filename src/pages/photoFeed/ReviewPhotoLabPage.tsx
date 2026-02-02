@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { HomeIcon, ExclamationCircleIcon } from "@/assets/icon";
 import { TextArea } from "@/components/common/TextArea";
@@ -21,16 +21,6 @@ export default function ReviewPhotoLabPage() {
 
   const files = useNewPostState((s) => s.files);
   const imageMetas = useNewPostState((s) => s.imageMetas);
-
-  const postImages: PostImage[] = useMemo(() => {
-    if (files.length !== imageMetas.length) return [];
-
-    return files.map((file, idx) => ({
-      imageUrl: URL.createObjectURL(file),
-      width: imageMetas[idx].width,
-      height: imageMetas[idx].height,
-    }));
-  }, [files, imageMetas]);
 
   const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -70,22 +60,28 @@ export default function ReviewPhotoLabPage() {
       // ApiResponse unwrap
       const presignedList = presignedResults.map((res) => {
         if (!res.success) throw new Error(res.message);
-        return res.data;
+        return res.data; // { url, objectPath, expiresAtEpochSecond }
       });
 
       // 2️.  GCS 업로드
       await Promise.all(
-        presignedList.map((p, idx) => {
-          const file = files[idx];
-          return uploadToPresigned.mutateAsync({
+        presignedList.map((p, idx) =>
+          uploadToPresigned.mutateAsync({
             url: p.url,
-            file,
-            contentType: file.type,
-          });
-        }),
+            file: files[idx],
+            contentType: files[idx].type,
+          }),
+        ),
       );
 
-      // 3. 게시글 생성
+      // 3. createPost에 넣을 image 배열을 objectPath 기반으로 생성
+      const postImages: PostImage[] = presignedList.map((p, idx) => ({
+        imageUrl: p.objectPath,
+        width: imageMetas[idx].width,
+        height: imageMetas[idx].height,
+      }));
+
+      // 4. 게시글 생성
       createPost({
         title,
         content,

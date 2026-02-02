@@ -10,6 +10,9 @@ import { Header } from "@/components/common";
 import { useGeolocation } from "@/hooks/photoLab/useGeolocation";
 import { useSearchLabs } from "@/hooks/photoFeed/search/useSearchLabs";
 import EmptyView from "@/components/common/EmptyView";
+import type { PostImage } from "@/types/photoFeed/postPreview";
+import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
+import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 
 type Step = "search" | "confirm";
 
@@ -19,6 +22,12 @@ export default function FindPhotoLabPage() {
   const [keyword, setKeyword] = useState("");
   const [searching, setSearching] = useState(false);
   const [checked, setChecked] = useState(false);
+
+  const title = useNewPostState((s) => s.title);
+  const content = useNewPostState((s) => s.content);
+
+  const files = useNewPostState((s) => s.files);
+  const imageMetas = useNewPostState((s) => s.imageMetas);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -59,6 +68,69 @@ export default function FindPhotoLabPage() {
     setSelectedLab(lab);
     setSearching(false);
     setStep("confirm");
+  };
+
+  const issuePresigned = useIssuePresignedUrl();
+  const uploadToPresigned = useUploadToPresignedUrl();
+
+  // 게시글(자가현상) 등록 api 호출
+  const { mutate: createPost, isPending } = useCreatePost({
+    onSuccess: (postId) => {
+      navigate(`/photoFeed/post/${postId}`);
+    },
+    onError: (err) => {
+      console.error("게시글 생성 실패", err);
+    },
+  });
+
+  const handleSubmit = async () => {
+    try {
+      // 1️. presigned-url 발급 (여러 파일)
+      const presignedResults = await Promise.all(
+        files.map((file) =>
+          issuePresigned.mutateAsync({
+            category: "POST_IMAGE",
+            memberId: 23,
+            fileName: file.name,
+          }),
+        ),
+      );
+
+      // ApiResponse unwrap
+      const presignedList = presignedResults.map((res) => {
+        if (!res.success) throw new Error(res.message);
+        return res.data;
+      });
+
+      // 2️.  GCS 업로드
+      await Promise.all(
+        presignedList.map((p, idx) => {
+          const file = files[idx];
+          return uploadToPresigned.mutateAsync({
+            url: p.url,
+            file,
+            contentType: file.type,
+          });
+        }),
+      );
+
+      // 3. createPost에 넣을 image 배열을 objectPath 기반으로 생성
+      const postImages: PostImage[] = presignedList.map((p, idx) => ({
+        imageUrl: p.objectPath,
+        width: imageMetas[idx].width,
+        height: imageMetas[idx].height,
+      }));
+
+      // 4. 게시글 생성
+      createPost({
+        title,
+        content,
+        image: postImages,
+        isSelfDeveloped: true,
+      });
+    } catch (e) {
+      console.error("게시글 업로드 실패", e);
+    }
   };
 
   /** 현상소 선택 후 Confirm 화면  */
@@ -192,7 +264,6 @@ export default function FindPhotoLabPage() {
                   onChange={setChecked}
                   onClick={() => {
                     setIsSelfDeveloped(true);
-                    // TODO: 현상소 관련 로직 없이 바로 post 요청
                   }}
                 />
                 <p className="text-[0.875rem] text-white">자가 현상했어요.</p>
@@ -201,9 +272,9 @@ export default function FindPhotoLabPage() {
                 <CTA_Button
                   text="다음"
                   size="xlarge"
-                  disabled={!checked}
+                  disabled={!checked || isPending}
                   color={checked ? "orange" : "black"}
-                  onClick={() => {}} // 게시글 등록 API 호출 후 링크
+                  onClick={handleSubmit} // 자가현상 게시글 등록 API 호출 후 링크
                 />
               </div>
             </>
