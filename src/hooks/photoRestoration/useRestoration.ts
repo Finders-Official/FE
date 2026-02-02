@@ -1,5 +1,5 @@
-// Presigned URL 발급, 업로드, 복원 요청, 폴링 로직을 담당
 import { useState, useRef } from "react";
+import { isAxiosError } from "axios";
 import {
   getPresignedUrl,
   uploadToGCS,
@@ -11,6 +11,9 @@ export const useRestoration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [restoredImageUrl, setRestoredImageUrl] = useState<string | null>(null);
+
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   // 폴링 인터벌 제어용 Ref
   const intervalRef = useRef<number | null>(null);
@@ -24,34 +27,34 @@ export const useRestoration = () => {
 
   const startRestoration = async (originalImageUrl: string, maskBlob: Blob) => {
     if (isGenerating) return;
+
+    // 상태 초기화
     setIsGenerating(true);
+    setError(null);
+    setRestoredImageUrl(null);
+    setProgress(10); // 시작
 
     try {
       setStatusMessage("이미지 처리 중...");
-
       const originalBlob = await fetch(originalImageUrl).then((r) => r.blob());
       const originalFile = new File([originalBlob], "original.png", {
         type: "image/png",
       });
+      setProgress(30);
 
       setStatusMessage("업로드 URL 발급 중...");
       const [originalPresigned, maskPresigned] = await Promise.all([
         getPresignedUrl("RESTORATION_ORIGINAL", "original.png"),
         getPresignedUrl("RESTORATION_MASK", "mask.png"),
       ]);
-
-      // -----------------------------------------------------------
-      // Presigned URL 발급 결과 확인
-      // -----------------------------------------------------------
-      console.log("🔍 [1] Presigned API 응답 데이터:");
-      console.log("원본 objectPath:", originalPresigned.data.objectPath);
-      console.log("마스크 objectPath:", maskPresigned.data.objectPath);
+      setProgress(50);
 
       setStatusMessage("클라우드 업로드 중...");
       await Promise.all([
         uploadToGCS(originalPresigned.data.url, originalFile),
         uploadToGCS(maskPresigned.data.url, maskBlob),
       ]);
+      setProgress(70);
 
       setStatusMessage("AI 복원 요청 중...");
       const restorationRes = await requestRestoration(
@@ -60,10 +63,19 @@ export const useRestoration = () => {
       );
 
       setStatusMessage("AI가 열심히 복원하고 있어요...");
+      setProgress(85); // 폴링 직전
       pollStatus(restorationRes.data.id);
-    } catch (error) {
-      console.error(error);
-      alert("오류가 발생했습니다. 다시 시도해주세요.");
+    } catch (e) {
+      if (isAxiosError(e)) {
+        console.error("Axios error:", {
+          status: e.response?.status,
+          data: e.response?.data,
+          headers: e.response?.headers,
+        });
+      } else {
+        console.error("Unknown error:", e);
+      }
+      setError("서버 연결이 불안정합니다");
       setIsGenerating(false);
       setStatusMessage("");
     }
@@ -73,7 +85,7 @@ export const useRestoration = () => {
     const MAX_RETRIES = 60;
     let count = 0;
 
-    clearPolling(); // 기존 폴링 있으면 제거
+    clearPolling();
 
     intervalRef.current = setInterval(async () => {
       count++;
@@ -85,6 +97,7 @@ export const useRestoration = () => {
           clearPolling();
           setIsGenerating(false);
           setStatusMessage("");
+          setProgress(100); // 완료
           setRestoredImageUrl(data.restoredUrl);
         } else if (data.status === "FAILED") {
           clearPolling();
@@ -96,27 +109,39 @@ export const useRestoration = () => {
           throw new Error("시간 초과");
         }
       } catch (e) {
-        console.error(e);
+        if (isAxiosError(e)) {
+          console.error("Axios error during polling:", {
+            status: e.response?.status,
+            data: e.response?.data,
+            headers: e.response?.headers,
+          });
+        } else {
+          console.error("Unknown error during polling:", e);
+        }
         clearPolling();
         setIsGenerating(false);
         setStatusMessage("");
-        alert("복원 결과를 가져오는데 실패했습니다.");
+        setError("복원 결과를 가져오는데 실패했습니다."); // 에러 처리
       }
-    }, 1000);
+    }, 1000); // 1초마다 폴링
   };
 
-  // 초기화 함수 (재편집 시 사용)
   const resetRestoration = () => {
     setRestoredImageUrl(null);
     setStatusMessage("");
     setIsGenerating(false);
+    setProgress(0);
+    setError(null);
     clearPolling();
   };
 
   return {
     isGenerating,
     statusMessage,
+    progress,
     restoredImageUrl,
+    error,
+    setError,
     startRestoration,
     resetRestoration,
   };
