@@ -12,7 +12,7 @@ const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
 export function LoginPage() {
   const [sp, setSp] = useSearchParams();
 
-  const nickname = useAuthStore((s) => s.user?.memberId);
+  const nickname = useAuthStore((s) => s.user?.nickname);
 
   const welcome = sp.get("welcome") === "1";
   const nonce = sp.get("nonce");

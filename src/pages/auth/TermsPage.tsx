@@ -79,7 +79,7 @@ export function TermsPage() {
           rightAction={{
             type: "icon",
             icon: <XMarkIcon />,
-            onClick: () => window.history.back,
+            onClick: () => window.history.back(),
           }}
         />
 
