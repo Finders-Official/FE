@@ -1,56 +1,26 @@
 import { useState, useEffect } from "react";
 import { SectionHeader } from "@/components/common/SectionHeader";
-import CommunityGallerySectionCard, {
+import CommunityGallerySectionCard from "./CommunityGallerySectionCard";
+import {
+  fetchCommunityPosts,
   type CommunityPost,
-} from "./CommunityGallerySectionCard";
-
-interface ApiResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  data: {
-    previewList: CommunityPost[];
-    totalCount: number;
-    isLast: boolean;
-  };
-}
+} from "@/apis/mainPage/mainPage.api";
 
 export default function CommunityGallerySection() {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
 
   useEffect(() => {
-    const fetchCommunityPosts = async () => {
-      const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
-      const token = localStorage.getItem("accessToken");
-
+    const getCommunityPosts = async () => {
       try {
-        const response = await fetch(`${baseUrl}/posts/preview`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const json: ApiResponse = await response.json();
-
-        if (json.success && json.data && Array.isArray(json.data.previewList)) {
-          setPosts(json.data.previewList);
-        } else {
-          console.warn("데이터 구조가 예상과 다릅니다:", json);
-          setPosts([]);
-        }
+        const data = await fetchCommunityPosts();
+        setPosts(data);
       } catch (error) {
-        console.error("에러: ", error);
+        console.error("Error fetching community posts:", error);
         setPosts([]);
       }
     };
 
-    fetchCommunityPosts();
+    getCommunityPosts();
   }, []);
 
   if (!posts || posts.length === 0) return null;

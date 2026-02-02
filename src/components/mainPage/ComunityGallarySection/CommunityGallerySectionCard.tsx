@@ -1,18 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-
-export interface CommunityPost {
-  postId: number;
-  image: {
-    imageUrl: string;
-    width: number;
-    height: number;
-  };
-  title: string;
-  likeCount: number;
-  commentCount: number;
-  isLiked: boolean;
-}
+import {
+  likePost,
+  unlikePost,
+  type CommunityPost,
+} from "@/apis/mainPage/mainPage.api";
 
 interface CommunityGallerySectionCardProps {
   post: CommunityPost;
@@ -22,7 +14,6 @@ export default function CommunityGallerySectionCard({
   post,
 }: CommunityGallerySectionCardProps) {
   const navigate = useNavigate();
-  const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
 
   // 좋아요 상태와 카운트 모두 로컬 state로 관리
   const [isLiked, setIsLiked] = useState(post.isLiked);
@@ -42,12 +33,12 @@ export default function CommunityGallerySectionCard({
     e.stopPropagation();
 
     const token = localStorage.getItem("accessToken");
-
     if (!token) {
       alert("로그인이 필요한 서비스입니다.");
       return;
     }
 
+    // Optimistic UI update
     const prevIsLiked = isLiked;
     const prevLikeCount = likeCount;
 
@@ -55,40 +46,19 @@ export default function CommunityGallerySectionCard({
     setLikeCount((prev) => (prevIsLiked ? prev - 1 : prev + 1));
 
     try {
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
       if (!prevIsLiked) {
-        // 좋아요 연동 (POST)
-        const response = await fetch(`${baseUrl}/posts/${post.postId}/likes`, {
-          method: "POST",
-          headers,
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          if (errorData.code === "MEMBER_404") {
-            alert("회원 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
-            localStorage.removeItem("accessToken");
-            // navigate("/login");
-          }
-          throw new Error("Like failed");
-        }
+        await likePost(post.postId);
       } else {
-        // 좋아요 취소 동 (DELETE)
-        const response = await fetch(`${baseUrl}/posts/${post.postId}/likes`, {
-          method: "DELETE",
-          headers,
-        });
-
-        if (!response.ok) throw new Error("Unlike failed");
+        await unlikePost(post.postId);
       }
     } catch (error) {
       console.error("좋아요 처리 중 오류 발생:", error);
+      // Revert UI on error
       setIsLiked(prevIsLiked);
       setLikeCount(prevLikeCount);
+      if (error instanceof Error) {
+        alert(error.message);
+      }
     }
   };
 

@@ -1,13 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { SectionHeader } from "@/components/common/SectionHeader";
-import PopularLabCard, { type Lab } from "./PopularLabCard";
-
-interface ApiResponse {
-  success: boolean;
-  code: string;
-  message: string;
-  data: Lab[];
-}
+import PopularLabCard from "./PopularLabCard";
+import { fetchPopularLabs, type Lab } from "@/apis/mainPage/mainPage.api";
 
 export default function PopularLabsSection() {
   const [labs, setLabs] = useState<Lab[]>([]);
@@ -15,34 +9,16 @@ export default function PopularLabsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchPopularLabs = async () => {
-      const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
-
+    const getPopularLabs = async () => {
       try {
-        const response = await fetch(`${baseUrl}/photo-labs/popular`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP 에러! status: ${response.status}`);
-        }
-
-        const json: ApiResponse = await response.json();
-
-        if (json.success) {
-          setLabs(json.data);
-        } else {
-          console.error("Failed to fetch labs:", json.message);
-        }
+        const data = await fetchPopularLabs();
+        setLabs(data);
       } catch (error) {
         console.error("Error fetching popular labs:", error);
       }
     };
 
-    fetchPopularLabs();
+    getPopularLabs();
   }, []);
 
   // 데이터 4개씩 묶기
