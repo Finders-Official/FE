@@ -13,8 +13,13 @@ interface PopularLabCardProps {
 }
 
 export default function PopularLabCard({ lab }: PopularLabCardProps) {
-  // TODO: API 이미지 경로 수정
-  const imageUrl = `https://dev-api.finders.it.kr/${lab.mainImageUrl}`;
+  const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
+
+  // 이미지가 'http'로 시작하면 그대로 쓰고, 아니면 앞에 baseUrl 붙이기
+  const imageUrl = lab.mainImageUrl.startsWith("http")
+    ? lab.mainImageUrl
+    : `${baseUrl}/${lab.mainImageUrl}`;
+
   const fallbackImage =
     "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80";
 
@@ -23,12 +28,10 @@ export default function PopularLabCard({ lab }: PopularLabCardProps) {
       to={`/lab/${lab.photoLabId}`}
       className="relative block aspect-163/230 w-full overflow-hidden rounded-[0.625rem] border border-neutral-800"
     >
-      {/* 이미지 */}
       <img
         src={imageUrl}
         alt={lab.name}
         className="absolute inset-0 h-full w-full object-cover"
-        // 이미지가 404일 경우 대체 이미지로 교체
         onError={(e) => {
           (e.target as HTMLImageElement).src = fallbackImage;
         }}
