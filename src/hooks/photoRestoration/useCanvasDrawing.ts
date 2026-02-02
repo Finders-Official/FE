@@ -1,5 +1,5 @@
 // 캔버스 초기화, 그리기, Undo/Redo, 마스크 Blob 생성 로직을 담당
-import { useState, useEffect, type RefObject } from "react";
+import { useState, useEffect, type RefObject, useCallback } from "react";
 
 export interface DrawPath {
   points: { x: number; y: number }[];
@@ -25,37 +25,40 @@ export const useCanvasDrawing = ({
   const [isDrawing, setIsDrawing] = useState(false);
 
   // 헬퍼: 경로 그리기
-  const drawPathOnCtx = (
-    ctx: CanvasRenderingContext2D,
-    path: DrawPath,
-    color: string,
-  ) => {
-    if (path.points.length < 1) return;
-    ctx.lineWidth = path.lineWidth;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(path.points[0].x, path.points[0].y);
-    if (path.points.length === 1)
-      ctx.lineTo(path.points[0].x, path.points[0].y);
-    else path.points.forEach((point) => ctx.lineTo(point.x, point.y));
-    ctx.stroke();
-  };
+  const drawPathOnCtx = useCallback(
+    (ctx: CanvasRenderingContext2D, path: DrawPath, color: string) => {
+      if (path.points.length < 1) return;
+      ctx.lineWidth = path.lineWidth;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(path.points[0].x, path.points[0].y);
+      if (path.points.length === 1)
+        ctx.lineTo(path.points[0].x, path.points[0].y);
+      else path.points.forEach((point) => ctx.lineTo(point.x, point.y));
+      ctx.stroke();
+    },
+    [],
+  );
 
   // 캔버스 다시 그리기
-  const redrawCanvas = () => {
+  const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
     const visiblePaths = paths.slice(0, historyStep + 1);
     visiblePaths.forEach((path) =>
       drawPathOnCtx(ctx, path, "rgba(233, 78, 22, 0.5)"),
     );
     if (currentPath) drawPathOnCtx(ctx, currentPath, "rgba(233, 78, 22, 0.5)");
-  };
+  }, [canvasRef, currentPath, drawPathOnCtx, historyStep, paths]);
 
   // 리사이즈 대응
   useEffect(() => {
@@ -63,11 +66,23 @@ export const useCanvasDrawing = ({
     const container = containerRef.current;
     if (!canvas || !container || !isImageLoaded) return;
 
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = container.getBoundingClientRect();
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+
+    const ctx = canvas.getContext("2d");
+    ctx?.scale(dpr, dpr);
+  }, [isImageLoaded, canvasRef, containerRef]);
+
+  // 다시 그리기 Effect
+  useEffect(() => {
+    if (!isImageLoaded) return;
     redrawCanvas();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isImageLoaded, paths, currentPath]);
+  }, [isImageLoaded, redrawCanvas]);
 
   // 좌표 계산
   const getPos = (e: React.MouseEvent | React.TouchEvent) => {
@@ -101,7 +116,7 @@ export const useCanvasDrawing = ({
     );
   };
 
-  const stopDrawing = () => {
+  const stopDrawing = useCallback(() => {
     if (!isDrawing || !currentPath) return;
     setIsDrawing(false);
     const newPaths = paths.slice(0, historyStep + 1);
@@ -109,14 +124,19 @@ export const useCanvasDrawing = ({
     setPaths(updatedPaths);
     setHistoryStep(updatedPaths.length - 1);
     setCurrentPath(null);
-  };
+  }, [isDrawing, currentPath, paths, historyStep]);
 
-  const handleUndo = () => {
-    if (historyStep >= 0) setHistoryStep((prev) => prev - 1);
-  };
-  const handleRedo = () => {
-    if (historyStep < paths.length - 1) setHistoryStep((prev) => prev + 1);
-  };
+  const handleUndo = useCallback(() => {
+    if (historyStep >= 0) {
+      setHistoryStep((prev) => prev - 1);
+    }
+  }, [historyStep]);
+
+  const handleRedo = useCallback(() => {
+    if (historyStep < paths.length - 1) {
+      setHistoryStep((prev) => prev + 1);
+    }
+  }, [historyStep, paths]);
 
   // 마스크 생성 (API 전송용)
   const createMaskBlob = async (): Promise<Blob | null> => {
