@@ -58,7 +58,7 @@ export default function SearchBar({
 
   return (
     <div
-      className={`flex h-12.5 items-center gap-5 overflow-hidden rounded-[3.125rem] border border-neutral-600 px-[1rem] py-3 ${className}`}
+      className={`flex h-12.5 w-full items-center gap-5 overflow-hidden rounded-[3.125rem] border border-neutral-600 px-[1rem] py-3 ${className}`}
     >
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         {showBack && (

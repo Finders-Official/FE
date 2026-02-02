@@ -1,4 +1,4 @@
-import { PhotoLabCard } from "@/components/mypage/PhotoLabCard";
+import { PhotoLabCard } from "@/components/mypage";
 import { PHOTO_LABS } from "@/constants/mypage/photolab.constant";
 
 export function LikedPhotoLabPage() {

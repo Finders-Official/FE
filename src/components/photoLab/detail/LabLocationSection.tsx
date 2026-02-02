@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CopyIcon, MapPinIcon } from "@/assets/icon";
+import customPinUrl from "@/assets/icon/custom-pin.svg";
 import type { PhotoLabLocation } from "@/types/photoLab";
 
 declare global {
@@ -12,8 +13,22 @@ declare global {
           options: { center: unknown; level: number },
         ) => unknown;
         LatLng: new (lat: number, lng: number) => unknown;
-        Marker: new (options: { position: unknown }) => {
+        Marker: new (options: { position: unknown; image?: unknown }) => {
           setMap: (map: unknown) => void;
+        };
+        MarkerImage: new (
+          src: string,
+          size: unknown,
+          options?: { offset: unknown },
+        ) => unknown;
+        Size: new (width: number, height: number) => unknown;
+        Point: new (x: number, y: number) => unknown;
+        CustomOverlay: new (options: {
+          content: string;
+          position: unknown;
+          yAnchor?: number;
+        }) => {
+          setMap: (map: unknown | null) => void;
         };
       };
     };
@@ -40,7 +55,7 @@ export default function LabLocationSection({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    let marker: { setMap: (map: unknown) => void } | null = null;
+    let marker: { setMap: (map: unknown | null) => void } | null = null;
 
     const initMap = () => {
       const { kakao } = window;
@@ -56,8 +71,18 @@ export default function LabLocationSection({
         level: 3,
       });
 
+      // 커스텀 마커 이미지
+      const imageSize = new kakao.maps.Size(63, 63);
+      const imageOption = { offset: new kakao.maps.Point(31, 31) };
+      const markerImage = new kakao.maps.MarkerImage(
+        customPinUrl,
+        imageSize,
+        imageOption,
+      );
+
       marker = new kakao.maps.Marker({
         position: position,
+        image: markerImage,
       });
 
       marker.setMap(map);
@@ -95,14 +120,12 @@ export default function LabLocationSection({
           <button
             type="button"
             onClick={handleCopyAddress}
-            className="flex items-center gap-1.5"
+            className="flex w-full items-center gap-1.5"
           >
-            <div className="flex h-6 w-6 items-center justify-center">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center">
               <CopyIcon className="h-4 w-4 text-neutral-200" />
             </div>
-            <span className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-              {" "}
-              {/* 유저에게 뭔가 줄 반응이 필요함 */}
+            <span className="min-w-0 flex-1 truncate text-left text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
               {address}
             </span>
           </button>

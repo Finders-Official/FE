@@ -21,7 +21,9 @@ export function DetailInfoPage() {
 
   const handleComplete = () => {
     // TODO: 선택한 주소 저장(zustand 등)하고 다음으로 이동
-    navigate("../photoManage/print-option");
+    navigate("../photoManage/print-option", {
+      state: { pickupMethod: "delivery" as const },
+    });
   };
 
   return (
@@ -42,7 +44,7 @@ export function DetailInfoPage() {
           onChange={handlePhoneChange}
         />
       </main>
-      <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900 px-4">
+      <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900">
         <div className="flex h-full items-center">
           <CTA_Button
             text="입력 완료"
