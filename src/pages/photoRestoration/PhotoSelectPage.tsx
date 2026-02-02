@@ -1,5 +1,3 @@
-// 메인 페이지 연결하고 삭제할 파일 입니다.
-
 import type { ChangeEvent } from "react";
 import { useNewPostState } from "@/store/useNewPostState.store";
 interface PhotoSelectProps {

@@ -37,8 +37,6 @@ export const DialogBox = ({
       onClick={onCancel}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
     >
-      {/* 기존의 absolute overlay div 제거됨 */}
-
       <div
         // 2. 모달 내부 클릭 시 상위(배경)로 클릭 이벤트가 전파되지 않도록 차단
         onClick={(e) => e.stopPropagation()}
