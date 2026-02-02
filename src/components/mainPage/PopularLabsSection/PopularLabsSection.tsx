@@ -64,7 +64,7 @@ export default function PopularLabsSection() {
 
   return (
     <section className="flex flex-col gap-4 py-6">
-      <div className="px-5">
+      <div>
         <SectionHeader title="이번주 인기있는 현상소" link="/" />
       </div>
 
@@ -76,10 +76,7 @@ export default function PopularLabsSection() {
           className="scrollbar-hide flex w-full snap-x snap-mandatory overflow-x-auto pb-8"
         >
           {chunkedLabs.map((group, groupIndex) => (
-            <div
-              key={groupIndex}
-              className="min-w-full shrink-0 snap-center px-5"
-            >
+            <div key={groupIndex} className="min-w-full shrink-0 snap-center">
               <div className="grid grid-cols-2 gap-4">
                 {group.map((lab) => (
                   <PopularLabCard key={lab.photoLabId} lab={lab} />
@@ -95,7 +92,7 @@ export default function PopularLabsSection() {
             {chunkedLabs.map((_, index) => (
               <div
                 key={index}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`h-1 rounded-full transition-all duration-300 ${
                   currentIndex === index
                     ? "w-1 bg-orange-500"
                     : "w-1 bg-neutral-400"

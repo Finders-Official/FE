@@ -3,7 +3,7 @@ import { MainCamera, MainFilm, MainSparkle } from "@/assets/icon";
 
 export default function QuickActionGrid() {
   return (
-    <section className="mt-7.5 mb-7.5 grid h-51 grid-cols-2 grid-rows-2 gap-3 px-5">
+    <section className="mt-7.5 mb-7.5 grid h-51 grid-cols-2 grid-rows-2 gap-3">
       {/* 현상 맡기기 */}
       <ActionCard
         to="/"

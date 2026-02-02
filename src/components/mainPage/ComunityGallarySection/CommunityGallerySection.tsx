@@ -58,7 +58,7 @@ export default function CommunityGallerySection() {
   return (
     <section className="flex flex-col gap-7 py-6">
       <SectionHeader
-        title="파인더들이 찍은 사진 같이 보실래요?"
+        title={"파인더들이 찍은 사진\n같이 보실래요?"}
         link="/community"
       />
 

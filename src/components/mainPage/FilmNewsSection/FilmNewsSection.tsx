@@ -32,7 +32,7 @@ export default function FilmNewsSection() {
   return (
     <div>
       <SectionHeader title="꼭 알아야 할 필름 소식" link="/" />
-      <section className="flex flex-col gap-3.5 px-5 py-6">
+      <section className="flex flex-col gap-3.5 py-6">
         {/* 카드 리스트 (세로 스택) */}
         <div className="flex flex-col gap-5">
           {NEWS_LIST.map((news) => (

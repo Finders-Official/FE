@@ -91,7 +91,7 @@ export default function PromotionBanner() {
         {BANNERS.map((_, index) => (
           <div
             key={index}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
+            className={`h-1 rounded-full transition-all duration-300 ${
               currentIndex === index
                 ? "w-1 scale-125 bg-orange-500"
                 : "w-1 bg-neutral-400"
