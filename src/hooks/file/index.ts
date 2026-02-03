@@ -1,2 +1,2 @@
-export { useUploadToPresignedUrl } from "./useFileUpLoad";
+export { useUploadToPresignedUrl } from "./useFileUpload";
 export { useIssuePresignedUrl } from "./usePresignedUrl";
