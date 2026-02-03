@@ -61,12 +61,12 @@ export default function PromotionBanner() {
         {BANNERS.map((banner) => (
           <div
             key={banner.id}
-            className="flex h-full min-w-[calc(100%-40px)] shrink-0 snap-center flex-col"
+            className="flex h-full min-w-[calc(100%-2.5rem)] shrink-0 snap-center flex-col"
           >
             <Link to={banner.link} className="group block h-full">
               <div className="relative flex h-full w-full items-center overflow-hidden rounded-2xl bg-orange-500 px-6 transition-transform duration-200 active:scale-[0.98]">
                 <div className="z-10 flex max-w-[65%] flex-col gap-3">
-                  <h2 className="absolute top-30 text-[22px] leading-tight font-semibold whitespace-pre-wrap text-neutral-100">
+                  <h2 className="absolute top-30 text-[1.375rem] leading-tight font-semibold whitespace-pre-wrap text-neutral-100">
                     {banner.title}
                   </h2>
                   <p className="absolute top-45 text-sm font-medium text-neutral-100">

@@ -140,7 +140,7 @@ export default function CommunityGallerySectionCard({
           </button>
         </div>
 
-        <p className="font-regular line-clamp-2 min-h-7.5 text-[12px] leading-[126%] tracking-[-0.02em] text-neutral-100">
+        <p className="font-regular line-clamp-2 min-h-7.5 text-[0.75rem] leading-[126%] tracking-[-0.02em] text-neutral-100">
           {post.title}
         </p>
       </div>
