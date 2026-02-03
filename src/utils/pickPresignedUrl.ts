@@ -1,17 +1,10 @@
-export function pickPresignedPutUrl(dto: unknown): string {
-  const r = dto as Record<string, unknown>;
-  const v =
-    r.url ??
-    r.uploadUrl ??
-    r.presignedUrl ??
-    r.putUrl ??
-    r.signedUrl ??
-    r.signedPutUrl;
+import type { PresignedUrlIssueResDto } from "@/types/file/presignedUrl";
 
-  if (typeof v !== "string" || v.length === 0) {
+export function pickPresignedPutUrl(dto: PresignedUrlIssueResDto): string {
+  if (!dto.url || dto.url.length === 0) {
     throw new Error("Presigned PUT url is missing in response");
   }
-  return v;
+  return dto.url;
 }
 
 export function deriveObjectUrlFromPresignedPutUrl(putUrl: string): string {
@@ -22,26 +15,12 @@ export function deriveObjectUrlFromPresignedPutUrl(putUrl: string): string {
 }
 
 export function pickUploadedFilePublicUrlOrKey(
-  dto: unknown,
+  dto: PresignedUrlIssueResDto,
   putUrl: string,
 ): string {
-  const r = dto as Record<string, unknown>;
-  const v =
-    r.fileUrl ??
-    r.publicUrl ??
-    r.objectUrl ??
-    r.downloadUrl ??
-    r.path ??
-    r.objectKey ??
-    r.key ??
-    r.fileKey ??
-    r.objectName ??
-    r.storagePath ??
-    r.filePath ??
-    r.resourceUrl;
-
-  if (typeof v === "string" && v.length > 0) return v;
-
+  if (dto.objectPath && dto.objectPath.length > 0) {
+    return dto.objectPath;
+  }
   // 응답에 없으면 putUrl에서 query 제거한 값으로 대체
   return deriveObjectUrlFromPresignedPutUrl(putUrl);
 }

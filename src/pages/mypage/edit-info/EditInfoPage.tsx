@@ -7,8 +7,10 @@ import { useLogout } from "@/hooks/auth/login";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useMe, useEditMe } from "@/hooks/member";
 import { formatPhoneKorea } from "@/utils/formatPhoneKorea";
-import { pickUploadedFilePublicUrlOrKey } from "@/utils/pickPresignedUrl";
-import { pickPresignedPutUrl } from "@/utils/presigned";
+import {
+  pickPresignedPutUrl,
+  pickUploadedFilePublicUrlOrKey,
+} from "@/utils/pickPresignedUrl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
