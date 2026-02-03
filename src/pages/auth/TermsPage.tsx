@@ -3,7 +3,7 @@ import { Header } from "@/components/common";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { sections } from "@/constants/terms";
 import type { Section } from "@/types/auth";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 function getHashIdFrom(hash: string): Section["id"] | null {
@@ -25,28 +25,18 @@ function scrollToSection(id: Section["id"]) {
   el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+// sections는 상수이므로 파생값도 모듈 레벨에서 한 번만 계산
+const ids = sections.map((s) => s.id);
+const idToIndex = new Map<Section["id"], number>(
+  ids.map((id, idx) => [id, idx]),
+);
+
 export function TermsPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // sections 순서 고정
-  const ids = useMemo(() => sections.map((s) => s.id), []);
-  const idToIndex = useMemo(() => {
-    const m = new Map<Section["id"], number>();
-    ids.forEach((id, idx) => m.set(id, idx));
-    return m;
-  }, [ids]);
-
-  const currentId = useMemo(
-    () => getHashIdFrom(location.hash),
-    [location.hash],
-  );
-
-  const currentIndex = useMemo(() => {
-    if (!currentId) return 0;
-    const idx = idToIndex.get(currentId);
-    return typeof idx === "number" ? idx : 0;
-  }, [currentId, idToIndex]);
+  const currentId = getHashIdFrom(location.hash);
+  const currentIndex = currentId ? (idToIndex.get(currentId) ?? 0) : 0;
 
   const isLast = currentIndex >= ids.length - 1;
 
