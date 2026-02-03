@@ -108,49 +108,33 @@ export function EditInfoPage() {
     setIsUploadingProfile(true);
 
     try {
-      //1. presigned 발급
       const presigned = await issuePresignedUrl({
         category: "PROFILE",
         fileName: picked.name,
         memberId,
       });
 
-      console.log("[presigned.data]", presigned.data);
-
-      //2. PUT URL만 먼저 뽑기 (여기까지 성공하면 PUT을 시도 가능)
       const putUrl = pickPresignedPutUrl(presigned.data);
-      console.log("[PUT will start]", putUrl);
 
-      //3. GCS PUT 업로드
       await uploadToPresignedUrl({
         url: putUrl,
         file: picked,
         contentType: picked.type || "application/octet-stream",
       });
 
-      console.log("[PUT done]");
-
-      //4. 저장용 url/key 확보
       const publicUrlOrKey = pickUploadedFilePublicUrlOrKey(
         presigned.data,
         putUrl,
       );
-      console.log("[publicUrlOrKey]", publicUrlOrKey);
 
-      //5. 우리 서버에 프로필 저장
       await editMe({ profileImageUrl: publicUrlOrKey });
-      console.log("[editMe done]");
 
-      //6. objectUrl 정리
       if (objectUrlRef.current) {
         URL.revokeObjectURL(objectUrlRef.current);
         objectUrlRef.current = null;
       }
       setObjectUrl(null);
       setError(null);
-    } catch (err) {
-      console.error("[uploadProfileImage error]", err);
-      throw err;
     } finally {
       setIsUploadingProfile(false);
     }
