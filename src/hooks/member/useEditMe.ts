@@ -30,9 +30,10 @@ export function useEditMe(
 
     onSuccess: async (data, variables, onMutateResult, context) => {
       const nextNick = variables.nickname?.trim();
+      const nextProfileImage = variables.profileImageUrl?.trim();
 
-      // UI 즉시 반영
-      if (nextNick) {
+      // UI 즉시 반영 (닉네임, 프로필 이미지)
+      if (nextNick || nextProfileImage) {
         qc.setQueryData<MyPageDataDto>(ME_QUERY_KEY, (prev) => {
           if (!prev) return prev;
 
@@ -41,7 +42,11 @@ export function useEditMe(
               ...prev,
               roleData: {
                 ...prev.roleData,
-                user: { ...prev.roleData.user, nickname: nextNick },
+                user: {
+                  ...prev.roleData.user,
+                  ...(nextNick && { nickname: nextNick }),
+                  ...(nextProfileImage && { profileImage: nextProfileImage }),
+                },
               },
             };
           }
