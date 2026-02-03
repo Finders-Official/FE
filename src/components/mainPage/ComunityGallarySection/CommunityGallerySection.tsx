@@ -1,29 +1,12 @@
-import { useState, useEffect } from "react";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import CommunityGallerySectionCard from "./CommunityGallerySectionCard";
-import {
-  fetchCommunityPosts,
-  type CommunityPost,
-} from "@/apis/mainPage/mainPage.api";
+import { useCommunityPostsQuery } from "@/hooks/mainPage/useMainPageQueries";
 
 export default function CommunityGallerySection() {
-  const [posts, setPosts] = useState<CommunityPost[]>([]);
+  const { data: posts, isLoading, isError } = useCommunityPostsQuery();
 
-  useEffect(() => {
-    const getCommunityPosts = async () => {
-      try {
-        const data = await fetchCommunityPosts();
-        setPosts(data);
-      } catch (error) {
-        console.error("Error fetching community posts:", error);
-        setPosts([]);
-      }
-    };
-
-    getCommunityPosts();
-  }, []);
-
-  if (!posts || posts.length === 0) return null;
+  if (isLoading) return <div>로딩 중...</div>; // TODO: 스켈레톤 UI
+  if (isError || !posts || posts.length === 0) return null;
 
   return (
     <section className="flex flex-col gap-7 py-6">
