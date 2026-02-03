@@ -2,7 +2,9 @@ import { axiosInstance } from "@/lib/axiosInstance";
 import type { PageParams } from "@/types/mypage/params";
 import type { GetPostPreviewPageResponse } from "@/types/mypage/post";
 
-export async function getMyPosts(params: PageParams) {
+export async function getMyPosts(
+  params: PageParams,
+): Promise<GetPostPreviewPageResponse> {
   const res = await axiosInstance.get<GetPostPreviewPageResponse>("/posts/me", {
     params,
   });
