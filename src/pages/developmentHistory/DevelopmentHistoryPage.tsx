@@ -1,60 +1,99 @@
-import { DEVELOPMENT_HISTORY_DATA } from "./constants";
-import { ChevronLeftIcon, CloseIcon, FlimImageIcon } from "@/assets/icon";
-import { useState } from "react";
-import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
+import { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { getDevelopmentOrders } from "@/apis/developmentHistory/developmentHistory.api";
+import { formatDevelopmentOrder } from "@/utils/developmentHistory/formatters";
+import { ChevronLeftIcon, CloseIcon, FlimImageIcon } from "@/assets/icon";
+import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
+
+interface FormattedDevelopmentOrder {
+  id: number;
+  shopName: string;
+  shopAddress: string;
+  status: string;
+  date: string;
+  tags: string;
+  price: number;
+  deliveryAddress?: string;
+  thumbnailUrl: string;
+  resultImageUrls: string[];
+}
 
 const DevelopmentHistoryPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMenu = location.state?.isMenu;
 
-  const data = DEVELOPMENT_HISTORY_DATA;
-  const hasData = data.length > 0;
+  const [orders, setOrders] = useState<FormattedDevelopmentOrder[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasNext, setHasNext] = useState(true);
 
-  // 뷰어 상태 관리
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
+  const loadOrders = useCallback(
+    async (pageNum: number) => {
+      if (!hasNext && pageNum > 0) return;
+
+      try {
+        setIsLoading(true);
+        const response = await getDevelopmentOrders(pageNum, 10);
+
+        if (response.success) {
+          const mappedData = response.data.map(formatDevelopmentOrder);
+          setOrders((prev) =>
+            pageNum === 0 ? mappedData : [...prev, ...mappedData],
+          );
+          setHasNext(response.slice.hasNext);
+        }
+      } catch (error) {
+        console.error("현상 내역을 불러오는데 실패했습니다.", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [hasNext],
+  );
+
+  useEffect(() => {
+    loadOrders(0);
+  }, [loadOrders]);
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadOrders(nextPage);
+  };
 
   const handleOpenViewer = (images: string[]) => {
     setSelectedImages(images);
     setIsViewerOpen(true);
   };
 
-  const newLocal =
-    "mx-auto min-h-screen w-full max-w-md bg-neutral-900 text-neutral-100";
+  const hasData = orders.length > 0;
 
   return (
-    <div className={newLocal}>
-      {/* 1. 데이터가 없을 때 (PM-000-1) */}
-      {!hasData ? (
-        // 레이아웃 중앙 정렬 (탭바 높이 등을 고려해 시각적 중앙 배치)
+    <div className="mx-auto min-h-screen w-full max-w-md bg-neutral-900 text-neutral-100">
+      {!hasData && !isLoading ? (
         <div className="flex h-[calc(100vh-6.25rem)] w-full flex-col items-center justify-center">
-          {/* 컨텐츠 래퍼 */}
           <div className="flex flex-col items-center gap-5">
-            {/* 텍스트 */}
             <h2 className="text-center text-[1.1875rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
               아직 맡기신 현상 작업이 없어요
             </h2>
-
-            {/* 아이콘 */}
             <div className="flex h-23.5 w-23.5 items-center justify-center rounded-full bg-[#484848]/36">
               <FlimImageIcon className="h-11.5 w-11.5 text-neutral-400" />
             </div>
           </div>
         </div>
       ) : (
-        /* 2. 데이터가 있을 때 (PM-000-2) */
         <div className="px-5 pt-6 pb-24">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-[1.25rem] font-bold text-neutral-100">
               지난 작업
             </h2>
-
             {isMenu && (
               <button
                 type="button"
-                aria-label="닫기"
                 onClick={() => navigate(-1)}
                 className="flex h-9 w-9 items-center justify-center text-neutral-200 active:opacity-70"
               >
@@ -64,19 +103,17 @@ const DevelopmentHistoryPage = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            {data.map((item) => (
+            {orders.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-col gap-4.5 rounded-2xl border border-neutral-800 bg-neutral-900 px-5 py-6"
               >
-                {/* 날짜 · 상태 */}
                 <div className="flex justify-start gap-1 text-[0.8125rem] font-normal tracking-[-0.02em] text-neutral-200">
                   <span>{item.date}</span>
                   <span>·</span>
                   <span>{item.status}</span>
                 </div>
 
-                {/* 업체 정보 */}
                 <div className="flex items-center gap-5">
                   <div className="h-15 w-15 shrink-0 overflow-hidden rounded-[0.625rem] bg-[#333]">
                     <img
@@ -95,9 +132,7 @@ const DevelopmentHistoryPage = () => {
                   </div>
                 </div>
 
-                {/* 상세 정보 박스 */}
                 <div className="bg-neutral-875 flex flex-col gap-3 rounded-2xl p-5">
-                  {/* 맡기신 작업 */}
                   <div className="flex items-start justify-between gap-5">
                     <span className="shrink-0 text-[0.9375rem] font-semibold tracking-[-0.02em] text-neutral-200">
                       맡기신 작업
@@ -106,8 +141,6 @@ const DevelopmentHistoryPage = () => {
                       {item.tags}
                     </span>
                   </div>
-
-                  {/* 총액 */}
                   <div className="flex items-start justify-between gap-5">
                     <span className="shrink-0 text-[0.9375rem] font-semibold tracking-[-0.02em] text-neutral-200">
                       총액
@@ -116,8 +149,6 @@ const DevelopmentHistoryPage = () => {
                       {item.price.toLocaleString()}원
                     </span>
                   </div>
-
-                  {/* 배송지 (조건부 렌더링) */}
                   {item.status === "배송" && item.deliveryAddress && (
                     <div className="flex items-start justify-between gap-5">
                       <span className="shrink-0 text-[0.9375rem] font-semibold tracking-[-0.02em] text-neutral-200">
@@ -130,9 +161,7 @@ const DevelopmentHistoryPage = () => {
                   )}
                 </div>
 
-                {/* 하단 버튼 및 이미지 영역 */}
                 <div className="flex flex-col gap-3">
-                  {/* 결과 보기 버튼 */}
                   <button
                     onClick={() => handleOpenViewer(item.resultImageUrls)}
                     className="mb-3 flex w-full items-center justify-between"
@@ -143,12 +172,6 @@ const DevelopmentHistoryPage = () => {
                     <ChevronLeftIcon className="h-4 w-4 rotate-180 text-[#888]" />
                   </button>
 
-                  {/* 저장 만료일 - 데이터가 없다면 하드코딩 혹은 제외 */}
-                  <div className="text-[0.875rem] font-normal tracking-[-0.02em] text-neutral-600">
-                    26/1/10 저장 만료
-                  </div>
-
-                  {/* 이미지 리스트 */}
                   <div className="scrollbar-hide flex gap-2.75 overflow-x-auto pb-1">
                     {item.resultImageUrls.map((url, idx) => (
                       <div
@@ -166,10 +189,20 @@ const DevelopmentHistoryPage = () => {
                 </div>
               </div>
             ))}
+
+            {hasNext && (
+              <button
+                onClick={handleLoadMore}
+                disabled={isLoading}
+                className="mt-4 rounded-xl border border-neutral-800 py-3 text-sm font-medium text-neutral-400 active:bg-neutral-800"
+              >
+                {isLoading ? "불러오는 중..." : "이전 내역 더보기"}
+              </button>
+            )}
           </div>
         </div>
       )}
-      {/* 뷰어 컴포넌트 (조건부 렌더링) */}
+
       <ScanResultViewer
         isOpen={isViewerOpen}
         onClose={() => setIsViewerOpen(false)}
