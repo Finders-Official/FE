@@ -95,12 +95,7 @@ export function EditInfoPage() {
   const uploadProfileImage = async (picked: File) => {
     if (!me) throw new Error("내 정보가 아직 없어요.");
 
-    const memberRecord = me.member as unknown as Record<string, unknown>;
-    const memberId =
-      (typeof memberRecord.memberId === "number"
-        ? memberRecord.memberId
-        : undefined) ??
-      (typeof memberRecord.id === "number" ? memberRecord.id : undefined);
+    const memberId = me.member.memberId;
 
     if (typeof memberId !== "number") {
       throw new Error(
