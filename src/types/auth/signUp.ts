@@ -7,7 +7,6 @@ export interface SocialSignupCompleteReq {
   nickname: string;
   phone: string;
   verifiedPhoneToken: string;
-  agreements: AgreementItem[];
 }
 
 export type SocialSignupCompleteData = {

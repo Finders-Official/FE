@@ -1,4 +1,3 @@
-// src/pages/auth/OnBoardingPage/useOnBoardingForm.ts
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDebouncedValue } from "@/hooks/common";
@@ -9,6 +8,7 @@ import {
 } from "@/hooks/member";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useSocialSignup } from "./useSignUp";
+import { useAuthStore } from "@/store/useAuth.store";
 
 type PhonePurpose = "SIGNUP" | "MY_PAGE";
 
@@ -54,6 +54,8 @@ export function useOnBoardingForm(options?: Options) {
   } = useNicknameCheck(nicknameTrimmed, { enabled: nicknameValid, retry: 0 });
 
   const nicknameAvailable = nicknameRes?.data.available ?? false;
+
+  const setUser = useAuthStore((s) => s.setUser);
 
   const { mutate: requestCode, isPending: isRequestingCode } =
     useRequestPhoneVerification({
@@ -117,6 +119,10 @@ export function useOnBoardingForm(options?: Options) {
         refreshToken: res.data.refreshToken,
         signupToken: null,
       });
+      setUser({
+        memberId: res.data.member.memberId,
+        nickname: res.data.member.nickname,
+      });
       navigate(`/auth/login?welcome=1&nonce=${crypto.randomUUID()}`, {
         replace: true,
       });
@@ -173,10 +179,6 @@ export function useOnBoardingForm(options?: Options) {
       nickname: nicknameTrimmed,
       phone,
       verifiedPhoneToken,
-      agreements: [
-        { termsId: 1, isAgreed: true },
-        { termsId: 2, isAgreed: true },
-      ],
     });
   };
 
