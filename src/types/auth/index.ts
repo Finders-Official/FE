@@ -9,3 +9,5 @@ export type {
   SocialSignupCompleteData,
   SocialSignupCompleteReq,
 } from "./signUp";
+
+export type { Section } from "./terms";

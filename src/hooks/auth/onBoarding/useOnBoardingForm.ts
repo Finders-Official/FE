@@ -1,4 +1,3 @@
-// src/pages/auth/OnBoardingPage/useOnBoardingForm.ts
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDebouncedValue } from "@/hooks/common";
@@ -9,13 +8,22 @@ import {
 } from "@/hooks/member";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useSocialSignup } from "./useSignUp";
+import { useAuthStore } from "@/store/useAuth.store";
+
+type PhonePurpose = "SIGNUP" | "MY_PAGE";
+
+type Options = {
+  phonePurpose?: PhonePurpose;
+};
 
 function isValidNickname(n: string) {
   return /^[a-zA-Z0-9가-힣]{2,8}$/.test(n);
 }
 
-export function useOnBoardingForm() {
+export function useOnBoardingForm(options?: Options) {
   const navigate = useNavigate();
+
+  const phonePurpose: PhonePurpose = options?.phonePurpose ?? "SIGNUP";
 
   const [isSending, setIsSending] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
@@ -46,6 +54,8 @@ export function useOnBoardingForm() {
   } = useNicknameCheck(nicknameTrimmed, { enabled: nicknameValid, retry: 0 });
 
   const nicknameAvailable = nicknameRes?.data.available ?? false;
+
+  const setUser = useAuthStore((s) => s.setUser);
 
   const { mutate: requestCode, isPending: isRequestingCode } =
     useRequestPhoneVerification({
@@ -109,15 +119,19 @@ export function useOnBoardingForm() {
         refreshToken: res.data.refreshToken,
         signupToken: null,
       });
+      setUser({
+        memberId: res.data.member.memberId,
+        nickname: res.data.member.nickname,
+      });
       navigate(`/auth/login?welcome=1&nonce=${crypto.randomUUID()}`, {
         replace: true,
       });
-      //로그인 페이지로 welcome 값과 nonce 값을 넘겨줌 (애니메이션 분기 처리 위함)
     },
-    onError: (e) => console.error(e.message), //TODO: 토스트 문구나 그런 걸로 바꿀 예정
+    onError: (e) => console.error(e.message),
   });
 
-  const handleSend = () => requestCode({ phone, purpose: "SIGNUP" });
+  // ✅ 여기만 목적에 따라 달라짐
+  const handleSend = () => requestCode({ phone, purpose: phonePurpose });
 
   const handleVerify = () => {
     if (remainSec <= 0) return;
@@ -145,6 +159,18 @@ export function useOnBoardingForm() {
     setVerifiedNumber(digits);
   };
 
+  const initPhone = (rawPhone: string) => {
+    const digits = rawPhone.replace(/\D/g, "").slice(0, 11);
+    setPhone(digits);
+
+    setIsSending(false);
+    setRemainSec(0);
+    setVerifiedNumber("");
+    setIsVerified(false);
+    setRequestId(null);
+    setVerifiedPhoneToken(null);
+  };
+
   const handleSubmit = () => {
     if (!canSubmit) return;
     if (!verifiedPhoneToken) return;
@@ -153,10 +179,6 @@ export function useOnBoardingForm() {
       nickname: nicknameTrimmed,
       phone,
       verifiedPhoneToken,
-      agreements: [
-        { termsId: 1, isAgreed: true },
-        { termsId: 2, isAgreed: true },
-      ],
     });
   };
 
@@ -183,5 +205,18 @@ export function useOnBoardingForm() {
     handlePhoneChange,
     handleVerifiedNumberChange,
     handleSubmit,
+
+    // nickname edit
+    nicknameTrimmed,
+    nicknameValid,
+    nicknameAvailable,
+    isCheckingNickname,
+
+    // phone edit
+    verifiedPhoneToken,
+    initPhone,
+
+    //  지금 목적이 뭔지 화면에서 쓸 수 있게
+    phonePurpose,
   };
 }

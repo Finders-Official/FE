@@ -10,10 +10,10 @@ import ReservationInfoRow from "./ReservationInfoRow";
 
 interface ReservationDetailSectionProps {
   schedule: string;
-  estimatedCompletion: string;
+  estimatedCompletion?: string;
   taskSummary: string;
   memo?: string;
-  labMessage: string;
+  labMessage?: string;
   labName: string;
 }
 
@@ -38,11 +38,13 @@ export default function ReservationDetailSection({
           value={schedule}
         />
 
-        <ReservationInfoRow
-          icon={<ClockIcon className="h-3.5 w-3.5 text-neutral-200" />}
-          label="예상 완료 시점"
-          value={estimatedCompletion}
-        />
+        {estimatedCompletion && (
+          <ReservationInfoRow
+            icon={<ClockIcon className="h-3.5 w-3.5 text-neutral-200" />}
+            label="예상 완료 시점"
+            value={estimatedCompletion}
+          />
+        )}
 
         <ReservationInfoRow
           icon={<BriefcaseIcon className="h-3.5 w-3.5 text-neutral-200" />}
@@ -66,17 +68,19 @@ export default function ReservationDetailSection({
         )}
 
         {/* 현상소에서 드리는 글 - 없으면 안보임*/}
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-1">
-            <div className="flex h-6 w-6 items-center justify-center">
-              <PencilLineIcon className="h-3.5 w-3.5 text-neutral-200" />
+        {labMessage && (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-1">
+              <div className="flex h-6 w-6 items-center justify-center">
+                <PencilLineIcon className="h-3.5 w-3.5 text-neutral-200" />
+              </div>
+              <span className="text-base leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                {labName}에서 드리는 글
+              </span>
             </div>
-            <span className="text-base leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
-              {labName}에서 드리는 글
-            </span>
+            <TextArea value={labMessage} onChange={() => {}} disabled />
           </div>
-          <TextArea value={labMessage} onChange={() => {}} disabled />
-        </div>
+        )}
       </div>
     </section>
   );

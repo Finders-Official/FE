@@ -1,13 +1,8 @@
 import type { PhotoLabNotice } from "@/types/photoLab";
 
 interface LabNoticeSectionProps {
-  notices: PhotoLabNotice[];
+  notice: PhotoLabNotice | null;
   className?: string;
-}
-
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return `${date.getMonth() + 1}.${date.getDate()}`;
 }
 
 function getNoticeTypeLabel(type: "EVENT" | "NOTICE"): string {
@@ -15,12 +10,10 @@ function getNoticeTypeLabel(type: "EVENT" | "NOTICE"): string {
 }
 
 export default function LabNoticeSection({
-  notices,
+  notice,
   className = "",
 }: LabNoticeSectionProps) {
-  const activeNotices = notices.filter((n) => n.isActive);
-
-  if (activeNotices.length === 0) return null;
+  if (!notice) return null;
 
   return (
     <div className={`py-[1.875rem] ${className}`}>
@@ -29,17 +22,14 @@ export default function LabNoticeSection({
       </h3>
 
       <div className="bg-neutral-875 flex flex-col gap-2.5 rounded-[0.625rem] p-5">
-        {activeNotices.map((notice) => (
-          <div key={notice.noticeId} className="flex items-center gap-2">
-            <span className="bg-neutral-750 shrink-0 rounded-full px-2 py-1 text-[0.625rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-200">
-              {getNoticeTypeLabel(notice.noticeType)}
-            </span>
-            <span className="text-[0.8125rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
-              {notice.title} ({formatDate(notice.startDate)}~
-              {formatDate(notice.endDate)})
-            </span>
-          </div>
-        ))}
+        <div className="flex items-center gap-2">
+          <span className="bg-neutral-750 shrink-0 rounded-full px-2 py-1 text-[0.625rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-200">
+            {getNoticeTypeLabel(notice.noticeType)}
+          </span>
+          <span className="text-[0.8125rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+            {notice.title}
+          </span>
+        </div>
       </div>
     </div>
   );

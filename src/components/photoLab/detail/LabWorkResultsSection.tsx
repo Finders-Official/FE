@@ -1,22 +1,19 @@
 import { ChevronLeftIcon } from "@/assets/icon";
-import type { PhotoLabWorkResults } from "@/types/photoLab";
 
 interface LabWorkResultsSectionProps {
   labName: string;
-  workResults: PhotoLabWorkResults;
+  postImageUrls: string[];
   onMoreClick?: () => void;
   className?: string;
 }
 
 export default function LabWorkResultsSection({
   labName,
-  workResults,
+  postImageUrls,
   onMoreClick,
   className = "",
 }: LabWorkResultsSectionProps) {
-  const { count, previewImageUrls } = workResults;
-
-  if (previewImageUrls.length === 0) return null;
+  if (postImageUrls.length === 0) return null;
 
   return (
     <div className={`py-[1.875rem] ${className}`}>
@@ -27,7 +24,7 @@ export default function LabWorkResultsSection({
             작업 결과물
           </h3>
           <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-100">
-            {labName}에서 현상한 사진들 ({count}개)
+            {labName}에서 현상한 사진들 ({postImageUrls.length}개)
           </p>
         </div>
         {onMoreClick && (
@@ -42,10 +39,10 @@ export default function LabWorkResultsSection({
         )}
       </div>
 
-      {/* 이미지 masonry 스크롤 - CSS columns로 세로 스택 후 가로 스크롤, 일단 최선.. */}
+      {/* 이미지 masonry 스크롤 */}
       <div className="scrollbar-hide scroll-fade-right h-[16rem] overflow-x-auto overflow-y-hidden">
         <div className="flex h-full flex-col flex-wrap content-start gap-3">
-          {previewImageUrls.map((url, index) => (
+          {postImageUrls.map((url, index) => (
             <img
               key={index}
               src={url}
