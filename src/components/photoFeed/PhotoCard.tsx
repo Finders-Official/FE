@@ -1,25 +1,33 @@
 import { HeartIcon } from "@/assets/icon";
-import type { PostPreview } from "@/types/photoFeed/postPreview";
+import type { PostPreviewDto } from "@/types/mypage/post";
 import { Link } from "react-router";
 
 type Props = {
-  photo: PostPreview;
-  isLiked?: boolean;
-  onToggleLike?: (id: number) => void; // 좋아요 해제 및 등록 api에 사용 예정
+  photo: PostPreviewDto;
+  isLiked?: boolean; // optional override (없으면 photo.isLiked 사용)
+  onToggleLike?: (id: number) => void;
 };
 
-export default function PhotoCard({ photo, isLiked }: Props) {
+export default function PhotoCard({ photo, isLiked, onToggleLike }: Props) {
   const { width, height } = photo.image;
   const aspect = width && height ? `${width} / ${height}` : "1 / 1";
 
-  const heartColorClass = isLiked
+  const liked = isLiked ?? photo.isLiked;
+
+  const heartColorClass = liked
     ? "fill-orange-500 text-orange-500"
-    : "text-white fill-none ";
+    : "text-white fill-none";
+
+  const handleClickLike = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Link 이동 방지
+    e.stopPropagation();
+    onToggleLike?.(photo.postId);
+  };
+
   return (
     <div className="mb-4 [break-inside:avoid]">
       <div className="group relative">
         <Link to={`/photoFeed/post/${photo.postId}`} className="w-[10.125rem]">
-          {/* 이미지 */}
           <div
             className="relative w-full overflow-hidden rounded-2xl bg-neutral-800/60"
             style={{ aspectRatio: aspect }}
@@ -30,19 +38,27 @@ export default function PhotoCard({ photo, isLiked }: Props) {
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
             />
-
-            {/* hover 오버레이 */}
             <div className="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/10" />
           </div>
 
-          {/* 제목 */}
           <div className="mt-1 text-[0.625rem] break-words text-white">
             {photo.title}
           </div>
+
+          {/* 필요 없으면 삭제해도 됨 */}
+          <div className="mt-0.5 flex gap-2 text-[0.5625rem] text-neutral-300">
+            <span>좋아요 {photo.likeCount}</span>
+            <span>댓글 {photo.commentCount}</span>
+          </div>
         </Link>
 
-        {isLiked ? (
-          <button className="absolute right-2 bottom-7">
+        {liked ? (
+          <button
+            type="button"
+            className="absolute right-2 bottom-7"
+            onClick={handleClickLike}
+            aria-label="좋아요 토글"
+          >
             <HeartIcon className={`h-6 w-6 ${heartColorClass}`} />
           </button>
         ) : null}

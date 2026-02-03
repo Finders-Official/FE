@@ -1,21 +1,23 @@
-import { InfoBar, MyPageTabs, OptionLink } from "@/components/mypage";
-import { info } from "@/constants/mypage/info.constant";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { InfoBar } from "@/components/mypage/InfoBar";
+import { MyPageTabs } from "@/components/mypage/MyPageTab";
+import { OptionLink } from "@/components/mypage/OptionLink";
 import {
   managelist,
   servicelist,
 } from "@/constants/mypage/servicelist.constant";
+import { useMe } from "@/hooks/member";
 
 export function MyPage() {
-  // 내 정보 조희 api 연동 -> 데이터 값 캐싱 활용 예정 (zustand 사용 x)
-  const { member, roleData } = info;
-  const { user } = roleData;
+  const { data: me, isLoading } = useMe();
+
   return (
-    <div>
+    <div className="relative">
       <header className="rounded-tl-lg rounded-tr-lg bg-orange-500 p-[1rem]">
         <InfoBar
-          name={member.name}
-          nickname={user?.nickname}
-          profile={user?.profileImage}
+          name={me?.member.name}
+          nickname={me?.roleData.user?.nickname}
+          profile={me?.roleData.user?.profileImage}
         />
         <MyPageTabs />
       </header>
@@ -27,7 +29,7 @@ export function MyPage() {
               {...item}
               info={
                 item.text === "티켓 충전"
-                  ? `${user?.creditBalance ?? 0}개`
+                  ? `${me?.roleData.user?.creditBalance ?? 0}개`
                   : undefined
               }
             />
@@ -39,6 +41,7 @@ export function MyPage() {
           ))}
         </section>
       </main>
+      <LoadingSpinner open={isLoading} />
     </div>
   );
 }

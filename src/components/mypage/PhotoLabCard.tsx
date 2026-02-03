@@ -38,7 +38,7 @@ export const PhotoLabCard = ({ photoLab }: props) => {
           {/* 주소 + 거리 */}
           <section className="mt-1 flex items-center gap-1 text-[0.85rem] font-light text-neutral-200">
             <span>{photoLab.address}</span>
-            <span>({photoLab.distanceKm}km)</span>
+            <span>({photoLab.distanceText}km)</span>
           </section>
 
           {/* 하단 지표 */}
