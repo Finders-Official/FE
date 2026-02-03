@@ -31,14 +31,12 @@ export function useLogout(
     ...restOptions,
 
     onSuccess: (data, variables, onMutateResult, context) => {
-      console.log("[useLogout] onSuccess - will clear tokens");
       tokenStorage.clear();
       qc.clear();
       onSuccess?.(data, variables, onMutateResult, context);
     },
 
     onError: (error, variables, onMutateResult, context) => {
-      console.log("[useLogout] onError - will clear tokens");
       tokenStorage.clear();
       qc.clear();
       onError?.(error, variables, onMutateResult, context);
