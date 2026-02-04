@@ -43,6 +43,7 @@ import {
 } from "@/pages/mypage";
 import TransactionPage from "@/pages/photoManage/TransactionPage";
 import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
+import PhotoRestorationPage from "@/pages/photoRestoration/PhotoRestorationPage";
 
 const router = createBrowserRouter([
   {
@@ -116,6 +117,10 @@ const router = createBrowserRouter([
       {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
+      },
+      {
+        path: "/photoRestoration",
+        Component: PhotoRestorationPage,
       },
 
       // FooterLayout 적용 필요한 페이지들

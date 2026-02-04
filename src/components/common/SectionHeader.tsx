@@ -16,9 +16,9 @@ export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
   };
 
   return (
-    <div className="flex w-full items-center justify-between py-5">
+    <div className="flex w-full items-center justify-between">
       {/* 타이틀 */}
-      <h2 className="text-[20px] leading-[128%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
+      <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
         {title}
       </h2>
 
