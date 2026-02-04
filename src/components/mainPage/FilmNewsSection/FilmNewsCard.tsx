@@ -22,7 +22,7 @@ export default function FilmNewsCard({ news }: FilmNewsCardProps) {
       <img
         src={news.thumbnail}
         alt={news.title}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-57.5 w-full object-cover"
       />
 
       {/* 텍스트 컨텐츠 (하단 배치) */}

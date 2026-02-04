@@ -1,14 +1,68 @@
-// 현상소 아이템
+// 현상소 아이템 (GET /photo-labs 응답)
 export interface PhotoLabItem {
   photoLabId: number;
   name: string;
-  keywords: string[];
+  tags: string[];
   address: string;
   distanceKm: number;
   workCount: number;
-  avgWorkTimeMinutes: number | null;
+  avgWorkTime: number;
   imageUrls: string[];
   isFavorite: boolean;
+}
+
+// 즐겨찾기 응답
+export interface PhotoLabFavoriteStatus {
+  isFavorite: boolean;
+}
+
+// 페이지네이션 정보
+export interface PaginationInfo {
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+// 페이지네이션 포함 API 응답
+export interface PagedApiResponse<T> {
+  success: boolean;
+  code: string;
+  message: string;
+  timestamp: string;
+  data: T;
+  pagination: PaginationInfo;
+}
+
+// 현상소 목록 조회 파라미터
+export interface PhotoLabListParams {
+  q?: string;
+  tagIds?: number[];
+  regionId?: number;
+  date?: string;
+  page?: number;
+  size?: number;
+  lat?: number;
+  lng?: number;
+}
+
+// 태그 정의
+export interface PhotoLabTag {
+  id: number;
+  name: string;
+}
+
+// 위치 정보 상태
+export interface GeolocationState {
+  latitude: number;
+  longitude: number;
+  isLoading: boolean;
+  error: string | null;
+  isDefault: boolean;
 }
 
 // 필터 태그
@@ -33,6 +87,7 @@ export interface FilterState {
   time?: string; // "오전 10:00" 형식
   region?: string; // "서울"
   subRegion?: string; // "동작구"
+  regionId?: number; // TODO: BottomSheet API 연동 시 사용
 }
 
 // 지역 정보
@@ -84,42 +139,30 @@ export const results: PhotoLab[] = [
 ];
 
 // 현상소 상세 페이지 타입 (PL-020)
-export interface PhotoLabDetailImage {
-  imageUrl: string;
-  isMain: boolean;
-  displayOrder: number;
-}
-
-export interface PhotoLabNotice {
-  noticeId: number;
-  noticeType: "EVENT" | "NOTICE";
-  title: string;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
-}
-
-export interface PhotoLabWorkResults {
-  count: number;
-  previewImageUrls: string[];
-}
-
 export interface PhotoLabLocation {
   latitude: number;
   longitude: number;
 }
 
+export interface PhotoLabNotice {
+  noticeType: "EVENT" | "NOTICE";
+  title: string;
+}
+
 export interface PhotoLabDetail {
   photoLabId: number;
   name: string;
-  keywords: string[];
-  isFavorite: boolean;
+  imageUrls: string[];
+  tags: string[];
   address: string;
-  distanceKm: number;
-  location: PhotoLabLocation;
+  addressDetail: string | null;
+  distanceKm: number | null;
+  isFavorite: boolean;
   workCount: number;
-  avgWorkTimeMinutes: number | null;
-  images: PhotoLabDetailImage[];
-  notices: PhotoLabNotice[];
-  workResults: PhotoLabWorkResults;
+  reviewCount: number;
+  avgWorkTime: number | null;
+  mainNotice: PhotoLabNotice | null;
+  postImageUrls: string[];
+  latitude: number;
+  longitude: number;
 }

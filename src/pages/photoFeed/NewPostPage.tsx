@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { useSelectedPhotos } from "@/store/useSelectedPhotos.store";
+import { useNewPostState } from "@/store/useNewPostState.store";
 import { TextArea } from "@/components/common/TextArea";
 import { isValidText } from "@/utils/isValidText";
 import { CTA_Button, Header } from "@/components/common";
@@ -15,7 +15,8 @@ const LIMITS = {
 
 export default function NewPostPage() {
   const navigate = useNavigate();
-  const files = useSelectedPhotos((s) => s.files);
+  const files = useNewPostState((s) => s.files);
+  const setPostInfo = useNewPostState((s) => s.setPostInfo);
 
   const [titleText, setTitleText] = useState("");
   const [contentText, setContentText] = useState("");
@@ -54,6 +55,7 @@ export default function NewPostPage() {
 
   const handleNext = () => {
     if (!canGoNext) return;
+    setPostInfo(titleText, contentText);
     navigate("/photoFeed/lab/find");
   };
 
@@ -85,6 +87,7 @@ export default function NewPostPage() {
         <section className="flex flex-col gap-[0.5rem]">
           <p className="text-[0.875rem] text-white">제목</p>
           <TextArea
+            type="title"
             value={titleText}
             onChange={setTitleText}
             placeholder="제목을 입력해주세요."
@@ -96,6 +99,7 @@ export default function NewPostPage() {
         <section className="flex flex-col gap-[0.5rem]">
           <p className="text-[0.875rem] text-white">설명</p>
           <TextArea
+            type="content"
             value={contentText}
             onChange={setContentText}
             placeholder="나만의 필름 사진 이야기를 공유해주세요."

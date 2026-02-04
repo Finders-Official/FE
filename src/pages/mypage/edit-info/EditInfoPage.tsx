@@ -1,43 +1,65 @@
 import { CheckCircleIcon } from "@/assets/icon";
 import { ToastItem } from "@/components/common";
+import { DialogBox } from "@/components/common/DialogBox";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { OptionLink } from "@/components/mypage/OptionLink";
-import { info } from "@/constants/mypage/info.constant";
+import { useLogout } from "@/hooks/auth/login";
+import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
+import { useMe, useEditMe } from "@/hooks/member";
+import { formatPhoneKorea } from "@/utils/formatPhoneKorea";
+import {
+  pickPresignedPutUrl,
+  pickUploadedFilePublicUrlOrKey,
+} from "@/utils/pickPresignedUrl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
-  const { member, roleData } = info;
+  const { data: me, isLoading } = useMe({ refetchOnMount: "always" });
+  const phone = formatPhoneKorea(me?.member.phone);
+
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const [file, setFile] = useState<File | null>(null);
-  const [objectUrl, setObjectUrl] = useState<string | null>(null); // blob 전용
+  const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const objectUrlRef = useRef<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  //서버에서 온 초기 프로필 URL (string 고정)
+  const [isUploadingProfile, setIsUploadingProfile] = useState(false);
+
+  // 서버 프로필 URL
   const serverProfileUrl = useMemo(() => {
-    const url = roleData.user?.profileImage;
+    const url = me?.roleData.user?.profileImage;
     return typeof url === "string" ? url : "";
-  }, [roleData.user?.profileImage]);
+  }, [me?.roleData.user?.profileImage]);
 
-  //실제 화면에서 쓸 src: 파일 선택 시 objectUrl, 아니면 serverProfileUrl
-  const previewSrc = objectUrl ?? serverProfileUrl;
+  // src="" 방지: 없으면 null
+  const previewSrc =
+    objectUrl ?? (serverProfileUrl.length > 0 ? serverProfileUrl : null);
 
-  //토스트 관련 값
+  // 토스트
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state as LocationState) ?? null;
   const [showToast, setShowToast] = useState(false);
   const [message, setMessage] = useState("");
 
+  // 로그아웃 모달
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const { mutate: doLogout, isPending: isLogoutPending } = useLogout({
+    onSuccess: () => navigate("/auth/login", { replace: true }),
+    onError: () => navigate("/auth/login", { replace: true }),
+  });
+
+  const handleLogout = () => setIsLogoutModalOpen(true);
+
   useEffect(() => {
     const toast = state?.toast;
     if (!toast) return;
 
-    //  effect 본문에서 setState 동기 호출 금지 룰 대응: "콜백 안에서" setState
     const showId = window.setTimeout(() => {
       setMessage(toast);
       setShowToast(true);
@@ -55,6 +77,7 @@ export function EditInfoPage() {
   }, [state?.toast, navigate, location.pathname]);
 
   const openPicker = () => {
+    if (isUploadingProfile) return;
     setError(null);
     inputRef.current?.click();
   };
@@ -66,9 +89,60 @@ export function EditInfoPage() {
     return null;
   };
 
-  const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  // presigned -> put upload -> editMe 3단계 프로세스 처리
+  const { mutateAsync: issuePresignedUrl } = useIssuePresignedUrl();
+  const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
+  const { mutateAsync: editMe } = useEditMe();
+
+  const uploadProfileImage = async (picked: File) => {
+    if (!me) throw new Error("내 정보가 아직 없어요.");
+
+    const memberId = me.member.memberId;
+
+    if (typeof memberId !== "number") {
+      throw new Error(
+        "memberId를 찾을 수 없어요. me DTO(member.id/memberId) 확인해줘.",
+      );
+    }
+
+    setIsUploadingProfile(true);
+
+    try {
+      const presigned = await issuePresignedUrl({
+        category: "PROFILE",
+        fileName: picked.name,
+        memberId,
+      });
+
+      const putUrl = pickPresignedPutUrl(presigned.data);
+
+      await uploadToPresignedUrl({
+        url: putUrl,
+        file: picked,
+        contentType: picked.type || "application/octet-stream",
+      });
+
+      const publicUrlOrKey = pickUploadedFilePublicUrlOrKey(
+        presigned.data,
+        putUrl,
+      );
+
+      await editMe({ profileImageUrl: publicUrlOrKey });
+
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      setObjectUrl(null);
+      setError(null);
+    } finally {
+      setIsUploadingProfile(false);
+    }
+  };
+
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     const picked = e.target.files?.[0] ?? null;
-    e.target.value = ""; // 같은 파일 다시 선택 가능하게
+    e.target.value = "";
 
     if (!picked) return;
 
@@ -77,22 +151,28 @@ export function EditInfoPage() {
       setError(msg);
       return;
     }
-    //기존 objectURL 정리 (blob만)
+
+    // 기존 objectURL 정리
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = null;
     }
 
-    //objectURL은 이벤트 핸들러에서 생성/세팅
+    // 미리보기 세팅
     const url = URL.createObjectURL(picked);
     objectUrlRef.current = url;
     setObjectUrl(url);
 
-    setFile(picked);
-    console.log(file); // api 연동 예정
+    // 업로드 + editMe
+    try {
+      await uploadProfileImage(picked);
+    } catch (err) {
+      const m =
+        err instanceof Error ? err.message : "프로필 사진 업로드에 실패했어요.";
+      setError(m);
+    }
   };
 
-  //objectURL 생성/정리 (blob만 revoke)
   useEffect(() => {
     return () => {
       if (objectUrlRef.current) {
@@ -103,24 +183,36 @@ export function EditInfoPage() {
   }, []);
 
   return (
-    <div className="flex h-full flex-1 flex-col">
+    <div className="relative flex h-full flex-1 flex-col">
       <header className="border-neutral-875 flex flex-col items-center justify-center gap-3 border-b-[0.4rem] pt-8 pb-6">
         <div className="border-radius-100 h-[5rem] w-[5rem] overflow-hidden rounded-full border border-orange-400">
-          <img
-            src={previewSrc}
-            alt="프로필 이미지"
-            draggable={false}
-            className="h-full w-full object-cover"
-          />
+          {previewSrc ? (
+            <img
+              src={previewSrc}
+              alt="프로필 이미지"
+              draggable={false}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="h-full w-full bg-neutral-800" />
+          )}
         </div>
-        <button type="button" className="text-orange-500" onClick={openPicker}>
-          사진 수정
+
+        <button
+          type="button"
+          className="text-orange-500"
+          onClick={openPicker}
+          disabled={isUploadingProfile}
+        >
+          {isUploadingProfile ? "업로드 중..." : "사진 수정"}
         </button>
+
         {error ? (
           <p className="mt-2 text-sm text-orange-600" role="alert">
             {error}
           </p>
         ) : null}
+
         <input
           ref={inputRef}
           type="file"
@@ -129,31 +221,50 @@ export function EditInfoPage() {
           className="hidden"
         />
       </header>
+
       <main className="py-1">
         <OptionLink
           to="./nickname"
           text="닉네임"
-          info={roleData.user?.nickname}
+          info={me?.roleData.user?.nickname}
           infoColor="gray"
         />
+
         <div className="flex justify-between p-4">
           <p>이름</p>
-          <p className="mr-8 text-neutral-500">{member.name}</p>
+          <p className="mr-8 text-neutral-500">{me?.member.name}</p>
         </div>
-        <OptionLink
-          to="./phone"
-          text="연락처"
-          info={member.phone}
-          infoColor="gray"
-        />
+
+        <OptionLink to="./phone" text="연락처" info={phone} infoColor="gray" />
+
         <OptionLink
           to="./social"
           text="연동된 소셜 계정"
           info="카카오톡"
           infoColor="gray"
         />
-        <button className="p-4">로그아웃</button>
+
+        <section className="flex flex-col">
+          <button onClick={handleLogout} className="p-4 text-left">
+            로그아웃
+          </button>
+          <Link to="./withdraw" className="p-4 text-left">
+            탈퇴하기
+          </Link>
+        </section>
+
+        <DialogBox
+          isOpen={isLogoutModalOpen}
+          title="로그아웃"
+          description="정말로 로그아웃하시겠어요?"
+          confirmText={isLogoutPending ? "로그아웃 중..." : "로그아웃"}
+          onConfirm={() => doLogout()}
+          cancelText="뒤로 가기"
+          onCancel={() => setIsLogoutModalOpen(false)}
+        />
       </main>
+      <LoadingSpinner open={isLoading} />
+
       {showToast ? (
         <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
           <ToastItem message={message} icon={<CheckCircleIcon />} />

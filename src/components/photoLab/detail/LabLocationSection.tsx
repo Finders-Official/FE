@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CopyIcon, MapPinIcon } from "@/assets/icon";
+import customPinUrl from "@/assets/icon/custom-pin.svg";
 import type { PhotoLabLocation } from "@/types/photoLab";
 
 declare global {
@@ -12,8 +13,22 @@ declare global {
           options: { center: unknown; level: number },
         ) => unknown;
         LatLng: new (lat: number, lng: number) => unknown;
-        Marker: new (options: { position: unknown }) => {
+        Marker: new (options: { position: unknown; image?: unknown }) => {
           setMap: (map: unknown) => void;
+        };
+        MarkerImage: new (
+          src: string,
+          size: unknown,
+          options?: { offset: unknown },
+        ) => unknown;
+        Size: new (width: number, height: number) => unknown;
+        Point: new (x: number, y: number) => unknown;
+        CustomOverlay: new (options: {
+          content: string;
+          position: unknown;
+          yAnchor?: number;
+        }) => {
+          setMap: (map: unknown | null) => void;
         };
       };
     };
@@ -22,25 +37,28 @@ declare global {
 
 interface LabLocationSectionProps {
   address: string;
-  distanceKm: number;
-  location: PhotoLabLocation;
+  addressDetail?: string;
+  distanceKm: number | null;
+  location?: PhotoLabLocation;
   labName: string;
   className?: string;
 }
 
 export default function LabLocationSection({
   address,
+  addressDetail,
   distanceKm,
   location,
   labName,
   className = "",
 }: LabLocationSectionProps) {
+  const fullAddress = addressDetail ? `${address} ${addressDetail}` : address;
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!mapContainerRef.current || !location) return;
 
-    let marker: { setMap: (map: unknown) => void } | null = null;
+    let marker: { setMap: (map: unknown | null) => void } | null = null;
 
     const initMap = () => {
       const { kakao } = window;
@@ -56,8 +74,18 @@ export default function LabLocationSection({
         level: 3,
       });
 
+      // 커스텀 마커 이미지
+      const imageSize = new kakao.maps.Size(63, 63);
+      const imageOption = { offset: new kakao.maps.Point(31, 31) };
+      const markerImage = new kakao.maps.MarkerImage(
+        customPinUrl,
+        imageSize,
+        imageOption,
+      );
+
       marker = new kakao.maps.Marker({
         position: position,
+        image: markerImage,
       });
 
       marker.setMap(map);
@@ -72,13 +100,16 @@ export default function LabLocationSection({
         marker.setMap(null);
       }
     };
-  }, [location.latitude, location.longitude]);
+    // 최적화를 위한 원시값 사용
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location?.latitude, location?.longitude]);
 
   const handleCopyAddress = async () => {
-    await navigator.clipboard.writeText(address);
+    await navigator.clipboard.writeText(fullAddress);
   };
 
   const handleDirectionsClick = () => {
+    if (!location) return;
     const encodedName = encodeURIComponent(labName);
     const kakaoMapUrl = `https://map.kakao.com/link/to/${encodedName},${location.latitude},${location.longitude}`;
     window.open(kakaoMapUrl, "_blank");
@@ -95,15 +126,13 @@ export default function LabLocationSection({
           <button
             type="button"
             onClick={handleCopyAddress}
-            className="flex items-center gap-1.5"
+            className="flex w-full items-center gap-1.5"
           >
-            <div className="flex h-6 w-6 items-center justify-center">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center">
               <CopyIcon className="h-4 w-4 text-neutral-200" />
             </div>
-            <span className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-              {" "}
-              {/* 유저에게 뭔가 줄 반응이 필요함 */}
-              {address}
+            <span className="min-w-0 flex-1 truncate text-left text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+              {fullAddress}
             </span>
           </button>
           <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-300">

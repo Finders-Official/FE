@@ -1,32 +1,31 @@
 import { useMemo, useState } from "react";
 import { CTA_Button } from "@/components/common";
-import { photoMock } from "@/types/photo";
+import { photoMock } from "@/types/photoFeed/postPreview";
 import { useNavigate } from "react-router";
 import { PhotoQuantityStepper } from "@/components/photoManage/PhotoQuantityStepper";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 
 type QtyMap = Record<number, number>;
 
 export function PrintRequestPage() {
   const navigate = useNavigate();
 
-  //수량 초기화 -> 사진 id 별로 초기 수량을 0으로 세팅
   const [qtyById, setQtyById] = useState<QtyMap>(() => {
     const init: QtyMap = {};
-    for (const p of photoMock) init[p.id] = 0;
+    for (const p of photoMock.previewList) init[p.postId] = 0;
     return init;
   });
 
-  //수량들을 뽑아 총 장 수를 계산
+  const setTotalPrintCount = usePrintOrderStore((s) => s.setTotalPrintCount);
+
   const totalQty = useMemo(() => {
     return Object.values(qtyById).reduce((sum, v) => sum + v, 0);
   }, [qtyById]);
 
-  //해당 id 사진의 수량을 증가시킴
   const increase = (id: number) => {
     setQtyById((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
   };
 
-  //해당 id 사진의 수량을 감소시킴 (0아래 금지)
   const decrease = (id: number) => {
     setQtyById((prev) => {
       const next = (prev[id] ?? 0) - 1;
@@ -35,6 +34,7 @@ export function PrintRequestPage() {
   };
 
   const handleNext = () => {
+    setTotalPrintCount(totalQty);
     navigate("../photoManage/pickup-method");
   };
 
@@ -50,29 +50,37 @@ export function PrintRequestPage() {
       </header>
 
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] grid flex-1 grid-cols-2 gap-4 overflow-y-auto">
-        {photoMock.map((photo) => {
-          const qty = qtyById[photo.id] ?? 0;
+        {photoMock.previewList.map((photo) => {
+          const qty = qtyById[photo.postId] ?? 0;
 
           return (
-            <div key={photo.id} className="flex flex-col items-center">
+            <div key={photo.postId} className="flex flex-col items-center">
               <img
-                src={photo.src}
+                src={photo.image.imageUrl}
                 alt={photo.title}
                 className="h-40 w-40 rounded-[0.625rem]"
               />
               <PhotoQuantityStepper
                 qty={qty}
-                onDec={() => decrease(photo.id)}
-                onInc={() => increase(photo.id)}
+                onDec={() => decrease(photo.postId)}
+                onInc={() => increase(photo.postId)}
                 min={0}
-                // max={99} // 필요하면
               />
             </div>
           );
         })}
       </main>
 
-      <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900 px-4">
+      <section className="border-neutral-850 mb-6 flex items-center justify-between border-t px-4 py-5">
+        <p className="text-[1.0625rem] font-normal text-neutral-100">
+          총 인화 매수
+        </p>
+        <p className="text-[1.0625rem] font-normal text-orange-500">
+          {totalQty}장
+        </p>
+      </section>
+
+      <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900">
         <div className="flex h-full items-center">
           <CTA_Button
             text="다음"

@@ -5,27 +5,54 @@ import { TextArea } from "@/components/common/TextArea";
 import { DialogBox } from "@/components/common/DialogBox";
 import { useNavigate, useLocation } from "react-router";
 import { Header } from "@/components/common";
+import { useMutation } from "@tanstack/react-query";
+import type { PostUploadRequest } from "@/types/photoFeed/postDetail";
+import { createPost } from "@/apis/photoFeed/post.api";
 
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
+
   const { state } = useLocation();
   const labName = state?.labName;
+  const labId = state?.labId;
+  const files = state?.files;
+  const title = state?.title;
+  const content = state?.content;
 
-  if (!state?.labName) {
-    // labName 정보가 없으면 FindPhotoLabPage로 이동
-    navigate("/photoFeed/lab/find");
-  }
-
-  const [text, setText] = useState("");
+  const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const MIN = 20;
   const MAX = 300;
 
-  const isTooShort = text.length > 0 && text.length < MIN;
-  const isTooLong = text.length > MAX;
+  const isTooShort = reviewText.length > 0 && reviewText.length < MIN;
+  const isTooLong = reviewText.length > MAX;
+  const canSave = reviewText.length === 0 ? false : !isTooShort && !isTooLong;
 
-  const canSave = text.length === 0 ? false : !isTooShort && !isTooLong;
+  const createMutation = useMutation({
+    mutationFn: (payload: PostUploadRequest) => createPost(payload),
+    onSuccess: (data) => {
+      // 성공 시 생성된 게시글로 이동
+      navigate(`/photoFeed/post/${data}`);
+    },
+    onError: () => {
+      // TODO: 토스트/다이얼로그로 에러 안내
+      alert("리뷰 등록에 실패했어요. 다시 시도해주세요.");
+    },
+  });
+
+  const handleSubmit = () => {
+    const payload: PostUploadRequest = {
+      title: title,
+      content: content,
+      image: files,
+      isSelfDeveloped: false,
+      labId: labId,
+      reviewContent: reviewText,
+    };
+
+    createMutation.mutate(payload);
+  };
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
@@ -42,8 +69,8 @@ export default function ReviewPhotoLabPage() {
         </div>
 
         <TextArea
-          value={text}
-          onChange={setText}
+          value={reviewText}
+          onChange={setReviewText}
           placeholder={
             "ex) 따뜻하고 포근한 느낌이에요.\nex) 후지필름의 청량함이 잘 느껴져요."
           }
@@ -77,7 +104,7 @@ export default function ReviewPhotoLabPage() {
             confirmText="네"
             onConfirm={() => {
               setIsDialogOpen(false);
-              navigate("/photoFeed/post/1"); // TODO: API 연동 후 실제 postId로 수정
+              handleSubmit();
             }}
             cancelText="아니오"
             onCancel={() => setIsDialogOpen(false)}

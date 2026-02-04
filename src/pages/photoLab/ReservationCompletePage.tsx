@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useLocation, useParams } from "react-router";
 import { Header } from "@/components/common";
 import { LabLocationSection } from "@/components/photoLab/detail";
@@ -7,50 +7,67 @@ import {
   ReservationDetailSection,
 } from "@/components/photoLab/reservation";
 import { XMarkIcon } from "@/assets/icon";
-
-// Mock data - 추후 API로 연동
-const MOCK_DATA = {
-  schedule: "2025. 12. 12(금) 오전 11:00",
-  estimatedCompletion: "2025. 12. 12(금) 오후 3:00",
-  taskSummary: "현상 • 스캔 • 2롤",
-  labMessage:
-    "예약이 확정되었습니다. 당일취소 불가능하며 1시간 전 연락주시면 일정 변경 가능합니다. 감사합니다:)",
-  location: {
-    address: "서울 동작구 상도로 00길 00",
-    distanceKm: 1.5,
-    coordinates: {
-      latitude: 37.50287963116875,
-      longitude: 126.94790892178148,
-    },
-  },
-};
+import { useReservationDetail } from "@/hooks/photoLab";
+import { TASK_OPTIONS } from "@/constants/photoLab";
+import { formatKoreanDateTime } from "@/utils/dateFormat";
 
 interface LocationState {
-  labName?: string;
-  requestMemo?: string;
+  reservationId?: number;
+  distanceKm?: number | null;
 }
 
 export default function ReservationCompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { photoLabId } = useParams();
+  const labId = photoLabId ? Number(photoLabId) : undefined;
 
   const state = location.state as LocationState | null;
-  const labName = state?.labName ?? "파인더스 상도점";
-  const memo = state?.requestMemo;
+  const reservationId = state?.reservationId;
+  const distanceKm = state?.distanceKm ?? null;
+
+  const { data: reservation } = useReservationDetail(labId, reservationId);
+
+  // 일정
+  const schedule = useMemo(() => {
+    if (!reservation) return "";
+    return formatKoreanDateTime(
+      reservation.reservationDate,
+      reservation.reservationTime,
+    );
+  }, [reservation]);
+
+  // 작업 요약
+  const taskSummary = useMemo(() => {
+    if (!reservation) return "";
+    const taskLabels = reservation.taskTypes.map(
+      (type) => TASK_OPTIONS.find((opt) => opt.type === type)?.label ?? type,
+    );
+    return [...taskLabels, `${reservation.filmCount}롤`].join(" • ");
+  }, [reservation]);
+
+  // 예상 완료 시점
+  const estimatedCompletion = useMemo(() => {
+    if (!reservation?.estimatedCompletion) return undefined;
+    return formatKoreanDateTime(reservation.estimatedCompletion);
+  }, [reservation]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   const handleClose = () => {
-    navigate(`/photolab/${photoLabId}`, { replace: true });
+    navigate(-1);
   };
+
+  if (!reservation) {
+    return null;
+  }
 
   return (
     <div className="flex w-full flex-col">
       <Header
-        title={labName}
+        title={reservation.storeName}
         rightAction={{
           type: "icon",
           icon: <XMarkIcon className="h-3.5 w-3.5 text-neutral-200" />,
@@ -62,19 +79,23 @@ export default function ReservationCompletePage() {
         <ReservationSuccessMessage />
 
         <ReservationDetailSection
-          schedule={MOCK_DATA.schedule}
-          estimatedCompletion={MOCK_DATA.estimatedCompletion}
-          taskSummary={MOCK_DATA.taskSummary}
-          memo={memo}
-          labMessage={MOCK_DATA.labMessage}
-          labName={labName}
+          schedule={schedule}
+          estimatedCompletion={estimatedCompletion}
+          taskSummary={taskSummary}
+          memo={reservation.memo ?? undefined}
+          labName={reservation.storeName}
+          labMessage={reservation.photoLabNotice ?? undefined}
         />
 
         <LabLocationSection
-          address={MOCK_DATA.location.address}
-          distanceKm={MOCK_DATA.location.distanceKm}
-          location={MOCK_DATA.location.coordinates}
-          labName={labName}
+          address={reservation.address}
+          addressDetail={reservation.addressDetail}
+          distanceKm={distanceKm}
+          location={{
+            latitude: reservation.latitude,
+            longitude: reservation.longitude,
+          }}
+          labName={reservation.storeName}
         />
       </main>
     </div>

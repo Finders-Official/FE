@@ -1,14 +1,21 @@
-// src/entities/dropbox/constants.ts (또는 너 프로젝트의 category.constant.ts)
-
+// src/entities/dropbox/constants.ts
 import type { DropDownCategory } from "@/types/photomanage/category";
+
+// 사이즈 기본금
+export const BASE_SIZE_WON = 1400 as const;
+
+// 배송비
+export const DELIVERY_FEE_WON = 3000 as const;
+
+const formatPlusWon = (n: number) => `+${n.toLocaleString("ko-KR")}원`;
 
 export const DROPBOX_CATEGORIES: readonly DropDownCategory[] = [
   {
     key: "FILM",
     title: "필름",
-    placeholder: "추가 내용",
+    placeholder: "",
     options: [
-      { value: "SLIDE", label: "슬라이드", priceWon: 0, priceText: "0원" },
+      { value: "SLIDE", label: "슬라이드", priceWon: 0, priceText: "+0원" },
       {
         value: "COLOR_NEGATIVE",
         label: "컬러네가",
@@ -21,65 +28,97 @@ export const DROPBOX_CATEGORIES: readonly DropDownCategory[] = [
   {
     key: "PRINT_METHOD",
     title: "인화 방식",
-    placeholder: "추가 내용",
+    placeholder: "",
     options: [
-      { value: "INKJET", label: "잉크젯", priceWon: 0, priceText: "+1000원" },
-      { value: "CPRINT", label: "CPRINT", priceWon: 500, priceText: "+0원" },
+      {
+        value: "INKJET",
+        label: "잉크젯",
+        priceWon: 1000,
+        priceText: "+1,000원",
+      },
+      { value: "CPRINT", label: "CPRINT", priceWon: 0, priceText: "+0원" },
     ],
   },
   {
     key: "PAPER",
     title: "인화지",
-    placeholder: "추가 내용",
+    placeholder: "",
     options: [
       {
-        value: "FUJI_CRYSTAL",
-        label: "후지 크리스탈",
+        value: "ECO_GLOSSY_260",
+        label: "에코 글로시 260",
         priceWon: 0,
-        priceText: "0원",
+        priceText: "+0원",
       },
       {
-        value: "KODAK_PRO",
-        label: "코닥 프로",
-        priceWon: 1000,
-        priceText: "+1,000원",
-      },
-    ],
-  },
-  {
-    key: "PROCESS",
-    title: "프로세스",
-    placeholder: "추가 내용",
-    options: [
-      { value: "DEV_ONLY", label: "현상만", priceWon: 0, priceText: "0원" },
-      {
-        value: "DEV_SCAN",
-        label: "현상+스캔",
-        priceWon: 0,
-        priceText: "+(0.2배)",
+        value: "ECO_LUSTER_255",
+        label: "에코 러스터 255",
+        priceWon: 50,
+        priceText: "+50원",
       },
       {
-        value: "DEV_PRINT",
-        label: "현상+인화",
-        priceWon: 0,
-        priceText: "+(0.3배)",
+        value: "EPSON_SEMI_GLOSSY_250",
+        label: "앱손 세미글로시 250",
+        priceWon: 50,
+        priceText: "+50원",
       },
     ],
   },
   {
     key: "SIZE",
     title: "사이즈",
-    placeholder: "추가 내용",
+    // 선택 전에는 “기본금”이 보이게
+    placeholder: "",
     options: [
-      { value: "3X5", label: "3x5", priceWon: 0, priceText: "0원" },
-      { value: "4X6", label: "4x6", priceWon: 500, priceText: "+500원" },
-      { value: "5X7", label: "5x7", priceWon: 1000, priceText: "+1,000원" },
+      //  5*7은 “추가금 0”이 아니라 “기본금 포함 최종 +1,400원”
+      {
+        value: "5X7",
+        label: "5*7",
+        priceWon: BASE_SIZE_WON,
+        priceText: formatPlusWon(BASE_SIZE_WON),
+      },
+      {
+        value: "6X8",
+        label: "6*8",
+        priceWon: BASE_SIZE_WON + 1200, // 2600
+        priceText: formatPlusWon(BASE_SIZE_WON + 1200), // +2,600원
+      },
+      {
+        value: "8X10",
+        label: "8*10",
+        priceWon: BASE_SIZE_WON + 3000, // 4400
+        priceText: formatPlusWon(BASE_SIZE_WON + 3000), // +4,400원
+      },
+      {
+        value: "8X12",
+        label: "8*12",
+        priceWon: BASE_SIZE_WON + 4900, // 6300
+        priceText: formatPlusWon(BASE_SIZE_WON + 4900), // +6,300원
+      },
+      {
+        value: "A4",
+        label: "A4",
+        priceWon: BASE_SIZE_WON + 5100, // 6500
+        priceText: formatPlusWon(BASE_SIZE_WON + 5100), // +6,500원
+      },
+      {
+        value: "10X15",
+        label: "10*15",
+        priceWon: BASE_SIZE_WON + 6600, // 8000
+        priceText: formatPlusWon(BASE_SIZE_WON + 6600), // +8,000원
+      },
+      {
+        value: "11X14",
+        label: "11*14",
+        priceWon: BASE_SIZE_WON + 7000, // 8400
+        priceText: formatPlusWon(BASE_SIZE_WON + 7000), // +8,400원
+      },
     ],
   },
   {
     key: "PRINT_TYPE",
     title: "인화 유형",
-    placeholder: "추가 내용",
+    placeholder: "",
     options: [
       {
         value: "FRAME",
@@ -95,17 +134,4 @@ export const DROPBOX_CATEGORIES: readonly DropDownCategory[] = [
       },
     ],
   },
-  {
-    key: "CUTS",
-    title: "컷 수",
-    placeholder: "추가 내용",
-    options: [
-      { value: "12", label: "12컷", priceWon: 0, priceText: "0원" },
-      { value: "24", label: "24컷", priceWon: 0, priceText: "+(0.1배)" },
-      { value: "36", label: "36컷", priceWon: 0, priceText: "+(0.2배)" },
-    ],
-  },
 ] as const;
-
-export const DELIVERY_FEE_WON = 3000;
-//옵션은 변경될 수 있음

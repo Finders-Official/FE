@@ -10,7 +10,7 @@ import TagBadge from "./TagBadge";
 
 interface LabCardProps {
   lab: PhotoLabItem;
-  onFavoriteToggle?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
   onCardClick?: (photoLabId: number) => void;
   className?: string;
 }
@@ -33,7 +33,7 @@ export default function LabCard({
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId);
+    onFavoriteToggle?.(lab.photoLabId, lab.isFavorite);
   };
 
   const handleCardClick = () => {
@@ -72,10 +72,10 @@ export default function LabCard({
           {/* 상세 정보 */}
           <div className="flex flex-col gap-1.5">
             {/* 태그 */}
-            {lab.keywords.length > 0 && (
+            {lab.tags.length > 0 && (
               <div className="flex items-center gap-1 px-1">
-                {lab.keywords.map((keyword) => (
-                  <TagBadge key={keyword} label={keyword} />
+                {lab.tags.map((tag) => (
+                  <TagBadge key={tag} label={tag} />
                 ))}
               </div>
             )}
@@ -110,7 +110,7 @@ export default function LabCard({
                 </div>
 
                 {/* 소요시간 */}
-                {lab.avgWorkTimeMinutes !== null && (
+                {lab.avgWorkTime > 0 && (
                   <div className="flex items-center gap-1">
                     <div className="flex items-center">
                       <div className="flex h-6 w-6 items-center justify-center">
@@ -121,7 +121,7 @@ export default function LabCard({
                       </span>
                     </div>
                     <span className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                      {lab.avgWorkTimeMinutes}분
+                      {lab.avgWorkTime}분
                     </span>
                   </div>
                 )}
@@ -130,14 +130,15 @@ export default function LabCard({
           </div>
         </div>
 
-        {/* Images Section - 오른쪽 패딩 밖으로 확장해서 다음 이미지 살짝 보이게, 혹은 추후에 화면 끝까지 */}
+        {/* Images Section */}
         {lab.imageUrls.length > 0 && (
-          <div className="scrollbar-hide -mr-4 flex gap-2 overflow-x-auto pr-4">
+          <div className="scrollbar-hide scroll-fade-right flex gap-2 overflow-x-auto">
             {lab.imageUrls.map((url, index) => (
               <img
                 key={index}
                 src={url}
                 alt={`${lab.name} 이미지 ${index + 1}`}
+                loading="lazy"
                 className="h-[8.875rem] w-[14.5rem] shrink-0 rounded-[0.625rem] object-cover"
               />
             ))}
