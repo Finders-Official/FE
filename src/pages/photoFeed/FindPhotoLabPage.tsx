@@ -118,7 +118,7 @@ export default function FindPhotoLabPage() {
 
       // 3. createPost에 넣을 image 배열을 objectPath 기반으로 생성
       const postImages: PostImage[] = presignedList.map((p, idx) => ({
-        objectPath: p.objectPath,
+        imageUrl: p.objectPath,
         width: imageMetas[idx].width,
         height: imageMetas[idx].height,
       }));

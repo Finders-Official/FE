@@ -1,9 +1,9 @@
 import { HeartIcon } from "@/assets/icon";
-import type { PostPreviewDto } from "@/types/mypage/post";
+import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { Link } from "react-router";
 
 type Props = {
-  photo: PostPreviewDto;
+  photo: PostPreview;
   isLiked?: boolean; // optional override (없으면 photo.isLiked 사용)
   onToggleLike?: (id: number) => void;
 };
@@ -33,7 +33,7 @@ export default function PhotoCard({ photo, isLiked, onToggleLike }: Props) {
             style={{ aspectRatio: aspect }}
           >
             <img
-              src={photo.image.objectPath}
+              src={photo.image.imageUrl}
               alt={photo.title}
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"

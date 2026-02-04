@@ -24,7 +24,7 @@ export function MyPostPage() {
     () =>
       previews.map((p) => ({
         id: p.postId,
-        src: p.image.objectPath,
+        src: p.image.imageUrl,
         title: p.title,
         likes: p.likeCount,
         date: "", // 서버가 createdAt 주면 여기서 변환해서 넣기

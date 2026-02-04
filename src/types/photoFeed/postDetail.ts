@@ -71,21 +71,21 @@ export type PostCommentList = {
  * mock 데이터
  */
 const mockPostImage1: PostImage = {
-  objectPath:
+  imageUrl:
     "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",
   width: 1200,
   height: 800,
 };
 
 const mockPostImage2: PostImage = {
-  objectPath:
+  imageUrl:
     "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",
   width: 1200,
   height: 800,
 };
 
 const mockPostImage3: PostImage = {
-  objectPath:
+  imageUrl:
     "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",
   width: 1200,
   height: 800,
