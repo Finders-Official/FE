@@ -86,9 +86,9 @@ const DevelopmentHistoryPage = () => {
           </div>
         </div>
       ) : (
-        <div className="px-5 pt-6 pb-24">
+        <div className="pt-6 pb-24">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-[1.25rem] font-bold text-neutral-100">
+            <h2 className="text-[1.375rem] font-semibold text-neutral-100">
               지난 작업
             </h2>
             {isMenu && (
