@@ -10,9 +10,7 @@ import { Header } from "@/components/common";
 import { useGeolocation } from "@/hooks/photoLab/useGeolocation";
 import { useSearchLabs } from "@/hooks/photoFeed/search/useSearchLabs";
 import EmptyView from "@/components/common/EmptyView";
-import type { PostImage } from "@/types/photoFeed/postPreview";
-import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
-import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
+import { useCreatePostWithUpload } from "@/hooks/photoFeed/posts/useCreatePostWithUpload";
 import { useAuthStore } from "@/store/useAuth.store";
 
 type Step = "search" | "confirm";
@@ -23,24 +21,29 @@ export default function FindPhotoLabPage() {
   const [keyword, setKeyword] = useState("");
   const [searching, setSearching] = useState(false);
   const [checked, setChecked] = useState(false);
-
-  const title = useNewPostState((s) => s.title);
-  const content = useNewPostState((s) => s.content);
-
-  const files = useNewPostState((s) => s.files);
-  const imageMetas = useNewPostState((s) => s.imageMetas);
-
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // 사용자 ID 가져오기
+  const memberId = useAuthStore((s) => s.user?.memberId);
+
+  // 이전 페이지에서 작성한 데이터 가져오기
+  const { title, content, files, imageMetas } = useNewPostState((s) => ({
+    title: s.title,
+    content: s.content,
+    files: s.files,
+    imageMetas: s.imageMetas,
+  }));
+
+  // 자가현상 여부 및 현상소 정보 저장
+  const setIsSelfDeveloped = useNewPostState((s) => s.setIsSelfDeveloped);
+  const setLabInfo = useNewPostState((s) => s.setLabInfo);
+
+  // 선택된 현상소
   const [selectedLab, setSelectedLab] = useState<LabSearchResponse | null>(
     null,
   );
 
-  const setIsSelfDeveloped = useNewPostState((s) => s.setIsSelfDeveloped);
-  const setLabInfo = useNewPostState((s) => s.setLabInfo);
-
   const navigate = useNavigate();
-  const memberId = useAuthStore((s) => s.user?.memberId);
 
   // 사용자 위치 정보
   const { latitude, longitude, locationAgreed } = useGeolocation();
@@ -69,65 +72,24 @@ export default function FindPhotoLabPage() {
     setLabInfo(lab.labId, lab.name);
     setSelectedLab(lab);
     setSearching(false);
+    setIsSelfDeveloped(false);
     setStep("confirm");
   };
 
-  const issuePresigned = useIssuePresignedUrl();
-  const uploadToPresigned = useUploadToPresignedUrl();
-
-  // 게시글(자가현상) 등록 api 호출
-  const { mutate: createPost, isPending } = useCreatePost({
-    onSuccess: (postId) => {
-      navigate(`/photoFeed/post/${postId}`);
-    },
-    onError: (err) => {
-      console.error("게시글 생성 실패", err);
-    },
+  // GCS에 사진 등록 + 게시글 등록 API
+  const { submit, isPending } = useCreatePostWithUpload({
+    onSuccess: (postId) => navigate(`/photoFeed/post/${postId}`),
+    onError: (err) => console.error("게시글 생성 실패", err),
   });
 
   const handleSubmit = async () => {
     try {
-      // 1️. presigned-url 발급 (여러 파일)
-      const presignedResults = await Promise.all(
-        files.map((file) =>
-          issuePresigned.mutateAsync({
-            category: "POST_IMAGE",
-            ...(memberId !== undefined && { memberId }),
-            fileName: file.name,
-          }),
-        ),
-      );
-
-      // ApiResponse unwrap
-      const presignedList = presignedResults.map((res) => {
-        if (!res.success) throw new Error(res.message);
-        return res.data;
-      });
-
-      // 2️.  GCS 업로드
-      await Promise.all(
-        presignedList.map((p, idx) => {
-          const file = files[idx];
-          return uploadToPresigned.mutateAsync({
-            url: p.url,
-            file,
-            contentType: file.type,
-          });
-        }),
-      );
-
-      // 3. createPost에 넣을 image 배열을 objectPath 기반으로 생성
-      const postImages: PostImage[] = presignedList.map((p, idx) => ({
-        imageUrl: p.objectPath,
-        width: imageMetas[idx].width,
-        height: imageMetas[idx].height,
-      }));
-
-      // 4. 게시글 생성
-      createPost({
+      await submit({
         title,
         content,
-        images: postImages,
+        files,
+        imageMetas,
+        memberId,
         isSelfDeveloped: true,
       });
     } catch (e) {

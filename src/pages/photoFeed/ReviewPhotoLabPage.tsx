@@ -6,91 +6,54 @@ import { DialogBox } from "@/components/common/DialogBox";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import { useNewPostState } from "@/store/useNewPostState.store";
-import type { PostImage } from "@/types/photoFeed/postPreview";
-import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
-import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useAuthStore } from "@/store/useAuth.store";
+import { useCreatePostWithUpload } from "@/hooks/photoFeed/posts/useCreatePostWithUpload";
+
+const MIN = 20;
+const MAX = 300;
 
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
 
-  const labId = useNewPostState((s) => s.labId);
-  const labName = useNewPostState((s) => s.labName);
+  // 이전 페이지에서 작성한 데이터 가져오기
+  const { title, content, files, imageMetas, isSelfDeveloped, labId, labName } =
+    useNewPostState((s) => ({
+      title: s.title,
+      content: s.content,
+      files: s.files,
+      imageMetas: s.imageMetas,
+      labId: s.labId,
+      labName: s.labName,
+      isSelfDeveloped: s.isSelfDeveloped,
+    }));
 
-  const title = useNewPostState((s) => s.title);
-  const content = useNewPostState((s) => s.content);
-
-  const files = useNewPostState((s) => s.files);
-  const imageMetas = useNewPostState((s) => s.imageMetas);
+  // 사용자 ID 가져오기
+  const memberId = useAuthStore((s) => s.user?.memberId);
 
   const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const MIN = 20;
-  const MAX = 300;
-
+  // 리뷰 글자수 제한 적용
   const isTooShort = reviewText.length > 0 && reviewText.length < MIN;
   const isTooLong = reviewText.length > MAX;
   const canSave = reviewText.length === 0 ? false : !isTooShort && !isTooLong;
 
-  const issuePresigned = useIssuePresignedUrl();
-  const uploadToPresigned = useUploadToPresignedUrl();
-
-  const memberId = useAuthStore((s) => s.user?.memberId);
-
-  const { mutate: createPost, isPending } = useCreatePost({
-    onSuccess: (postId) => {
-      navigate(`/photoFeed/post/${postId}`);
-    },
-    onError: (err) => {
-      console.error("게시글 생성 실패", err);
-    },
+  // 사진 GCS에 등록 + 게시글 등록
+  const { submit, isPending } = useCreatePostWithUpload({
+    onSuccess: (postId) => navigate(`/photoFeed/post/${postId}`),
+    onError: (err) => console.error("게시글 생성 실패", err),
   });
 
   const handleSubmit = async () => {
     try {
-      // 1️. presigned-url 발급 (여러 파일)
-      const presignedResults = await Promise.all(
-        files.map((file) =>
-          issuePresigned.mutateAsync({
-            category: "POST_IMAGE",
-            ...(memberId !== undefined && { memberId }),
-            fileName: file.name,
-          }),
-        ),
-      );
-
-      // ApiResponse unwrap
-      const presignedList = presignedResults.map((res) => {
-        if (!res.success) throw new Error(res.message);
-        return res.data; // { url, objectPath, expiresAtEpochSecond }
-      });
-
-      // 2️.  GCS 업로드
-      await Promise.all(
-        presignedList.map((p, idx) =>
-          uploadToPresigned.mutateAsync({
-            url: p.url,
-            file: files[idx],
-            contentType: files[idx].type,
-          }),
-        ),
-      );
-
-      // 3. createPost에 넣을 image 배열을 objectPath 기반으로 생성
-      const postImages: PostImage[] = presignedList.map((p, idx) => ({
-        imageUrl: p.objectPath,
-        width: imageMetas[idx].width,
-        height: imageMetas[idx].height,
-      }));
-
-      // 4. 게시글 생성
-      createPost({
+      await submit({
         title,
         content,
-        images: postImages,
-        isSelfDeveloped: false,
+        files,
+        imageMetas,
+        memberId,
         labId,
+        isSelfDeveloped,
         reviewContent: reviewText,
       });
     } catch (e) {
