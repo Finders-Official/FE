@@ -13,6 +13,7 @@ import EmptyView from "@/components/common/EmptyView";
 import type { PostImage } from "@/types/photoFeed/postPreview";
 import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
+import { useAuthStore } from "@/store/useAuth.store";
 
 type Step = "search" | "confirm";
 
@@ -39,6 +40,7 @@ export default function FindPhotoLabPage() {
   const setLabInfo = useNewPostState((s) => s.setLabInfo);
 
   const navigate = useNavigate();
+  const memberId = useAuthStore((s) => s.user?.memberId);
 
   // 사용자 위치 정보
   const { latitude, longitude, locationAgreed } = useGeolocation();
@@ -90,7 +92,7 @@ export default function FindPhotoLabPage() {
         files.map((file) =>
           issuePresigned.mutateAsync({
             category: "POST_IMAGE",
-            memberId: 23,
+            ...(memberId !== undefined && { memberId }),
             fileName: file.name,
           }),
         ),
@@ -116,7 +118,7 @@ export default function FindPhotoLabPage() {
 
       // 3. createPost에 넣을 image 배열을 objectPath 기반으로 생성
       const postImages: PostImage[] = presignedList.map((p, idx) => ({
-        imageUrl: p.objectPath,
+        objectPath: p.objectPath,
         width: imageMetas[idx].width,
         height: imageMetas[idx].height,
       }));
@@ -125,7 +127,7 @@ export default function FindPhotoLabPage() {
       createPost({
         title,
         content,
-        image: postImages,
+        images: postImages,
         isSelfDeveloped: true,
       });
     } catch (e) {

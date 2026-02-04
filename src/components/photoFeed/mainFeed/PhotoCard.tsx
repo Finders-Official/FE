@@ -33,7 +33,7 @@ export default function PhotoCard({ photo, isLiked, onToggleLike }: Props) {
             style={{ aspectRatio: aspect }}
           >
             <img
-              src={photo.image.imageUrl}
+              src={photo.image.objectPath}
               alt={photo.title}
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
@@ -43,12 +43,6 @@ export default function PhotoCard({ photo, isLiked, onToggleLike }: Props) {
 
           <div className="mt-1 text-[0.625rem] break-words text-white">
             {photo.title}
-          </div>
-
-          {/* 필요 없으면 삭제해도 됨 */}
-          <div className="mt-0.5 flex gap-2 text-[0.5625rem] text-neutral-300">
-            <span>좋아요 {photo.likeCount}</span>
-            <span>댓글 {photo.commentCount}</span>
           </div>
         </Link>
 

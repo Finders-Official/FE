@@ -13,7 +13,7 @@ export type PostPreview = {
 };
 
 export type PostImage = {
-  imageUrl: string;
+  objectPath: string;
   width: number;
   height: number;
 };
@@ -30,7 +30,7 @@ export const photoMock: PhotoFeedResponse = {
     {
       postId: 7,
       image: {
-        imageUrl:
+        objectPath:
           "https://storage.googleapis.com/finders-public/temp/test-image-1.jpg",
         width: 1080,
         height: 1080,
@@ -43,7 +43,7 @@ export const photoMock: PhotoFeedResponse = {
     {
       postId: 6,
       image: {
-        imageUrl:
+        objectPath:
           "https://storage.googleapis.com/finders-public/temp/test-image-2.jpg",
         width: 1080,
         height: 1350,
@@ -56,7 +56,7 @@ export const photoMock: PhotoFeedResponse = {
     {
       postId: 5,
       image: {
-        imageUrl:
+        objectPath:
           "https://storage.googleapis.com/finders-public/temp/test-image-3.jpg",
         width: 1080,
         height: 720,

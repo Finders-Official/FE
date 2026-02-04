@@ -9,6 +9,7 @@ import { useNewPostState } from "@/store/useNewPostState.store";
 import type { PostImage } from "@/types/photoFeed/postPreview";
 import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
+import { useAuthStore } from "@/store/useAuth.store";
 
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ export default function ReviewPhotoLabPage() {
   const issuePresigned = useIssuePresignedUrl();
   const uploadToPresigned = useUploadToPresignedUrl();
 
+  const memberId = useAuthStore((s) => s.user?.memberId);
+
   const { mutate: createPost, isPending } = useCreatePost({
     onSuccess: (postId) => {
       navigate(`/photoFeed/post/${postId}`);
@@ -51,7 +54,7 @@ export default function ReviewPhotoLabPage() {
         files.map((file) =>
           issuePresigned.mutateAsync({
             category: "POST_IMAGE",
-            memberId: 23,
+            ...(memberId !== undefined && { memberId }),
             fileName: file.name,
           }),
         ),
@@ -76,7 +79,7 @@ export default function ReviewPhotoLabPage() {
 
       // 3. createPost에 넣을 image 배열을 objectPath 기반으로 생성
       const postImages: PostImage[] = presignedList.map((p, idx) => ({
-        imageUrl: p.objectPath,
+        objectPath: p.objectPath,
         width: imageMetas[idx].width,
         height: imageMetas[idx].height,
       }));
@@ -85,7 +88,7 @@ export default function ReviewPhotoLabPage() {
       createPost({
         title,
         content,
-        image: postImages,
+        images: postImages,
         isSelfDeveloped: false,
         labId,
         reviewContent: reviewText,

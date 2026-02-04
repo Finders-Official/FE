@@ -9,7 +9,7 @@ export type Post = {
 };
 
 export interface PostPreviewImageDto {
-  imageUrl: string;
+  objectPath: string;
   width: number;
   height: number;
 }

@@ -56,7 +56,7 @@ export default function PostPage() {
             date={mock.createdAt}
             isOwner={true}
           />
-          <PhotoCarousel images={mock.image} altPrefix={mock.title} />
+          <PhotoCarousel images={mock.images} altPrefix={mock.title} />
           <div className="flex h-5 w-full justify-start gap-3 pl-1">
             <div className="flex items-center gap-1">
               <button
