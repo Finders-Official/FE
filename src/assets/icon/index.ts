@@ -19,6 +19,7 @@ export { default as CloseIcon } from "./close.svg?react";
 export { default as CopyIcon } from "./copy.svg?react";
 export { default as CopyFillIcon } from "./copy-filled.svg?react";
 export { default as CustomPinIcon } from "./custom-pin.svg?react";
+export { default as DefaultProfileIcon } from "./defaultProfile.svg?react";
 export { default as DownloadIcon } from "./download.svg?react";
 export { default as EmptyBoxIcon } from "./empty-box.svg?react";
 export { default as EmptyCheckCircleIcon } from "./empty-check-circle.svg?react";

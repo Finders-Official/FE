@@ -1,4 +1,4 @@
-import { EllipsisVerticalIcon } from "@/assets/icon";
+import { DefaultProfileIcon, EllipsisVerticalIcon } from "@/assets/icon";
 import { useState } from "react";
 import ActionSheet from "./ActionSheet";
 import { timeAgo } from "@/utils/timeAgo";
@@ -42,13 +42,21 @@ export default function Profile({
   return (
     <div className="flex items-start gap-2">
       {/* avatar */}
-      <img
-        src={avatarUrl}
-        alt={userName}
-        className="h-9 w-9 rounded-full"
-        width="36"
-        height="36"
-      />
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt={userName}
+          className="h-9 w-9 rounded-full"
+          width="36"
+          height="36"
+        />
+      ) : (
+        <DefaultProfileIcon
+          className="h-9 w-9 rounded-full"
+          width="36"
+          height="36"
+        />
+      )}
 
       {/* content */}
       <div className="flex flex-1 flex-col">
