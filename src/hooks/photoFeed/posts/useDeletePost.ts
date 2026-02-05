@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePost } from "@/apis/photoFeed/post.api";
 
-export function useDeletePost() {
+export function useDeletePost(postId: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ["deletePost"],
-    mutationFn: (postId: number) => deletePost(postId),
+    mutationKey: ["deletePost", postId],
+    mutationFn: () => deletePost(postId),
 
     onSuccess: (_data, postId) => {
       // 1) 피드 리스트 최신화

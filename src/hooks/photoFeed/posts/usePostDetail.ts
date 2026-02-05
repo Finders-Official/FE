@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
  */
 export function usePostDetail(postId: number) {
   return useQuery<PostDetailResponse>({
-    queryKey: ["postDetail"],
+    queryKey: ["postDetail", postId],
     queryFn: () => getPostDetail(postId),
   });
 }

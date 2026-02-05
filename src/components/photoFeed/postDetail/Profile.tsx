@@ -36,8 +36,8 @@ export default function Profile({
   const [year, month, day] = splitDate.split("-");
   const formattedDate = `${year}년 ${Number(month)}월 ${Number(day)}일`;
 
-  const { mutate: deletePost } = useDeletePost();
-  const { mutate: deleteComment } = useDeleteComment();
+  const { mutate: deletePost } = useDeletePost(objectId);
+  const { mutate: deleteComment } = useDeleteComment(objectId);
 
   return (
     <div className="flex items-start gap-2">
@@ -118,7 +118,7 @@ export default function Profile({
               label: "삭제하기",
               variant: "danger",
               onClick: () => {
-                deletePost(objectId);
+                deletePost();
               },
             },
           ]}
@@ -130,17 +130,10 @@ export default function Profile({
           onClose={() => setMoreMenu(false)}
           actions={[
             {
-              label: "신고하기",
-              onClick: () => {
-                // 신고 API 호출
-                console.log("신고");
-              },
-            },
-            {
               label: "삭제하기",
               variant: "danger",
               onClick: () => {
-                deleteComment(objectId);
+                deleteComment();
               },
             },
           ]}
