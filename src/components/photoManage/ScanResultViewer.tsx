@@ -79,11 +79,43 @@ const ScanResultViewer = ({
 
   const handleDownload = () => {
     console.log(`이미지 다운로드: ${currentImage}`);
+    const fileName = `scan_${currentIndex + 1}.jpg`;
+    downloadImage(currentImage, fileName);
   };
 
-  const handleDownloadAll = () => {
-    console.log("모든 이미지 다운로드");
+  const handleDownloadAll = async () => {
     setIsMenuOpen(false);
+
+    // 순차적으로 다운로드 (너무 많으면 브라우저 차단이 걸릴 수 있음)
+    for (let i = 0; i < images.length; i++) {
+      const fileName = `scan_all_${i + 1}.jpg`;
+      await downloadImage(images[i], fileName);
+
+      // 브라우저가 한 번에 너무 많은 다운로드를 시도하는 것을 방지하기 위한 미세한 지연
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+  };
+
+  const downloadImage = async (imageUrl: string, fileName?: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      // 파일명 지정 (지정하지 않으면 브라우저가 판단)
+      link.download = fileName || imageUrl.split("/").pop() || "download-image";
+
+      document.body.appendChild(link);
+      link.click();
+
+      // 메모리 누수 방지
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("다운로드 중 오류 발생:", error);
+    }
   };
 
   return (
@@ -144,7 +176,7 @@ const ScanResultViewer = ({
             }}
             className="border-neutral-750 bg-neutral-1000/40 absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border text-neutral-400 backdrop-blur-xs transition-transform active:scale-95"
           >
-            <DownloadIcon className="h-5 w-5" />
+            <DownloadIcon className="h-5 w-5 border-neutral-400" />
           </button>
         </div>
       </div>
@@ -156,7 +188,7 @@ const ScanResultViewer = ({
             <button
               key={img}
               onClick={() => setCurrentIndex(idx)}
-              className={`relative h-15 w-15 shrink-0 overflow-hidden rounded-[10] border transition-all ${
+              className={`relative h-15 w-15 shrink-0 overflow-hidden rounded-[0.625rem] border transition-all ${
                 currentIndex === idx
                   ? "border-neutral-100 opacity-100"
                   : "border-transparent opacity-50 hover:opacity-80"
