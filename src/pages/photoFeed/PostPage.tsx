@@ -6,18 +6,17 @@ import {
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
 import { Header, ToastItem } from "@/components/common";
-import { mockSelfPostResponse } from "@/types/photoFeed/postDetail";
 import { commentMock } from "@/types/photoFeed/postDetail";
 import { timeAgo } from "@/utils/timeAgo";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import Profile from "@/components/photoFeed/postDetail/Profile";
-import { useNavigate } from "react-router";
 import CommentInput from "@/components/photoFeed/postDetail/CommentInput";
+import { useNavigate, useParams } from "react-router";
+import { usePostDetail } from "@/hooks/photoFeed/posts/usePostDetail";
 
 export default function PostPage() {
-  const mock = mockSelfPostResponse;
   const [toastVisible, setToastVisible] = useState(true);
   const [mounted, setMounted] = useState(true);
   const [commentVisible, setCommentVisible] = useState(false);
@@ -25,6 +24,12 @@ export default function PostPage() {
   const [comment, setComment] = useState("");
 
   const navigate = useNavigate();
+
+  // 게시글 Id 가져오기
+  const { postId } = useParams<{ postId: string }>();
+  const numericPostId = Number(postId);
+
+  const { data, isPending, isError } = usePostDetail(numericPostId);
 
   useEffect(() => {
     // 1. 1.6초 후 fade-out 시작
@@ -42,92 +47,117 @@ export default function PostPage() {
       clearTimeout(removeTimer);
     };
   }, []);
-  return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
-      {/** TODO: 상황별로 다른 곳으로 navigate 되어야 함  */}
-      <Header title="" showBack onBack={() => navigate("/photoFeed")} />
-      <section className="flex flex-col gap-[0.625rem] pb-10">
-        {/** 상단 */}
-        <div className="flex flex-col gap-[0.625rem]">
-          <Profile
-            type="post"
-            userName={mock.user?.nickname}
-            avatarUrl={mock.user?.profileImageUrl}
-            date={mock.createdAt}
-            isOwner={true}
-          />
-          <PhotoCarousel images={mock.images} altPrefix={mock.title} />
-          <div className="flex h-5 w-full justify-start gap-3 pl-1">
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                aria-label="좋아요"
-                aria-pressed={isLiked}
-                onClick={() => setIsLiked((prev) => !prev)}
-              >
-                {isLiked ? (
-                  <HeartFillIcon className="h-[1.25rem] w-[1.40625rem] text-orange-500" />
-                ) : (
-                  <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
-                )}
-              </button>
-              <p className="text-[0.8125rem]">{mock.likeCount}</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                aria-label="댓글 보기"
-                onClick={() => {
-                  setCommentVisible(true);
-                }}
-              >
-                <ChatBubbleEmptyIcon className="h-[1.25rem] w-[1.25rem]" />
-              </button>
-              <p className="text-[0.8125rem]">{mock.commentCount}</p>
-            </div>
-          </div>
-        </div>
 
-        {/** 하단 */}
-        <div className="flex flex-col gap-4">
-          {/** 게시글 제목 및 내용 */}
-          <div className="flex flex-col gap-2">
-            <p className="text-semi-bold text-[1.0625rem] text-neutral-100">
-              {mock.title}
-            </p>
-            <p className="text-[0.9375rem] text-neutral-300">{mock.content}</p>
-          </div>
+  const errorResponse = () => {
+    return (
+      <div className="flex items-center justify-center py-6 text-red-400">
+        데이터 불러오기에 실패했어요.
+      </div>
+    );
+  };
 
-          {/** 현상소 후기 */}
-          {mock.isSelfDeveloped ? (
-            <div className="border-neutral-850 flex items-center gap-2 rounded-2xl border bg-neutral-900 px-5 py-4 text-left text-neutral-500">
-              <HomeIcon className="h-4 w-4 font-semibold" />
-              <p className="text-[1rem] font-semibold text-neutral-200">
-                자가 현상했어요
-              </p>
-            </div>
-          ) : (
-            <button
-              type="button"
-              aria-label="현상소 보러가기"
-              onClick={() => navigate("/photoFeed/lab/review")} // TODO: PL-020으로 이동
-              className="bg-neutral-875 border-neutral-850 flex flex-col gap-1 rounded-2xl border px-5 py-4 text-left text-neutral-500"
-            >
-              <div className="gap-2">
-                <div className="flex items-center gap-2">
-                  <HomeIcon className="h-4 w-4 font-semibold" />
-                  <p className="text-[1rem] font-semibold text-neutral-200">
-                    {mock.labReview?.labName} 이용
-                  </p>
+  const renderPostDetail = () => {
+    if (isPending) {
+      return <></>; // TODO: 스켈레톤 UI
+    }
+    if (isError) return errorResponse();
+    if (data) {
+      return (
+        <>
+          {/** TODO: 상황별로 다른 곳으로 navigate 되어야 함  */}
+          <Header title="" showBack onBack={() => navigate("/photoFeed")} />
+          <section className="flex flex-col gap-[0.625rem] pb-10">
+            {/** 상단 */}
+            <div className="flex flex-col gap-[0.625rem]">
+              <Profile
+                type="post"
+                userName={data.user?.nickname}
+                avatarUrl={data.user?.profileImageUrl}
+                date={data.createdAt}
+                isOwner={true}
+              />
+              <PhotoCarousel images={data.images} altPrefix={data.title} />
+              <div className="flex h-5 w-full justify-start gap-3 pl-1">
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label="좋아요"
+                    aria-pressed={isLiked}
+                    onClick={() => setIsLiked((prev) => !prev)}
+                  >
+                    {isLiked ? (
+                      <HeartFillIcon className="h-[1.25rem] w-[1.40625rem] text-orange-500" />
+                    ) : (
+                      <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
+                    )}
+                  </button>
+                  <p className="text-[0.8125rem]">{data.likeCount}</p>
                 </div>
-                <p className="text-[0.875rem] text-neutral-200">
-                  {mock.labReview?.content}
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label="댓글 보기"
+                    onClick={() => {
+                      setCommentVisible(true);
+                    }}
+                  >
+                    <ChatBubbleEmptyIcon className="h-[1.25rem] w-[1.25rem]" />
+                  </button>
+                  <p className="text-[0.8125rem]">{data.commentCount}</p>
+                </div>
+              </div>
+            </div>
+
+            {/** 하단 */}
+            <div className="flex flex-col gap-4">
+              {/** 게시글 제목 및 내용 */}
+              <div className="flex flex-col gap-2">
+                <p className="text-semi-bold text-[1.0625rem] text-neutral-100">
+                  {data.title}
+                </p>
+                <p className="text-[0.9375rem] text-neutral-300">
+                  {data.content}
                 </p>
               </div>
-            </button>
-          )}
-        </div>
-      </section>
+
+              {/** 현상소 후기 */}
+              {data.isSelfDeveloped ? (
+                <div className="border-neutral-850 flex items-center gap-2 rounded-2xl border bg-neutral-900 px-5 py-4 text-left text-neutral-500">
+                  <HomeIcon className="h-4 w-4 font-semibold" />
+                  <p className="text-[1rem] font-semibold text-neutral-200">
+                    자가 현상했어요
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  aria-label="현상소 보러가기"
+                  onClick={() => navigate("/photoFeed/lab/review")} // TODO: PL-020으로 이동
+                  className="bg-neutral-875 border-neutral-850 flex flex-col gap-1 rounded-2xl border px-5 py-4 text-left text-neutral-500"
+                >
+                  <div className="gap-2">
+                    <div className="flex items-center gap-2">
+                      <HomeIcon className="h-4 w-4 font-semibold" />
+                      <p className="text-[1rem] font-semibold text-neutral-200">
+                        {data.labReview?.labName} 이용
+                      </p>
+                    </div>
+                    <p className="text-[0.875rem] text-neutral-200">
+                      {data.labReview?.content}
+                    </p>
+                  </div>
+                </button>
+              )}
+            </div>
+          </section>
+        </>
+      );
+    }
+  };
+
+  return (
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
+      {data && renderPostDetail()}
 
       {/** toast 메세지 */}
       {/** TODO: 게시글 작성 직후에만 뜨도록 변경 예정 */}
@@ -164,7 +194,7 @@ export default function PostPage() {
                     avatarUrl={user?.profileImageUrl}
                     comment={content}
                     time={timeAgo(createdAt)}
-                    isOwner={mock.user?.userId === user?.userId}
+                    isOwner={data.isMine}
                   />
                 ))}
               </div>
