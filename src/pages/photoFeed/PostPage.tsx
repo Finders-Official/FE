@@ -6,8 +6,6 @@ import {
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
 import { Header, ToastItem } from "@/components/common";
-import { commentMock } from "@/types/photoFeed/postDetail";
-import { timeAgo } from "@/utils/timeAgo";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
@@ -15,6 +13,7 @@ import Profile from "@/components/photoFeed/postDetail/Profile";
 import CommentInput from "@/components/photoFeed/postDetail/CommentInput";
 import { useNavigate, useParams } from "react-router";
 import { usePostDetail } from "@/hooks/photoFeed/posts/usePostDetail";
+import { useInfiniteComments } from "@/hooks/photoFeed/comments/useInfiniteComments";
 
 export default function PostPage() {
   const [toastVisible, setToastVisible] = useState(true);
@@ -29,7 +28,20 @@ export default function PostPage() {
   const { postId } = useParams<{ postId: string }>();
   const numericPostId = Number(postId);
 
-  const { data, isPending, isError } = usePostDetail(numericPostId);
+  // 게시글 상세 정보 조회
+  const {
+    data: postDetail,
+    isPending: isPostPending,
+    isError: isPostError,
+  } = usePostDetail(numericPostId);
+
+  // 게시글 댓글 조회
+  const {
+    data,
+    isPending: isCommentPending,
+    isError: isCommentError,
+  } = useInfiniteComments(numericPostId);
+  const comments = data?.pages.flatMap((c) => c.commentList) ?? [];
 
   useEffect(() => {
     // 1. 1.6초 후 fade-out 시작
@@ -57,10 +69,10 @@ export default function PostPage() {
   };
 
   const renderPostDetail = () => {
-    if (isPending) {
+    if (isPostPending) {
       return <></>; // TODO: 스켈레톤 UI
     }
-    if (isError) return errorResponse();
+    if (isPostError) return errorResponse();
     if (data) {
       return (
         <>
@@ -71,12 +83,15 @@ export default function PostPage() {
             <div className="flex flex-col gap-[0.625rem]">
               <Profile
                 type="post"
-                userName={data.user?.nickname}
-                avatarUrl={data.user?.profileImageUrl}
-                date={data.createdAt}
+                userName={postDetail.nickname}
+                avatarUrl={postDetail.profileImageUrl}
+                date={postDetail.createdAt}
                 isOwner={true}
               />
-              <PhotoCarousel images={data.images} altPrefix={data.title} />
+              <PhotoCarousel
+                images={postDetail.images}
+                altPrefix={postDetail.title}
+              />
               <div className="flex h-5 w-full justify-start gap-3 pl-1">
                 <div className="flex items-center gap-1">
                   <button
@@ -91,7 +106,7 @@ export default function PostPage() {
                       <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
                     )}
                   </button>
-                  <p className="text-[0.8125rem]">{data.likeCount}</p>
+                  <p className="text-[0.8125rem]">{postDetail.likeCount}</p>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -103,7 +118,7 @@ export default function PostPage() {
                   >
                     <ChatBubbleEmptyIcon className="h-[1.25rem] w-[1.25rem]" />
                   </button>
-                  <p className="text-[0.8125rem]">{data.commentCount}</p>
+                  <p className="text-[0.8125rem]">{postDetail.commentCount}</p>
                 </div>
               </div>
             </div>
@@ -113,15 +128,15 @@ export default function PostPage() {
               {/** 게시글 제목 및 내용 */}
               <div className="flex flex-col gap-2">
                 <p className="text-semi-bold text-[1.0625rem] text-neutral-100">
-                  {data.title}
+                  {postDetail.title}
                 </p>
                 <p className="text-[0.9375rem] text-neutral-300">
-                  {data.content}
+                  {postDetail.content}
                 </p>
               </div>
 
               {/** 현상소 후기 */}
-              {data.isSelfDeveloped ? (
+              {postDetail.isSelfDeveloped ? (
                 <div className="border-neutral-850 flex items-center gap-2 rounded-2xl border bg-neutral-900 px-5 py-4 text-left text-neutral-500">
                   <HomeIcon className="h-4 w-4 font-semibold" />
                   <p className="text-[1rem] font-semibold text-neutral-200">
@@ -139,11 +154,11 @@ export default function PostPage() {
                     <div className="flex items-center gap-2">
                       <HomeIcon className="h-4 w-4 font-semibold" />
                       <p className="text-[1rem] font-semibold text-neutral-200">
-                        {data.labReview?.labName} 이용
+                        {postDetail.labReview?.labName} 이용
                       </p>
                     </div>
                     <p className="text-[0.875rem] text-neutral-200">
-                      {data.labReview?.content}
+                      {postDetail.labReview?.content}
                     </p>
                   </div>
                 </button>
@@ -155,9 +170,70 @@ export default function PostPage() {
     }
   };
 
+  const renderComments = () => {
+    if (isCommentPending) {
+      // TODO 스켈레톤
+      return <></>;
+    }
+    if (isCommentError) {
+      // TODO error
+      return <></>;
+    }
+    return (
+      <>
+        {commentVisible && comments && (
+          <BottomSheet
+            open={commentVisible}
+            onClose={() => setCommentVisible(false)}
+            title="댓글"
+          >
+            <div className="flex h-full flex-col gap-1">
+              <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex flex-col gap-5">
+                  {comments.map(
+                    ({
+                      commentId,
+                      nickname,
+                      profileImageUrl,
+                      content,
+                      createdAt,
+                      isMine,
+                    }) => (
+                      <Profile
+                        key={commentId}
+                        type="comment"
+                        userName={nickname}
+                        avatarUrl={profileImageUrl}
+                        comment={content}
+                        date={createdAt}
+                        isOwner={isMine}
+                      />
+                    ),
+                  )}
+                </div>
+              </div>
+              <div className="bg-neutral-875 h-10 shrink-0">
+                <CommentInput
+                  value={comment}
+                  onChange={setComment}
+                  onSubmit={() => {
+                    // API 호출
+                    // 성공하면 초기화
+                    setComment("");
+                  }}
+                  placeholder="이 현상에 대한 이야기를 남겨보세요!"
+                />
+              </div>
+            </div>
+          </BottomSheet>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
-      {data && renderPostDetail()}
+      {postDetail && renderPostDetail()}
 
       {/** toast 메세지 */}
       {/** TODO: 게시글 작성 직후에만 뜨도록 변경 예정 */}
@@ -177,43 +253,7 @@ export default function PostPage() {
       )}
 
       {/** 댓글창(바텀시트) */}
-      {commentVisible && (
-        <BottomSheet
-          open={commentVisible}
-          onClose={() => setCommentVisible(false)}
-          title="댓글"
-        >
-          <div className="flex h-full flex-col gap-1">
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="flex flex-col gap-5">
-                {commentMock.map(({ commentId, user, content, createdAt }) => (
-                  <Profile
-                    key={commentId}
-                    type="comment"
-                    userName={user?.nickname}
-                    avatarUrl={user?.profileImageUrl}
-                    comment={content}
-                    time={timeAgo(createdAt)}
-                    isOwner={data?.user?.userId === user?.userId}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="bg-neutral-875 h-10 shrink-0">
-              <CommentInput
-                value={comment}
-                onChange={setComment}
-                onSubmit={() => {
-                  // API 호출
-                  // 성공하면 초기화
-                  setComment("");
-                }}
-                placeholder="이 현상에 대한 이야기를 남겨보세요!"
-              />
-            </div>
-          </div>
-        </BottomSheet>
-      )}
+      {comments && renderComments()}
     </div>
   );
 }

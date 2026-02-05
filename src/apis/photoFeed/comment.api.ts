@@ -4,16 +4,26 @@ import type {
   PostComment,
   PostCommentList,
 } from "@/types/photoFeed/postDetail";
+import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
 
 /**
  * 게시글 댓글 조회
  */
-export async function getComments(postId: number): Promise<PostCommentList> {
+export async function getComments(
+  postId: number,
+  pageParam: number = 0,
+): Promise<PostCommentList> {
   const res = await axiosInstance.get<ApiResponse<PostCommentList>>(
     `/posts/${postId}/comments`,
+    {
+      params: {
+        page: pageParam,
+        size: PAGE_SIZE,
+      },
+    },
   );
 
-  return res.data.data; // 게시글 댓글 리스트 return
+  return res.data.data;
 }
 
 /**
