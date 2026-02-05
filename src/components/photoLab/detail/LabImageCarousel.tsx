@@ -1,4 +1,4 @@
-import { useCarousel } from "@/hooks/useCarousel";
+import { useCarousel } from "@/hooks/common/useCarousel";
 
 type Props = {
   images: string[];

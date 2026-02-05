@@ -194,7 +194,7 @@ export default function PostPage() {
                     avatarUrl={user?.profileImageUrl}
                     comment={content}
                     time={timeAgo(createdAt)}
-                    isOwner={data.isMine}
+                    isOwner={data?.user?.userId === user?.userId}
                   />
                 ))}
               </div>

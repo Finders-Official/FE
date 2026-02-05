@@ -12,7 +12,7 @@ import {
   KeywordSuggestionSection,
   LabPreviewSection,
 } from "@/components/photoLab/search";
-import { useRecentSearches } from "@/hooks/useRecentSearches";
+import { useRecentSearches } from "@/hooks/common/useRecentSearches";
 import { usePopularPhotoLabs } from "@/hooks/photoLab";
 import {
   MOCK_KEYWORD_SUGGESTIONS,
