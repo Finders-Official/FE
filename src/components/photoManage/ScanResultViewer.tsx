@@ -119,7 +119,7 @@ const ScanResultViewer = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex h-full w-full flex-col bg-neutral-900/10">
+    <div className="fixed inset-0 z-9999 flex h-full w-full flex-col bg-neutral-900/10">
       {/* 1. 헤더 */}
       <header className="absolute top-13.75 right-0 left-0 z-50 flex h-14 items-center justify-between px-4">
         <button
