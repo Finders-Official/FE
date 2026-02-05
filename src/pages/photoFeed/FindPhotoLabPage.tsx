@@ -37,6 +37,12 @@ export default function FindPhotoLabPage() {
   const setIsSelfDeveloped = useNewPostState((s) => s.setIsSelfDeveloped);
   const setLabInfo = useNewPostState((s) => s.setLabInfo);
 
+  // 게시글 등록한 직후인지에 대한 정보 저장
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
+
+  // store 전체 reset
+  const reset = useNewPostState((s) => s.reset);
+
   // 선택된 현상소
   const [selectedLab, setSelectedLab] = useState<LabSearchResponse | null>(
     null,
@@ -77,7 +83,11 @@ export default function FindPhotoLabPage() {
 
   // GCS에 사진 등록 + 게시글 등록 API
   const { submit, isPending } = useCreatePostWithUpload({
-    onSuccess: (postId) => navigate(`/photoFeed/post/${postId}`),
+    onSuccess: (postId) => {
+      reset();
+      setIsNewPost(true);
+      navigate(`/photoFeed/post/${postId}`);
+    },
     onError: (err) => console.error("게시글 생성 실패", err),
   });
 

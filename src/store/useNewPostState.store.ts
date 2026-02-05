@@ -40,6 +40,8 @@ type NewPostState = {
 
   reviewContent: string | undefined;
 
+  isNewPost: boolean;
+
   /** setters */
   setPostInfo: (title: string, content: string) => void;
 
@@ -47,6 +49,8 @@ type NewPostState = {
   setIsSelfDeveloped: (isSelfDeveloped: boolean) => void;
   setLabInfo: (labId: number | undefined, labName: string | undefined) => void;
   setReviewContent: (reviewContent: string | undefined) => void;
+
+  setIsNewPost: (isNewPost: boolean) => void;
 
   reset: () => void;
 };
@@ -60,6 +64,7 @@ const initialState = {
   labId: undefined,
   labName: undefined,
   reviewContent: undefined,
+  isNewPost: false,
 };
 
 export const useNewPostState = create<NewPostState>((set) => ({
@@ -76,6 +81,8 @@ export const useNewPostState = create<NewPostState>((set) => ({
   setIsSelfDeveloped: (isSelfDeveloped) => set({ isSelfDeveloped }),
   setLabInfo: (labId, labName) => set({ labId, labName }),
   setReviewContent: (reviewContent) => set({ reviewContent }),
+
+  setIsNewPost: (isNewPost) => set({ isNewPost }),
 
   reset: () => set(initialState),
 }));

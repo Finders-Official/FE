@@ -16,10 +16,9 @@ import EmptyView from "@/components/common/EmptyView";
 import { useUnlikePost } from "@/hooks/photoFeed/reactions/useUnlikePost";
 import { useLikePost } from "@/hooks/photoFeed/reactions/useLikePost";
 import CommentSheet from "@/components/photoFeed/postDetail/CommentSheet";
+import { useNewPostState } from "@/store/useNewPostState.store";
 
 export default function PostPage() {
-  const [toastVisible, setToastVisible] = useState(true);
-  const [mounted, setMounted] = useState(true);
   const [commentVisible, setCommentVisible] = useState(false);
 
   const navigate = useNavigate();
@@ -55,22 +54,36 @@ export default function PostPage() {
 
   const isMutating = isLiking || isUnliking;
 
-  useEffect(() => {
-    // 1. 1.6초 후 fade-out 시작
-    const fadeTimer = setTimeout(() => {
-      setToastVisible(false);
-    }, 1600);
+  // 게시글 등록 직후인지 여부
+  const isNewPost = useNewPostState((s) => s.isNewPost);
 
-    // 2. 3초 후 완전히 제거
-    const removeTimer = setTimeout(() => {
-      setMounted(false);
-    }, 3000);
+  const [toastVisible, setToastVisible] = useState(isNewPost);
+  const [mounted, setMounted] = useState(isNewPost);
+
+  // 게시글 등록한 직후인지에 대한 정보 저장
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
+
+  useEffect(() => {
+    if (!isNewPost) return;
+
+    const fadeTimer = setTimeout(() => setToastVisible(false), 1600);
+    const removeTimer = setTimeout(() => setMounted(false), 3000);
 
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(removeTimer);
     };
-  }, []);
+  }, [isNewPost]);
+
+  const handleGoBack = () => {
+    if (isNewPost) {
+      setIsNewPost(false);
+      return navigate("/photoFeed");
+    }
+    // 히스토리 없으면 fallback
+    if (window.history.length > 1) return navigate(-1);
+    return navigate("/photoFeed");
+  };
 
   const renderPostDetail = () => {
     if (isPostPending) {
@@ -85,8 +98,7 @@ export default function PostPage() {
     if (!postDetail) return <EmptyView content="게시글 정보가 없습니다." />;
     return (
       <>
-        {/** TODO: 상황별로 다른 곳으로 navigate 되어야 함  */}
-        <Header title="" showBack onBack={() => navigate("/photoFeed")} />
+        <Header title="" showBack onBack={handleGoBack} />
         <section className="flex flex-col gap-[0.625rem] pb-10">
           {/** 상단 */}
           <div className="flex flex-col gap-[0.625rem]">
@@ -190,8 +202,7 @@ export default function PostPage() {
       {renderPostDetail()}
 
       {/** toast 메세지 */}
-      {/** TODO: 게시글 작성 직후에만 뜨도록 변경 예정 */}
-      {mounted && (
+      {isNewPost && mounted && (
         <div className="fixed right-0 bottom-0 left-0 z-50 flex justify-center px-5 py-5">
           <div
             className={`transition-opacity duration-300 ease-out ${

@@ -30,6 +30,12 @@ export default function ReviewPhotoLabPage() {
 
   const isSelfDeveloped = useNewPostState((s) => s.isSelfDeveloped);
 
+  // 게시글 등록한 직후인지에 대한 정보 저장
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
+
+  // store 전체 reset
+  const reset = useNewPostState((s) => s.reset);
+
   // 사용자 ID 가져오기
   const memberId = useAuthStore((s) => s.user?.memberId);
 
@@ -40,7 +46,11 @@ export default function ReviewPhotoLabPage() {
 
   // 사진 GCS에 등록 + 게시글 등록
   const { submit, isPending } = useCreatePostWithUpload({
-    onSuccess: (postId) => navigate(`/photoFeed/post/${postId}`),
+    onSuccess: (postId) => {
+      reset();
+      setIsNewPost(true);
+      navigate(`/photoFeed/post/${postId}`);
+    },
     onError: (err) => console.error("게시글 생성 실패", err),
   });
 
