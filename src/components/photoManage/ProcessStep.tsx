@@ -46,6 +46,7 @@ export default function Process({
   currentIndex,
   isLast = false,
 }: ProcessProps) {
+  console.log(`Step: ${step}, isCurrent:`, isCurrent);
   const Icon = ICON_BY_STEP[step];
 
   const iconWrapperClass = [
