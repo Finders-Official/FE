@@ -2,6 +2,8 @@ import { EllipsisVerticalIcon } from "@/assets/icon";
 import { useState } from "react";
 import ActionSheet from "./ActionSheet";
 import { timeAgo } from "@/utils/timeAgo";
+import { useDeletePost } from "@/hooks/photoFeed/posts/useDeletePost";
+import { useDeleteComment } from "@/hooks/photoFeed/comments/useDeleteComment";
 
 type ProfileType = "post" | "comment";
 
@@ -12,6 +14,7 @@ interface ProfileProps {
   date: string;
   comment?: string;
   isOwner: boolean;
+  objectId: number; // postId or commentId
 }
 
 export default function Profile({
@@ -21,6 +24,7 @@ export default function Profile({
   date,
   comment,
   isOwner,
+  objectId,
 }: ProfileProps) {
   const [moreMenu, setMoreMenu] = useState(false);
 
@@ -31,6 +35,9 @@ export default function Profile({
   const [splitDate] = date.split("T");
   const [year, month, day] = splitDate.split("-");
   const formattedDate = `${year}년 ${Number(month)}월 ${Number(day)}일`;
+
+  const { mutate: deletePost } = useDeletePost();
+  const { mutate: deleteComment } = useDeleteComment();
 
   return (
     <div className="flex items-start gap-2">
@@ -111,8 +118,7 @@ export default function Profile({
               label: "삭제하기",
               variant: "danger",
               onClick: () => {
-                // 삭제 API 호출
-                console.log("삭제");
+                deletePost(objectId);
               },
             },
           ]}
@@ -134,8 +140,7 @@ export default function Profile({
               label: "삭제하기",
               variant: "danger",
               onClick: () => {
-                // 삭제 API 호출
-                console.log("삭제");
+                deleteComment(objectId);
               },
             },
           ]}
