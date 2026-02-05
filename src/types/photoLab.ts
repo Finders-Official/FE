@@ -83,11 +83,29 @@ export interface LabNews {
 
 // 필터 상태 (바텀시트용)
 export interface FilterState {
-  date?: string; // "2026-1-xx" 형식
+  date?: string; // "2026-01-15" 형식 (yyyy-MM-dd)
   time?: string; // "오전 10:00" 형식
   region?: string; // "서울"
   subRegion?: string; // "동작구"
-  regionId?: number; // TODO: BottomSheet API 연동 시 사용
+  regionId?: number; // 하위(구/군) regionId — API 전달용
+}
+
+// GET /photo-labs/region 응답
+export interface RegionParent {
+  parentId: number;
+  parentName: string;
+  photoLabCount: number;
+}
+
+export interface RegionChild {
+  regionId: number;
+  regionName: string;
+  parentId: number;
+}
+
+export interface RegionFilterData {
+  parents: RegionParent[];
+  regions: RegionChild[];
 }
 
 // 지역 정보
