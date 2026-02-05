@@ -13,18 +13,19 @@ import {
   LabPreviewSection,
 } from "@/components/photoLab/search";
 import { useRecentSearches } from "@/hooks/useRecentSearches";
+import { useDebouncedValue } from "@/hooks/common";
 import {
   usePopularPhotoLabs,
   usePhotoLabList,
   useFavoriteToggle,
   useGeolocation,
 } from "@/hooks/photoLab";
-import {
-  MOCK_KEYWORD_SUGGESTIONS,
-  MOCK_LAB_PREVIEWS,
-} from "@/constants/photoLab";
+import { getPhotoLabList } from "@/apis/photoLab";
+import { useQuery } from "@tanstack/react-query";
+import { MOCK_KEYWORD_SUGGESTIONS } from "@/constants/photoLab";
 import { WEEKDAYS } from "@/constants/date";
 import type { FilterState } from "@/types/photoLab";
+import type { LabPreview } from "@/types/photoLabSearch";
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
@@ -77,15 +78,31 @@ export default function PhotoLabSearchPage() {
     ).slice(0, 4);
   }, [query]);
 
-  const filteredLabPreviews = useMemo(() => {
-    if (!query.trim()) return [];
-    const q = query.toLowerCase();
-    return MOCK_LAB_PREVIEWS.filter(
-      (lab) =>
-        lab.name.toLowerCase().includes(q) ||
-        lab.address.toLowerCase().includes(q),
-    ).slice(0, 10);
-  }, [query]);
+  // TODO: 백엔드 경량 API 완성 시 교체
+  const debouncedQuery = useDebouncedValue(query, 300);
+  const { data: previewData } = useQuery({
+    queryKey: ["photoLab", "preview", debouncedQuery],
+    queryFn: () =>
+      getPhotoLabList({
+        q: debouncedQuery,
+        size: 10,
+        lat: latitude ?? undefined,
+        lng: longitude ?? undefined,
+      }),
+    enabled: !!debouncedQuery.trim() && !isResultsState,
+    staleTime: 1000 * 60 * 2,
+  });
+
+  const filteredLabPreviews: LabPreview[] = useMemo(() => {
+    if (!previewData?.data) return [];
+    return previewData.data.map((lab) => ({
+      photoLabId: lab.photoLabId,
+      name: lab.name,
+      address: lab.address,
+      distanceKm: lab.distanceKm,
+      mainImageUrl: lab.imageUrls[0] ?? null,
+    }));
+  }, [previewData]);
 
   // 검색 결과 API 연동
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
