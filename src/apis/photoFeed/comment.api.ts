@@ -1,9 +1,9 @@
 import { axiosInstance } from "@/lib/axiosInstance";
-import type { ApiResponse } from "@/types/common/apiResponse";
 import type {
-  PostComment,
-  PostCommentList,
-} from "@/types/photoFeed/postDetail";
+  ApiResponse,
+  ApiResponseWithPagination,
+} from "@/types/common/apiResponse";
+import type { PostComment } from "@/types/photoFeed/postDetail";
 import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
 
 /**
@@ -12,8 +12,8 @@ import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
 export async function getComments(
   postId: number,
   pageParam: number = 0,
-): Promise<PostCommentList> {
-  const res = await axiosInstance.get<ApiResponse<PostCommentList>>(
+): Promise<ApiResponseWithPagination<PostComment[]>> {
+  const res = await axiosInstance.get<ApiResponseWithPagination<PostComment[]>>(
     `/posts/${postId}/comments`,
     {
       params: {
@@ -29,7 +29,7 @@ export async function getComments(
     throw new Error(body.message);
   }
 
-  return body.data;
+  return body;
 }
 
 /**

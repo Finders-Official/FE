@@ -47,7 +47,7 @@ export default function PostPage() {
     isPending: isCommentPending,
     isError: isCommentError,
   } = useInfiniteComments(numericPostId);
-  const comments = data?.pages.flatMap((c) => c.commentList) ?? [];
+  const comments = data?.pages.flatMap((c) => c.data) ?? [];
 
   // 게시글 좋아요
   const { mutate: unlikePost, isPending: isUnliking } = useUnlikePost();
