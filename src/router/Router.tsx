@@ -1,5 +1,10 @@
 import RootLayout from "@/layouts/RootLayout";
-import { KakaoCallbackPage, LoginPage, OnBoardingPage } from "@/pages/auth";
+import {
+  KakaoCallbackPage,
+  LoginPage,
+  OnBoardingPage,
+  TermsPage,
+} from "@/pages/auth";
 import PhotoFeedPage from "@/pages/photoFeed/PhotoFeedPage";
 import PostPage from "@/pages/photoFeed/PostPage";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
@@ -38,6 +43,7 @@ import {
 } from "@/pages/mypage";
 import TransactionPage from "@/pages/photoManage/TransactionPage";
 import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
+import PhotoRestorationPage from "@/pages/photoRestoration/PhotoRestorationPage";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/auth/terms",
+        Component: TermsPage,
       },
       {
         path: "/development-history",
@@ -107,6 +117,10 @@ const router = createBrowserRouter([
       {
         path: "/photoFeed/post/new",
         Component: NewPostPage,
+      },
+      {
+        path: "/photoRestoration",
+        Component: PhotoRestorationPage,
       },
 
       // FooterLayout 적용 필요한 페이지들

@@ -8,7 +8,7 @@ export default function LabBottomBar({
   onReservationClick,
 }: LabBottomBarProps) {
   return (
-    <div className="fixed right-0 bottom-0 left-0 flex justify-center border-t border-neutral-800 bg-neutral-900 px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,2.125rem))]">
+    <div className="fixed right-0 bottom-0 left-0 z-10 flex justify-center border-t border-neutral-800 bg-neutral-900 px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,2.125rem))]">
       <button
         type="button"
         onClick={onInquiryClick}

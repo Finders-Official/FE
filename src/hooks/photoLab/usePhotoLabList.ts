@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getPhotoLabList } from "@/api/photoLab";
+import { getPhotoLabList } from "@/apis/photoLab";
 import type {
   PhotoLabListParams,
   PagedApiResponse,

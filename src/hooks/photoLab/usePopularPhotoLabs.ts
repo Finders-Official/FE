@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPopularPhotoLabs } from "@/api/photoLab";
+import { getPopularPhotoLabs } from "@/apis/photoLab";
 
 export function usePopularPhotoLabs() {
   return useQuery({

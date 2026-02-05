@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
 import { Header } from "@/components/common";
 import {
   LabBasicInfo,
@@ -9,12 +9,26 @@ import {
   LabNoticeSection,
   LabWorkResultsSection,
 } from "@/components/photoLab/detail";
-import { MOCK_LAB_DETAIL } from "@/constants/photoLab";
-import type { PhotoLabDetail } from "@/types/photoLab";
+import {
+  usePhotoLabDetail,
+  useGeolocation,
+  useFavoriteToggle,
+} from "@/hooks/photoLab";
 
 export default function PhotoLabDetailPage() {
   const navigate = useNavigate();
-  const [lab, setLab] = useState<PhotoLabDetail>(MOCK_LAB_DETAIL);
+  const { photoLabId } = useParams();
+  const { latitude, longitude } = useGeolocation();
+  const { mutate: toggleFavorite } = useFavoriteToggle();
+
+  const {
+    data: lab,
+    isLoading,
+    error,
+  } = usePhotoLabDetail(
+    photoLabId ? parseInt(photoLabId) : undefined,
+    latitude && longitude ? { lat: latitude, lng: longitude } : undefined,
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -24,49 +38,69 @@ export default function PhotoLabDetailPage() {
     navigate(-1);
   };
 
-  const handleFavoriteToggle = () => {
-    setLab((prev) => ({ ...prev, isFavorite: !prev.isFavorite }));
+  const handleFavoriteToggle = (photoLabId: number, isFavorite: boolean) => {
+    toggleFavorite({ photoLabId, isFavorite });
   };
 
   const handleReservation = () => {
+    if (!lab) return;
     navigate(`/photolab/${lab.photoLabId}/reservation`, {
-      state: { labName: lab.name },
+      state: { labName: lab.name, distanceKm: lab.distanceKm },
     });
   };
 
-  const imageUrls = lab.images
-    .slice()
-    .sort((a, b) => a.displayOrder - b.displayOrder)
-    .map((img) => img.imageUrl);
+  // TODO: Skeleton UI로 교체
+  if (isLoading) {
+    return (
+      <div className="flex w-full flex-col">
+        <Header title="" showBack onBack={handleBack} />
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error || !lab) {
+    return (
+      <div className="flex w-full flex-col">
+        <Header title="" showBack onBack={handleBack} />
+        <div className="flex h-64 items-center justify-center">
+          <span className="text-neutral-400">
+            현상소 정보를 불러올 수 없습니다.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full flex-col">
-      <Header title="파인더스 상도점" showBack onBack={handleBack} />
+      <Header title={lab.name} showBack onBack={handleBack} />
 
       <main className="pb-32">
         {/* 메인 이미지 캐러셀 */}
         <div className="-mx-4">
-          <LabImageCarousel images={imageUrls} altPrefix={lab.name} />
+          <LabImageCarousel images={lab.imageUrls} altPrefix={lab.name} />
         </div>
 
         {/* 기본 정보 */}
         <LabBasicInfo lab={lab} onFavoriteToggle={handleFavoriteToggle} />
 
         {/* 주요 공지 */}
-        <LabNoticeSection notices={lab.notices} />
+        <LabNoticeSection notice={lab.mainNotice} />
 
         {/* 작업 결과물 */}
-        <LabWorkResultsSection //추후 Figma 디자인에 맞는 방식으로 변경 필요
+        <LabWorkResultsSection
           labName={lab.name}
-          workResults={lab.workResults}
+          postImageUrls={lab.postImageUrls}
           onMoreClick={() => navigate("/photoFeed")}
         />
 
         {/* 지도 */}
         <LabLocationSection
           address={lab.address}
+          addressDetail={lab.addressDetail ?? undefined}
           distanceKm={lab.distanceKm}
-          location={lab.location}
+          location={{ latitude: lab.latitude, longitude: lab.longitude }}
           labName={lab.name}
         />
       </main>

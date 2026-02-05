@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addFavorite, removeFavorite } from "@/api/photoLab";
+import { addFavorite, removeFavorite } from "@/apis/photoLab";
 import type { PagedApiResponse, PhotoLabItem } from "@/types/photoLab";
 import type { InfiniteData } from "@tanstack/react-query";
 
