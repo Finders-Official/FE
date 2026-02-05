@@ -184,7 +184,7 @@ export default function PhotoManageMainPage() {
               ? "인화여부를 확정해야 다음 단계로 넘어가요!"
               : "고해상도 디지털 파일로 변환",
           buttons: status === "SCAN" && (
-            <div className="flex flex-col gap-[0.625rem]">
+            <div className="flex flex-col gap-2.5">
               <ActionButton
                 leftIcon={<PrinterIcon />}
                 message="인화 여부 확정하기"
@@ -209,13 +209,13 @@ export default function PhotoManageMainPage() {
           title: "사진 인화",
           subComment: status === "PRINT" && workData.print && (
             <div>
-              <p className="mb-[0.125rem] flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+              <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
                 <ClockIcon className="h-3 w-3" />
                 {workData.print.status === "PENDING"
                   ? "작업 예정 시간 확인 중"
                   : `예상 작업 완료 시간: ${formatEstimatedTime(workData.print.estimatedAt)}`}
               </p>
-              <hr className="mb-[0.375rem] border-orange-500/30" />
+              <hr className="mb-1.5 border-orange-500/30" />
             </div>
           ),
           content:
@@ -240,7 +240,7 @@ export default function PhotoManageMainPage() {
           title: receiptMethod === "PICKUP" ? "방문 수령" : "택배 배송",
           subComment: status === "DELIVERY" && workData.delivery && (
             <div>
-              <p className="mb-[0.125rem] flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+              <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
                 {workData.delivery.status === "DELIVERED" ? (
                   <CheckEmptyIcon className="h-3 w-3" />
                 ) : (
@@ -250,7 +250,7 @@ export default function PhotoManageMainPage() {
                   ? "배송 완료"
                   : "배송 중"}
               </p>
-              <hr className="mb-[0.375rem] border-orange-500/30" />
+              <hr className="mb-1.5 border-orange-500/30" />
             </div>
           ),
           content:
@@ -275,7 +275,7 @@ export default function PhotoManageMainPage() {
               "안전하게 포장하여 배송"
             ),
           buttons: status === "DELIVERY" && (
-            <div className="flex flex-col gap-[0.625rem]">
+            <div className="flex flex-col gap-2.5">
               {receiptMethod === "DELIVERY" && (
                 <ActionButton
                   leftIcon={
@@ -323,9 +323,9 @@ export default function PhotoManageMainPage() {
       />
       {/* 상단 비주얼 영역: status에 따라 변함 */}
       <div className="relative mt-15 flex justify-center">
-        <CircleIcon className="h-[14.4375rem] w-[14.4375rem]" />
+        <CircleIcon className="h-57.75 w-57.75" />
         <div className="absolute top-0 flex flex-col items-center text-center">
-          <div className="flex h-[5.0625rem] w-[4.5rem] -translate-y-1/2">
+          <div className="flex h-20.25 w-18 -translate-y-1/2">
             {currentBanner.icon}
           </div>
           <div className="flex -translate-y-1/2 flex-col gap-2">
@@ -339,7 +339,7 @@ export default function PhotoManageMainPage() {
         </div>
       </div>
 
-      <main className="flex flex-col gap-[0.875rem] py-4">
+      <main className="flex flex-col gap-3.5 py-4">
         {isDialogOpen && (
           <DialogBox
             isOpen={isDialogOpen}
