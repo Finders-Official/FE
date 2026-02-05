@@ -23,7 +23,7 @@ import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
 import ReservationPage from "@/pages/photoLab/ReservationPage";
 import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
-import PmMainPage from "@/pages/photoManage/PmMainPage";
+import PhotoManageMainPage from "@/pages/photoManage/PhotoManageMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
 import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
@@ -66,10 +66,10 @@ const router = createBrowserRouter([
         path: "/auth/terms",
         Component: TermsPage,
       },
-      {
-        path: "/development-history",
-        Component: DevelopmentHistoryPage,
-      },
+      // {
+      //   path: "/development-history",
+      //   Component: DevelopmentHistoryPage,
+      // },
       {
         path: "/filmCameraGuide",
         Component: FilmCameraGuidePage,
@@ -141,7 +141,11 @@ const router = createBrowserRouter([
           },
           {
             path: "/photoManage/main",
-            Component: PmMainPage,
+            Component: PhotoManageMainPage,
+          },
+          {
+            path: "/development-history",
+            Component: DevelopmentHistoryPage,
           },
         ],
       },
