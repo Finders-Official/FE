@@ -23,7 +23,13 @@ export async function getComments(
     },
   );
 
-  return res.data.data;
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data;
 }
 
 /**
@@ -38,7 +44,13 @@ export async function postComment(
     { content },
   );
 
-  return res.data.data; // 작성한 댓글 정보 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data; // 작성한 댓글 정보 return
 }
 
 /**
@@ -49,5 +61,11 @@ export async function deleteComment(commentId: number): Promise<boolean> {
     `/posts/comments/${commentId}`,
   );
 
-  return res.data.success; // 댓글 삭제 성공 여부 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return true; // 댓글 삭제 성공 여부 return (success면 true)
 }
