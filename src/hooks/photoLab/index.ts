@@ -6,3 +6,4 @@ export { usePhotoLabDetail } from "./usePhotoLabDetail";
 export { useAvailableTimes } from "./useAvailableTimes";
 export { useCreateReservation } from "./useCreateReservation";
 export { useReservationDetail } from "./useReservationDetail";
+export { useRegionFilters } from "./useRegionFilters";

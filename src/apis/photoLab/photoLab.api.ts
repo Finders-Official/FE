@@ -6,6 +6,7 @@ import type {
   PhotoLabFavoriteStatus,
   PhotoLabDetail,
   PagedApiResponse,
+  RegionFilterData,
 } from "@/types/photoLab";
 import type { PopularLab } from "@/types/photoLabSearch";
 
@@ -68,6 +69,24 @@ export async function getPopularPhotoLabs(): Promise<
   const res = await axiosInstance.get<ApiResponse<PopularLab[]>>(
     "/photo-labs/popular",
   );
+
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
+}
+
+// 지역별 현상소 개수 조회
+export async function getRegionFilters(): Promise<
+  ApiResponse<RegionFilterData>
+> {
+  const res =
+    await axiosInstance.get<ApiResponse<RegionFilterData>>(
+      "/photo-labs/region",
+    );
 
   const body = res.data;
 
