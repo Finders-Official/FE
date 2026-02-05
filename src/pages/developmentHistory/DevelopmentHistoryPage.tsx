@@ -12,6 +12,7 @@ interface FormattedDevelopmentOrder {
   shopAddress: string;
   status: string;
   date: string;
+  createdAt: string;
   tags: string;
   price: number;
   deliveryAddress?: string;
@@ -42,7 +43,7 @@ const DevelopmentHistoryPage = () => {
         setIsLoading(true);
         const response = await getDevelopmentOrders(pageNum, 10);
 
-        if (response.success) {
+        if (response && response.data) {
           const mappedData = response.data.map(formatDevelopmentOrder);
           setOrders((prev) =>
             pageNum === 0 ? mappedData : [...prev, ...mappedData],

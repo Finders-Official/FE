@@ -6,7 +6,6 @@ export const getDevelopmentOrders = async (page = 0, size = 10) => {
     `/photos/development-orders`,
     { params: { page, size } },
   );
-  return {
-    data,
-  };
+
+  return data;
 };

@@ -23,6 +23,7 @@ export const formatDevelopmentOrder = (order: DevelopmentOrder) => {
     shopAddress: order.photoLabAddress,
     status: order.deliveryAddress ? "배송" : "직접 수령", // 배송지 정보 유무로 판단
     date: `${month}/${day}(${weekDay})`,
+    createdAt: order.createdAt,
     tags: `${taskTags} · ${order.rollCount}롤`,
     price: order.totalPrice,
     deliveryAddress: order.deliveryAddress
