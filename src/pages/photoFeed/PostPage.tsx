@@ -95,7 +95,7 @@ export default function PostPage() {
               userName={postDetail.nickname}
               avatarUrl={postDetail.profileImageUrl}
               date={postDetail.createdAt}
-              isOwner={true}
+              isOwner={postDetail.isMine}
               objectId={postDetail.postId}
             />
             <PhotoCarousel

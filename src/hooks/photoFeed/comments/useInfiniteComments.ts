@@ -9,7 +9,7 @@ import type { ApiResponseWithPagination } from "@/types/common/apiResponse";
  */
 export function useInfiniteComments(postId: number) {
   return useInfiniteQuery<ApiResponseWithPagination<PostComment[]>>({
-    queryKey: ["comments", PAGE_SIZE],
+    queryKey: ["comments", postId, PAGE_SIZE],
     queryFn: ({ pageParam = 0 }) => getComments(postId, pageParam as number),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
