@@ -27,6 +27,7 @@ import type {
   DeliveryStatus,
 } from "@/types/photomanage/process";
 import BottomSheet from "@/components/common/BottomSheet";
+//import { usePrintSkip } from "@/hooks/photoManage";
 
 type StepConfig = {
   key: string;
@@ -57,6 +58,9 @@ export default function PmMainPage() {
   const mock = mocks.deliveryShipped;
   const status = mock.status as Status;
   const currentIndex = STATUS_INDEX_MAP[status];
+
+  // TOdO: 인화 안 함 확정 API
+  // const { mutate: printSkip } = usePrintSkip();
 
   // 예상 완료 시간 포맷
   const formatEstimatedTime = (isoDate: string | null): string => {
@@ -359,6 +363,7 @@ export default function PmMainPage() {
             }}
             cancelText="다음에 할게요"
             onCancel={() => {
+              // TODO: printSkip(developmentOrderId);
               setIsDialogOpen(false);
               setDialogStep(1);
             }}
