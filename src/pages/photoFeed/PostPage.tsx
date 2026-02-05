@@ -17,6 +17,7 @@ import { useUnlikePost } from "@/hooks/photoFeed/reactions/useUnlikePost";
 import { useLikePost } from "@/hooks/photoFeed/reactions/useLikePost";
 import CommentSheet from "@/components/photoFeed/postDetail/CommentSheet";
 import { useNewPostState } from "@/store/useNewPostState.store";
+import ProfileSkeleton from "@/components/photoFeed/postDetail/ProfileSkeleton";
 
 export default function PostPage() {
   const [commentVisible, setCommentVisible] = useState(false);
@@ -87,12 +88,22 @@ export default function PostPage() {
 
   const renderPostDetail = () => {
     if (isPostPending) {
-      return <></>; // TODO: 스켈레톤 UI
+      return (
+        <>
+          <div className="flex animate-pulse flex-col gap-[0.625rem] pb-10">
+            <Header title="" showBack onBack={handleGoBack} />
+            <ProfileSkeleton />
+            <div className="h-90 w-full bg-neutral-700"></div>
+            <p className="h-4 w-70 rounded-xl bg-neutral-800"></p>
+            <p className="h-4 w-50 rounded-xl bg-neutral-800"></p>
+          </div>
+        </>
+      );
     }
     if (isPostError)
       return (
-        <div className="flex items-center justify-center py-6 text-red-400">
-          데이터 불러오기에 실패했어요.
+        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+          <p className="text-red-400">불러오기에 실패했어요.</p>
         </div>
       );
     if (!postDetail) return <EmptyView content="게시글 정보가 없습니다." />;
@@ -175,7 +186,9 @@ export default function PostPage() {
               <button
                 type="button"
                 aria-label="현상소 보러가기"
-                onClick={() => navigate("/photoFeed/lab/review")} // TODO: PL-020으로 이동
+                onClick={() =>
+                  navigate(`/photolab/${postDetail.labReview?.labId}`)
+                }
                 className="bg-neutral-875 border-neutral-850 flex flex-col gap-1 rounded-2xl border px-5 py-4 text-left text-neutral-500"
               >
                 <div className="gap-2">

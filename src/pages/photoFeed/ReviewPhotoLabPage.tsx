@@ -68,7 +68,7 @@ export default function ReviewPhotoLabPage() {
         reviewContent: reviewText,
       });
     } catch (e) {
-      console.error("게시글 업로드 실패", e);
+      console.error("게시글 업로드 실패", e); // TODO 디자인 받고 토스트 메세지로 변경
     }
   };
 
