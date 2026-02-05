@@ -15,23 +15,23 @@ const MAX = 300;
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
 
+  const [reviewText, setReviewText] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   // 이전 페이지에서 작성한 데이터 가져오기
-  const { title, content, files, imageMetas, isSelfDeveloped, labId, labName } =
-    useNewPostState((s) => ({
-      title: s.title,
-      content: s.content,
-      files: s.files,
-      imageMetas: s.imageMetas,
-      labId: s.labId,
-      labName: s.labName,
-      isSelfDeveloped: s.isSelfDeveloped,
-    }));
+  const title = useNewPostState((s) => s.title);
+  const content = useNewPostState((s) => s.content);
+
+  const files = useNewPostState((s) => s.files);
+  const imageMetas = useNewPostState((s) => s.imageMetas);
+
+  const labId = useNewPostState((s) => s.labId);
+  const labName = useNewPostState((s) => s.labName);
+
+  const isSelfDeveloped = useNewPostState((s) => s.isSelfDeveloped);
 
   // 사용자 ID 가져오기
   const memberId = useAuthStore((s) => s.user?.memberId);
-
-  const [reviewText, setReviewText] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // 리뷰 글자수 제한 적용
   const isTooShort = reviewText.length > 0 && reviewText.length < MIN;
@@ -44,6 +44,7 @@ export default function ReviewPhotoLabPage() {
     onError: (err) => console.error("게시글 생성 실패", err),
   });
 
+  // 게시글 업로드 핸들러
   const handleSubmit = async () => {
     try {
       await submit({

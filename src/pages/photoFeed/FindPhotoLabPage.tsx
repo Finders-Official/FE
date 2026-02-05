@@ -27,12 +27,11 @@ export default function FindPhotoLabPage() {
   const memberId = useAuthStore((s) => s.user?.memberId);
 
   // 이전 페이지에서 작성한 데이터 가져오기
-  const { title, content, files, imageMetas } = useNewPostState((s) => ({
-    title: s.title,
-    content: s.content,
-    files: s.files,
-    imageMetas: s.imageMetas,
-  }));
+  const title = useNewPostState((s) => s.title);
+  const content = useNewPostState((s) => s.content);
+
+  const files = useNewPostState((s) => s.files);
+  const imageMetas = useNewPostState((s) => s.imageMetas);
 
   // 자가현상 여부 및 현상소 정보 저장
   const setIsSelfDeveloped = useNewPostState((s) => s.setIsSelfDeveloped);
