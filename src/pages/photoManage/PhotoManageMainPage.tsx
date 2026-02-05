@@ -65,20 +65,13 @@ export default function PhotoManageMainPage() {
     if (isError) navigate("/development-history");
   }, [isSuccess, isError, workData, navigate]);
 
-  /**
-   * 상태 결정 로직: API 응답 객체의 존재 여부에 따라 우선순위 결정
-   */
-  // PhotoManageMainPage.tsx 내부 수정
   const getActiveStatus = (): Status => {
     if (!workData) return "DEVELOP";
 
-    // 1. 배송 데이터가 '실제로' 존재하는지 ID로 확인
     if (workData.delivery && workData.delivery.deliveryId) return "DELIVERY";
 
-    // 2. 인화 데이터가 '실제로' 존재하는지 ID로 확인
     if (workData.print && workData.print.printOrderId) return "PRINT";
 
-    // 3. 현상 상태 매핑 (대문자 일치 확인)
     const devStatusMap: Record<DevelopmentStatus, Status> = {
       RECEIVED: "DEVELOP",
       DEVELOPING: "DEVELOP",
@@ -87,9 +80,6 @@ export default function PhotoManageMainPage() {
     };
 
     const currentStatus = devStatusMap[workData.developmentStatus] ?? "DEVELOP";
-
-    // 디버깅용 로그: 1단계가 안 켜진다면 이 값이 "DEVELOP"인지 확인하세요.
-    console.log("현재 계산된 전체 상태(status):", currentStatus);
 
     return currentStatus;
   };
