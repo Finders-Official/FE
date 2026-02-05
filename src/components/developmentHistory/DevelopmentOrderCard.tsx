@@ -6,7 +6,8 @@ interface DevelopmentOrderCardProps {
     shopName: string;
     shopAddress: string;
     status: string;
-    date: string; // "2026-01-29T08:41:34"
+    date: string;
+    createdAt: string;
     tags: string;
     price: number;
     deliveryAddress?: string;
@@ -20,25 +21,32 @@ const DevelopmentOrderCard = ({
   item,
   onOpenViewer,
 }: DevelopmentOrderCardProps) => {
-  // 만료일 계산 로직 (createdAt + 30일)
-  const calculateExpiry = (dateStr: string) => {
-    const date = new Date(dateStr);
-    date.setDate(date.getDate() + 30);
+  // 만료일 계산 로직 (createdAt 기준 + 30일)
+  const getExpiryDate = (isoString: string) => {
+    try {
+      const date = new Date(isoString);
+      date.setDate(date.getDate() + 30);
 
-    // YY/M/D 형식으로 변환
-    const yy = String(date.getFullYear()).slice(-0);
-    const m = date.getMonth() + 1;
-    const d = date.getDate();
-    return `${yy}/${m}/${d} 저장 만료`;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}.${month}.${day}`;
+    } catch {
+      return "-";
+    }
   };
 
-  const expiryText = calculateExpiry(item.date);
+  const expiryText = getExpiryDate(item.createdAt);
 
   return (
     <div className="flex flex-col gap-4.5 rounded-2xl border border-neutral-800 bg-neutral-900 px-5 py-6">
       {/* 상단 날짜 및 상태 */}
       <div className="flex justify-start gap-1 text-[0.8125rem] font-normal tracking-[-0.02em] text-neutral-200">
-        <span>{item.date.split("T")[0]}</span> {/* 시간 제외 날짜만 표시 */}
+        {/* date가 ISO 형식이면 split을 쓰고, 이미 포맷된 문자열이면 그대로 출력 */}
+        <span>
+          {item.date.includes("T") ? item.date.split("T")[0] : item.date}
+        </span>
         <span>·</span>
         <span>{item.status}</span>
       </div>
@@ -107,7 +115,7 @@ const DevelopmentOrderCard = ({
               스캔 사진 결과 보기
             </span>
             <span className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-600">
-              {expiryText}
+              {expiryText} 저장 만료
             </span>
           </div>
           <ChevronLeftIcon className="h-4 w-4 rotate-180 text-neutral-200" />
