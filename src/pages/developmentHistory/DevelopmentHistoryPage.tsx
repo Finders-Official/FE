@@ -82,7 +82,7 @@ const DevelopmentHistoryPage = () => {
         <EmptyOrderState />
       ) : (
         /* 2. 데이터가 있을 때 (Main Content) */
-        <div className="px-5 pt-6 pb-24">
+        <div className="pt-6 pb-24">
           <header className="mb-4 flex items-center justify-between">
             <h2 className="text-[1.375rem] font-semibold text-neutral-100">
               지난 작업
