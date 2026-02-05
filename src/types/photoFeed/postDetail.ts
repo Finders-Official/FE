@@ -30,13 +30,19 @@ export type User = {
   profileImageUrl: string;
 };
 
+export type PostRequestImage = {
+  objectPath: string;
+  width: number;
+  height: number;
+};
+
 /**
  * 게시글 작성 요청 (CO-022)
  */
 export type PostUploadRequest = {
   title: string;
   content: string;
-  images: PostImage[];
+  images: PostRequestImage[];
   isSelfDeveloped: boolean;
   labId?: number;
   reviewContent?: string;

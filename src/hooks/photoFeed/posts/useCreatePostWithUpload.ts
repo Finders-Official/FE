@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import type { PostImage } from "@/types/photoFeed/postPreview";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
+import type { PostRequestImage } from "@/types/photoFeed/postDetail";
 
 type ImageMeta = { width: number; height: number };
 
@@ -74,8 +74,8 @@ export function useCreatePostWithUpload(options?: Options) {
       );
 
       // 3) createPost에 넣을 images 생성 (objectPath 기반)
-      const postImages: PostImage[] = presignedList.map((p, idx) => ({
-        imageUrl: p.objectPath,
+      const postImages: PostRequestImage[] = presignedList.map((p, idx) => ({
+        objectPath: p.objectPath,
         width: imageMetas[idx].width,
         height: imageMetas[idx].height,
       }));
