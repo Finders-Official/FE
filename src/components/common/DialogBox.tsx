@@ -35,7 +35,7 @@ export const DialogBox = ({
     <div
       // 1. 배경(Wrapper)에 직접 onClick 이벤트 할당
       onClick={onCancel}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
     >
       {/* 기존의 absolute overlay div 제거됨 */}
 

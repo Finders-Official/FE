@@ -154,14 +154,14 @@ export default function BottomSheet({
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-black/80"
+          className="fixed inset-0 z-[60] bg-black/80"
         />
       )}
 
       {/* Sheet */}
       <div
         ref={sheetRef}
-        className="fixed inset-x-0 bottom-0 z-50"
+        className="fixed inset-x-0 bottom-0 z-[70]"
         style={{
           height: `${sheetH}px`,
           transition,
