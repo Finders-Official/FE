@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import {
   TabHomeIcon,
   PhotoLabIcon,
@@ -12,8 +12,9 @@ import {
   MyPageFillIcon,
 } from "@/assets/icon";
 import type { TabItem } from "@/types/tab";
+import { useCurrentWorkNavigation } from "@/hooks/photoManage/useCurrentWorkNavigation";
 
-const tabs: TabItem[] = [
+const tabs: (TabItem & { id?: string })[] = [
   {
     to: "/mainpage",
     label: "홈",
@@ -34,6 +35,7 @@ const tabs: TabItem[] = [
     activeIcon: ChatFillIcon,
   },
   {
+    id: "manage",
     to: "/photoManage/main",
     label: "현상 관리",
     icon: ManageIcon,
@@ -47,11 +49,40 @@ const tabs: TabItem[] = [
   },
 ];
 
+const MANAGE_TAB_PATHS = ["/photoManage", "/development-history"];
+
 export const TabBar = () => {
+  const { handleNavigationClick, isChecking } = useCurrentWorkNavigation();
+  const { pathname } = useLocation();
+
   return (
     <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-6 py-5">
       <nav className="grid h-full grid-cols-5 gap-1">
         {tabs.map((tab) => {
+          if (tab.id === "manage") {
+            const isManageTabActive = MANAGE_TAB_PATHS.some((path) =>
+              pathname.startsWith(path),
+            );
+            const ManageTabIcon = isManageTabActive ? tab.activeIcon : tab.icon;
+
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={handleNavigationClick}
+                disabled={isChecking}
+                className={[
+                  "flex flex-col items-center justify-center active:scale-[0.99]",
+                  isManageTabActive ? "text-orange-500" : "text-neutral-300",
+                ].join(" ")}
+                aria-label={tab.label}
+              >
+                <ManageTabIcon className="h-[1.5rem] w-[1.5rem]" />
+                <span className="mt-auto text-center text-xs">{tab.label}</span>
+              </button>
+            );
+          }
+
           return (
             <NavLink
               key={tab.to}
