@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router";
 import { ChevronLeftIcon } from "@/assets/icon";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 interface SectionHeaderProps {
   title: string;
@@ -7,11 +7,11 @@ interface SectionHeaderProps {
 }
 
 export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
-  const navigate = useNavigate();
+  const { requireAuthNavigate } = useRequireAuth();
 
   const handleMoreClick = () => {
     if (link) {
-      navigate(link);
+      requireAuthNavigate(link);
     }
   };
 

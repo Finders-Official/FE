@@ -1,10 +1,19 @@
+// 배송지 조회 응답 (GET /users/addresses)
 export type Address = {
-  id: number;
+  addressId: number;
+  addressName: string;
+  zipcode: string;
   address: string;
-  // 필요한 필드가 있으면 추가
+  addressDetail: string;
+  isDefault: boolean;
+  createdAt: string;
 };
 
-export const mockAddresses: Address[] = [
-  { id: 1, address: "서울특별시 흑석동 123-123" },
-  { id: 2, address: "서울특별시 흑석동 123-123" },
-];
+// 배송지 추가 요청 (POST /users/addresses)
+export interface CreateAddressRequest {
+  addressName: string;
+  zipcode: string;
+  address: string;
+  addressDetail?: string;
+  isDefault: boolean;
+}

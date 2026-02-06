@@ -24,3 +24,18 @@ export interface TransactionFormState {
   paymentProofImage: File | null;
   paymentProofPreview: string | null;
 }
+
+// 입금 확인 API
+
+export interface DepositReceiptConfirmRequest {
+  objectPath: string;
+  depositorName: string;
+  depositBankName: string;
+}
+
+// 백엔드 응답 필드명 기준. hook select에서 LabAccountInfo로 매핑
+export interface PhotoLabAccountResponse {
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountHolder: string;
+}

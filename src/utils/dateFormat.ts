@@ -29,3 +29,21 @@ export function formatKoreanDateTime(
 
   return `${year}. ${month}. ${day}(${weekday}) ${period} ${displayHour}:00`;
 }
+
+export function formatEstimatedTime(isoDate: string | null): string {
+  if (!isoDate) return "현재 확인 중";
+  const date = new Date(isoDate);
+  const hour = date.getHours();
+  return `${date.getMonth() + 1}월 ${date.getDate()}일 ${hour >= 12 ? "오후" : "오전"} ${
+    hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+  }시`;
+}
+
+export function formatShippedDate(isoDate: string | null): string {
+  if (!isoDate) return "-";
+  const date = new Date(isoDate);
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(
+    date.getDate(),
+  ).padStart(2, "0")}(${days[date.getDay()]})`;
+}

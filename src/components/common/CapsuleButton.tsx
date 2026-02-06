@@ -53,7 +53,7 @@ export const CapsuleButton = ({
         border: "1px solid transparent",
       }}
     >
-      <Icon className="h-[1.5rem] w-[1.5rem]" />
+      <Icon className="h-6 w-6" />
       <span className="whitespace-nowrap">{text}</span>
     </button>
   );

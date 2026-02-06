@@ -1,23 +1,51 @@
 import { PlusIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { AddressCard } from "@/components/photoManage/AddressCard";
-import { mockAddresses } from "@/types/photomanage/address";
+import { DaumAddressSearch } from "@/components/photoManage/DaumAddressSearch";
+import { useAddressList, useCreateAddress } from "@/hooks/member";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 export function SelectAddressPage() {
   const navigate = useNavigate();
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
-    null,
-  );
+  const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
 
-  const isNextEnabled = useMemo(
-    () => selectedAddressId !== null,
-    [selectedAddressId],
-  );
+  const { data: addresses = [] } = useAddressList();
+  const { mutate: addAddress } = useCreateAddress();
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const isNextEnabled = useMemo(() => selectedId !== null, [selectedId]);
+
+  const handleAddressFound = (data: { zipcode: string; address: string }) => {
+    addAddress(
+      {
+        addressName: "새 주소",
+        zipcode: data.zipcode,
+        address: data.address,
+        isDefault: addresses.length === 0,
+      },
+      {
+        onSuccess: (res) => {
+          setSelectedId(res.data.addressId);
+        },
+      },
+    );
+  };
 
   const handleComplete = () => {
-    // TODO: 선택한 주소 저장(zustand 등)하고 다음으로 이동
+    const selected = addresses.find((a) => a.addressId === selectedId);
+    if (!selected) return;
+
+    setDeliveryAddress({
+      recipientName: "",
+      phone: "",
+      zipcode: selected.zipcode,
+      address: selected.address,
+      addressDetail: selected.addressDetail,
+    });
     navigate("./detail");
   };
 
@@ -29,15 +57,16 @@ export function SelectAddressPage() {
           size="xlarge"
           color="gray"
           icon={PlusIcon}
+          onClick={() => setIsSearchOpen(true)}
         />
       </header>
 
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] flex flex-1 flex-col gap-4">
-        {mockAddresses.map((addr) => (
+        {addresses.map((addr) => (
           <AddressCard
-            key={addr.id}
-            isSelected={selectedAddressId === addr.id}
-            onClick={() => setSelectedAddressId(addr.id)}
+            key={addr.addressId}
+            isSelected={selectedId === addr.addressId}
+            onClick={() => setSelectedId(addr.addressId)}
             address={addr}
           />
         ))}
@@ -54,6 +83,12 @@ export function SelectAddressPage() {
           />
         </div>
       </footer>
+
+      <DaumAddressSearch
+        open={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onComplete={handleAddressFound}
+      />
     </div>
   );
 }
