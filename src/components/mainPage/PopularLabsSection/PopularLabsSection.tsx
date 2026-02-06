@@ -41,7 +41,7 @@ export default function PopularLabsSection() {
   return (
     <section className="flex flex-col gap-4 py-6">
       <div>
-        <SectionHeader title="이번주 인기있는 현상소" link="/" />
+        <SectionHeader title="이번주 인기있는 현상소" link="/photolab" />
       </div>
 
       <div className="relative w-full">
