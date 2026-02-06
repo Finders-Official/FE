@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { isAxiosError } from "axios";
 import {
   getPresignedUrl,
   uploadToGCS,
@@ -16,7 +15,7 @@ export const useRestoration = () => {
   const [error, setError] = useState<string | null>(null);
 
   // 폴링 인터벌 제어용 Ref
-  const intervalRef = useRef<number | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const clearPolling = () => {
     if (intervalRef.current) {
@@ -66,12 +65,8 @@ export const useRestoration = () => {
       setProgress(85); // 폴링 직전
       pollStatus(restorationRes.data.id);
     } catch (e) {
-      if (isAxiosError(e)) {
-        console.error("Axios error:", {
-          status: e.response?.status,
-          data: e.response?.data,
-          headers: e.response?.headers,
-        });
+      if (e instanceof Error) {
+        console.error("Restoration process error:", e.message, e);
       } else {
         console.error("Unknown error:", e);
       }
@@ -99,7 +94,10 @@ export const useRestoration = () => {
           setStatusMessage("");
           setProgress(100); // 완료
           setRestoredImageUrl(data.restoredUrl);
-        } else if (data.status === "FAILED") {
+          return;
+        }
+
+        if (data.status === "FAILED") {
           clearPolling();
           throw new Error(data.errorMessage || "복원 실패");
         }
@@ -109,19 +107,15 @@ export const useRestoration = () => {
           throw new Error("시간 초과");
         }
       } catch (e) {
-        if (isAxiosError(e)) {
-          console.error("Axios error during polling:", {
-            status: e.response?.status,
-            data: e.response?.data,
-            headers: e.response?.headers,
-          });
+        if (e instanceof Error) {
+          console.error("Restoration polling error:", e.message, e);
         } else {
           console.error("Unknown error during polling:", e);
         }
         clearPolling();
         setIsGenerating(false);
         setStatusMessage("");
-        setError("복원 결과를 가져오는데 실패했습니다."); // 에러 처리
+        setError("복원 결과를 가져오는데 실패했습니다.");
       }
     }, 1000); // 1초마다 폴링
   };
