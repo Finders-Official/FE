@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { AccountInfoCard } from "@/components/photoManage/AccountInfoCard";
 import { DepositorInput } from "@/components/photoManage/DepositorInput";
 import { BankSelectDropdown } from "@/components/photoManage/BankSelectDropdown";
@@ -7,47 +7,105 @@ import { PaymentProofUpload } from "@/components/photoManage/PaymentProofUpload"
 import { ToastItem, ToastList } from "@/components/common/ToastMessage";
 import { CTA_Button } from "@/components/common";
 import { CopyFillIcon } from "@/assets/icon";
-import type {
-  TransactionRouteState,
-  BankInfo,
-} from "@/types/photomanage/transaction";
-
-// 테스트용 mock 데이터
-const MOCK_STATE: TransactionRouteState = {
-  photoLabId: 1,
-  printOrderId: 55,
-  totalPrice: 8000,
-  receiptMethod: "PICKUP",
-  labAccountInfo: {
-    bankName: "우리은행",
-    accountNumber: "2739749381409821414",
-    accountHolder: "박*상",
-  },
-};
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
+import { useAuthStore } from "@/store/useAuth.store";
+import { useMe } from "@/hooks/member";
+import {
+  usePhotoLabAccount,
+  useConfirmDepositReceipt,
+} from "@/hooks/photoManage";
+import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
+import type { BankInfo } from "@/types/photomanage/transaction";
 
 export default function TransactionPage() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const routeState = (location.state as TransactionRouteState) || MOCK_STATE;
-  const { totalPrice, labAccountInfo } = routeState;
+
+  const storedMemberId = useAuthStore((s) => s.user?.memberId);
+  const setUser = useAuthStore((s) => s.setUser);
+  const { data: meData } = useMe({ enabled: storedMemberId == null });
+  const memberId = storedMemberId ?? meData?.member.memberId;
+
+  useEffect(() => {
+    if (!storedMemberId && meData) {
+      setUser({
+        memberId: meData.member.memberId,
+        nickname:
+          meData.roleData.role === "USER"
+            ? meData.roleData.user.nickname
+            : meData.member.name,
+      });
+    }
+  }, [storedMemberId, meData, setUser]);
+
+  const developmentOrderId = usePrintOrderStore((s) => s.developmentOrderId);
+  const printOrderId = usePrintOrderStore((s) => s.printOrderId);
+  const totalPrice = usePrintOrderStore((s) => s.totalPrice);
+  const resetWorkflow = usePrintOrderStore((s) => s.resetWorkflow);
+
+  const { data: labAccountInfo } = usePhotoLabAccount(developmentOrderId);
+  const { mutateAsync: issuePresignedUrl } = useIssuePresignedUrl();
+  const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
+  const { mutateAsync: confirmDeposit } = useConfirmDepositReceipt();
 
   const [showToast, setShowToast] = useState(false);
   const [depositorName, setDepositorName] = useState("");
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
   const [proofImage, setProofImage] = useState<File | null>(null);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 폼 유효성 검사
   const isFormValid =
     depositorName.trim() !== "" && selectedBank !== null && proofImage !== null;
 
-  const handleSubmit = () => {
-    if (!isFormValid) return;
-    // 나중에 여기서 API 호출
-    navigate("/photoManage/main");
+  const handleSubmit = async () => {
+    if (
+      !isFormValid ||
+      !printOrderId ||
+      !proofImage ||
+      !selectedBank ||
+      !memberId
+    )
+      return;
+
+    setIsSubmitting(true);
+    try {
+      // 1. presigned URL 발급
+      // TODO: 백엔드에서 DEPOSIT_RECEIPT 카테고리 추가 시 변경
+      const { data: presigned } = await issuePresignedUrl({
+        category: "TEMP_PUBLIC",
+        fileName: proofImage.name,
+        memberId,
+      });
+
+      // 2. S3 업로드
+      await uploadToPresignedUrl({
+        url: presigned.url,
+        file: proofImage,
+        contentType: proofImage.type,
+      });
+
+      // 3. 입금 확인 요청
+      await confirmDeposit({
+        printOrderId,
+        request: {
+          objectPath: presigned.objectPath,
+          depositorName: depositorName.trim(),
+          depositBankName: selectedBank.name,
+        },
+      });
+
+      // 4. 워크플로우 초기화 + 이동
+      resetWorkflow();
+      navigate("/photoManage/main");
+    } catch (err) {
+      console.error("입금 확인 요청 실패:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCopyAccount = async () => {
+    if (!labAccountInfo) return;
     try {
       await navigator.clipboard.writeText(labAccountInfo.accountNumber);
       setShowToast(true);
@@ -65,12 +123,14 @@ export default function TransactionPage() {
           아래 계좌로 {totalPrice.toLocaleString()}원을 입금해주세요
         </h1>
 
-        <div className="mt-4">
-          <AccountInfoCard
-            accountInfo={labAccountInfo}
-            onCopy={handleCopyAccount}
-          />
-        </div>
+        {labAccountInfo && (
+          <div className="mt-4">
+            <AccountInfoCard
+              accountInfo={labAccountInfo}
+              onCopy={handleCopyAccount}
+            />
+          </div>
+        )}
       </section>
 
       {/* 입금자 입력 */}
@@ -95,13 +155,13 @@ export default function TransactionPage() {
         <CTA_Button
           text="인화 신청 완료"
           size="xlarge"
-          color={isFormValid ? "orange" : "black"}
-          disabled={!isFormValid}
+          color={isFormValid && !isSubmitting ? "orange" : "black"}
+          disabled={!isFormValid || isSubmitting}
           onClick={handleSubmit}
         />
       </footer>
 
-      {/* Toast, http에선 IOS 클립보드 복사 안됨 */}
+      {/* Toast */}
       {showToast && (
         <ToastList>
           <ToastItem

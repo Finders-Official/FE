@@ -1,13 +1,20 @@
 import { ShoeIcon, TruckIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { BigButton } from "@/components/photoManage/BigButton";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
+import type { ReceiptMethod } from "@/types/photomanage/process";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
 type PickUpMethod = "pickup" | "delivery";
 
+const toReceiptMethod = (m: PickUpMethod): ReceiptMethod =>
+  m === "pickup" ? "PICKUP" : "DELIVERY";
+
 export function PickUpMethodPage() {
   const navigate = useNavigate();
+  const setReceiptMethod = usePrintOrderStore((s) => s.setReceiptMethod);
+  const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
   const [selectedMethod, setSelectedMethod] = useState<PickUpMethod | null>(
     null,
   );
@@ -15,12 +22,14 @@ export function PickUpMethodPage() {
   const isNextEnabled = selectedMethod;
 
   const handleNext = () => {
+    if (!selectedMethod) return;
+    setReceiptMethod(toReceiptMethod(selectedMethod));
+
     if (selectedMethod === "delivery") {
       navigate("../photoManage/select-address");
-    } else if (selectedMethod === "pickup") {
-      navigate("../photoManage/print-option", {
-        state: { pickupMethod: "pickup" as const },
-      });
+    } else {
+      setDeliveryAddress(null);
+      navigate("../photoManage/print-option");
     }
   };
 
