@@ -17,6 +17,7 @@ export function PrintRequestPage() {
   });
 
   const setTotalPrintCount = usePrintOrderStore((s) => s.setTotalPrintCount);
+  const setSelectedPhotos = usePrintOrderStore((s) => s.setSelectedPhotos);
 
   const totalQty = useMemo(() => {
     return Object.values(qtyById).reduce((sum, v) => sum + v, 0);
@@ -35,6 +36,12 @@ export function PrintRequestPage() {
 
   const handleNext = () => {
     setTotalPrintCount(totalQty);
+
+    const photos = Object.entries(qtyById)
+      .filter(([, qty]) => qty > 0)
+      .map(([id, qty]) => ({ scannedPhotoId: Number(id), quantity: qty }));
+    setSelectedPhotos(photos);
+
     navigate("../photoManage/pickup-method");
   };
 

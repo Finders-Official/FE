@@ -1,11 +1,8 @@
 import { CTA_Button } from "@/components/common";
 import { DropBox } from "@/components/photoManage/DropBox";
 import { DELIVERY_FEE_WON } from "@/constants/photomanage/category.constant";
-import {
-  usePrintOptions,
-  usePrintQuote,
-  useCreatePrintOrder,
-} from "@/hooks/photoManage";
+import { usePrintOptions, useCreatePrintOrder } from "@/hooks/photoManage";
+import { quotePrintPrice } from "@/apis/photoManage";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import type {
   CategoryKey,
@@ -18,7 +15,7 @@ import type {
   PrintQuoteRequest,
   PrintQuoteResponse,
 } from "@/types/photomanage/printOrder";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
 const formatWon = (n: number) => `${n.toLocaleString("ko-KR")}원`;
@@ -61,11 +58,11 @@ export function PrintOptionPage() {
   const setTotalPrice = usePrintOrderStore((s) => s.setTotalPrice);
 
   const { data: printOptions } = usePrintOptions();
-  const { mutateAsync: fetchQuoteAsync } = usePrintQuote();
   const { mutate: submitOrder, isPending: isSubmitting } =
     useCreatePrintOrder();
 
   const [quote, setQuote] = useState<PrintQuoteResponse | null>(null);
+  const quoteRequestId = useRef(0);
 
   // API 데이터 → DropDownCategory[] 변환
   const categories = useMemo<DropDownCategory[]>(() => {
@@ -150,22 +147,21 @@ export function PrintOptionPage() {
     deliveryAddress,
   ]);
 
-  // 사이즈 선택 시 견적 API 호출 (stale 응답 무시)
+  // 옵션 변경 시 견적 API 호출 (stale 응답 무시)
   useEffect(() => {
     const request = buildQuoteRequest();
     if (!request) return;
 
-    let stale = false;
-    fetchQuoteAsync(request)
-      .then((res) => {
-        if (!stale) setQuote(res.data);
-      })
-      .catch(() => {});
+    const id = ++quoteRequestId.current;
 
-    return () => {
-      stale = true;
-    };
-  }, [buildQuoteRequest, fetchQuoteAsync]);
+    quotePrintPrice(request)
+      .then((res) => {
+        if (quoteRequestId.current === id) setQuote(res.data);
+      })
+      .catch((err) => {
+        console.error("견적 조회 실패:", err);
+      });
+  }, [buildQuoteRequest]);
 
   // 사이즈 미선택 시 견적 표시하지 않음
   const displayedQuote = selection.SIZE ? quote : null;
