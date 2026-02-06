@@ -1,39 +1,42 @@
-// TODO: 파일 이름 QuickActionGrid로 변경
-
 import { useRef, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { MainCamera, MainFilm, MainSparkle } from "@/assets/icon";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
+import { useAuthStore } from "@/store/useAuth.store";
 
 export default function QuickActionGrid() {
   const navigate = useNavigate();
+  const { requireAuthNavigate } = useRequireAuth();
+
+  const user = useAuthStore((s) => s.user);
+  const isAuthed = Boolean(user && user.memberId > 0);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 파일 선택 시 처리 핸들러
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
+    if (!e.target.files || e.target.files.length === 0) return;
 
-      // File 객체를 브라우저용 URL(문자열)로 변환
-      const objectUrl = URL.createObjectURL(selectedFile);
+    const selectedFile = e.target.files[0];
+    const objectUrl = URL.createObjectURL(selectedFile);
 
-      // navigate는 한 번만 호출하며, 키값은 'imageUrl'로 통일
-      navigate("/restore/editor", {
-        state: { imageUrl: objectUrl },
-      });
+    navigate("/restore/editor", {
+      state: { imageUrl: objectUrl },
+    });
 
-      // (선택사항) 동일한 파일을 다시 선택할 수 있도록 input 초기화
-      e.target.value = "";
-    }
+    e.target.value = "";
   };
 
-  // 카드 클릭 시 숨겨진 input 트리거
   const handleRestoreClick = () => {
+    if (!isAuthed) {
+      requireAuthNavigate("/photoRestoration");
+      return;
+    }
     fileInputRef.current?.click();
   };
 
   return (
     <>
-      {/* 숨겨진 파일 입력 필드 */}
+      {/* 숨겨진 파일 입력 */}
       <input
         type="file"
         ref={fileInputRef}
@@ -45,7 +48,7 @@ export default function QuickActionGrid() {
       <section className="mt-7.5 mb-7.5 grid h-51 grid-cols-2 grid-rows-2 gap-3 px-5">
         {/* 현상 맡기기 */}
         <ActionCard
-          to="/"
+          onClick={() => requireAuthNavigate("/photolab")}
           className="row-span-2 flex flex-col items-center justify-center gap-4 bg-linear-to-br from-[#2a2a2a] to-[#111111]"
         >
           <div className="flex size-12.5 items-center justify-center">
@@ -71,7 +74,7 @@ export default function QuickActionGrid() {
 
         {/* 필카 입문 101 */}
         <ActionCard
-          to="/"
+          onClick={() => requireAuthNavigate("/film-camera-guide")}
           className="flex flex-col items-center justify-center gap-2 bg-[#1C1C1E]"
         >
           <div className="flex size-8 items-center justify-center">
@@ -94,7 +97,7 @@ interface ActionCardProps {
 }
 
 function ActionCard({ to, onClick, className, children }: ActionCardProps) {
-  const commonStyles = `relative overflow-hidden rounded-[20px] border border-white/5 shadow-inner transition-transform active:scale-[0.98] ${className} cursor-pointer`;
+  const commonStyles = `relative cursor-pointer overflow-hidden rounded-[1.25rem] border border-white/5 shadow-inner transition-transform active:scale-[0.98] ${className ?? ""}`;
 
   const content = (
     <>
@@ -105,15 +108,11 @@ function ActionCard({ to, onClick, className, children }: ActionCardProps) {
     </>
   );
 
-  if (to) {
-    return (
-      <Link to={to} className={commonStyles}>
-        {content}
-      </Link>
-    );
-  }
-
-  return (
+  return to ? (
+    <Link to={to} className={commonStyles}>
+      {content}
+    </Link>
+  ) : (
     <div onClick={onClick} className={commonStyles}>
       {content}
     </div>
