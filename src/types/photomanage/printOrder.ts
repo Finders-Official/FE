@@ -41,8 +41,3 @@ export interface ScanResult {
   expiresAt: number;
   createdAt: string;
 }
-
-export interface ScanResultSlice {
-  content: ScanResult[];
-  hasNext: boolean;
-}

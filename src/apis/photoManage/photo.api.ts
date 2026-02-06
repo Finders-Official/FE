@@ -4,7 +4,7 @@ import type { PrintOptionsResponse } from "@/types/photomanage/category";
 import type {
   PrintQuoteRequest,
   PrintQuoteResponse,
-  ScanResultSlice,
+  ScanResult,
 } from "@/types/photomanage/printOrder";
 import type {
   DepositReceiptConfirmRequest,
@@ -69,8 +69,8 @@ export async function getScanResults(
   developmentOrderId: number,
   page = 0,
   size = 20,
-): Promise<ApiResponse<ScanResultSlice>> {
-  const res = await axiosInstance.get<ApiResponse<ScanResultSlice>>(
+): Promise<ApiResponse<ScanResult[]>> {
+  const res = await axiosInstance.get<ApiResponse<ScanResult[]>>(
     `/photos/development-orders/${developmentOrderId}/scan-results`,
     { params: { page, size } },
   );

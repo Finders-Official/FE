@@ -5,7 +5,7 @@ export function useScanResults(developmentOrderId: number | null) {
   return useQuery({
     queryKey: ["photoManage", "scanResults", developmentOrderId],
     queryFn: () => getScanResults(developmentOrderId!, 0, 100),
-    select: (res) => res.data.content,
+    select: (res) => res.data,
     enabled: developmentOrderId !== null,
     staleTime: 1000 * 60 * 5,
   });
