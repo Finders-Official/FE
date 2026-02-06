@@ -123,7 +123,13 @@ export function PrintOptionPage() {
 
   // 견적 요청 빌드
   const buildQuoteRequest = useCallback((): PrintQuoteRequest | null => {
-    if (!developmentOrderId || !receiptMethod || !selection.SIZE) return null;
+    if (
+      !developmentOrderId ||
+      !receiptMethod ||
+      !selection.SIZE ||
+      !selection.PRINT_TYPE
+    )
+      return null;
 
     return {
       developmentOrderId,
@@ -163,8 +169,8 @@ export function PrintOptionPage() {
       });
   }, [buildQuoteRequest]);
 
-  // 사이즈 미선택 시 견적 표시하지 않음
-  const displayedQuote = selection.SIZE ? quote : null;
+  // 사이즈·인화유형 미선택 시 견적 표시하지 않음
+  const displayedQuote = selection.SIZE && selection.PRINT_TYPE ? quote : null;
   const isDelivery = receiptMethod === "DELIVERY";
   const shippingLabel = isDelivery ? "배송" : "직접수령";
   const shippingFee =
