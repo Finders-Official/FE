@@ -8,8 +8,7 @@ export function usePrintSkip() {
   return useMutation({
     mutationFn: (developmentOrderId: number) => printSkip(developmentOrderId),
     onSuccess: () => {
-      // TODO: PM-100으로 이동
-      navigate("/photoManage/finish");
+      navigate("/photoManage/splash");
     },
     onError: (error) => {
       console.error(error);
