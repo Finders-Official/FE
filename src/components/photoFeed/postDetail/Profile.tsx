@@ -2,8 +2,7 @@ import { DefaultProfileIcon, EllipsisVerticalIcon } from "@/assets/icon";
 import { useState } from "react";
 import ActionSheet from "./ActionSheet";
 import { timeAgo } from "@/utils/timeAgo";
-import { useDeletePost } from "@/hooks/photoFeed/posts/useDeletePost";
-import { useDeleteComment } from "@/hooks/photoFeed/comments/useDeleteComment";
+import { useDeletePost, useDeleteComment } from "@/hooks/photoFeed";
 
 type ProfileType = "post" | "comment";
 

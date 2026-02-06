@@ -3,7 +3,7 @@ import type { PostComment } from "@/types/photoFeed/postDetail";
 import Profile from "./Profile";
 import CommentInput from "./CommentInput";
 import { useState } from "react";
-import { useCreateComment } from "@/hooks/photoFeed/comments/useCreateComment";
+import { useCreateComment } from "@/hooks/photoFeed";
 
 type CommentSheetProps = {
   isCommentPending: boolean;

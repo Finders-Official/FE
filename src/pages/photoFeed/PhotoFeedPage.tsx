@@ -4,7 +4,7 @@ import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
 import { useNavigate } from "react-router";
-import { useInfinitePosts } from "@/hooks/photoFeed/posts/useInfinitePosts";
+import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 

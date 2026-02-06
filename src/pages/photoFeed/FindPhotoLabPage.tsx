@@ -8,9 +8,8 @@ import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import { useGeolocation } from "@/hooks/photoLab/useGeolocation";
-import { useSearchLabs } from "@/hooks/photoFeed/search/useSearchLabs";
 import EmptyView from "@/components/common/EmptyView";
-import { useCreatePostWithUpload } from "@/hooks/photoFeed/posts/useCreatePostWithUpload";
+import { useSearchLabs, useCreatePostWithUpload } from "@/hooks/photoFeed";
 import { useAuthStore } from "@/store/useAuth.store";
 
 type Step = "search" | "confirm";

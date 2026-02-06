@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useAuthStore } from "@/store/useAuth.store";
-import { useCreatePostWithUpload } from "@/hooks/photoFeed/posts/useCreatePostWithUpload";
+import { useCreatePostWithUpload } from "@/hooks/photoFeed";
 
 const MIN = 20;
 const MAX = 300;

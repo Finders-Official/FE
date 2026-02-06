@@ -9,12 +9,14 @@ import { Header, ToastItem } from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { usePostDetail } from "@/hooks/photoFeed/posts/usePostDetail";
+import {
+  usePostDetail,
+  useInfiniteComments,
+  useUnlikePost,
+  useLikePost,
+} from "@/hooks/photoFeed";
 import Profile from "@/components/photoFeed/postDetail/Profile";
-import { useInfiniteComments } from "@/hooks/photoFeed/comments/useInfiniteComments";
 import EmptyView from "@/components/common/EmptyView";
-import { useUnlikePost } from "@/hooks/photoFeed/reactions/useUnlikePost";
-import { useLikePost } from "@/hooks/photoFeed/reactions/useLikePost";
 import CommentSheet from "@/components/photoFeed/postDetail/CommentSheet";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import ProfileSkeleton from "@/components/photoFeed/postDetail/ProfileSkeleton";
