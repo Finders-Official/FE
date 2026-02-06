@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store/useAuth.store";
+import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_API_URL;
 
@@ -13,16 +14,21 @@ interface PresignedUrlResponse {
   };
 }
 
-// 헬퍼: 토큰에서 유저 ID 추출
-function getMemberIdFromToken(token: string): number {
-  try {
-    const payload = token.split(".")[1];
-    const decoded = JSON.parse(atob(payload));
-    return Number(decoded.id || decoded.memberId || decoded.sub || 0);
-  } catch (e) {
-    console.error("토큰 디코딩 실패", e);
-    return 0;
+type JwtPayload = {
+  id?: number;
+  memberId?: number;
+  sub?: string | number;
+};
+
+export function getMemberIdFromToken(token: string): number {
+  const decoded = jwtDecode<JwtPayload>(token);
+  const memberId = Number(decoded.id ?? decoded.memberId ?? decoded.sub);
+
+  if (!Number.isInteger(memberId) || memberId <= 0) {
+    throw new Error("No valid memberId found in token");
   }
+
+  return memberId;
 }
 
 // 1. Presigned URL 발급 요청
