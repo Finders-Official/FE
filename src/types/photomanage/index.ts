@@ -1,5 +1,4 @@
 export type { Address } from "./address";
-export { mockAddresses } from "./address";
 
 export type {
   CategoryKey,
