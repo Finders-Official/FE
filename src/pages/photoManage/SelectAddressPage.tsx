@@ -2,51 +2,38 @@ import { PlusIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { AddressCard } from "@/components/photoManage/AddressCard";
 import { DaumAddressSearch } from "@/components/photoManage/DaumAddressSearch";
+import { useAddressList, useCreateAddress } from "@/hooks/member";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
-import type { Address } from "@/types/photomanage/address";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-
-const STORAGE_KEY = "saved-addresses";
-
-function loadAddresses(): Address[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Address[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveAddresses(list: Address[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-}
 
 export function SelectAddressPage() {
   const navigate = useNavigate();
   const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
 
-  const [addresses, setAddresses] = useState<Address[]>(loadAddresses);
+  const { data: addresses = [] } = useAddressList();
+  const { mutate: addAddress } = useCreateAddress();
+
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const isNextEnabled = useMemo(() => selectedId !== null, [selectedId]);
 
-  const handleAddressFound = useCallback(
-    (data: { zipcode: string; address: string }) => {
-      const newAddr: Address = {
-        id: Date.now(),
-        label: "새 주소",
+  const handleAddressFound = (data: { zipcode: string; address: string }) => {
+    addAddress(
+      {
+        addressName: "새 주소",
         zipcode: data.zipcode,
         address: data.address,
-      };
-      const updated = [...addresses, newAddr];
-      setAddresses(updated);
-      saveAddresses(updated);
-      setSelectedId(newAddr.id);
-    },
-    [addresses],
-  );
+        isDefault: addresses.length === 0,
+      },
+      {
+        onSuccess: (res) => {
+          setSelectedId(res.data.id);
+        },
+      },
+    );
+  };
 
   const handleComplete = () => {
     const selected = addresses.find((a) => a.id === selectedId);
