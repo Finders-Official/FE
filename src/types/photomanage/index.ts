@@ -1,4 +1,4 @@
-export type { Address } from "./address";
+export type { Address, CreateAddressRequest } from "./address";
 
 export type {
   CategoryKey,
