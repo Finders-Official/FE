@@ -1,10 +1,13 @@
-import { useEffect, useState, useCallback } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { useInfiniteQuery } from "@tanstack/react-query";
+
 import { getDevelopmentOrders } from "@/apis/developmentHistory/developmentHistory.api";
 import { formatDevelopmentOrder } from "@/utils/developmentHistory/formatters";
 import { CloseIcon, FlimImageIcon } from "@/assets/icon";
 import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
 import DevelopmentOrderCard from "@/components/developmentHistory/DevelopmentOrderCard";
+import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 
 interface FormattedDevelopmentOrder {
   id: number;
@@ -20,69 +23,65 @@ interface FormattedDevelopmentOrder {
   resultImageUrls: string[];
 }
 
+const PAGE_SIZE = 10;
+
 const DevelopmentHistoryPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMenu = location.state?.isMenu;
 
-  const [orders, setOrders] = useState<FormattedDevelopmentOrder[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [hasNext, setHasNext] = useState(true);
-
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
-  // 데이터 로딩 로직
-  // TODO: 불러오는 중 대신 스켈레톤 UI
-  const loadOrders = useCallback(
-    async (pageNum: number) => {
-      if (!hasNext && pageNum > 0) return;
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-      try {
-        setIsLoading(true);
-        const response = await getDevelopmentOrders(pageNum, 10);
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["developmentOrders", PAGE_SIZE],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) => {
+      const pageNum = (pageParam ?? 0) as number;
+      const response = await getDevelopmentOrders(pageNum, PAGE_SIZE);
 
-        if (response && response.data) {
-          const mappedData = response.data.map(formatDevelopmentOrder);
-          setOrders((prev) =>
-            pageNum === 0 ? mappedData : [...prev, ...mappedData],
-          );
-          setHasNext(response.slice.hasNext);
-        }
-      } catch (error) {
-        console.error("현상 내역을 불러오는데 실패했습니다.", error);
-      } finally {
-        setIsLoading(false);
-      }
+      return {
+        items: response.data.map(formatDevelopmentOrder),
+        hasNext: response.slice.hasNext,
+      };
     },
-    [hasNext],
-  );
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.hasNext ? allPages.length : undefined; // 0부터 시작
+    },
+  });
 
-  useEffect(() => {
-    loadOrders(0);
-  }, [loadOrders]);
+  const orders: FormattedDevelopmentOrder[] = useMemo(() => {
+    return data?.pages.flatMap((p) => p.items) ?? [];
+  }, [data]);
 
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    loadOrders(nextPage);
-  };
+  const hasData = orders.length > 0;
 
   const handleOpenViewer = (images: string[]) => {
     setSelectedImages(images);
     setIsViewerOpen(true);
   };
 
-  const hasData = orders.length > 0;
+  useInfiniteScroll({
+    target: loadMoreRef,
+    onIntersect: fetchNextPage,
+    enabled: !!hasNextPage && !isFetchingNextPage,
+    rootMargin: "200px",
+  });
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-md bg-neutral-900 text-neutral-100">
-      {/* 1. 데이터가 없을 때 (Empty State) */}
       {!hasData && !isLoading ? (
         <EmptyOrderState />
       ) : (
-        /* 2. 데이터가 있을 때 (Main Content) */
         <div className="pt-6 pb-24">
           <header className="mb-4 flex items-center justify-between">
             <h2 className="text-[1.375rem] font-semibold text-neutral-100">
@@ -99,29 +98,32 @@ const DevelopmentHistoryPage = () => {
             )}
           </header>
 
-          <div className="flex flex-col gap-4">
-            {orders.map((item) => (
-              <DevelopmentOrderCard
-                key={item.id}
-                item={item}
-                onOpenViewer={handleOpenViewer}
-              />
-            ))}
+          {isError ? (
+            <div className="rounded-xl border border-neutral-800 p-4 text-sm text-neutral-300">
+              현상 내역을 불러오는데 실패했습니다.
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {orders.map((item) => (
+                <DevelopmentOrderCard
+                  key={item.id}
+                  item={item}
+                  onOpenViewer={handleOpenViewer}
+                />
+              ))}
 
-            {hasNext && (
-              <button
-                onClick={handleLoadMore}
-                disabled={isLoading}
-                className="mt-4 rounded-xl border border-neutral-800 py-3 text-sm font-medium text-neutral-400 active:bg-neutral-800 disabled:opacity-50"
-              >
-                {isLoading ? "불러오는 중..." : "이전 내역 더보기"}
-              </button>
-            )}
-          </div>
+              {hasNextPage && <div ref={loadMoreRef} className="h-10" />}
+
+              {(isLoading || isFetchingNextPage) && (
+                <div className="py-3 text-center text-sm text-neutral-400">
+                  불러오는 중...
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
-      {/* 3. 공통 뷰어 모달 */}
       <ScanResultViewer
         isOpen={isViewerOpen}
         onClose={() => setIsViewerOpen(false)}
@@ -131,9 +133,6 @@ const DevelopmentHistoryPage = () => {
   );
 };
 
-/**
- * 내부 컴포넌트: 데이터가 없을 때 표시
- */
 const EmptyOrderState = () => (
   <div className="flex h-[calc(100vh-6.25rem)] w-full flex-col items-center justify-center">
     <div className="flex flex-col items-center gap-5">
