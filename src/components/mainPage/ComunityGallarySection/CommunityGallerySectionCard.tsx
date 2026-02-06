@@ -26,7 +26,7 @@ export default function CommunityGallerySectionCard({
     "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80";
 
   const handleCardClick = () => {
-    requireAuthNavigate(`/community/post/${post.postId}`);
+    requireAuthNavigate(`/photoFeed/post/${post.postId}`);
   };
 
   const handleLikeClick = async (e: React.MouseEvent) => {
