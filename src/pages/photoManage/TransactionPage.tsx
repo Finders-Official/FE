@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { AccountInfoCard } from "@/components/photoManage/AccountInfoCard";
 import { DepositorInput } from "@/components/photoManage/DepositorInput";
@@ -8,6 +8,8 @@ import { ToastItem, ToastList } from "@/components/common/ToastMessage";
 import { CTA_Button } from "@/components/common";
 import { CopyFillIcon } from "@/assets/icon";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
+import { useAuthStore } from "@/store/useAuth.store";
+import { useMe } from "@/hooks/member";
 import {
   usePhotoLabAccount,
   useConfirmDepositReceipt,
@@ -17,6 +19,23 @@ import type { BankInfo } from "@/types/photomanage/transaction";
 
 export default function TransactionPage() {
   const navigate = useNavigate();
+
+  const storedMemberId = useAuthStore((s) => s.user?.memberId);
+  const setUser = useAuthStore((s) => s.setUser);
+  const { data: meData } = useMe({ enabled: storedMemberId == null });
+  const memberId = storedMemberId ?? meData?.member.memberId;
+
+  useEffect(() => {
+    if (!storedMemberId && meData) {
+      setUser({
+        memberId: meData.member.memberId,
+        nickname:
+          meData.roleData.role === "USER"
+            ? meData.roleData.user.nickname
+            : meData.member.name,
+      });
+    }
+  }, [storedMemberId, meData, setUser]);
 
   const developmentOrderId = usePrintOrderStore((s) => s.developmentOrderId);
   const printOrderId = usePrintOrderStore((s) => s.printOrderId);
@@ -39,7 +58,14 @@ export default function TransactionPage() {
     depositorName.trim() !== "" && selectedBank !== null && proofImage !== null;
 
   const handleSubmit = async () => {
-    if (!isFormValid || !printOrderId || !proofImage || !selectedBank) return;
+    if (
+      !isFormValid ||
+      !printOrderId ||
+      !proofImage ||
+      !selectedBank ||
+      !memberId
+    )
+      return;
 
     setIsSubmitting(true);
     try {
@@ -48,6 +74,7 @@ export default function TransactionPage() {
       const { data: presigned } = await issuePresignedUrl({
         category: "TEMP_PUBLIC",
         fileName: proofImage.name,
+        memberId,
       });
 
       // 2. S3 업로드
