@@ -1,25 +1,19 @@
 import BottomSheet from "@/components/common/BottomSheet";
-import type { PostComment } from "@/types/photoFeed/postDetail";
 import Profile from "./Profile";
 import CommentInput from "./CommentInput";
-import { useState } from "react";
-import { useCreateComment } from "@/hooks/photoFeed";
+import { useRef, useState } from "react";
+import { useCreateComment, useInfiniteComments } from "@/hooks/photoFeed";
+import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 
 type CommentSheetProps = {
-  isCommentPending: boolean;
-  isCommentError: boolean;
   open: boolean;
   onClose: () => void;
-  comments: PostComment[];
   postId: number;
 };
 
 export default function CommentSheet({
-  isCommentPending,
-  isCommentError,
   open,
   onClose,
-  comments,
   postId,
 }: CommentSheetProps) {
   // 댓글 input
@@ -41,6 +35,27 @@ export default function CommentSheet({
     );
   };
 
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // 게시글 댓글 조회
+  const {
+    data,
+    fetchNextPage,
+    isPending: isCommentPending,
+    isError: isCommentError,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteComments(postId);
+  const comments = data?.pages.flatMap((c) => c.data) ?? [];
+
+  const onIntersect = () => fetchNextPage();
+
+  useInfiniteScroll({
+    target: sentinelRef,
+    enabled: hasNextPage && !isFetchingNextPage,
+    onIntersect: onIntersect,
+  });
+
   return (
     <BottomSheet open={open} onClose={onClose} title="댓글">
       <div className="flex h-full flex-col gap-1">
@@ -54,7 +69,7 @@ export default function CommentSheet({
               데이터 불러오기에 실패했어요.
             </div>
           ) : (
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 pb-7">
               {comments.map(
                 ({
                   commentId,
@@ -78,6 +93,8 @@ export default function CommentSheet({
               )}
             </div>
           )}
+          {/* 센티널 요소 */}
+          <div ref={sentinelRef} style={{ height: 1 }} />
         </div>
 
         <div className="bg-neutral-875 h-10 shrink-0">

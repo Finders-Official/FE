@@ -8,7 +8,7 @@ import type { PostComment } from "@/types/photoFeed/postDetail";
 
 type CreateCommentResult = PostComment;
 type CreateCommentVars = { postId: number; content: string };
-type CreateCommentError = Error; // 또는 unknown
+type CreateCommentError = Error;
 
 export function useCreateComment(
   options?: UseMutationOptions<
@@ -27,8 +27,9 @@ export function useCreateComment(
     mutationKey: ["createComment"],
     mutationFn: ({ postId, content }) => postComment(postId, content),
     ...options,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments"] });
+    onSuccess: (data, vars, onMutateResult, ctx) => {
+      queryClient.invalidateQueries({ queryKey: ["comments", vars.postId] });
+      options?.onSuccess?.(data, vars, onMutateResult, ctx);
     },
   });
 }

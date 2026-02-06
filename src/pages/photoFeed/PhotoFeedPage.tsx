@@ -76,7 +76,11 @@ export default function PhotoFeedPage() {
               );
             })
           : posts.map((postPreview) => (
-              <PhotoCard key={postPreview.postId} photo={postPreview} />
+              <PhotoCard
+                key={postPreview.postId}
+                photo={postPreview}
+                isLiked={false}
+              />
             ))}
       </section>
 

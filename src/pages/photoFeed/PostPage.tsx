@@ -9,12 +9,7 @@ import { Header, ToastItem } from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import {
-  usePostDetail,
-  useInfiniteComments,
-  useUnlikePost,
-  useLikePost,
-} from "@/hooks/photoFeed";
+import { usePostDetail, useUnlikePost, useLikePost } from "@/hooks/photoFeed";
 import Profile from "@/components/photoFeed/postDetail/Profile";
 import EmptyView from "@/components/common/EmptyView";
 import CommentSheet from "@/components/photoFeed/postDetail/CommentSheet";
@@ -42,14 +37,6 @@ export default function PostPage() {
     isPending: isPostPending,
     isError: isPostError,
   } = usePostDetail(numericPostId);
-
-  // 게시글 댓글 조회
-  const {
-    data,
-    isPending: isCommentPending,
-    isError: isCommentError,
-  } = useInfiniteComments(numericPostId);
-  const comments = data?.pages.flatMap((c) => c.data) ?? [];
 
   // 게시글 좋아요
   const { mutate: unlikePost, isPending: isUnliking } = useUnlikePost();
@@ -235,11 +222,8 @@ export default function PostPage() {
       {/** 댓글창 */}
       {postDetail && (
         <CommentSheet
-          isCommentPending={isCommentPending}
-          isCommentError={isCommentError}
           open={commentVisible}
           onClose={() => setCommentVisible(false)}
-          comments={comments}
           postId={postDetail.postId}
         />
       )}
