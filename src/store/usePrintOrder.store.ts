@@ -47,7 +47,16 @@ const clampNonNegativeInt = (n: number) => {
   return v < 0 ? 0 : v;
 };
 
-const initialWorkflow = {
+const initialWorkflow: Pick<
+  PrintOrderState,
+  | "developmentOrderId"
+  | "selectedPhotos"
+  | "receiptMethod"
+  | "deliveryAddress"
+  | "selectedOptions"
+  | "printOrderId"
+  | "totalPrice"
+> = {
   developmentOrderId: null,
   selectedPhotos: [],
   receiptMethod: null,
@@ -55,7 +64,7 @@ const initialWorkflow = {
   selectedOptions: {},
   printOrderId: null,
   totalPrice: 0,
-} as const;
+};
 
 export const usePrintOrderStore = create<PrintOrderState>()(
   persist(
