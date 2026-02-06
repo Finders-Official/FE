@@ -4,6 +4,7 @@ import type { PrintOptionsResponse } from "@/types/photomanage/category";
 import type {
   PrintQuoteRequest,
   PrintQuoteResponse,
+  ScanResultSlice,
 } from "@/types/photomanage/printOrder";
 import type {
   DepositReceiptConfirmRequest,
@@ -52,6 +53,26 @@ export async function createPrintOrder(
   const res = await axiosInstance.post<ApiResponse<number>>(
     "/photos/print-orders",
     request,
+  );
+
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
+}
+
+// 스캔 결과 사진 조회
+export async function getScanResults(
+  developmentOrderId: number,
+  page = 0,
+  size = 20,
+): Promise<ApiResponse<ScanResultSlice>> {
+  const res = await axiosInstance.get<ApiResponse<ScanResultSlice>>(
+    `/photos/development-orders/${developmentOrderId}/scan-results`,
+    { params: { page, size } },
   );
 
   const body = res.data;
