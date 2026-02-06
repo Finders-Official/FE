@@ -1,10 +1,10 @@
-// 배송지 목록 조회 응답 (GET /users/addresses)
+// 배송지 조회 응답 (GET /users/addresses)
 export type Address = {
-  id: number;
-  label: string;
+  addressId: number;
+  addressName: string;
   zipcode: string;
   address: string;
-  addressDetail?: string;
+  addressDetail: string;
   isDefault: boolean;
   createdAt: string;
 };

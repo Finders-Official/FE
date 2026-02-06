@@ -29,14 +29,14 @@ export function SelectAddressPage() {
       },
       {
         onSuccess: (res) => {
-          setSelectedId(res.data.id);
+          setSelectedId(res.data.addressId);
         },
       },
     );
   };
 
   const handleComplete = () => {
-    const selected = addresses.find((a) => a.id === selectedId);
+    const selected = addresses.find((a) => a.addressId === selectedId);
     if (!selected) return;
 
     setDeliveryAddress({
@@ -64,9 +64,9 @@ export function SelectAddressPage() {
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] flex flex-1 flex-col gap-4">
         {addresses.map((addr) => (
           <AddressCard
-            key={addr.id}
-            isSelected={selectedId === addr.id}
-            onClick={() => setSelectedId(addr.id)}
+            key={addr.addressId}
+            isSelected={selectedId === addr.addressId}
+            onClick={() => setSelectedId(addr.addressId)}
             address={addr}
           />
         ))}

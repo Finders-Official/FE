@@ -24,7 +24,7 @@ export function AddressCard({
     >
       <section className="mb-2 flex items-center gap-2">
         <MapPinIcon className="h-4 w-4" />
-        <p>{address.label}</p>
+        <p>{address.addressName}</p>
       </section>
       <p className="text-sm text-neutral-300">
         [{address.zipcode}] {address.address}
