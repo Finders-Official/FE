@@ -10,13 +10,12 @@ export default function SplashPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 pb-15 text-center">
+    <div className="bg-splash-gradient -mx-4 min-h-screen w-screen">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 pb-14 text-center">
         <SplashIcon className="h-32 w-32" />
         <div className="flex flex-col gap-5">
-          <h2 className="font-5 whitespace-pre-line text-white">
-            {`파인더스를 이용해
-          현상을 진행해주셔서 감사해요!`}
+          <h2 className="text-[1.375rem] font-medium whitespace-pre-line text-white">
+            {`파인더스를 이용해\n현상을 진행해주셔서 감사해요!`}
           </h2>
           <ActionButton
             leftIcon={
@@ -25,6 +24,7 @@ export default function SplashPage() {
             message={"현상한 사진 자랑하러 가기"}
             showNext={true}
             onClick={handleClick}
+            className="w-63"
           />
         </div>
       </div>
