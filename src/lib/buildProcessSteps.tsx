@@ -44,14 +44,17 @@ export function buildProcessSteps({
       step: "DEVELOP",
       isCurrent: status === "DEVELOP",
       title: "필름 현상",
-      content: status === "DEVELOP" && (
-        <div className="flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
-          <ClockIcon className="h-3 w-3" />
-          <p className="">
-            {`작업 완료 시간: ${formatEstimatedTime(workData.completedAt)}`}
-          </p>
-        </div>
-      ),
+      content:
+        status === "DEVELOP" ? (
+          <div className="flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
+            <ClockIcon className="h-3 w-3" />
+            <p className="">
+              {`작업 완료 시간: ${formatEstimatedTime(workData.completedAt)}`}
+            </p>
+          </div>
+        ) : (
+          <p className="">어둠 속에서 이미지를 깨우는 중</p>
+        ),
       index: 1,
     },
     {
