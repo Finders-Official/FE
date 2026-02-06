@@ -44,6 +44,7 @@ import {
 import TransactionPage from "@/pages/photoManage/TransactionPage";
 import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
 import PhotoRestorationPage from "@/pages/photoRestoration/PhotoRestorationPage";
+import SplashPage from "@/pages/photoManage/SplashPage";
 
 const router = createBrowserRouter([
   {
@@ -142,6 +143,10 @@ const router = createBrowserRouter([
           {
             path: "/photoManage/main",
             Component: PmMainPage,
+          },
+          {
+            path: "/photoManage/splash",
+            Component: SplashPage,
           },
         ],
       },
