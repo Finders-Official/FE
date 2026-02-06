@@ -110,7 +110,6 @@ export default function NewPostPage() {
 
         <hr className="border-neutral-800" />
 
-        {/** TODO: 유의사항은 DB에서 가져오남..? 얜 나중에 제대로.. */}
         {/** 유의사항 표시 */}
         <div className="text-[0.75rem] leading-relaxed text-neutral-200">
           <p className="font-semibold">금지 활동 및 제한 사유</p>

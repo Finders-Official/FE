@@ -1,54 +1,111 @@
 import SearchBar from "@/components/common/SearchBar";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { Checkbox } from "@/components/common/CheckBox";
-import { useMemo, useRef, useState } from "react";
-import { HighlightText } from "@/components/photoFeed/highlightText";
-import type { PhotoLab } from "@/types/photoLab";
-import { results } from "@/types/photoLab";
+import { useRef, useState } from "react";
+import { HighlightText } from "@/components/photoFeed/upload/highlightText";
+import type { LabSearchResponse } from "@/types/photoFeed/labSearch";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
+import { useGeolocation } from "@/hooks/common/useGeolocation";
+import EmptyView from "@/components/common/EmptyView";
+import { useSearchLabs, useCreatePostWithUpload } from "@/hooks/photoFeed";
+import { useAuthStore } from "@/store/useAuth.store";
 
 type Step = "search" | "confirm";
 
 export default function FindPhotoLabPage() {
   const [step, setStep] = useState<Step>("search");
 
-  const [text, setText] = useState("");
+  const [keyword, setKeyword] = useState("");
   const [searching, setSearching] = useState(false);
   const [checked, setChecked] = useState(false);
-
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [selectedLab, setSelectedLab] = useState<PhotoLab | null>(null);
+  // 사용자 ID 가져오기
+  const memberId = useAuthStore((s) => s.user?.memberId);
 
+  // 이전 페이지에서 작성한 데이터 가져오기
+  const title = useNewPostState((s) => s.title);
+  const content = useNewPostState((s) => s.content);
+
+  const files = useNewPostState((s) => s.files);
+  const imageMetas = useNewPostState((s) => s.imageMetas);
+
+  // 자가현상 여부 및 현상소 정보 저장
   const setIsSelfDeveloped = useNewPostState((s) => s.setIsSelfDeveloped);
   const setLabInfo = useNewPostState((s) => s.setLabInfo);
 
+  // 게시글 등록한 직후인지에 대한 정보 저장
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
+
+  // store 전체 reset
+  const reset = useNewPostState((s) => s.reset);
+
+  // 선택된 현상소
+  const [selectedLab, setSelectedLab] = useState<LabSearchResponse | null>(
+    null,
+  );
+
   const navigate = useNavigate();
 
-  const filteredResults = useMemo(() => {
-    const q = text.trim().toLowerCase();
-    if (!q) return [];
-    return results.filter((r) => r.name.toLowerCase().includes(q));
-  }, [text]);
+  // 사용자 위치 정보
+  const { latitude, longitude, locationAgreed } = useGeolocation();
 
+  const params = {
+    keyword: keyword,
+    latitude: locationAgreed ? (latitude ?? undefined) : undefined,
+    longitude: locationAgreed ? (longitude ?? undefined) : undefined,
+    locationAgreed,
+  };
+
+  // 현상소 검색 기록 조회 API
+  const { data, isLoading, isError } = useSearchLabs(params);
+
+  // 검색 화면 초기화
   const handleResetSearch = () => {
     setStep("search");
     setSearching(false);
-    setText("");
+    setKeyword("");
     setSelectedLab(null);
   };
 
-  const handleLabSelect = (lab: PhotoLab) => {
+  // 현상소 선택
+  const handleLabSelect = (lab: LabSearchResponse) => {
     inputRef.current?.blur();
-    setLabInfo(lab.id, lab.name);
+    setLabInfo(lab.labId, lab.name);
     setSelectedLab(lab);
     setSearching(false);
+    setIsSelfDeveloped(false);
     setStep("confirm");
   };
 
-  /** 확인 화면(Confirm) 렌더링  */
+  // GCS에 사진 등록 + 게시글 등록 API
+  const { submit, isPending } = useCreatePostWithUpload({
+    onSuccess: (postId) => {
+      reset();
+      setIsNewPost(true);
+      navigate(`/photoFeed/post/${postId}`);
+    },
+    onError: (err) => console.error("게시글 생성 실패", err),
+  });
+
+  const handleSubmit = async () => {
+    try {
+      await submit({
+        title,
+        content,
+        files,
+        imageMetas,
+        memberId,
+        isSelfDeveloped: true,
+      });
+    } catch (e) {
+      console.error("게시글 업로드 실패", e);
+    }
+  };
+
+  /** 현상소 선택 후 Confirm 화면  */
   if (step === "confirm" && selectedLab) {
     return (
       <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
@@ -61,7 +118,7 @@ export default function FindPhotoLabPage() {
           <div className="border-neutral-750 gap-[0.625rem] rounded-2xl border p-[1.25rem]">
             <p className="font-semibold text-white">{selectedLab.name}</p>
             <p className="text-sm text-neutral-400">
-              {selectedLab.addr} ({selectedLab.dist})
+              {selectedLab.address} ({selectedLab.distance})
             </p>
           </div>
         </div>
@@ -86,6 +143,56 @@ export default function FindPhotoLabPage() {
     );
   }
 
+  /** 검색모드일 때: 결과 리스트 출력 */
+  const renderSearchList = () => {
+    if (isLoading) {
+      return (
+        <ul className="flex flex-col gap-4 p-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <li key={i} className="list-none">
+              <div className="flex flex-col gap-2 py-4">
+                <div className="h-5 w-52 animate-pulse rounded-md bg-neutral-800/60" />
+                <div className="h-4 w-72 animate-pulse rounded-md bg-neutral-800/40" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    if (isError) {
+      return (
+        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+          <p className="text-red-400">불러오기에 실패했어요.</p>
+        </div>
+      );
+    }
+    if (!data) {
+      return <EmptyView />;
+    }
+    return (
+      <ul className="divide-y divide-neutral-800 px-4">
+        {data.map((r) => (
+          <li
+            key={r.labId}
+            className="py-4"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              inputRef.current?.blur();
+            }}
+            onClick={() => handleLabSelect(r)}
+          >
+            <p className="font-semibold">
+              <HighlightText text={r.name} keyword={keyword} />
+            </p>
+            <p className="text-sm text-neutral-400">
+              {r.address} ({r.distance})
+            </p>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   /** 검색 화면(Search) 렌더링 */
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
@@ -106,46 +213,19 @@ export default function FindPhotoLabPage() {
         </h1>
         <div className="relative z-20 flex flex-col gap-4">
           <SearchBar
-            value={text}
+            value={keyword}
             inputRef={inputRef}
-            onChange={setText}
+            onChange={setKeyword}
             placeholder="이용하신 현상소를 찾아보세요."
             showBack={false}
             debounceMs={0}
             rightIcon="search"
             onFocus={() => setSearching(true)} // 포커스 되면 검색모드
-            onSearch={() => {
-              /* TODO: 실제 검색 실행 */
-            }}
+            onSearch={() => {}}
           />
 
           {/* 검색모드일 때: 결과 리스트 출력 */}
-          {searching && (
-            <>
-              {text.length > 0 && (
-                <ul className="divide-y divide-neutral-800 px-4">
-                  {filteredResults.map((r) => (
-                    <li
-                      key={r.id}
-                      className="py-4"
-                      onPointerDown={(e) => {
-                        e.preventDefault();
-                        inputRef.current?.blur();
-                      }}
-                      onClick={() => handleLabSelect(r)}
-                    >
-                      <p className="font-semibold">
-                        <HighlightText text={r.name} keyword={text} />
-                      </p>
-                      <p className="text-sm text-neutral-400">
-                        {r.addr} ({r.dist})
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </>
-          )}
+          {searching && keyword.length > 0 && renderSearchList()}
 
           {/* 기본모드일 때: 체크박스 + 다음 버튼 */}
           {!searching && (
@@ -156,7 +236,6 @@ export default function FindPhotoLabPage() {
                   onChange={setChecked}
                   onClick={() => {
                     setIsSelfDeveloped(true);
-                    // TODO: 현상소 관련 로직 없이 바로 post 요청
                   }}
                 />
                 <p className="text-[0.875rem] text-white">자가 현상했어요.</p>
@@ -165,10 +244,9 @@ export default function FindPhotoLabPage() {
                 <CTA_Button
                   text="다음"
                   size="xlarge"
-                  disabled={!checked}
-                  link="/photoFeed/post/1" // TODO: 수정 예정
+                  disabled={!checked || isPending}
                   color={checked ? "orange" : "black"}
-                  onClick={() => {}}
+                  onClick={handleSubmit} // 자가현상 게시글 등록 API 호출 후 링크
                 />
               </div>
             </>
@@ -178,7 +256,6 @@ export default function FindPhotoLabPage() {
     </div>
   );
 }
-
 /**
  * CO-023 FindPhotoLabPage.tsx
  * Description: 현상소 찾기 페이지

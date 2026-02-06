@@ -35,10 +35,8 @@ export const DialogBox = ({
     <div
       // 1. 배경(Wrapper)에 직접 onClick 이벤트 할당
       onClick={onCancel}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
     >
-      {/* 기존의 absolute overlay div 제거됨 */}
-
       <div
         // 2. 모달 내부 클릭 시 상위(배경)로 클릭 이벤트가 전파되지 않도록 차단
         onClick={(e) => e.stopPropagation()}
@@ -63,7 +61,7 @@ export const DialogBox = ({
           {cancelText && (
             <button
               onClick={onCancel}
-              className="h-[3rem] flex-1 rounded-[0.75rem] text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200 transition-all hover:brightness-110 active:scale-[0.98]"
+              className="h-12 flex-1 rounded-xl text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200 transition-all hover:brightness-110 active:scale-[0.98]"
               style={{
                 background: `linear-gradient(#1C1C1C, #1C1C1C) padding-box, ${borderGradient} border-box`,
                 border: "1px solid transparent",
@@ -76,7 +74,7 @@ export const DialogBox = ({
           {confirmButtonStyle === "filled" ? (
             <button
               onClick={onConfirm}
-              className={`${cancelText ? "flex-1" : "w-full"} h-[3rem] rounded-[0.75rem] text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100 transition-all hover:brightness-110 active:scale-[0.98]`}
+              className={`${cancelText ? "flex-1" : "w-full"} h-12 rounded-xl text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100 transition-all hover:brightness-110 active:scale-[0.98]`}
               style={{
                 background: `linear-gradient(#E94E16, #E94E16) padding-box, ${borderGradient} border-box`,
                 border: "1px solid transparent",

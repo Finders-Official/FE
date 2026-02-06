@@ -14,7 +14,7 @@ export type PresignedUploadCategory =
 export type PresignedUrlIssueReqDto = {
   category: PresignedUploadCategory;
   fileName: string;
-  memberId: number;
+  memberId?: number;
 };
 
 export type PresignedUrlIssueResDto = {

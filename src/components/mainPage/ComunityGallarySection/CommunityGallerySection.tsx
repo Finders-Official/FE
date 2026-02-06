@@ -12,7 +12,7 @@ export default function CommunityGallerySection() {
     <section className="flex flex-col gap-7 py-6">
       <SectionHeader
         title={"파인더들이 찍은 사진\n같이 보실래요?"}
-        link="/community"
+        link="/photoFeed"
       />
 
       <div className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-4">

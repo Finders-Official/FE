@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { SearchBar, FilterContainer } from "@/components/common";
 import {
@@ -12,14 +12,20 @@ import {
   KeywordSuggestionSection,
   LabPreviewSection,
 } from "@/components/photoLab/search";
-import { useRecentSearches } from "@/hooks/useRecentSearches";
-import { usePopularPhotoLabs } from "@/hooks/photoLab";
+import { useRecentSearches } from "@/hooks/common/useRecentSearches";
+import { useDebouncedValue } from "@/hooks/common";
 import {
-  MOCK_KEYWORD_SUGGESTIONS,
-  MOCK_LAB_PREVIEWS,
-} from "@/constants/photoLab";
+  usePopularPhotoLabs,
+  usePhotoLabList,
+  useFavoriteToggle,
+  useGeolocation,
+} from "@/hooks/photoLab";
+import { getPhotoLabList } from "@/apis/photoLab";
+import { useQuery } from "@tanstack/react-query";
+import { MOCK_KEYWORD_SUGGESTIONS } from "@/constants/photoLab";
 import { WEEKDAYS } from "@/constants/date";
-import type { PhotoLabItem, FilterState } from "@/types/photoLab";
+import type { FilterState } from "@/types/photoLab";
+import type { LabPreview } from "@/types/photoLabSearch";
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
@@ -43,6 +49,13 @@ export default function PhotoLabSearchPage() {
     }
   };
 
+  // 위치 정보
+  const {
+    latitude,
+    longitude,
+    isLoading: isLocationLoading,
+  } = useGeolocation();
+
   // 인기 현상소
   const { data: popularLabs = [] } = usePopularPhotoLabs();
 
@@ -51,14 +64,12 @@ export default function PhotoLabSearchPage() {
     useRecentSearches();
   const [isRecentExpanded, setIsRecentExpanded] = useState(false);
 
-  // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
   // 필터 상태 (results 화면용)
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filter, setFilter] = useState<FilterState>({});
 
-  // TODO: 검색 API 연동 (키워드 자동완성 + 현상소 프리뷰)
-  // 자동완성 필터링
+  // TODO: 키워드 자동완성 API 연동 (백엔드 개발중)
   const filteredKeywords = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase();
@@ -67,18 +78,67 @@ export default function PhotoLabSearchPage() {
     ).slice(0, 4);
   }, [query]);
 
-  const filteredLabPreviews = useMemo(() => {
-    if (!query.trim()) return [];
-    const q = query.toLowerCase();
-    return MOCK_LAB_PREVIEWS.filter(
-      (lab) =>
-        lab.name.toLowerCase().includes(q) ||
-        lab.address.toLowerCase().includes(q),
-    ).slice(0, 10);
-  }, [query]);
+  // TODO: 백엔드 경량 API 완성 시 교체
+  const debouncedQuery = useDebouncedValue(query, 300);
+  const { data: previewData } = useQuery({
+    queryKey: ["photoLab", "preview", debouncedQuery],
+    queryFn: () =>
+      getPhotoLabList({
+        q: debouncedQuery,
+        size: 10,
+        lat: latitude ?? undefined,
+        lng: longitude ?? undefined,
+      }),
+    enabled: !!debouncedQuery.trim() && !isResultsState,
+    staleTime: 1000 * 60 * 2,
+  });
 
-  // TODO: 검색 결과 API 연동
-  const filteredLabs: PhotoLabItem[] = [];
+  const filteredLabPreviews: LabPreview[] = useMemo(() => {
+    if (!previewData?.data) return [];
+    return previewData.data.map((lab) => ({
+      photoLabId: lab.photoLabId,
+      name: lab.name,
+      address: lab.address,
+      distanceKm: lab.distanceKm,
+      mainImageUrl: lab.imageUrls[0] ?? null,
+    }));
+  }, [previewData]);
+
+  // 검색 결과 API 연동
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    usePhotoLabList(
+      {
+        q: searchQuery || undefined,
+        tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+        regionId: filter.regionId,
+        date: filter.date,
+        lat: latitude ?? undefined,
+        lng: longitude ?? undefined,
+      },
+      isResultsState && !isLocationLoading,
+    );
+
+  const labs = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data],
+  );
+
+  // 즐겨찾기 토글
+  const { mutate: toggleFavorite } = useFavoriteToggle();
+
+  const handleFavoriteToggle = useCallback(
+    (photoLabId: number, isFavorite: boolean) => {
+      toggleFavorite({ photoLabId, isFavorite });
+    },
+    [toggleFavorite],
+  );
+
+  // 무한스크롤
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // 필터 값 포맷
   const formatFilterValue = (): string | undefined => {
@@ -139,9 +199,6 @@ export default function PhotoLabSearchPage() {
   const handleLabClick = (photoLabId: number) => {
     navigate(`/photolab/${photoLabId}`);
   };
-
-  // TODO: 즐겨찾기 API 연동
-  // const handleFavoriteToggle = (photoLabId: number) => {};
 
   const handleTagToggle = (tagId: number) => {
     setSelectedTagIds((prev) =>
@@ -216,14 +273,14 @@ export default function PhotoLabSearchPage() {
             <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
           </div>
 
-          {/* TODO: 검색 결과 API 연동 */}
           {/* 검색 결과 목록 */}
           <LabList
-            labs={filteredLabs}
-            isLoading={false}
-            isFetchingNextPage={false}
-            hasNextPage={false}
-            onLoadMore={() => {}}
+            labs={labs}
+            isLoading={isLoading || isLocationLoading}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage ?? false}
+            onLoadMore={handleLoadMore}
+            onFavoriteToggle={handleFavoriteToggle}
             onCardClick={handleLabClick}
             emptyMessage="검색 결과가 없어요"
             className="pt-4"

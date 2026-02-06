@@ -35,29 +35,22 @@ type NewPostState = {
 
   isSelfDeveloped: boolean;
 
-  labId: number | null;
-  labName: string | null;
+  labId: number | undefined;
+  labName: string | undefined;
 
-  reviewContent: string | null;
+  reviewContent: string | undefined;
+
+  isNewPost: boolean;
 
   /** setters */
   setPostInfo: (title: string, content: string) => void;
 
   setFiles: (files: File[]) => Promise<void>; // setFiles를 async로 바꿔서 metas도 같이 채움
   setIsSelfDeveloped: (isSelfDeveloped: boolean) => void;
-  setLabInfo: (labId: number | null, labName: string | null) => void;
-  setReviewContent: (reviewContent: string | null) => void;
+  setLabInfo: (labId: number | undefined, labName: string | undefined) => void;
+  setReviewContent: (reviewContent: string | undefined) => void;
 
-  /** getters */
-  getPostInfo: () => { title: string; content: string };
-
-  getFiles: () => File[];
-  getImageMetas: () => ImageMeta[];
-  getFileWithMetaAt: (idx: number) => { file: File; meta: ImageMeta } | null;
-
-  getIsSelfDeveloped: () => boolean;
-  getLabInfo: () => { labId: number | null; labName: string | null };
-  getReviewContent: () => string | null;
+  setIsNewPost: (isNewPost: boolean) => void;
 
   reset: () => void;
 };
@@ -68,12 +61,13 @@ const initialState = {
   files: [] as File[],
   imageMetas: [] as ImageMeta[],
   isSelfDeveloped: false,
-  labId: null,
-  labName: null,
-  reviewContent: null,
+  labId: undefined,
+  labName: undefined,
+  reviewContent: undefined,
+  isNewPost: false,
 };
 
-export const useNewPostState = create<NewPostState>((set, get) => ({
+export const useNewPostState = create<NewPostState>((set) => ({
   ...initialState,
 
   /** setters */
@@ -88,29 +82,7 @@ export const useNewPostState = create<NewPostState>((set, get) => ({
   setLabInfo: (labId, labName) => set({ labId, labName }),
   setReviewContent: (reviewContent) => set({ reviewContent }),
 
-  /** getters */
-  getPostInfo: () => {
-    const { title, content } = get();
-    return { title, content };
-  },
-
-  getFiles: () => get().files,
-  getImageMetas: () => get().imageMetas,
-
-  getFileWithMetaAt: (idx) => {
-    const { files, imageMetas } = get();
-    if (!files[idx] || !imageMetas[idx]) return null;
-    return { file: files[idx], meta: imageMetas[idx] };
-  },
-
-  getIsSelfDeveloped: () => get().isSelfDeveloped,
-
-  getLabInfo: () => {
-    const { labId, labName } = get();
-    return { labId, labName };
-  },
-
-  getReviewContent: () => get().reviewContent,
+  setIsNewPost: (isNewPost) => set({ isNewPost }),
 
   reset: () => set(initialState),
 }));

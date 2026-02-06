@@ -1,53 +1,46 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router";
-import MainBannerAiIcon from "@/assets/mocks/mock-main-banner-ai.svg";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
+import { PromotionBannerAiIcon } from "@/assets/icon";
 
 interface MainBannerProps {
   id: number;
-  title: string;
-  description: string;
   link: string;
-  imageAlt: string;
-  Image: string;
+  alt: string;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
+// TODO: 배너 이미지 교체 필요
 const BANNERS: MainBannerProps[] = [
   {
     id: 1,
-    title: "타버린 사진도,\nAI로 다시 살려요",
-    description: "타거나 잘못 찍힌 사진도 복원가능!",
     link: "/event/ai-restore",
-    imageAlt: "AI 복원 아이콘",
-    Image: MainBannerAiIcon,
+    alt: "AI 사진 복원 프로모션 배너",
+    Icon: PromotionBannerAiIcon,
   },
   {
     id: 2,
-    title: "첫 현상이라면\n50% 할인 혜택",
-    description: "필름 감성을 더 저렴하게",
     link: "/event/welcome-discount",
-    imageAlt: "할인 쿠폰 아이콘",
-    Image: MainBannerAiIcon,
+    alt: "첫 현상 50% 할인 프로모션 배너",
+    Icon: PromotionBannerAiIcon,
   },
   {
     id: 3,
-    title: "친구 초대하고\n무료 필름 받자",
-    description: "너도 나도 1롤씩 GET",
     link: "/event/invite-friend",
-    imageAlt: "필름 아이콘",
-    Image: MainBannerAiIcon,
+    alt: "친구 초대 혜택 프로모션 배너",
+    Icon: PromotionBannerAiIcon,
   },
 ];
 
 export default function PromotionBanner() {
+  const { requireAuthNavigate } = useRequireAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
-    const scrollLeft = scrollRef.current.scrollLeft;
-    const totalScrollWidth = scrollRef.current.scrollWidth;
-    const itemWidth = totalScrollWidth / BANNERS.length;
-    const newIndex = Math.round(scrollLeft / itemWidth);
+
+    const itemWidth = scrollRef.current.clientWidth;
+    const newIndex = Math.round(scrollRef.current.scrollLeft / itemWidth);
     setCurrentIndex(newIndex);
   };
 
@@ -56,34 +49,34 @@ export default function PromotionBanner() {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="scrollbar-hide flex h-full w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-8"
+        className="scrollbar-hide flex h-full w-full snap-x snap-mandatory overflow-x-auto px-5 pb-8"
       >
-        {BANNERS.map((banner) => (
-          <div
-            key={banner.id}
-            className="flex h-full min-w-[calc(100%-2.5rem)] shrink-0 snap-center flex-col"
-          >
-            <Link to={banner.link} className="group block h-full">
-              <div className="relative flex h-full w-full items-center overflow-hidden rounded-2xl bg-orange-500 px-6 transition-transform duration-200 active:scale-[0.98]">
-                <div className="z-10 flex max-w-[65%] flex-col gap-3">
-                  <h2 className="absolute top-30 text-[1.375rem] leading-tight font-semibold whitespace-pre-wrap text-neutral-100">
-                    {banner.title}
-                  </h2>
-                  <p className="absolute top-45 text-sm font-medium text-neutral-100">
-                    {banner.description}
-                  </p>
-                </div>
-                <div className="absolute top-7.25 right-7.5 h-34.25 w-28.5">
-                  <img
-                    src={banner.Image}
-                    alt={banner.imageAlt}
-                    className="h-full w-full object-contain"
-                  />
-                </div>
-              </div>
-            </Link>
-          </div>
-        ))}
+        {BANNERS.map((banner) => {
+          const BannerIcon = banner.Icon;
+
+          return (
+            <div
+              key={banner.id}
+              className="flex min-w-full shrink-0 snap-center justify-center"
+            >
+              <a
+                href={banner.link}
+                onClick={(e) => {
+                  e.preventDefault();
+                  requireAuthNavigate(banner.link);
+                }}
+                className="relative aspect-335/250 w-full max-w-82.5 overflow-hidden rounded-2xl transition-transform duration-200 active:scale-[0.98]"
+              >
+                <BannerIcon
+                  role="img"
+                  aria-label={banner.alt}
+                  className="absolute inset-0 h-full w-full"
+                  preserveAspectRatio="xMidYMid slice"
+                />
+              </a>
+            </div>
+          );
+        })}
       </div>
 
       {/* 페이지네이션 도트 */}
@@ -95,7 +88,7 @@ export default function PromotionBanner() {
               currentIndex === index
                 ? "w-1 scale-125 bg-orange-500"
                 : "w-1 bg-neutral-400"
-            } `}
+            }`}
           />
         ))}
       </div>

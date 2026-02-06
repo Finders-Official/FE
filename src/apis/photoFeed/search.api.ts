@@ -31,7 +31,13 @@ export async function getPostSearches({
     },
   );
 
-  return res.data.data; // 키워드에 맞는 게시글 프리뷰 리스트 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data; // 키워드에 맞는 게시글 프리뷰 리스트 return
 }
 
 /**
@@ -42,7 +48,13 @@ export async function getRecentSearches(): Promise<SearchHistory[]> {
     `/posts/search/history`,
   );
 
-  return res.data.data; // 최근 검색어 리스트 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data; // 최근 검색어 리스트 return
 }
 
 /**
@@ -53,7 +65,13 @@ export async function deleteRecentSearch(historyId: number) {
     `/posts/search/history/${historyId}`,
   );
 
-  return res.data.success; // 성공 여부 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return true; // 성공 여부 return
 }
 
 /**
@@ -64,7 +82,13 @@ export async function deleteAllRecentSearch() {
     `/posts/search/history/all`,
   );
 
-  return res.data.success; // 성공 여부 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return true; // 성공 여부 return
 }
 
 /**
@@ -76,7 +100,13 @@ export async function getRelatedSearches(keyword: string): Promise<string[]> {
     { params: { keyword } },
   );
 
-  return res.data.data; // 연관검색어 문자열 리스트 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data; // 연관검색어 문자열 리스트 return
 }
 
 /**
@@ -100,5 +130,11 @@ export async function getLabSearches({
     },
   );
 
-  return res.data.data.labSearchList; // 검색 결과 리스트 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data.photoLabSearchList ?? []; // 검색 결과 리스트 return
 }

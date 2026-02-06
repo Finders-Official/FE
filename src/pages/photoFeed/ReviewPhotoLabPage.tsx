@@ -3,55 +3,73 @@ import { CTA_Button } from "@/components/common/CTA_Button";
 import { HomeIcon, ExclamationCircleIcon } from "@/assets/icon";
 import { TextArea } from "@/components/common/TextArea";
 import { DialogBox } from "@/components/common/DialogBox";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
-import { useMutation } from "@tanstack/react-query";
-import type { PostUploadRequest } from "@/types/photoFeed/postDetail";
-import { createPost } from "@/apis/photoFeed/post.api";
+import { useNewPostState } from "@/store/useNewPostState.store";
+import { useAuthStore } from "@/store/useAuth.store";
+import { useCreatePostWithUpload } from "@/hooks/photoFeed";
+
+const MIN = 20;
+const MAX = 300;
 
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
 
-  const { state } = useLocation();
-  const labName = state?.labName;
-  const labId = state?.labId;
-  const files = state?.files;
-  const title = state?.title;
-  const content = state?.content;
-
   const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const MIN = 20;
-  const MAX = 300;
+  // 이전 페이지에서 작성한 데이터 가져오기
+  const title = useNewPostState((s) => s.title);
+  const content = useNewPostState((s) => s.content);
 
+  const files = useNewPostState((s) => s.files);
+  const imageMetas = useNewPostState((s) => s.imageMetas);
+
+  const labId = useNewPostState((s) => s.labId);
+  const labName = useNewPostState((s) => s.labName);
+
+  const isSelfDeveloped = useNewPostState((s) => s.isSelfDeveloped);
+
+  // 게시글 등록한 직후인지에 대한 정보 저장
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
+
+  // store 전체 reset
+  const reset = useNewPostState((s) => s.reset);
+
+  // 사용자 ID 가져오기
+  const memberId = useAuthStore((s) => s.user?.memberId);
+
+  // 리뷰 글자수 제한 적용
   const isTooShort = reviewText.length > 0 && reviewText.length < MIN;
   const isTooLong = reviewText.length > MAX;
   const canSave = reviewText.length === 0 ? false : !isTooShort && !isTooLong;
 
-  const createMutation = useMutation({
-    mutationFn: (payload: PostUploadRequest) => createPost(payload),
-    onSuccess: (data) => {
-      // 성공 시 생성된 게시글로 이동
-      navigate(`/photoFeed/post/${data}`);
+  // 사진 GCS에 등록 + 게시글 등록
+  const { submit, isPending } = useCreatePostWithUpload({
+    onSuccess: (postId) => {
+      reset();
+      setIsNewPost(true);
+      navigate(`/photoFeed/post/${postId}`);
     },
-    onError: () => {
-      // TODO: 토스트/다이얼로그로 에러 안내
-      alert("리뷰 등록에 실패했어요. 다시 시도해주세요.");
-    },
+    onError: (err) => console.error("게시글 생성 실패", err),
   });
 
-  const handleSubmit = () => {
-    const payload: PostUploadRequest = {
-      title: title,
-      content: content,
-      image: files,
-      isSelfDeveloped: false,
-      labId: labId,
-      reviewContent: reviewText,
-    };
-
-    createMutation.mutate(payload);
+  // 게시글 업로드 핸들러
+  const handleSubmit = async () => {
+    try {
+      await submit({
+        title,
+        content,
+        files,
+        imageMetas,
+        memberId,
+        labId,
+        isSelfDeveloped,
+        reviewContent: reviewText,
+      });
+    } catch (e) {
+      console.error("게시글 업로드 실패", e); // TODO 디자인 받고 토스트 메세지로 변경
+    }
   };
 
   return (
@@ -90,7 +108,7 @@ export default function ReviewPhotoLabPage() {
           <CTA_Button
             text="작성 완료"
             size="xlarge"
-            disabled={!canSave}
+            disabled={!canSave || isPending}
             color={canSave ? "orange" : "black"}
             onClick={() => setIsDialogOpen(true)}
           />

@@ -1,5 +1,3 @@
-// 메인 페이지 연결하고 삭제할 파일 입니다.
-
 import type { ChangeEvent } from "react";
 import { useNewPostState } from "@/store/useNewPostState.store";
 interface PhotoSelectProps {
@@ -27,7 +25,7 @@ const PhotoSelectPage = ({ onSelect }: PhotoSelectProps) => {
       </p>
 
       {/* 업로드 버튼 */}
-      <label className="bg-neutral-875 hover:bg-neutral-850 flex aspect-[3/4] w-full max-w-[280px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-700 transition-colors hover:border-neutral-500 active:scale-[0.98]">
+      <label className="bg-neutral-875 hover:bg-neutral-850 flex aspect-3/4 w-full max-w-70 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-700 transition-colors hover:border-neutral-500 active:scale-[0.98]">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-800">
           {/* 플러스 아이콘 */}
           <svg
@@ -67,3 +65,5 @@ const PhotoSelectPage = ({ onSelect }: PhotoSelectProps) => {
 };
 
 export default PhotoSelectPage;
+
+// TODO: 파일 삭제 예정

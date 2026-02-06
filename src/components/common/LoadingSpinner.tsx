@@ -6,7 +6,7 @@ export function LoadingSpinner({ open }: LoadingProps) {
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-[80] flex items-center justify-center"
       role="alert"
       aria-live="polite"
       aria-busy="true"

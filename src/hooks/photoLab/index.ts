@@ -1,4 +1,4 @@
-export { useGeolocation } from "./useGeolocation";
+export { useGeolocation } from "../common/useGeolocation";
 export { usePhotoLabList } from "./usePhotoLabList";
 export { useFavoriteToggle } from "./useFavoriteToggle";
 export { usePopularPhotoLabs } from "./usePopularPhotoLabs";
@@ -6,3 +6,4 @@ export { usePhotoLabDetail } from "./usePhotoLabDetail";
 export { useAvailableTimes } from "./useAvailableTimes";
 export { useCreateReservation } from "./useCreateReservation";
 export { useReservationDetail } from "./useReservationDetail";
+export { useRegionFilters } from "./useRegionFilters";
