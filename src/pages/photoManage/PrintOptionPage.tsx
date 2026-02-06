@@ -119,6 +119,7 @@ export function PrintOptionPage() {
   const handleSelect = (key: CategoryKey, option: DropDownOption) => {
     setSelection((prev) => ({ ...prev, [key]: option }));
     setOpenKey(null);
+    setQuote(null);
   };
 
   // 견적 요청 빌드
