@@ -28,3 +28,23 @@ export type DropDownCategory = {
 
 /** 선택 상태를 한 방에 들고가기 좋은 타입 */
 export type DropDownSelection = Record<CategoryKey, DropDownOption | null>;
+
+// 인화 옵션 API 응답
+
+export interface PrintOptionItem {
+  code: string;
+  label: string;
+  basePrice: number | null;
+  extraPrice: number | null;
+  rate: number | null;
+  roundingPolicy: string | null;
+}
+
+export interface PrintOptionsResponse {
+  deliveryFee: number;
+  filmTypes: PrintOptionItem[];
+  printMethods: PrintOptionItem[];
+  paperTypes: PrintOptionItem[];
+  sizes: PrintOptionItem[];
+  frameTypes: PrintOptionItem[];
+}
