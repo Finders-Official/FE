@@ -100,6 +100,7 @@ export { default as PhotoLabFillIcon } from "./photolab-fill.svg?react";
 export { default as ShareIcon } from "./share.svg?react";
 export { default as ShoeIcon } from "./shoe.svg?react";
 export { default as SparklesFillIcon } from "./sparkles-fill.svg?react";
+export { default as SplashIcon } from "./splash.svg?react";
 export { default as StarFillIcon } from "./star-fill.svg?react";
 export { default as TabHomeFillIcon } from "./tab-home-fill.svg?react";
 export { default as TicketFillIcon } from "./ticket-fill.svg?react";

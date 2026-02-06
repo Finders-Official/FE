@@ -6,6 +6,7 @@ interface ActionButtonProps {
   message: string;
   showNext: boolean;
   onClick: () => void;
+  className?: string;
 }
 
 export const ActionButton = ({
@@ -13,12 +14,13 @@ export const ActionButton = ({
   message,
   showNext,
   onClick,
+  className = "",
 }: ActionButtonProps) => {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex h-[2.9375rem] w-[17.3125rem] items-center justify-between rounded-[1.125rem] border border-orange-400 bg-orange-400/16 px-[1rem] py-[0.75rem] text-[0.875rem] leading-[150%] font-semibold tracking-[-0.023em] text-orange-400 transition-colors"
+      className={`flex h-[2.9375rem] w-[17.3125rem] items-center justify-between rounded-[1.125rem] border border-orange-400 bg-orange-400/16 px-[1rem] py-[0.75rem] text-[0.875rem] leading-[150%] font-semibold tracking-[-0.023em] text-orange-400 transition-colors ${className}`}
     >
       {/* 좌측 아이콘 영역 */}
       <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center text-[#EC602D]">
