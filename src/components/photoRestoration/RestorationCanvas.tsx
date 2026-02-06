@@ -158,7 +158,7 @@ export default function RestorationCanvas() {
   if (!receivedImageUrl) return null;
 
   return (
-    <div className="flex h-full w-full flex-col bg-neutral-900">
+    <div className="flex min-h-dvh w-full flex-col bg-neutral-900">
       <Header
         title={restoredImageUrl ? "복원 결과" : "탄 사진 복원하기"}
         showBack={true}

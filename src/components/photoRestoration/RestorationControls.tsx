@@ -23,7 +23,7 @@ export default function RestorationControls({
         <button
           onClick={onUndo}
           disabled={!canUndo}
-          className="flex items-center justify-center p-2"
+          className="flex items-center justify-center"
         >
           <UndoIcon
             className={`h-3.5 w-3.5 transition-colors ${
@@ -36,7 +36,7 @@ export default function RestorationControls({
         <button
           onClick={onRedo}
           disabled={!canRedo}
-          className="flex items-center justify-center p-2"
+          className="flex items-center justify-center"
         >
           <RedoIcon
             className={`h-3.5 w-3.5 transition-colors ${

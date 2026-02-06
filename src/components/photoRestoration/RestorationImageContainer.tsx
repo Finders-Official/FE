@@ -46,7 +46,7 @@ export const RestorationImageContainer: React.FC<
   return (
     <div
       ref={containerRef}
-      className="relative w-85.75 overflow-hidden rounded-[0.625rem] bg-neutral-800"
+      className="relative grid h-58 w-85.75 place-items-center overflow-hidden rounded-[0.625rem] bg-neutral-800"
       onMouseDown={startCompare}
       onMouseUp={endCompare}
       onMouseLeave={endCompare}
@@ -56,7 +56,7 @@ export const RestorationImageContainer: React.FC<
       <img
         src={currentImageSrc}
         alt="Target"
-        className="pointer-events-none h-auto w-full object-contain select-none"
+        className="pointer-events-none block max-h-full max-w-full object-contain select-none"
         onLoad={() => setIsImageLoaded(true)}
       />
 
