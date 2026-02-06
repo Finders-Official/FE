@@ -23,7 +23,7 @@ export default function TransactionPage() {
   const totalPrice = usePrintOrderStore((s) => s.totalPrice);
   const resetWorkflow = usePrintOrderStore((s) => s.resetWorkflow);
 
-  const { data: labAccountInfo } = usePhotoLabAccount(developmentOrderId ?? 0);
+  const { data: labAccountInfo } = usePhotoLabAccount(developmentOrderId);
   const { mutateAsync: issuePresignedUrl } = useIssuePresignedUrl();
   const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
   const { mutateAsync: confirmDeposit } = useConfirmDepositReceipt();

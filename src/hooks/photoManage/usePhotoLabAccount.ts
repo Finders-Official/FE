@@ -3,10 +3,11 @@ import { getPhotoLabAccount } from "@/apis/photoManage";
 import type { LabAccountInfo } from "@/types/photomanage/transaction";
 
 // 백엔드 필드명(bankAccountNumber, bankAccountHolder) → 프론트 필드명(accountNumber, accountHolder)으로 매핑
-export function usePhotoLabAccount(developmentOrderId: number) {
+export function usePhotoLabAccount(developmentOrderId: number | null) {
   return useQuery({
     queryKey: ["photoManage", "labAccount", developmentOrderId],
-    queryFn: () => getPhotoLabAccount(developmentOrderId),
+    queryFn: () => getPhotoLabAccount(developmentOrderId!),
+    enabled: !!developmentOrderId,
     select: (res): LabAccountInfo => ({
       bankName: res.data.bankName,
       accountNumber: res.data.bankAccountNumber,
