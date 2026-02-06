@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate, type NavigateOptions } from "react-router";
 import { useAuthStore } from "@/store/useAuth.store";
 import { useLoginModalStore } from "@/store/useLoginModal.store";
 
@@ -15,8 +15,8 @@ export const useRequireAuth = () => {
     }
   };
 
-  const requireAuthNavigate = (path: string) => {
-    requireAuth(() => navigate(path));
+  const requireAuthNavigate = (path: string, options?: NavigateOptions) => {
+    requireAuth(() => navigate(path, options));
   };
 
   return { requireAuth, requireAuthNavigate };

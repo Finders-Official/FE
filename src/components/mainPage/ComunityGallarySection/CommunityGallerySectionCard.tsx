@@ -60,7 +60,9 @@ export default function CommunityGallerySectionCard({
 
   const handleCommentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    requireAuthNavigate(`/community/post/${post.postId}`);
+    requireAuthNavigate(`/photoFeed/post/${post.postId}`, {
+      state: { openCommentSheet: true },
+    });
   };
 
   return (
