@@ -1,23 +1,64 @@
 import { PlusIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { AddressCard } from "@/components/photoManage/AddressCard";
-import { mockAddresses } from "@/types/photomanage/address";
-import { useMemo, useState } from "react";
+import { DaumAddressSearch } from "@/components/photoManage/DaumAddressSearch";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
+import type { Address } from "@/types/photomanage/address";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+
+const STORAGE_KEY = "saved-addresses";
+
+function loadAddresses(): Address[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Address[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveAddresses(list: Address[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
 
 export function SelectAddressPage() {
   const navigate = useNavigate();
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
-    null,
-  );
+  const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
 
-  const isNextEnabled = useMemo(
-    () => selectedAddressId !== null,
-    [selectedAddressId],
+  const [addresses, setAddresses] = useState<Address[]>(loadAddresses);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const isNextEnabled = useMemo(() => selectedId !== null, [selectedId]);
+
+  const handleAddressFound = useCallback(
+    (data: { zipcode: string; address: string }) => {
+      const newAddr: Address = {
+        id: Date.now(),
+        label: "새 주소",
+        zipcode: data.zipcode,
+        address: data.address,
+      };
+      const updated = [...addresses, newAddr];
+      setAddresses(updated);
+      saveAddresses(updated);
+      setSelectedId(newAddr.id);
+    },
+    [addresses],
   );
 
   const handleComplete = () => {
-    // TODO: 선택한 주소 저장(zustand 등)하고 다음으로 이동
+    const selected = addresses.find((a) => a.id === selectedId);
+    if (!selected) return;
+
+    setDeliveryAddress({
+      recipientName: "",
+      phone: "",
+      zipcode: selected.zipcode,
+      address: selected.address,
+      addressDetail: selected.addressDetail,
+    });
     navigate("./detail");
   };
 
@@ -29,15 +70,16 @@ export function SelectAddressPage() {
           size="xlarge"
           color="gray"
           icon={PlusIcon}
+          onClick={() => setIsSearchOpen(true)}
         />
       </header>
 
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] flex flex-1 flex-col gap-4">
-        {mockAddresses.map((addr) => (
+        {addresses.map((addr) => (
           <AddressCard
             key={addr.id}
-            isSelected={selectedAddressId === addr.id}
-            onClick={() => setSelectedAddressId(addr.id)}
+            isSelected={selectedId === addr.id}
+            onClick={() => setSelectedId(addr.id)}
             address={addr}
           />
         ))}
@@ -54,6 +96,12 @@ export function SelectAddressPage() {
           />
         </div>
       </footer>
+
+      <DaumAddressSearch
+        open={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onComplete={handleAddressFound}
+      />
     </div>
   );
 }
