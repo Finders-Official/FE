@@ -14,7 +14,10 @@ import type {
   DropDownSelection,
   PrintOptionItem,
 } from "@/types/photomanage/category";
-import type { PrintQuoteRequest } from "@/types/photomanage/printOrder";
+import type {
+  PrintQuoteRequest,
+  PrintQuoteResponse,
+} from "@/types/photomanage/printOrder";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -58,9 +61,11 @@ export function PrintOptionPage() {
   const setTotalPrice = usePrintOrderStore((s) => s.setTotalPrice);
 
   const { data: printOptions } = usePrintOptions();
-  const { mutate: fetchQuote, data: quoteData } = usePrintQuote();
+  const { mutateAsync: fetchQuoteAsync } = usePrintQuote();
   const { mutate: submitOrder, isPending: isSubmitting } =
     useCreatePrintOrder();
+
+  const [quote, setQuote] = useState<PrintQuoteResponse | null>(null);
 
   // API 데이터 → DropDownCategory[] 변환
   const categories = useMemo<DropDownCategory[]>(() => {
@@ -145,18 +150,29 @@ export function PrintOptionPage() {
     deliveryAddress,
   ]);
 
-  // 사이즈 선택 시 견적 API 호출
+  // 사이즈 선택 시 견적 API 호출 (stale 응답 무시)
   useEffect(() => {
     const request = buildQuoteRequest();
-    if (request) {
-      fetchQuote(request);
-    }
-  }, [buildQuoteRequest, fetchQuote]);
+    if (!request) return;
 
-  const quote = quoteData?.data;
+    let stale = false;
+    fetchQuoteAsync(request)
+      .then((res) => {
+        if (!stale) setQuote(res.data);
+      })
+      .catch(() => {});
+
+    return () => {
+      stale = true;
+    };
+  }, [buildQuoteRequest, fetchQuoteAsync]);
+
+  // 사이즈 미선택 시 견적 표시하지 않음
+  const displayedQuote = selection.SIZE ? quote : null;
   const isDelivery = receiptMethod === "DELIVERY";
   const shippingLabel = isDelivery ? "배송" : "직접수령";
-  const shippingFee = quote?.deliveryFee ?? (isDelivery ? DELIVERY_FEE_WON : 0);
+  const shippingFee =
+    displayedQuote?.deliveryFee ?? (isDelivery ? DELIVERY_FEE_WON : 0);
 
   const handleSubmit = () => {
     const request = buildQuoteRequest();
@@ -173,7 +189,7 @@ export function PrintOptionPage() {
     submitOrder(request, {
       onSuccess: (res) => {
         setPrintOrderId(res.data);
-        setTotalPrice(quote?.totalAmount ?? 0);
+        setTotalPrice(displayedQuote?.totalAmount ?? 0);
         navigate("/photoManage/transaction");
       },
     });
@@ -220,7 +236,9 @@ export function PrintOptionPage() {
           <div className="mt-4 mb-4 flex justify-between text-[1.1875rem]">
             <p>총 금액</p>
             <p className="text-orange-500">
-              {quote ? formatWon(quote.totalAmount) : formatWon(0)}
+              {displayedQuote
+                ? formatWon(displayedQuote.totalAmount)
+                : formatWon(0)}
             </p>
           </div>
         </section>
@@ -231,8 +249,8 @@ export function PrintOptionPage() {
           <CTA_Button
             text="송금하기"
             size="xlarge"
-            color={quote ? "orange" : "black"}
-            disabled={!quote || isSubmitting}
+            color={displayedQuote ? "orange" : "black"}
+            disabled={!displayedQuote || isSubmitting}
             onClick={handleSubmit}
           />
         </div>
