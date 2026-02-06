@@ -56,7 +56,7 @@ export interface MyCurrentWorkResponse {
   photoLabName: string;
   developmentStatus: DevelopmentStatus;
   createdAt: string;
-  compltedAt: string;
+  completedAt: string;
   print: PrintProgressResponse | null;
   delivery: DeliveryProgressResponse | null;
 }
