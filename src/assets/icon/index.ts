@@ -53,6 +53,8 @@ export { default as XMarkIcon } from "./x-mark.svg?react";
 export { default as LikedPhotoLabIcon } from "./liked-photolab.svg?react";
 export { default as MyPostIcon } from "./post.svg?react";
 export { default as LikedPostIcon } from "./liked-heart.svg?react";
+export { default as RestorationCompareIcon } from "./restoration-compare.svg?react";
+export { default as RestoraionSparkleIcon } from "./restoration-sparkle.svg?react";
 
 // 소셜 / 브랜드
 export { default as AppleIcon } from "./Apple.svg?react";
