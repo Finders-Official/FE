@@ -27,7 +27,13 @@ export async function getPosts({
     },
   );
 
-  return res.data.data; // 게시글 프리뷰 리스트 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data;
 }
 
 /**
@@ -39,7 +45,13 @@ export async function createPost(payload: PostUploadRequest): Promise<number> {
     payload,
   );
 
-  return res.data.data.postId;
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data.postId;
 }
 
 /**
@@ -52,7 +64,13 @@ export async function getPostDetail(
     `/posts/${postId}`,
   );
 
-  return res.data.data; // 게시글 상세 정보 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data; // 게시글 상세 정보 return
 }
 
 /**
@@ -61,5 +79,11 @@ export async function getPostDetail(
 export async function deletePost(postId: number): Promise<boolean> {
   const res = await axiosInstance.delete<ApiResponse<void>>(`/posts/${postId}`);
 
-  return res.data.success; // 게시글 삭제 성공 여부 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return true; // 게시글 삭제 성공 여부 return
 }

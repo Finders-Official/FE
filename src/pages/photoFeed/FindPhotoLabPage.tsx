@@ -7,10 +7,9 @@ import type { LabSearchResponse } from "@/types/photoFeed/labSearch";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
-import { useGeolocation } from "@/hooks/photoLab/useGeolocation";
-import { useSearchLabs } from "@/hooks/photoFeed/search/useSearchLabs";
+import { useGeolocation } from "@/hooks/common/useGeolocation";
 import EmptyView from "@/components/common/EmptyView";
-import { useCreatePostWithUpload } from "@/hooks/photoFeed/posts/useCreatePostWithUpload";
+import { useSearchLabs, useCreatePostWithUpload } from "@/hooks/photoFeed";
 import { useAuthStore } from "@/store/useAuth.store";
 
 type Step = "search" | "confirm";
@@ -36,6 +35,12 @@ export default function FindPhotoLabPage() {
   // 자가현상 여부 및 현상소 정보 저장
   const setIsSelfDeveloped = useNewPostState((s) => s.setIsSelfDeveloped);
   const setLabInfo = useNewPostState((s) => s.setLabInfo);
+
+  // 게시글 등록한 직후인지에 대한 정보 저장
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
+
+  // store 전체 reset
+  const reset = useNewPostState((s) => s.reset);
 
   // 선택된 현상소
   const [selectedLab, setSelectedLab] = useState<LabSearchResponse | null>(
@@ -77,7 +82,11 @@ export default function FindPhotoLabPage() {
 
   // GCS에 사진 등록 + 게시글 등록 API
   const { submit, isPending } = useCreatePostWithUpload({
-    onSuccess: (postId) => navigate(`/photoFeed/post/${postId}`),
+    onSuccess: (postId) => {
+      reset();
+      setIsNewPost(true);
+      navigate(`/photoFeed/post/${postId}`);
+    },
     onError: (err) => console.error("게시글 생성 실패", err),
   });
 
@@ -152,8 +161,8 @@ export default function FindPhotoLabPage() {
     }
     if (isError) {
       return (
-        <div className="flex items-center justify-center py-6 text-red-400">
-          데이터 불러오기에 실패했어요.
+        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+          <p className="text-red-400">불러오기에 실패했어요.</p>
         </div>
       );
     }

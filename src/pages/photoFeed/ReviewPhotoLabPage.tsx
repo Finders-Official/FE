@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useAuthStore } from "@/store/useAuth.store";
-import { useCreatePostWithUpload } from "@/hooks/photoFeed/posts/useCreatePostWithUpload";
+import { useCreatePostWithUpload } from "@/hooks/photoFeed";
 
 const MIN = 20;
 const MAX = 300;
@@ -30,6 +30,12 @@ export default function ReviewPhotoLabPage() {
 
   const isSelfDeveloped = useNewPostState((s) => s.isSelfDeveloped);
 
+  // 게시글 등록한 직후인지에 대한 정보 저장
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
+
+  // store 전체 reset
+  const reset = useNewPostState((s) => s.reset);
+
   // 사용자 ID 가져오기
   const memberId = useAuthStore((s) => s.user?.memberId);
 
@@ -40,7 +46,11 @@ export default function ReviewPhotoLabPage() {
 
   // 사진 GCS에 등록 + 게시글 등록
   const { submit, isPending } = useCreatePostWithUpload({
-    onSuccess: (postId) => navigate(`/photoFeed/post/${postId}`),
+    onSuccess: (postId) => {
+      reset();
+      setIsNewPost(true);
+      navigate(`/photoFeed/post/${postId}`);
+    },
     onError: (err) => console.error("게시글 생성 실패", err),
   });
 
@@ -58,7 +68,7 @@ export default function ReviewPhotoLabPage() {
         reviewContent: reviewText,
       });
     } catch (e) {
-      console.error("게시글 업로드 실패", e);
+      console.error("게시글 업로드 실패", e); // TODO 디자인 받고 토스트 메세지로 변경
     }
   };
 

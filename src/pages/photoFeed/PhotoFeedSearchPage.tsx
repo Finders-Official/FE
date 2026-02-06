@@ -8,13 +8,16 @@ import BottomSheet from "@/components/common/BottomSheet";
 import SelectFilter from "@/components/photoFeed/mainFeed/SelectFilter";
 import { TabBar } from "@/components/common/TabBar";
 import SearchPost from "@/components/photoFeed/mainFeed/SearchPost";
-import { useRecentSearches } from "@/hooks/photoFeed/search/useRecentSearches";
+
+import {
+  useRecentSearches,
+  useRelatedSearches,
+  useSearchPosts,
+  useDeleteRecentSearch,
+  useDeleteRecentSearchesAll,
+} from "@/hooks/photoFeed";
 import type { Filter } from "@/types/photoFeed/postSearch";
-import { useRelatedSearches } from "@/hooks/photoFeed/search/useRelatedSearches";
 import { KeywordSuggestionSection } from "@/components/photoLab/search";
-import { useSearchPosts } from "@/hooks/photoFeed/search/useSearchPosts";
-import { useDeleteRecentSearch } from "@/hooks/photoFeed/search/useDeleteRecentSearch";
-import { useDeleteRecentSearchesAll } from "@/hooks/photoFeed/search/useDeleteRecentSearchesAll";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import SearchItemSkeleton from "@/components/photoFeed/mainFeed/SearchItemSkeleton";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
@@ -144,8 +147,8 @@ export default function PhotoFeedSearchPage() {
   }
   const errorResponse = () => {
     return (
-      <div className="flex items-center justify-center py-6 text-red-400">
-        데이터 불러오기에 실패했어요.
+      <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+        <p className="text-red-400">불러오기에 실패했어요.</p>
       </div>
     );
   };

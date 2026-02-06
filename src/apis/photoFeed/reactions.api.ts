@@ -11,7 +11,13 @@ export async function postLike(postId: number): Promise<LikesResponse> {
     null,
   );
 
-  return res.data.data; // 게시글 좋아요 정보 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data; // 게시글 좋아요 정보 return
 }
 
 /**
@@ -22,5 +28,11 @@ export async function deleteLike(postId: number): Promise<LikesResponse> {
     `/posts/${postId}/likes`,
   );
 
-  return res.data.data; // 게시글 좋아요 정보 return
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body.data; // 게시글 좋아요 정보 return
 }
