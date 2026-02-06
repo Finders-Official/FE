@@ -371,6 +371,7 @@ export default function PmMainPage() {
           onClose={() => {}}
           sheetClassName="bg-neutral-900/60 backdrop-blur-3xl"
           isBackDrop={false}
+          overlay={false}
         >
           <div className="flex h-full flex-col gap-4 p-4">
             <p className="mb-1 flex justify-start text-[0.8125rem] text-white">

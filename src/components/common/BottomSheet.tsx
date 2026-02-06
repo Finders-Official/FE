@@ -16,6 +16,8 @@ type BottomSheetProps = {
   initialSnap?: Snap; // 바텀시트 처음 크기 (collapsed면 2/3에서, expanded면 전체화면으로 시작)
   sheetClassName?: string;
   isBackDrop?: boolean;
+  /** true면 TabBar 위에 표시 (z-60/70), false면 TabBar 아래 (z-40) */
+  overlay?: boolean;
 };
 
 // clamp 유틸
@@ -34,6 +36,7 @@ export default function BottomSheet({
   initialSnap = "collapsed",
   sheetClassName,
   isBackDrop = true,
+  overlay = true,
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement | null>(null);
 
@@ -154,14 +157,14 @@ export default function BottomSheet({
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          className="fixed inset-0 z-[60] bg-black/80"
+          className={`fixed inset-0 bg-black/80 ${overlay ? "z-[60]" : "z-40"}`}
         />
       )}
 
       {/* Sheet */}
       <div
         ref={sheetRef}
-        className="fixed inset-x-0 bottom-0 z-[70]"
+        className={`fixed inset-x-0 bottom-0 ${overlay ? "z-[70]" : "z-40"}`}
         style={{
           height: `${sheetH}px`,
           transition,
