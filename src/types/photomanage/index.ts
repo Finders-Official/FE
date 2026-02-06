@@ -11,7 +11,6 @@ export type {
 
 export type {
   Status,
-  SpecStep,
   ReceiptMethod,
   DevelopmentStatus,
   PrintOrderStatus,
@@ -20,10 +19,7 @@ export type {
   DeliveryProgressResponse,
   DeliveryInfo,
   MyCurrentWorkResponse,
-  Process,
 } from "./process";
-
-export { mocks } from "./process";
 
 export type {
   SelectedPhoto,
