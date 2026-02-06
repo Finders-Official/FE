@@ -8,7 +8,7 @@ import {
 import { Header, ToastItem } from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useLocation } from "react-router";
 import { usePostDetail, useUnlikePost, useLikePost } from "@/hooks/photoFeed";
 import Profile from "@/components/photoFeed/postDetail/Profile";
 import EmptyView from "@/components/common/EmptyView";
@@ -20,6 +20,7 @@ export default function PostPage() {
   const [commentVisible, setCommentVisible] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // 게시글 Id 가져오기
   const { postId } = useParams<{ postId: string }>();
@@ -30,6 +31,12 @@ export default function PostPage() {
       navigate("/photoFeed", { replace: true });
     }
   }, [postId, numericPostId, navigate]);
+
+  useEffect(() => {
+    if (location.state?.openCommentSheet) {
+      navigate(".", { replace: true, state: null });
+    }
+  }, [location.state, navigate]);
 
   // 게시글 상세 정보 조회
   const {

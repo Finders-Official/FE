@@ -72,11 +72,11 @@ const router = createBrowserRouter([
       //   Component: DevelopmentHistoryPage,
       // },
       {
-        path: "/filmCameraGuide",
+        path: "/film-camera-guide",
         Component: FilmCameraGuidePage,
       },
       {
-        path: `/filmCameraGuide/:id`,
+        path: `/film-camera-guide/:id`,
         Component: FilmCameraGuideDetailPage,
       },
       {

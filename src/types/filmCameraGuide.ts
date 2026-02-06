@@ -6,7 +6,7 @@ export interface GuideContentSection {
   locationHeading?: string;
 
   subHeading?: string;
-  imageUrl: string;
+  imageUrl?: string;
   description: string;
 }
 
@@ -17,5 +17,5 @@ export interface FilmCameraGuide {
   thumbnailUrl: string;
   toc?: string[];
   introText?: string;
-  contents?: GuideContentSection[];
+  contents: GuideContentSection[];
 }

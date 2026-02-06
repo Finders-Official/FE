@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 export interface NewsData {
   id: number;
@@ -13,10 +13,12 @@ interface FilmNewsCardProps {
 }
 
 export default function FilmNewsCard({ news }: FilmNewsCardProps) {
+  const { requireAuthNavigate } = useRequireAuth();
+
   return (
-    <Link
-      to={news.link}
-      className="group relative block h-57.5 w-full overflow-hidden rounded-[0.625rem]"
+    <div
+      onClick={() => requireAuthNavigate(news.link)}
+      className="group relative block h-57.5 w-full cursor-pointer overflow-hidden rounded-[0.625rem]"
     >
       {/* 배경 이미지 */}
       <img
@@ -37,6 +39,6 @@ export default function FilmNewsCard({ news }: FilmNewsCardProps) {
           {news.description}
         </p>
       </div>
-    </Link>
+    </div>
   );
 }
