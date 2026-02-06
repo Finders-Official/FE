@@ -14,6 +14,7 @@ const toReceiptMethod = (m: PickUpMethod): ReceiptMethod =>
 export function PickUpMethodPage() {
   const navigate = useNavigate();
   const setReceiptMethod = usePrintOrderStore((s) => s.setReceiptMethod);
+  const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
   const [selectedMethod, setSelectedMethod] = useState<PickUpMethod | null>(
     null,
   );
@@ -27,6 +28,7 @@ export function PickUpMethodPage() {
     if (selectedMethod === "delivery") {
       navigate("../photoManage/select-address");
     } else {
+      setDeliveryAddress(null);
       navigate("../photoManage/print-option");
     }
   };
