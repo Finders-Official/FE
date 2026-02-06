@@ -59,9 +59,12 @@ export default function PromotionBanner() {
               key={banner.id}
               className="flex min-w-full shrink-0 snap-center justify-center"
             >
-              <button
-                type="button"
-                onClick={() => requireAuthNavigate(banner.link)}
+              <a
+                href={banner.link}
+                onClick={(e) => {
+                  e.preventDefault();
+                  requireAuthNavigate(banner.link);
+                }}
                 className="relative aspect-335/250 w-full max-w-82.5 overflow-hidden rounded-2xl transition-transform duration-200 active:scale-[0.98]"
               >
                 <BannerIcon
@@ -70,7 +73,7 @@ export default function PromotionBanner() {
                   className="absolute inset-0 h-full w-full"
                   preserveAspectRatio="xMidYMid slice"
                 />
-              </button>
+              </a>
             </div>
           );
         })}

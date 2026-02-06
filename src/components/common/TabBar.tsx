@@ -96,9 +96,13 @@ export const TabBar = () => {
           const Icon = isActive ? tab.activeIcon : tab.icon;
 
           return (
-            <button
+            <a
+              href={tab.to}
               key={tab.to}
-              onClick={() => requireAuthNavigate(tab.to)}
+              onClick={(e) => {
+                e.preventDefault();
+                requireAuthNavigate(tab.to);
+              }}
               className={[
                 "flex flex-col items-center justify-center active:scale-[0.99]",
                 isActive ? "text-orange-500" : "text-neutral-300",
@@ -107,7 +111,7 @@ export const TabBar = () => {
             >
               <Icon className="h-[1.5rem] w-[1.5rem]" />
               <span className="mt-auto text-center text-xs">{tab.label}</span>
-            </button>
+            </a>
           );
         })}
       </nav>
