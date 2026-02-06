@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import {
   likePost,
   unlikePost,
   type CommunityPost,
 } from "@/apis/mainPage/mainPage.api";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 interface CommunityGallerySectionCardProps {
   post: CommunityPost;
@@ -13,7 +13,7 @@ interface CommunityGallerySectionCardProps {
 export default function CommunityGallerySectionCard({
   post,
 }: CommunityGallerySectionCardProps) {
-  const navigate = useNavigate();
+  const { requireAuth, requireAuthNavigate } = useRequireAuth();
 
   // 좋아요 상태와 카운트 모두 로컬 state로 관리
   const [isLiked, setIsLiked] = useState(post.isLiked);
@@ -26,45 +26,41 @@ export default function CommunityGallerySectionCard({
     "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80";
 
   const handleCardClick = () => {
-    navigate(`/community/post/${post.postId}`);
+    requireAuthNavigate(`/community/post/${post.postId}`);
   };
 
   const handleLikeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      alert("로그인이 필요한 서비스입니다.");
-      return;
-    }
+    requireAuth(async () => {
+      // Optimistic UI update
+      const prevIsLiked = isLiked;
+      const prevLikeCount = likeCount;
 
-    // Optimistic UI update
-    const prevIsLiked = isLiked;
-    const prevLikeCount = likeCount;
+      setIsLiked(!prevIsLiked);
+      setLikeCount((prev) => (prevIsLiked ? prev - 1 : prev + 1));
 
-    setIsLiked(!prevIsLiked);
-    setLikeCount((prev) => (prevIsLiked ? prev - 1 : prev + 1));
-
-    try {
-      if (!prevIsLiked) {
-        await likePost(post.postId);
-      } else {
-        await unlikePost(post.postId);
+      try {
+        if (!prevIsLiked) {
+          await likePost(post.postId);
+        } else {
+          await unlikePost(post.postId);
+        }
+      } catch (error) {
+        console.error("좋아요 처리 중 오류 발생:", error);
+        // Revert UI on error
+        setIsLiked(prevIsLiked);
+        setLikeCount(prevLikeCount);
+        if (error instanceof Error) {
+          alert(error.message);
+        }
       }
-    } catch (error) {
-      console.error("좋아요 처리 중 오류 발생:", error);
-      // Revert UI on error
-      setIsLiked(prevIsLiked);
-      setLikeCount(prevLikeCount);
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-    }
+    });
   };
 
   const handleCommentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/community/post/${post.postId}`);
+    requireAuthNavigate(`/community/post/${post.postId}`);
   };
 
   return (

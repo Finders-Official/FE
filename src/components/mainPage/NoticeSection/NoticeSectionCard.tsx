@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 export interface NoticeData {
   id: number;
@@ -14,10 +14,12 @@ interface NoticeSectionCardProps {
 }
 
 export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
+  const { requireAuthNavigate } = useRequireAuth();
+
   return (
-    <Link
-      to={`/lab/${notice.labId}`}
-      className="group bg-neutral-875/50 flex h-54.75 w-50 flex-col justify-between overflow-hidden rounded-[0.625rem] border border-neutral-800 p-5"
+    <div
+      onClick={() => requireAuthNavigate(`/lab/${notice.labId}`)}
+      className="group bg-neutral-875/50 flex h-54.75 w-50 cursor-pointer flex-col justify-between overflow-hidden rounded-[0.625rem] border border-neutral-800 p-5"
     >
       <div className="flex flex-col items-start gap-3">
         <span className="flex items-center justify-center rounded-[6.25rem] bg-orange-500 px-2.5 py-1 text-[0.625rem] font-semibold text-neutral-100">
@@ -91,7 +93,7 @@ export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 

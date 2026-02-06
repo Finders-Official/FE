@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router";
 import MainBannerAiIcon from "@/assets/mocks/mock-main-banner-ai.svg";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 interface MainBannerProps {
   id: number;
@@ -39,6 +39,7 @@ const BANNERS: MainBannerProps[] = [
 ];
 
 export default function PromotionBanner() {
+  const { requireAuthNavigate } = useRequireAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +64,10 @@ export default function PromotionBanner() {
             key={banner.id}
             className="flex h-full min-w-[calc(100%-2.5rem)] shrink-0 snap-center flex-col"
           >
-            <Link to={banner.link} className="group block h-full">
+            <div
+              onClick={() => requireAuthNavigate(banner.link)}
+              className="group block h-full cursor-pointer"
+            >
               <div className="relative flex h-full w-full items-center overflow-hidden rounded-2xl bg-orange-500 px-6 transition-transform duration-200 active:scale-[0.98]">
                 <div className="z-10 flex max-w-[65%] flex-col gap-3">
                   <h2 className="absolute top-30 text-[1.375rem] leading-tight font-semibold whitespace-pre-wrap text-neutral-100">
@@ -81,7 +85,7 @@ export default function PromotionBanner() {
                   />
                 </div>
               </div>
-            </Link>
+            </div>
           </div>
         ))}
       </div>
