@@ -40,7 +40,7 @@ export default function NoticeSection() {
   return (
     <section className="flex flex-col gap-3.5 py-6">
       {/* 헤더 */}
-      <SectionHeader title="현상소에서 알려드립니다" link="/" />
+      <SectionHeader title="현상소에서 알려드립니다" />
 
       {/* 가로 스크롤 리스트 */}
       <div className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-4">
@@ -53,5 +53,3 @@ export default function NoticeSection() {
     </section>
   );
 }
-
-// SectionHeader에 올바른 경로 전달 필요 (link="/")

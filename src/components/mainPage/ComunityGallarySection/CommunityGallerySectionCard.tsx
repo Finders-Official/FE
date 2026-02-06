@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
-
-export interface CommunityPost {
-  id: number;
-  thumbnail: string;
-  caption: string;
-  likeCount: number;
-  commentCount: number;
-  isLiked: boolean; // 초기 좋아요 상태
-}
+import {
+  likePost,
+  unlikePost,
+  type CommunityPost,
+} from "@/apis/mainPage/mainPage.api";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 interface CommunityGallerySectionCardProps {
   post: CommunityPost;
@@ -17,45 +13,79 @@ interface CommunityGallerySectionCardProps {
 export default function CommunityGallerySectionCard({
   post,
 }: CommunityGallerySectionCardProps) {
-  const navigate = useNavigate();
+  const { requireAuth, requireAuthNavigate } = useRequireAuth();
+
+  // 좋아요 상태와 카운트 모두 로컬 state로 관리
   const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [likeCount, setLikeCount] = useState(post.likeCount);
 
-  // 카드 본문 클릭 시 상세 페이지 이동
+  const imageUrl = post.image.imageUrl;
+
+  // 대체 이미지
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80";
+
   const handleCardClick = () => {
-    navigate(`/community/post/${post.id}`);
+    requireAuthNavigate(`/photoFeed/post/${post.postId}`);
   };
 
-  // 좋아요 버튼 클릭 핸들러
-  const handleLikeClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // 카드 클릭 이벤트 전파 방지
-    setIsLiked((prev) => !prev); // 토글 상태 변경
-    // TODO: API 호출 로직 추가
+  const handleLikeClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    requireAuth(async () => {
+      // Optimistic UI update
+      const prevIsLiked = isLiked;
+      const prevLikeCount = likeCount;
+
+      setIsLiked(!prevIsLiked);
+      setLikeCount((prev) => (prevIsLiked ? prev - 1 : prev + 1));
+
+      try {
+        if (!prevIsLiked) {
+          await likePost(post.postId);
+        } else {
+          await unlikePost(post.postId);
+        }
+      } catch (error) {
+        console.error("좋아요 처리 중 오류 발생:", error);
+        // Revert UI on error
+        setIsLiked(prevIsLiked);
+        setLikeCount(prevLikeCount);
+        if (error instanceof Error) {
+          alert(error.message);
+        }
+      }
+    });
   };
 
-  // 댓글 버튼 클릭 핸들러
   const handleCommentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/community/post/${post.id}`);
+    requireAuthNavigate(`/photoFeed/post/${post.postId}`, {
+      state: { openCommentSheet: true },
+    });
   };
 
   return (
     <div
       onClick={handleCardClick}
-      className="group bg-neutral-875 flex w-66.25 cursor-pointer flex-col overflow-hidden rounded-2xl"
+      className="group bg-neutral-875 flex w-66.25 cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800"
     >
-      {/* 썸네일 이미지 1:1 비율 */}
+      {/* 썸네일 이미지 */}
       <div className="relative aspect-square w-full overflow-hidden bg-neutral-800">
         <img
-          src={post.thumbnail}
-          alt="게시글 썸네일"
-          className="h-full w-full object-cover"
+          src={imageUrl}
+          alt={post.title}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = fallbackImage;
+          }}
         />
       </div>
 
-      {/*  하단 정보 영역 */}
+      {/* 하단 정보 영역 */}
       <div className="flex flex-col gap-3 p-4">
         <div className="flex items-center gap-3">
-          {/* 좋아요 버튼 */}
+          {/* 좋아요 */}
           <button
             onClick={handleLikeClick}
             className="flex items-center justify-center transition-transform active:scale-90"
@@ -79,9 +109,10 @@ export default function CommunityGallerySectionCard({
                 strokeLinejoin="round"
               />
             </svg>
+            <span className="ml-1 text-xs text-neutral-400">{likeCount}</span>
           </button>
 
-          {/* 댓글 버튼 */}
+          {/* 댓글 */}
           <button
             onClick={handleCommentClick}
             className="flex items-center justify-center transition-transform active:scale-90"
@@ -101,12 +132,14 @@ export default function CommunityGallerySectionCard({
                 strokeLinejoin="round"
               />
             </svg>
+            <span className="ml-1 text-xs text-neutral-400">
+              {post.commentCount}
+            </span>
           </button>
         </div>
 
-        {/* 캡션 (2줄 제한) */}
-        <p className="font-regular line-clamp-2 text-[12px] leading-[126%] tracking-[-0.02em] text-neutral-100">
-          {post.caption}
+        <p className="font-regular line-clamp-2 min-h-7.5 text-[0.75rem] leading-[126%] tracking-[-0.02em] text-neutral-100">
+          {post.title}
         </p>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router";
 import { ChevronLeftIcon } from "@/assets/icon";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 interface SectionHeaderProps {
   title: string;
@@ -7,18 +7,18 @@ interface SectionHeaderProps {
 }
 
 export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
-  const navigate = useNavigate();
+  const { requireAuthNavigate } = useRequireAuth();
 
   const handleMoreClick = () => {
     if (link) {
-      navigate(link);
+      requireAuthNavigate(link);
     }
   };
 
   return (
-    <div className="flex w-full items-center justify-between py-5">
+    <div className="flex w-full items-center justify-between">
       {/* 타이틀 */}
-      <h2 className="text-[20px] leading-[128%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
+      <h2 className="text-[1.25rem] leading-[128%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
         {title}
       </h2>
 

@@ -23,7 +23,7 @@ import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
 import ReservationPage from "@/pages/photoLab/ReservationPage";
 import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
-import PmMainPage from "@/pages/photoManage/PmMainPage";
+import PhotoManageMainPage from "@/pages/photoManage/PhotoManageMainPage";
 import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
 import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
@@ -44,6 +44,7 @@ import {
 import TransactionPage from "@/pages/photoManage/TransactionPage";
 import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
 import RestorationCanvas from "@/components/photoRestoration/RestorationCanvas";
+import SplashPage from "@/pages/photoManage/SplashPage";
 
 const router = createBrowserRouter([
   {
@@ -66,16 +67,16 @@ const router = createBrowserRouter([
         path: "/auth/terms",
         Component: TermsPage,
       },
+      // {
+      //   path: "/development-history",
+      //   Component: DevelopmentHistoryPage,
+      // },
       {
-        path: "/development-history",
-        Component: DevelopmentHistoryPage,
-      },
-      {
-        path: "/filmCameraGuide",
+        path: "/film-camera-guide",
         Component: FilmCameraGuidePage,
       },
       {
-        path: `/filmCameraGuide/:id`,
+        path: `/film-camera-guide/:id`,
         Component: FilmCameraGuideDetailPage,
       },
       {
@@ -141,7 +142,15 @@ const router = createBrowserRouter([
           },
           {
             path: "/photoManage/main",
-            Component: PmMainPage,
+            Component: PhotoManageMainPage,
+          },
+          {
+            path: "/development-history",
+            Component: DevelopmentHistoryPage,
+          },
+          {
+            path: "/photoManage/splash",
+            Component: SplashPage,
           },
         ],
       },

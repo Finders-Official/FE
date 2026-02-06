@@ -2,7 +2,7 @@ import { ChevronLeftIcon } from "@/assets/icon";
 import { NavLink } from "react-router";
 
 interface InfoBarProps {
-  name: string;
+  name: string | undefined;
   nickname: string | undefined;
   profile: string | undefined;
 }

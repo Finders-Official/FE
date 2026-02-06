@@ -37,23 +37,26 @@ declare global {
 
 interface LabLocationSectionProps {
   address: string;
-  distanceKm: number;
-  location: PhotoLabLocation;
+  addressDetail?: string;
+  distanceKm: number | null;
+  location?: PhotoLabLocation;
   labName: string;
   className?: string;
 }
 
 export default function LabLocationSection({
   address,
+  addressDetail,
   distanceKm,
   location,
   labName,
   className = "",
 }: LabLocationSectionProps) {
+  const fullAddress = addressDetail ? `${address} ${addressDetail}` : address;
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!mapContainerRef.current || !location) return;
 
     let marker: { setMap: (map: unknown | null) => void } | null = null;
 
@@ -97,13 +100,16 @@ export default function LabLocationSection({
         marker.setMap(null);
       }
     };
-  }, [location.latitude, location.longitude]);
+    // 최적화를 위한 원시값 사용
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location?.latitude, location?.longitude]);
 
   const handleCopyAddress = async () => {
-    await navigator.clipboard.writeText(address);
+    await navigator.clipboard.writeText(fullAddress);
   };
 
   const handleDirectionsClick = () => {
+    if (!location) return;
     const encodedName = encodeURIComponent(labName);
     const kakaoMapUrl = `https://map.kakao.com/link/to/${encodedName},${location.latitude},${location.longitude}`;
     window.open(kakaoMapUrl, "_blank");
@@ -126,7 +132,7 @@ export default function LabLocationSection({
               <CopyIcon className="h-4 w-4 text-neutral-200" />
             </div>
             <span className="min-w-0 flex-1 truncate text-left text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-              {address}
+              {fullAddress}
             </span>
           </button>
           <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-300">

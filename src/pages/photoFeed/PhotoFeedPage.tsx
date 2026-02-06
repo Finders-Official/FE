@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
-import PhotoCard from "@/components/photoFeed/PhotoCard";
-import NewPostModal from "@/components/photoFeed/NewPostModal";
+import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
+import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
 import { useNavigate } from "react-router";
-import { useInfinitePosts } from "@/hooks/photoFeed/posts/useInfinitePosts";
+import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
-import PhotoCardSkeleton from "@/components/photoFeed/PhotoCardSkeleton";
+import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 
 const SKELETON_COUNT = 8;
 
@@ -57,8 +57,8 @@ export default function PhotoFeedPage() {
 
       {/* 에러 처리 */}
       {isError && (
-        <div className="flex items-center justify-center py-6 text-red-400">
-          불러오기에 실패했어요.
+        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+          <p className="text-red-400">불러오기에 실패했어요.</p>
         </div>
       )}
 
@@ -76,7 +76,11 @@ export default function PhotoFeedPage() {
               );
             })
           : posts.map((postPreview) => (
-              <PhotoCard key={postPreview.postId} photo={postPreview} />
+              <PhotoCard
+                key={postPreview.postId}
+                photo={postPreview}
+                isLiked={false}
+              />
             ))}
       </section>
 
