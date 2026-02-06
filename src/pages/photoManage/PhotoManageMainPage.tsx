@@ -12,6 +12,7 @@ import { buildProcessSteps } from "@/lib/buildProcessSteps";
 import { getActiveStatus } from "@/utils/getActiveStatus";
 import { STATUS_INDEX_MAP } from "@/constants/photomanage/status.constant";
 import { getBannerContent } from "@/lib/getBannerContent";
+import { usePrintSkip } from "@/hooks/photoManage";
 
 export default function PhotoManageMainPage() {
   const navigate = useNavigate();
@@ -28,6 +29,9 @@ export default function PhotoManageMainPage() {
     queryKey: ["currentWork"],
     queryFn: getCurrentWork,
   });
+
+  // 인화 안 함 확정
+  const { mutate: printSkip } = usePrintSkip();
 
   const workData = currentWorkResponse?.data;
 
@@ -52,7 +56,10 @@ export default function PhotoManageMainPage() {
         status,
         receiptMethod,
         onOpenPrintConfirmDialog: () => setIsDialogOpen(true),
-        onGoDownload: () => navigate("/photoManage/download"),
+        onGoDownload: () =>
+          navigate("/photoManage/download", {
+            state: { developmentOrderId: workData.developmentOrderId },
+          }),
         onGoFeed: () => navigate("/photoFeed"),
         onGoTrackDelivery: () => {},
         onConfirmReceived: () => {},
@@ -116,9 +123,14 @@ export default function PhotoManageMainPage() {
               navigate("/photoManage/print-request");
             }}
             cancelText={dialogStep === 1 ? "아니오" : "다음에 할게요"}
-            onCancel={() =>
-              dialogStep === 1 ? setDialogStep(2) : setIsDialogOpen(false)
-            }
+            onCancel={() => {
+              if (dialogStep === 1) {
+                setDialogStep(2);
+              } else {
+                setIsDialogOpen(false);
+                printSkip(workData.developmentOrderId);
+              }
+            }}
           />
         )}
 
