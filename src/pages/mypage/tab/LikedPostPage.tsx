@@ -1,7 +1,7 @@
-import PhotoCard from "@/components/photoFeed/PhotoCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import { useLikedPostsInfinite } from "@/hooks/my";
 import { useCallback, useMemo, useRef } from "react";
+import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 
 export function LikedPostPage() {
   const {

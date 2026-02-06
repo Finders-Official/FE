@@ -3,8 +3,8 @@
  */
 export type LabSearchRequest = {
   keyword: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   locationAgreed: boolean;
 };
 
@@ -15,9 +15,9 @@ export type LabSearchResponse = {
   labId: number;
   name: string;
   address: string;
-  distance: string;
+  distance?: string;
 };
 
 export type LabSearchResponseList = {
-  labSearchList: LabSearchResponse[];
+  photoLabSearchList: LabSearchResponse[];
 };

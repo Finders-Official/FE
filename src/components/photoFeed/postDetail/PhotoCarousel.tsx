@@ -1,4 +1,4 @@
-import { useCarousel } from "@/hooks/useCarousel";
+import { useCarousel } from "@/hooks/common/useCarousel";
 import type { PostImage } from "@/types/photoFeed/postPreview";
 
 type Props = {

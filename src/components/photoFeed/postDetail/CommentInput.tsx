@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 import { PaperAirplaneFillIcon } from "@/assets/icon";
-import { Icon } from "../common";
+import Icon from "@/components/common/Icon";
 
 interface CommentInputProps {
   value: string;
