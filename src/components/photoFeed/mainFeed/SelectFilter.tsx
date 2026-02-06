@@ -1,4 +1,4 @@
-import SearchFilterItem from "@/components/photoFeed/SearchFilterItem";
+import SearchFilterItem from "@/components/photoFeed/mainFeed/SearchFilterItem";
 import type { Filter } from "@/types/photoFeed/postSearch";
 
 const FILTER_OPTIONS: Array<{ key: Filter; label: string }> = [

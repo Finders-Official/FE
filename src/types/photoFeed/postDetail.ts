@@ -9,7 +9,7 @@ export type PostDetailResponse = {
   createdAt: string;
   title: string;
   content: string;
-  image: PostImage[];
+  images: PostImage[];
   likeCount: number;
   isLiked: boolean;
   isSelfDeveloped: boolean;
@@ -30,13 +30,19 @@ export type User = {
   profileImageUrl: string;
 };
 
+export type PostRequestImage = {
+  objectPath: string;
+  width: number;
+  height: number;
+};
+
 /**
  * 게시글 작성 요청 (CO-022)
  */
 export type PostUploadRequest = {
   title: string;
   content: string;
-  image: PostImage;
+  images: PostRequestImage[];
   isSelfDeveloped: boolean;
   labId?: number;
   reviewContent?: string;
@@ -102,7 +108,7 @@ export const mockSelfPostResponse: PostDetailResponse = {
   title: "겨울 오후의 빛",
   content:
     "햇빛이 유리창에 반사되는 순간이 너무 예뻐서 셔터를 눌렀어요. 필름 특유의 부드러운 색감이 마음에 듭니다.",
-  image: [mockPostImage1, mockPostImage2, mockPostImage3],
+  images: [mockPostImage1, mockPostImage2, mockPostImage3],
   likeCount: 27,
   isLiked: true,
   isSelfDeveloped: true,
@@ -121,7 +127,7 @@ export const mockLabPostResponse: PostDetailResponse = {
   title: "겨울 오후의 빛",
   content:
     "햇빛이 유리창에 반사되는 순간이 너무 예뻐서 셔터를 눌렀어요. 필름 특유의 부드러운 색감이 마음에 듭니다.",
-  image: [mockPostImage1, mockPostImage2, mockPostImage3],
+  images: [mockPostImage1, mockPostImage2, mockPostImage3],
   likeCount: 27,
   isLiked: true,
   isSelfDeveloped: false,

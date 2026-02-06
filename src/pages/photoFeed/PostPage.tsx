@@ -9,12 +9,12 @@ import { Header, ToastItem } from "@/components/common";
 import { mockSelfPostResponse } from "@/types/photoFeed/postDetail";
 import { commentMock } from "@/types/photoFeed/postDetail";
 import { timeAgo } from "@/utils/timeAgo";
-import PhotoCarousel from "@/components/photoFeed/PhotoCarousel";
+import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
-import Profile from "@/components/photoFeed/Profile";
+import Profile from "@/components/photoFeed/postDetail/Profile";
 import { useNavigate } from "react-router";
-import CommentInput from "@/components/photoFeed/CommentInput";
+import CommentInput from "@/components/photoFeed/postDetail/CommentInput";
 
 export default function PostPage() {
   const mock = mockSelfPostResponse;
@@ -56,7 +56,7 @@ export default function PostPage() {
             date={mock.createdAt}
             isOwner={true}
           />
-          <PhotoCarousel images={mock.image} altPrefix={mock.title} />
+          <PhotoCarousel images={mock.images} altPrefix={mock.title} />
           <div className="flex h-5 w-full justify-start gap-3 pl-1">
             <div className="flex items-center gap-1">
               <button

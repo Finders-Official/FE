@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
-import PhotoCard from "@/components/photoFeed/PhotoCard";
-import NewPostModal from "@/components/photoFeed/NewPostModal";
+import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
+import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import { FloatingIcon, SearchIcon } from "@/assets/icon";
 import { Header } from "@/components/common";
 import { useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed/posts/useInfinitePosts";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
-import PhotoCardSkeleton from "@/components/photoFeed/PhotoCardSkeleton";
+import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 
 const SKELETON_COUNT = 8;
 

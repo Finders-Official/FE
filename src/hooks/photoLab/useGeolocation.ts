@@ -5,6 +5,7 @@ interface GeolocationResult {
   longitude: number | null;
   isLoading: boolean;
   error: string | null;
+  locationAgreed: boolean;
 }
 
 const defaultState: GeolocationResult = {
@@ -12,6 +13,7 @@ const defaultState: GeolocationResult = {
   longitude: null,
   isLoading: true,
   error: null,
+  locationAgreed: false,
 };
 
 let cachedState: GeolocationResult = defaultState;
@@ -34,6 +36,7 @@ function requestLocation() {
       longitude: null,
       isLoading: false,
       error: "Geolocation not supported",
+      locationAgreed: false,
     });
     return;
   }
@@ -45,6 +48,7 @@ function requestLocation() {
         longitude: position.coords.longitude,
         isLoading: false,
         error: null,
+        locationAgreed: true,
       });
     },
     (error) => {
@@ -53,6 +57,7 @@ function requestLocation() {
         longitude: null,
         isLoading: false,
         error: error.message,
+        locationAgreed: false,
       });
     },
     {

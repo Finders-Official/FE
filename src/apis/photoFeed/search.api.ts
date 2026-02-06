@@ -100,5 +100,5 @@ export async function getLabSearches({
     },
   );
 
-  return res.data.data.labSearchList; // 검색 결과 리스트 return
+  return res.data.data.photoLabSearchList ?? []; // 검색 결과 리스트 return
 }

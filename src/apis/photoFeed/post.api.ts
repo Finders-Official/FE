@@ -34,9 +34,12 @@ export async function getPosts({
  * 게시물 작성
  */
 export async function createPost(payload: PostUploadRequest): Promise<number> {
-  const res = await axiosInstance.post<ApiResponse<number>>("/posts", payload);
+  const res = await axiosInstance.post<ApiResponse<PostDetailResponse>>(
+    "/posts",
+    payload,
+  );
 
-  return res.data.data; // postId return
+  return res.data.data.postId;
 }
 
 /**
