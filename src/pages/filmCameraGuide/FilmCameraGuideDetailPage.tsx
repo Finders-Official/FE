@@ -107,13 +107,16 @@ const FilmCameraGuideDetailPage = () => {
               </div>
 
               {/* 섹션 이미지 */}
-              <div className="overflow-hidden rounded-[0.625rem]">
-                <img
-                  src={section.imageUrl}
-                  alt={section.heading || section.locationHeading}
-                  className="h-auto w-full object-cover"
-                />
-              </div>
+              {section.imageUrl ? (
+                <div className="overflow-hidden rounded-[0.625rem]">
+                  <img
+                    src={section.imageUrl}
+                    alt=""
+                    className="h-auto w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : null}
 
               {/* 설명글 */}
               <p className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">
