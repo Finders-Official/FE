@@ -40,7 +40,7 @@ export default function QuickActionGrid() {
         <div className="flex size-8 items-center justify-center">
           <MainCamera className="size-8 text-[#FF5A00]" strokeWidth={2} />
         </div>
-        <span className="mt-[0.625rem] text-[1rem] font-semibold text-neutral-100">
+        <span className="mt-2.5 text-[1rem] font-semibold text-neutral-100">
           필카 입문 101
         </span>
       </ActionCard>
