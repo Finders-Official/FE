@@ -30,3 +30,19 @@ export interface PrintQuoteResponse {
   deliveryFee: number;
   totalAmount: number;
 }
+
+// 스캔 결과 사진
+export interface ScanResult {
+  scannedPhotoId: number;
+  displayOrder: number;
+  fileName: string;
+  objectPath: string;
+  signedUrl: string;
+  expiresAt: number;
+  createdAt: string;
+}
+
+export interface ScanResultSlice {
+  content: ScanResult[];
+  hasNext: boolean;
+}
