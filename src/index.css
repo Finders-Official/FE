@@ -95,3 +95,23 @@
 .animate-toast-in {
   animation: toast-in 0.3s ease-out;
 }
+
+.bg-splash-gradient {
+  background:
+    radial-gradient(
+      700px 400px at -10% 0%,
+      rgba(255, 153, 92, 0.25) 0%,
+      rgba(0, 0, 0, 0) 40%
+    ),
+    radial-gradient(
+      1000px 1000px at 90% 85%,
+      rgba(255, 107, 39, 0.22) 0%,
+      rgba(0, 0, 0, 0) 60%
+    ),
+    radial-gradient(
+      200px 200px at 110% 100%,
+      rgba(255, 233, 197, 1) 0%,
+      rgba(0, 0, 0, 0) 30%
+    ),
+    #070707;
+}

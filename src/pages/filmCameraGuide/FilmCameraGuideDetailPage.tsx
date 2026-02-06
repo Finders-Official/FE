@@ -30,7 +30,7 @@ const FilmCameraGuideDetailPage = () => {
         title={data.title}
         showBack={true}
         onBack={() => navigate(-1)}
-        className="sticky top-0 z-20 bg-neutral-900 px-4"
+        className="sticky top-0 z-20 bg-neutral-900"
       />
 
       {/* 2. 히어로 이미지 섹션 */}
@@ -53,7 +53,7 @@ const FilmCameraGuideDetailPage = () => {
       </section>
 
       {/* 3. 본문 영역 */}
-      <div className="px-4 pt-8">
+      <div className="pt-8">
         {/* 3-1. 목차 */}
         {data.toc && (
           <div className="mb-10 space-y-1">
@@ -107,13 +107,16 @@ const FilmCameraGuideDetailPage = () => {
               </div>
 
               {/* 섹션 이미지 */}
-              <div className="overflow-hidden rounded-[0.625rem]">
-                <img
-                  src={section.imageUrl}
-                  alt={section.heading || section.locationHeading}
-                  className="h-auto w-full object-cover"
-                />
-              </div>
+              {section.imageUrl ? (
+                <div className="overflow-hidden rounded-[0.625rem]">
+                  <img
+                    src={section.imageUrl}
+                    alt=""
+                    className="h-auto w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : null}
 
               {/* 설명글 */}
               <p className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02%] whitespace-pre-wrap text-neutral-100">

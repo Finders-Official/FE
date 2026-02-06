@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import {
   TabHomeIcon,
   PhotoLabIcon,
@@ -13,6 +13,7 @@ import {
 } from "@/assets/icon";
 import type { TabItem } from "@/types/tab";
 import { useCurrentWorkNavigation } from "@/hooks/photoManage/useCurrentWorkNavigation";
+import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 
 const tabs: (TabItem & { id?: string })[] = [
   {
@@ -54,6 +55,14 @@ const MANAGE_TAB_PATHS = ["/photoManage", "/development-history"];
 export const TabBar = () => {
   const { handleNavigationClick, isChecking } = useCurrentWorkNavigation();
   const { pathname } = useLocation();
+  const { requireAuth, requireAuthNavigate } = useRequireAuth();
+
+  const isTabActive = (tab: TabItem) => {
+    if (tab.end) {
+      return pathname === tab.to;
+    }
+    return pathname.startsWith(tab.to);
+  };
 
   return (
     <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-6 py-5">
@@ -69,7 +78,7 @@ export const TabBar = () => {
               <button
                 key={tab.id}
                 type="button"
-                onClick={handleNavigationClick}
+                onClick={() => requireAuth(handleNavigationClick)}
                 disabled={isChecking}
                 className={[
                   "flex flex-col items-center justify-center active:scale-[0.99]",
@@ -83,31 +92,26 @@ export const TabBar = () => {
             );
           }
 
+          const isActive = isTabActive(tab);
+          const Icon = isActive ? tab.activeIcon : tab.icon;
+
           return (
-            <NavLink
+            <a
+              href={tab.to}
               key={tab.to}
-              to={tab.to}
-              end={tab.end}
-              className={({ isActive }) =>
-                [
-                  "flex flex-col items-center justify-center active:scale-[0.99]",
-                  isActive ? "text-orange-500" : "text-neutral-300",
-                ].join(" ")
-              }
+              onClick={(e) => {
+                e.preventDefault();
+                requireAuthNavigate(tab.to);
+              }}
+              className={[
+                "flex flex-col items-center justify-center active:scale-[0.99]",
+                isActive ? "text-orange-500" : "text-neutral-300",
+              ].join(" ")}
               aria-label={tab.label}
             >
-              {({ isActive }) => {
-                const Icon = isActive ? tab.activeIcon : tab.icon;
-                return (
-                  <>
-                    <Icon className="h-[1.5rem] w-[1.5rem]" />
-                    <span className="mt-auto text-center text-xs">
-                      {tab.label}
-                    </span>
-                  </>
-                );
-              }}
-            </NavLink>
+              <Icon className="h-[1.5rem] w-[1.5rem]" />
+              <span className="mt-auto text-center text-xs">{tab.label}</span>
+            </a>
           );
         })}
       </nav>

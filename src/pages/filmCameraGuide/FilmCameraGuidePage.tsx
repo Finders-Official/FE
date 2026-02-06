@@ -16,7 +16,7 @@ const FilmCameraGuidePage = () => {
         title={"필카 입문 101"}
         showBack={true}
         onBack={() => navigate(-1)}
-        className="sticky top-0 z-20 bg-neutral-900 px-4"
+        className="sticky top-0 z-20 bg-neutral-900"
       />
 
       {/* 서브 헤더 */}
