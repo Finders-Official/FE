@@ -7,7 +7,7 @@ import type { LabSearchResponse } from "@/types/photoFeed/labSearch";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
 import { Header } from "@/components/common";
-import { useGeolocation } from "@/hooks/photoLab/useGeolocation";
+import { useGeolocation } from "@/hooks/common/useGeolocation";
 import EmptyView from "@/components/common/EmptyView";
 import { useSearchLabs, useCreatePostWithUpload } from "@/hooks/photoFeed";
 import { useAuthStore } from "@/store/useAuth.store";
