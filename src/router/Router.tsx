@@ -1,5 +1,10 @@
 import RootLayout from "@/layouts/RootLayout";
-import { KakaoCallbackPage, LoginPage, OnBoardingPage } from "@/pages/auth";
+import {
+  KakaoCallbackPage,
+  LoginPage,
+  OnBoardingPage,
+  TermsPage,
+} from "@/pages/auth";
 import PhotoFeedPage from "@/pages/photoFeed/PhotoFeedPage";
 import PostPage from "@/pages/photoFeed/PostPage";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
@@ -56,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: "/auth/onboarding",
         Component: OnBoardingPage,
+      },
+      {
+        path: "/auth/terms",
+        Component: TermsPage,
       },
       {
         path: "/development-history",
