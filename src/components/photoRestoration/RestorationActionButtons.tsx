@@ -30,7 +30,7 @@ export const RestorationActionButtons: React.FC<
   const showHintTooltip =
     historyStep === -1 && !currentPath && !restoredImageUrl && !isGenerating;
 
-  if (showHintTooltip) return null; // Action buttons are not shown when hint tooltip is visible
+  if (showHintTooltip) return null;
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 pointer-events-auto flex items-center justify-center duration-300">

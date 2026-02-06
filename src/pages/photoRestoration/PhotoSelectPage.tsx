@@ -65,3 +65,5 @@ const PhotoSelectPage = ({ onSelect }: PhotoSelectProps) => {
 };
 
 export default PhotoSelectPage;
+
+// TODO: 파일 삭제 예정
