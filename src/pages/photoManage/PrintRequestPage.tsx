@@ -1,23 +1,22 @@
 import { useMemo, useState } from "react";
 import { CTA_Button } from "@/components/common";
-import { photoMock } from "@/types/photoFeed/postPreview";
 import { useNavigate } from "react-router";
 import { PhotoQuantityStepper } from "@/components/photoManage/PhotoQuantityStepper";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
+import { useScanResults } from "@/hooks/photoManage";
 
 type QtyMap = Record<number, number>;
 
 export function PrintRequestPage() {
   const navigate = useNavigate();
 
-  const [qtyById, setQtyById] = useState<QtyMap>(() => {
-    const init: QtyMap = {};
-    for (const p of photoMock.previewList) init[p.postId] = 0;
-    return init;
-  });
-
+  const developmentOrderId = usePrintOrderStore((s) => s.developmentOrderId);
   const setTotalPrintCount = usePrintOrderStore((s) => s.setTotalPrintCount);
   const setSelectedPhotos = usePrintOrderStore((s) => s.setSelectedPhotos);
+
+  const { data: scanResults, isLoading } = useScanResults(developmentOrderId);
+
+  const [qtyById, setQtyById] = useState<QtyMap>({});
 
   const totalQty = useMemo(() => {
     return Object.values(qtyById).reduce((sum, v) => sum + v, 0);
@@ -47,6 +46,14 @@ export function PrintRequestPage() {
 
   const isNextEnabled = totalQty > 0;
 
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-neutral-300">사진을 불러오는 중...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col pt-7">
       <header className="leading-[128%] tracking-[-0.025rem] text-neutral-100">
@@ -57,20 +64,23 @@ export function PrintRequestPage() {
       </header>
 
       <main className="mt-8 mb-[calc(var(--tabbar-height)+var(--fab-gap))] grid flex-1 grid-cols-2 gap-4 overflow-y-auto">
-        {photoMock.previewList.map((photo) => {
-          const qty = qtyById[photo.postId] ?? 0;
+        {scanResults?.map((photo) => {
+          const qty = qtyById[photo.scannedPhotoId] ?? 0;
 
           return (
-            <div key={photo.postId} className="flex flex-col items-center">
+            <div
+              key={photo.scannedPhotoId}
+              className="flex flex-col items-center"
+            >
               <img
-                src={photo.image.imageUrl}
-                alt={photo.title}
-                className="h-40 w-40 rounded-[0.625rem]"
+                src={photo.signedUrl}
+                alt={photo.fileName}
+                className="h-40 w-40 rounded-[0.625rem] object-cover"
               />
               <PhotoQuantityStepper
                 qty={qty}
-                onDec={() => decrease(photo.postId)}
-                onInc={() => increase(photo.postId)}
+                onDec={() => decrease(photo.scannedPhotoId)}
+                onInc={() => increase(photo.scannedPhotoId)}
                 min={0}
               />
             </div>
