@@ -3,7 +3,7 @@
 // 참고: https://github.com/daumPostcode/QnA/issues/1498
 import DaumPostcodeEmbed from "react-daum-postcode";
 import type { Address as DaumAddress } from "react-daum-postcode";
-import BottomSheet from "@/components/common/BottomSheet";
+import { Header } from "@/components/common";
 
 interface DaumAddressSearchProps {
   open: boolean;
@@ -24,17 +24,17 @@ export function DaumAddressSearch({
     onClose();
   };
 
+  if (!open) return null;
+
   return (
-    <BottomSheet
-      open={open}
-      onClose={onClose}
-      title="주소 검색"
-      initialSnap="expanded"
-    >
-      <DaumPostcodeEmbed
-        onComplete={handleComplete}
-        style={{ height: "100%" }}
-      />
-    </BottomSheet>
+    <div className="fixed inset-0 z-50 flex flex-col bg-neutral-900">
+      <Header title="주소 입력하기" showBack onBack={onClose} />
+      <div className="min-h-0 flex-1">
+        <DaumPostcodeEmbed
+          onComplete={handleComplete}
+          style={{ height: "100%" }}
+        />
+      </div>
+    </div>
   );
 }
