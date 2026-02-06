@@ -2,10 +2,8 @@ export type CategoryKey =
   | "FILM"
   | "PRINT_METHOD"
   | "PAPER"
-  | "PROCESS"
   | "SIZE"
-  | "PRINT_TYPE"
-  | "CUTS";
+  | "PRINT_TYPE";
 
 export type DropDownOption = {
   /** 선택 값(서버/스토어에 저장할 값) */
