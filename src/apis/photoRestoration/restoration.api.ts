@@ -1,3 +1,5 @@
+import { useAuthStore } from "@/store/useAuth.store";
+
 const BASE_URL = import.meta.env.VITE_PUBLIC_API_URL;
 
 interface PresignedUrlResponse {
@@ -31,13 +33,17 @@ export async function getPresignedUrl(
   const token = localStorage.getItem("accessToken");
   if (!token) throw new Error("로그인이 필요합니다.");
 
-  const memberId = getMemberIdFromToken(token);
+  const storeMemberId = useAuthStore.getState().user?.memberId;
+
+  const memberId = storeMemberId ?? getMemberIdFromToken(token);
+
+  if (!memberId) throw new Error("회원 정보를 확인할 수 없습니다.");
 
   const response = await fetch(`${BASE_URL}/files/presigned-url`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ category, fileName, memberId }),
   });
