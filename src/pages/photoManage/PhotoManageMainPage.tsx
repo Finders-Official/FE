@@ -295,7 +295,7 @@ export default function PhotoManageMainPage() {
   if (isLoading)
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <p>Loading...</p>
+        <p>로딩중...</p>
       </div>
     );
   if (!workData || !currentBanner) return null;
