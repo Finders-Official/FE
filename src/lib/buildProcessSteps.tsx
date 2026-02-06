@@ -48,7 +48,7 @@ export function buildProcessSteps({
         <div className="flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
           <ClockIcon className="h-3 w-3" />
           <p className="">
-            {`작업 완료 시간: ${formatEstimatedTime(workData.compltedAt)}`}
+            {`작업 완료 시간: ${formatEstimatedTime(workData.completedAt)}`}
           </p>
         </div>
       ),
