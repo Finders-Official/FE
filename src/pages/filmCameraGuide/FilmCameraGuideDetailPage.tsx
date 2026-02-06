@@ -30,7 +30,7 @@ const FilmCameraGuideDetailPage = () => {
         title={data.title}
         showBack={true}
         onBack={() => navigate(-1)}
-        className="sticky top-0 z-20 bg-neutral-900 px-4"
+        className="sticky top-0 z-20 bg-neutral-900"
       />
 
       {/* 2. 히어로 이미지 섹션 */}
@@ -53,7 +53,7 @@ const FilmCameraGuideDetailPage = () => {
       </section>
 
       {/* 3. 본문 영역 */}
-      <div className="px-4 pt-8">
+      <div className="pt-8">
         {/* 3-1. 목차 */}
         {data.toc && (
           <div className="mb-10 space-y-1">

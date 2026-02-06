@@ -34,7 +34,7 @@ export default function QuickActionGrid() {
 
       {/* 필카 입문 101 */}
       <ActionCard
-        onClick={() => requireAuthNavigate("/")}
+        onClick={() => requireAuthNavigate("/film-camera-guide")}
         className="flex flex-col items-center justify-center gap-2 bg-[#1C1C1E]"
       >
         <div className="flex size-8 items-center justify-center">
