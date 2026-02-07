@@ -164,7 +164,7 @@ export default function FilterBottomSheet({
       expandedVh={expandedVh}
       collapsedRatio={expandedVh / 100}
       initialSnap="expanded"
-      overlay
+      overlay={true}
     >
       <div className="flex h-full flex-col">
         {/* 탭 */}
