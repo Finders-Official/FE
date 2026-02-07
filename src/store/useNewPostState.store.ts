@@ -1,9 +1,12 @@
+import type { LabSearchResponse } from "@/types/photoFeed/labSearch";
 import { create } from "zustand";
 
 type ImageMeta = {
   width: number;
   height: number;
 };
+
+export type LabReviewStep = "default" | "search" | "confirm";
 
 /**
  * file에서 width/height 뽑기
@@ -36,8 +39,8 @@ type NewPostState = {
 
   isSelfDeveloped: boolean;
 
-  labId: number | undefined;
-  labName: string | undefined;
+  labReviewStep: LabReviewStep | undefined;
+  labInfo: LabSearchResponse | null;
 
   reviewContent: string | undefined;
 
@@ -49,7 +52,10 @@ type NewPostState = {
   setFiles: (files: File[]) => Promise<void>; // setFiles를 async로 바꿔서 metas도 같이 채움
 
   setIsSelfDeveloped: (isSelfDeveloped: boolean) => void;
-  setLabInfo: (labId: number | undefined, labName: string | undefined) => void;
+
+  setLabReviewStep: (labReviewStep: LabReviewStep | undefined) => void;
+  setLabInfo: (labInfo: LabSearchResponse | null) => void;
+
   setReviewContent: (reviewContent: string | undefined) => void;
 
   setIsNewPost: (isNewPost: boolean) => void;
@@ -64,8 +70,8 @@ const initialState = {
   previewUrls: [] as string[],
   imageMetas: [] as ImageMeta[],
   isSelfDeveloped: false,
-  labId: undefined,
-  labName: undefined,
+  labReviewStep: "default" as LabReviewStep,
+  labInfo: null,
   reviewContent: undefined,
   isNewPost: false,
 };
@@ -97,7 +103,10 @@ export const useNewPostState = create<NewPostState>((set) => ({
   },
 
   setIsSelfDeveloped: (isSelfDeveloped) => set({ isSelfDeveloped }),
-  setLabInfo: (labId, labName) => set({ labId, labName }),
+
+  setLabReviewStep: (labReviewStep) => set({ labReviewStep }),
+  setLabInfo: (labInfo) => set({ labInfo }),
+
   setReviewContent: (reviewContent) => set({ reviewContent }),
 
   setIsNewPost: (isNewPost) => set({ isNewPost }),
