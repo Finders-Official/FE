@@ -109,10 +109,11 @@ export async function getRegionFilters(): Promise<
 // 검색어 자동완성
 export async function getAutocomplete(
   keyword: string,
+  signal?: AbortSignal,
 ): Promise<ApiResponse<string[]>> {
   const res = await axiosInstance.get<ApiResponse<string[]>>(
     "/photo-labs/search/autocomplete",
-    { params: { keyword } },
+    { params: { keyword }, signal },
   );
 
   const body = res.data;
