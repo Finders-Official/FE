@@ -59,7 +59,7 @@ export function LikedPhotoLabPage() {
 
   if (isError) {
     return (
-      <div className="px-4 py-6 text-neutral-100">
+      <div className="p-4 text-neutral-100">
         <p className="text-red-400">불러오기 실패</p>
         <button
           type="button"
@@ -89,9 +89,7 @@ export function LikedPhotoLabPage() {
         )}
 
         {!hasNextPage && labs.length > 0 && (
-          <div className="py-2 text-center text-sm text-neutral-500">
-            마지막입니다.
-          </div>
+          <div className="py-2 text-center text-sm text-neutral-500"></div>
         )}
 
         {labs.length === 0 && !isFetchingNextPage && (

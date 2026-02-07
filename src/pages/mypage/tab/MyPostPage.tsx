@@ -66,16 +66,11 @@ export function MyPostPage() {
     );
   }
 
-  const totalCount = data?.pages?.[0]?.data.totalCount ?? 0;
+  // const totalCount = data?.pages?.[0]?.data.totalCount ?? 0;
 
   return (
     <div className="px-4 py-6">
-      <main className="rounded-md border border-neutral-800 p-5 text-neutral-100">
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-[1rem] font-semibold">내가 쓴 글</h2>
-          <p className="text-xs text-neutral-400">{totalCount}개</p>
-        </div>
-
+      <main>
         <div className="grid grid-cols-2 gap-4">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
@@ -91,14 +86,12 @@ export function MyPostPage() {
         )}
 
         {!hasNextPage && posts.length > 0 && (
-          <div className="mt-3 text-center text-sm text-neutral-500">
-            마지막 페이지야
-          </div>
+          <div className="mt-3 text-center text-sm text-neutral-500"></div>
         )}
 
         {posts.length === 0 && !isFetchingNextPage && (
           <div className="py-10 text-center text-sm text-neutral-400">
-            아직 작성한 게시물이 없어
+            아직 작성한 게시물이 없습니다.
           </div>
         )}
       </main>

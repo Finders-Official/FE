@@ -58,7 +58,7 @@ export function LikedPostPage() {
   }
 
   return (
-    <div className="px-4 py-6">
+    <div className="px-4">
       <main>
         {/* Masonry 느낌: PhotoCard가 break-inside:avoid 쓰고 있어서 columns가 잘 맞음 */}
         <div className="columns-2 gap-4">
@@ -87,7 +87,7 @@ export function LikedPostPage() {
 
         {items.length === 0 && !isFetchingNextPage && (
           <div className="py-10 text-center text-sm text-neutral-400">
-            아직 좋아요한 게시물이 없어
+            아직 좋아요한 게시물이 없습니다.
           </div>
         )}
       </main>
