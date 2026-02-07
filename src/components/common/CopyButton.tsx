@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { CopyIcon, CopyFillIcon } from "@/assets/icon";
-import { ToastItem, ToastList } from "./ToastMessage";
+import { ToastItem } from "./ToastMessage";
 
 interface CopyButtonProps {
   text: string;
@@ -9,6 +9,7 @@ interface CopyButtonProps {
   iconClassName?: string;
   children?: React.ReactNode;
   ariaLabel?: string;
+  aboveTabBar?: boolean;
 }
 
 export function CopyButton({
@@ -18,6 +19,7 @@ export function CopyButton({
   iconClassName = "h-4 w-4 text-neutral-200",
   children,
   ariaLabel,
+  aboveTabBar = false,
 }: CopyButtonProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -60,14 +62,16 @@ export function CopyButton({
       </button>
 
       {mounted && (
-        <ToastList>
+        <div
+          className={`fixed left-1/2 z-[9999] flex -translate-x-1/2 flex-col gap-[0.75rem] ${aboveTabBar ? "bottom-[calc(var(--tabbar-height)+1rem)]" : "bottom-[2rem]"}`}
+        >
           <div className={visible ? "" : "animate-toast-out"}>
             <ToastItem
               message={toastMessage}
               icon={<CopyFillIcon className="h-5 w-5 text-orange-500" />}
             />
           </div>
-        </ToastList>
+        </div>
       )}
     </>
   );

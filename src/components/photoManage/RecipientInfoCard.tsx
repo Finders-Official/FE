@@ -22,6 +22,7 @@ export function RecipientInfoCard({ items }: RecipientInfoCardProps) {
               text={item.copyValue}
               className="text-neutral-400 hover:text-white"
               iconClassName="h-3.5 w-3.5"
+              aboveTabBar
             />
           )}
           <span className="text-white">{item.value}</span>
