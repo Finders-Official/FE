@@ -1,3 +1,4 @@
+// src/pages/mypage/PhoneEditPage.tsx
 import { ActionButton, InputForm } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { formatMMSS } from "@/utils/time";
@@ -15,7 +16,6 @@ export function PhoneEditPage() {
   const f = useOnBoardingForm({ phonePurpose: "MY_PAGE" });
   const didInit = useRef(false);
 
-  //최초 진입 시 현재 전화번호 주입 + 인증상태 리셋
   useEffect(() => {
     if (didInit.current) return;
     if (!currentPhone) return;
@@ -44,7 +44,6 @@ export function PhoneEditPage() {
     return next.length > 0 && next !== cur;
   }, [f.phone, currentPhone]);
 
-  //제출 가능 조건: (변경됨) + (인증완료) + (토큰 있음) + (수정 중 아님)
   const canSubmit = useMemo(() => {
     return phoneChanged && f.isVerified && !!f.verifiedPhoneToken && !isEditing;
   }, [phoneChanged, f.isVerified, f.verifiedPhoneToken, isEditing]);
@@ -68,39 +67,61 @@ export function PhoneEditPage() {
             name="전화번호"
             placeholder="'-'제외하고 입력"
             size="medium"
-            className="focus:border-orange-500"
+            borderClass={`focus:border-orange-500 ${
+              f.lockPhoneForm ? "bg-neutral-850" : ""
+            }`}
             value={f.phone}
             onChange={f.handlePhoneChange}
+            disabled={f.lockPhoneForm}
           />
           <ActionButton
             type="button"
             text={f.isSending ? "재발송" : "인증하기"}
             onClick={f.handleSend}
-            disabled={!phoneChanged || f.phone.length < 10}
+            disabled={f.lockPhoneForm || !phoneChanged || f.phone.length < 10}
+            className={f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""}
           />
         </section>
 
         {f.isSending && (
-          <section className="flex gap-[1.25rem]">
-            <InputForm
-              placeholder="인증번호 입력"
-              size="medium"
-              className="focus:border-orange-500"
-              value={f.verifiedNumber}
-              timer={
-                <span className="text-sm text-orange-500">
-                  {formatMMSS(Math.max(f.remainSec, 0))}
-                </span>
-              }
-              onChange={f.handleVerifiedNumberChange}
-            />
-            <ActionButton
-              type="button"
-              text="확인"
-              onClick={f.handleVerify}
-              disabled={f.verifiedNumber.length !== 6 || f.remainSec <= 0}
-            />
-          </section>
+          <>
+            <section className="flex gap-[1.25rem]">
+              <InputForm
+                placeholder="인증번호 입력"
+                size="medium"
+                borderClass={`focus:border-orange-500 ${f.phoneBorderClass} ${
+                  f.lockPhoneForm ? "bg-neutral-850" : ""
+                }`}
+                value={f.verifiedNumber}
+                timer={
+                  !f.lockPhoneForm ? (
+                    <span className="text-sm text-orange-500">
+                      {formatMMSS(Math.max(f.remainSec, 0))}
+                    </span>
+                  ) : null
+                }
+                onChange={f.handleVerifiedNumberChange}
+                disabled={f.lockPhoneForm}
+              />
+
+              <ActionButton
+                type="button"
+                text="확인"
+                onClick={f.handleVerify}
+                disabled={
+                  f.lockPhoneForm ||
+                  f.verifiedNumber.length !== 6 ||
+                  f.remainSec <= 0
+                }
+                className={
+                  f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""
+                }
+              />
+            </section>
+            <p className={`mt-2 px-2 text-sm ${f.phoneTextClass}`}>
+              {f.phoneStatusText}
+            </p>
+          </>
         )}
       </form>
 
