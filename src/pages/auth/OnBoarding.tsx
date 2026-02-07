@@ -85,6 +85,9 @@ export function OnBoardingPage() {
                   f.isConfirmingCode ||
                   f.isCompleting
                 }
+                className={
+                  f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""
+                }
               />
             </section>
             <p className={`mt-2 px-2 text-sm ${f.phoneTextClass}`}>
