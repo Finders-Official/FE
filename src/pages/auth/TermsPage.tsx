@@ -36,8 +36,9 @@ export function TermsPage() {
   const location = useLocation();
 
   const currentId = getHashIdFrom(location.hash);
-  const currentIndex = currentId ? (idToIndex.get(currentId) ?? 0) : 0;
+  const showCta = Boolean(currentId); // 해시 있을 때만 CTA
 
+  const currentIndex = currentId ? (idToIndex.get(currentId) ?? 0) : 0;
   const isLast = currentIndex >= ids.length - 1;
 
   // 해시가 바뀔 때마다 해당 섹션으로 스크롤
@@ -57,13 +58,19 @@ export function TermsPage() {
 
     navigate(
       { pathname: location.pathname, hash: `#${nextId}` },
-      { replace: true }, //해시 쌓임 방지
-    );
+      { replace: true },
+    ); // 해시 쌓임 방지
   };
 
   return (
     <div className="min-h-dvh text-neutral-100">
-      <div className="pb-[calc(env(safe-area-inset-bottom)+6.75rem)]">
+      <div
+        className={
+          showCta
+            ? "pb-[calc(env(safe-area-inset-bottom)+6.75rem)]"
+            : "pb-[calc(env(safe-area-inset-bottom)+3.75rem)]"
+        }
+      >
         <Header
           title="약관 동의"
           rightAction={{
@@ -95,17 +102,18 @@ export function TermsPage() {
         </main>
       </div>
 
-      <div className="border-neutral-850 fixed inset-x-0 bottom-0 z-20 border-t bg-neutral-950/90 backdrop-blur">
-        <div className="mx-auto w-full px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
-          <CTA_Button
-            text={isLast ? "확인" : "다음"}
-            color="orange"
-            size="xlarge"
-            onClick={handleNextOrConfirm}
-            disabled={!currentId}
-          />
+      {showCta && (
+        <div className="border-neutral-850 fixed inset-x-0 bottom-0 z-20 border-t backdrop-blur">
+          <div className="mx-auto w-full px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
+            <CTA_Button
+              text={isLast ? "확인" : "다음"}
+              color="orange"
+              size="xlarge"
+              onClick={handleNextOrConfirm}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
