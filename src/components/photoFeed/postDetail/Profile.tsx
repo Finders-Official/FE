@@ -3,6 +3,7 @@ import { useState } from "react";
 import ActionSheet from "./ActionSheet";
 import { timeAgo } from "@/utils/timeAgo";
 import { useDeletePost, useDeleteComment } from "@/hooks/photoFeed";
+import { useNavigate } from "react-router";
 
 type ProfileType = "post" | "comment";
 
@@ -25,6 +26,7 @@ export default function Profile({
   isOwner,
   objectId,
 }: ProfileProps) {
+  const navigate = useNavigate();
   const [moreMenu, setMoreMenu] = useState(false);
 
   // date에서 시간 추출
@@ -126,6 +128,11 @@ export default function Profile({
               variant: "danger",
               onClick: () => {
                 deletePost(objectId);
+                navigate("/photoFeed", {
+                  state: {
+                    isDeleted: true,
+                  },
+                });
               },
             },
           ]}
