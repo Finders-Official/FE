@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { CopyIcon, CopyFillIcon } from "@/assets/icon";
+import { CopyIcon, CopyFillIcon, ExclamationCircleIcon } from "@/assets/icon";
 import { ToastItem } from "./ToastMessage";
 
 interface CopyButtonProps {
@@ -23,6 +23,7 @@ export function CopyButton({
 }: CopyButtonProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [isError, setIsError] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -31,25 +32,29 @@ export function CopyButton({
     };
   }, []);
 
+  const showToast = useCallback((error: boolean) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    setIsError(error);
+    setMounted(true);
+    setVisible(true);
+
+    timeoutRef.current = setTimeout(() => {
+      setVisible(false);
+      timeoutRef.current = setTimeout(() => {
+        setMounted(false);
+      }, 200);
+    }, 1800);
+  }, []);
+
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
-
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
-      setMounted(true);
-      setVisible(true);
-
-      timeoutRef.current = setTimeout(() => {
-        setVisible(false);
-        timeoutRef.current = setTimeout(() => {
-          setMounted(false);
-        }, 200);
-      }, 1800);
-    } catch (err) {
-      console.error("복사 실패:", err);
+      showToast(false);
+    } catch {
+      showToast(true);
     }
-  }, [text]);
+  }, [text, showToast]);
 
   return (
     <>
@@ -68,8 +73,14 @@ export function CopyButton({
         >
           <div className={visible ? "" : "animate-toast-out"}>
             <ToastItem
-              message={toastMessage}
-              icon={<CopyFillIcon className="h-5 w-5 text-orange-500" />}
+              message={isError ? "복사에 실패했습니다." : toastMessage}
+              icon={
+                isError ? (
+                  <ExclamationCircleIcon className="text-orange-450 h-5 w-5" />
+                ) : (
+                  <CopyFillIcon className="text-orange-450 h-5 w-5" />
+                )
+              }
             />
           </div>
         </div>
