@@ -3,6 +3,9 @@ import { PostCard } from "@/components/mypage/PostCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import type { Post } from "@/types/mypage/post";
 import { useMyPostsInfinite } from "@/hooks/my";
+import { PostCardSkeleton } from "@/components/mypage";
+
+const SKELETON_COUNT = 6;
 
 export function MyPostPage() {
   const {
@@ -49,8 +52,6 @@ export function MyPostPage() {
     threshold: 0,
   });
 
-  if (isLoading) return <div className="p-6 text-neutral-100">로딩중...</div>;
-
   if (isError) {
     return (
       <div className="p-6 text-neutral-100">
@@ -72,9 +73,11 @@ export function MyPostPage() {
     <div className="px-4 py-6">
       <main>
         <div className="grid grid-cols-2 gap-4">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+          {isLoading
+            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
+                return <PostCardSkeleton key={`post-skeleton-${i}`} />;
+              })
+            : posts.map((post) => <PostCard key={post.id} post={post} />)}
         </div>
 
         <div ref={bottomRef} className="h-10" />

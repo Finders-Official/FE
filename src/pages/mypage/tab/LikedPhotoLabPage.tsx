@@ -1,8 +1,10 @@
 import { useCallback, useMemo, useRef } from "react";
-import { PhotoLabCard } from "@/components/mypage";
+import { PhotoLabCard, PhotoLabCardSkeleton } from "@/components/mypage";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { useLikedPhotoLabsInfinite } from "@/hooks/my";
+
+const SKELETON_COUNT = 5;
 
 export function LikedPhotoLabPage() {
   const {
@@ -53,10 +55,6 @@ export function LikedPhotoLabPage() {
     threshold: 0,
   });
 
-  if (isLoading) {
-    return <div className="px-4 py-6 text-neutral-100">로딩중...</div>;
-  } // 스켈레톤 ui로 처리 예정
-
   if (isError) {
     return (
       <div className="p-4 text-neutral-100">
@@ -75,9 +73,13 @@ export function LikedPhotoLabPage() {
   return (
     <div>
       <main className="px-4">
-        {labs.map((photolab) => (
-          <PhotoLabCard key={photolab.id} photoLab={photolab} />
-        ))}
+        {isLoading
+          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
+              return <PhotoLabCardSkeleton key={`post-skeleton-${i}`} />;
+            })
+          : labs.map((photolab) => (
+              <PhotoLabCard key={photolab.id} photoLab={photolab} />
+            ))}
 
         {/* sentinel */}
         <div ref={bottomRef} className="h-10" />

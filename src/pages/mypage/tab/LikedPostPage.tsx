@@ -2,6 +2,17 @@ import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import { useLikedPostsInfinite } from "@/hooks/my";
 import { useCallback, useMemo, useRef } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
+import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
+
+const SKELETON_COUNT = 8;
+
+const SKELETON_HEIGHTS = [
+  "h-[180px]",
+  "h-[220px]",
+  "h-[260px]",
+  "h-[300px]",
+  "h-[340px]",
+];
 
 export function LikedPostPage() {
   const {
@@ -38,10 +49,6 @@ export function LikedPostPage() {
     threshold: 0,
   });
 
-  if (isLoading) {
-    return <div className="p-6 text-neutral-100">로딩중...</div>;
-  }
-
   if (isError) {
     return (
       <div className="p-6 text-neutral-100">
@@ -62,14 +69,26 @@ export function LikedPostPage() {
       <main>
         {/* Masonry 느낌: PhotoCard가 break-inside:avoid 쓰고 있어서 columns가 잘 맞음 */}
         <div className="columns-2 gap-4">
-          {items.map((photo) => (
-            <PhotoCard
-              key={photo.postId}
-              photo={photo}
-              isLiked={true}
-              // onToggleLike={...}  // 나중에 좋아요 해제 API
-            />
-          ))}
+          {isLoading
+            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
+                const heightClass =
+                  SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
+
+                return (
+                  <PhotoCardSkeleton
+                    key={`skeleton-${i}`}
+                    className={heightClass}
+                  />
+                );
+              })
+            : items.map((photo) => (
+                <PhotoCard
+                  key={photo.postId}
+                  photo={photo}
+                  isLiked={true}
+                  // onToggleLike={...}  // 나중에 좋아요 해제 API
+                />
+              ))}
         </div>
 
         {/* sentinel */}
