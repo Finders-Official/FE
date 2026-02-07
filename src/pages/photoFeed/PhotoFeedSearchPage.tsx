@@ -8,16 +8,13 @@ import BottomSheet from "@/components/common/BottomSheet";
 import SelectFilter from "@/components/photoFeed/mainFeed/SelectFilter";
 import { TabBar } from "@/components/common/TabBar";
 import SearchPost from "@/components/photoFeed/mainFeed/SearchPost";
-
-import {
-  useRecentSearches,
-  useRelatedSearches,
-  useSearchPosts,
-  useDeleteRecentSearch,
-  useDeleteRecentSearchesAll,
-} from "@/hooks/photoFeed";
+import { useRecentSearches } from "@/hooks/photoFeed/search/useRecentSearches";
 import type { Filter } from "@/types/photoFeed/postSearch";
+import { useRelatedSearches } from "@/hooks/photoFeed/search/useRelatedSearches";
 import { KeywordSuggestionSection } from "@/components/photoLab/search";
+import { useSearchPosts } from "@/hooks/photoFeed/search/useSearchPosts";
+import { useDeleteRecentSearch } from "@/hooks/photoFeed/search/useDeleteRecentSearch";
+import { useDeleteRecentSearchesAll } from "@/hooks/photoFeed/search/useDeleteRecentSearchesAll";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import SearchItemSkeleton from "@/components/photoFeed/mainFeed/SearchItemSkeleton";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
@@ -142,20 +139,16 @@ export default function PhotoFeedSearchPage() {
     onIntersect: onIntersect,
   });
 
-  {
-    /** API 요청 실패 */
-  }
+  /** API 요청 실패 */
   const errorResponse = () => {
     return (
-      <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-        <p className="text-red-400">불러오기에 실패했어요.</p>
+      <div className="flex items-center justify-center py-6 text-red-400">
+        데이터 불러오기에 실패했어요.
       </div>
     );
   };
 
-  {
-    /** 최근 검색 기록 */
-  }
+  /** 최근 검색 기록 */
   const renderRecent = () => {
     if (isRecentPending) {
       return (
@@ -227,7 +220,7 @@ export default function PhotoFeedSearchPage() {
 
     if (isRelatedError) return errorResponse();
 
-    if (relatedSearches && relatedSearches.length === 0) {
+    if (relatedSearches && relatedSearches.length !== 0) {
       return (
         <div className="flex flex-col gap-[1.875rem] pt-5">
           <KeywordSuggestionSection
@@ -322,14 +315,16 @@ export default function PhotoFeedSearchPage() {
       {mode === "result" && renderResult()}
 
       {/* 새 게시물 작성 플로팅 버튼 */}
-      <button
-        type="button"
-        aria-label="새 게시물 작성"
-        onClick={() => setIsCreateModalOpen(true)}
-        className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
-      >
-        <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
-      </button>
+      {mode === "result" && (
+        <button
+          type="button"
+          aria-label="새 게시물 작성"
+          onClick={() => setIsCreateModalOpen(true)}
+          className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
+        >
+          <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
+        </button>
+      )}
 
       {isCreateModalOpen && (
         <NewPostModal
@@ -343,7 +338,6 @@ export default function PhotoFeedSearchPage() {
         <BottomSheet
           open={bottomSheetOpen}
           collapsedRatio={0.44}
-          overlay={true}
           onClose={() => {
             setBottomSheetOpen(false);
           }}
