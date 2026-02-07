@@ -13,7 +13,7 @@ export async function getAvailableTimes(
   date: string,
 ): Promise<ApiResponse<AvailableTimesResponse>> {
   const res = await axiosInstance.get<ApiResponse<AvailableTimesResponse>>(
-    `/photo-labs/${photoLabId}/reservation/available-times`,
+    `/photo-labs/${photoLabId}/reservations/available-times`,
     { params: { date } },
   );
 
