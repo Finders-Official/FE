@@ -13,6 +13,8 @@ import { useCanvasDrawing } from "@/hooks/photoRestoration/useCanvasDrawing";
 import { useRestoration } from "@/hooks/photoRestoration/useRestoration";
 import RestorationControls from "./RestorationControls";
 
+import { RestorationCompareIcon } from "@/assets/icon";
+
 type DialogType =
   | "NONE"
   | "MASKING_BACK"
@@ -160,7 +162,7 @@ export default function RestorationCanvas() {
   return (
     <div className="flex min-h-dvh w-full flex-col bg-neutral-900">
       <Header
-        title={restoredImageUrl ? "복원 결과" : "탄 사진 복원하기"}
+        title="탄 사진 복원하기"
         showBack={true}
         onBack={handleBack}
         className="z-20"
@@ -172,13 +174,6 @@ export default function RestorationCanvas() {
           statusMessage={statusMessage}
           progress={progress}
         />
-
-        {/* 상단 힌트 (결과 화면용) */}
-        {restoredImageUrl && (
-          <div className="absolute top-4 z-30 rounded-full bg-black/50 px-4 py-2 text-sm text-white backdrop-blur-md transition-opacity">
-            {isComparing ? "원본 이미지" : "복원된 이미지"}
-          </div>
-        )}
 
         <RestorationImageContainer
           imageUrl={imageUrl}
@@ -194,6 +189,21 @@ export default function RestorationCanvas() {
           endCompare={endCompare}
           setIsImageLoaded={setIsImageLoaded}
         />
+        {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
+        {restoredImageUrl && !isGenerating && (
+          <div className="mt-3 flex w-85.75 justify-end">
+            <div
+              onMouseDown={startCompare}
+              onMouseUp={endCompare}
+              onMouseLeave={endCompare}
+              onTouchStart={startCompare}
+              onTouchEnd={endCompare}
+              className="pointer-events-auto cursor-pointer rounded-full p-2"
+            >
+              <RestorationCompareIcon className="h-10 w-10" />
+            </div>
+          </div>
+        )}
 
         {/* 편집 모드일 때: Undo/Redo 컨트롤러 (위치: 이미지 하단) */}
         {!restoredImageUrl && !isGenerating && (
@@ -222,8 +232,6 @@ export default function RestorationCanvas() {
           isGenerating={isGenerating}
           handleGenerateClick={handleGenerateClick}
           handleRegenerateClick={handleRegenerateClick}
-          startCompare={startCompare}
-          endCompare={endCompare}
         />
       </div>
 
