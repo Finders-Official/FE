@@ -29,7 +29,7 @@ const NOTICE_LIST: NoticeData[] = [
   {
     id: 4,
     type: "공지",
-    title: "어쩌구저쩌구\n중요한 공지사항입니다",
+    title: "로모그래피\nMc-a 입고!",
     labName: "고래사진관 충무로",
     labId: 102,
     period: "12.24~12.25",
