@@ -1,7 +1,7 @@
 export { PHOTO_LAB_TAGS } from "./tags";
 export { TIME_SLOTS } from "./timeSlots";
 export { REGIONS } from "./regions";
-export { MOCK_KEYWORD_SUGGESTIONS } from "./mockSearchData";
+
 export {
   TASK_OPTIONS,
   FILM_ROLL_MIN,
