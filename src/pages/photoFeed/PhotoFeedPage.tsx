@@ -30,7 +30,6 @@ export default function PhotoFeedPage() {
   // 토스트 메세지 관련 상태
   const [toastVisible, setToastVisible] = useState(isDeleted);
   const [mounted, setMounted] = useState(isDeleted);
-  console.log("toastVisible, mounted", toastVisible, mounted);
 
   useEffect(() => {
     if (!isDeleted) return;
