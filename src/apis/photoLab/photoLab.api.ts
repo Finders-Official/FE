@@ -128,10 +128,11 @@ export async function getAutocomplete(
 // 검색 미리보기 (경량)
 export async function getSearchPreview(
   params: PhotoLabListParams,
+  signal?: AbortSignal,
 ): Promise<PagedApiResponse<LabPreview[]>> {
   const res = await axiosInstance.get<PagedApiResponse<LabPreview[]>>(
     "/photo-labs/search/preview",
-    { params: serializeListParams(params) },
+    { params: serializeListParams(params), signal },
   );
 
   const body = res.data;
