@@ -19,21 +19,29 @@ export function CopyButton({
   children,
   ariaLabel,
 }: CopyButtonProps) {
-  const [showToast, setShowToast] = useState(false);
-  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const removeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
 
-      if (toastTimeoutRef.current) {
-        clearTimeout(toastTimeoutRef.current);
-      }
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+      if (removeTimeoutRef.current) clearTimeout(removeTimeoutRef.current);
 
-      setShowToast(true);
-      toastTimeoutRef.current = setTimeout(() => {
-        setShowToast(false);
-        toastTimeoutRef.current = null;
+      setMounted(true);
+      setVisible(true);
+
+      fadeTimeoutRef.current = setTimeout(() => {
+        setVisible(false);
+        fadeTimeoutRef.current = null;
+      }, 1800);
+
+      removeTimeoutRef.current = setTimeout(() => {
+        setMounted(false);
+        removeTimeoutRef.current = null;
       }, 2000);
     } catch (err) {
       console.error("복사 실패:", err);
@@ -51,12 +59,14 @@ export function CopyButton({
         {children ?? <CopyIcon className={iconClassName} />}
       </button>
 
-      {showToast && (
+      {mounted && (
         <ToastList>
-          <ToastItem
-            message={toastMessage}
-            icon={<CopyFillIcon className="h-5 w-5 text-orange-500" />}
-          />
+          <div className={visible ? "animate-toast-in" : "animate-toast-out"}>
+            <ToastItem
+              message={toastMessage}
+              icon={<CopyFillIcon className="h-5 w-5 text-orange-500" />}
+            />
+          </div>
         </ToastList>
       )}
     </>

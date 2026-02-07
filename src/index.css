@@ -96,6 +96,19 @@
   animation: toast-in 0.3s ease-out;
 }
 
+@keyframes toast-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-toast-out {
+  animation: toast-out 0.1s ease-in forwards;
+}
+
 .bg-splash-gradient {
   background:
     radial-gradient(
