@@ -17,9 +17,16 @@ export default function NewPostPage() {
   const navigate = useNavigate();
   const files = useNewPostState((s) => s.files);
   const setPostInfo = useNewPostState((s) => s.setPostInfo);
+  const reset = useNewPostState((s) => s.reset);
 
-  const [titleText, setTitleText] = useState("");
-  const [contentText, setContentText] = useState("");
+  const title = useNewPostState((s) => s.title);
+  const content = useNewPostState((s) => s.content);
+
+  const previewUrls = useNewPostState((s) => s.previewUrls);
+
+  // store에 저장된 값이 있으면 꺼내오기
+  const [titleText, setTitleText] = useState(() => title ?? "");
+  const [contentText, setContentText] = useState(() => content ?? "");
 
   // 파일 없으면(직접 URL 접근/새로고침 등) 피드로
   useEffect(() => {
@@ -29,17 +36,6 @@ export default function NewPostPage() {
   }, [files.length, navigate]);
 
   const limitedFiles = useMemo(() => files.slice(0, LIMITS.maxPhotos), [files]);
-
-  const previewUrls = useMemo(
-    () => limitedFiles.map((file) => URL.createObjectURL(file)),
-    [limitedFiles],
-  );
-
-  useEffect(() => {
-    return () => {
-      previewUrls.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [previewUrls]);
 
   const isTitleValid = useMemo(
     () => isValidText(titleText, LIMITS.titleMin, LIMITS.titleMax),
@@ -61,7 +57,14 @@ export default function NewPostPage() {
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
-      <Header title="글 작성하기" showBack onBack={() => navigate(-1)} />
+      <Header
+        title="글 작성하기"
+        showBack
+        onBack={() => {
+          reset();
+          navigate(-1);
+        }}
+      />
       {/* 선택된 사진 슬라이딩 */}
       <div
         className="scrollbar-hide mb-[1rem] flex h-[15.1875rem] snap-x snap-mandatory gap-[0.5rem] overflow-x-auto p-[1rem] [-webkit-overflow-scrolling:touch]"
