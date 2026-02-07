@@ -36,7 +36,7 @@ export default function BottomSheet({
   initialSnap = "collapsed",
   sheetClassName,
   isBackDrop = true,
-  overlay = true,
+  overlay = false,
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement | null>(null);
 
