@@ -105,17 +105,29 @@ export default function PhotoFeedSearchPage() {
   const resetToRecent = () => {
     setInputText("");
     setSearchText("");
-    setIsSearching(false);
+    setIsSearching(false); // 완전 나가기(blur/뒤로가기/clear 버튼 등)
+    refetchRecentSearches();
+  };
+
+  const resetToRecentButKeepSearching = () => {
+    setInputText("");
+    setSearchText("");
+    setIsSearching(true); // 포커스 유지 + 다시 타이핑하면 related로 갈 수 있게
     refetchRecentSearches();
   };
 
   // 검색어 변경 핸들러
   const handleQueryChange = (value: string) => {
+    setInputText(value);
     if (value === "") {
-      resetToRecent();
+      if (mode === "result") {
+        setSearchText("");
+        setIsSearching(true);
+        return;
+      }
+      resetToRecentButKeepSearching();
       return;
     }
-    setInputText(value);
   };
 
   // 검색 제출 핸들러
@@ -292,21 +304,26 @@ export default function PhotoFeedSearchPage() {
     }
   };
 
+  const searchBarProps = {
+    value: inputText,
+    onChange: handleQueryChange,
+    placeholder: "게시글 제목, 본문, 현상소 이름 검색",
+    showBack: true,
+    onBack: () => {
+      if (mode === "recent" || mode === "related") navigate(-1);
+      else if (mode === "result") resetToRecent();
+    },
+    onSearch: handleSearch,
+    onFocus: () => setIsSearching(true),
+    rightIcon: mode === "related" ? ("clear" as const) : ("none" as const),
+    onClear: resetToRecent,
+  };
+
   return (
     <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
       <div className="py-3">
-        <SearchBar
-          value={inputText}
-          onChange={handleQueryChange}
-          placeholder="게시글 제목, 본문, 현상소 이름 검색"
-          showBack
-          onBack={() => navigate(-1)}
-          onSearch={handleSearch}
-          onFocus={() => setIsSearching(true)}
-          rightIcon="clear"
-          onClear={resetToRecent}
-        />
+        <SearchBar {...searchBarProps} />
       </div>
 
       {/* mode에 따른 분기 */}
