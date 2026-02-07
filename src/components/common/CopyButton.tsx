@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { CopyIcon, CopyFillIcon } from "@/assets/icon";
 import { ToastItem } from "./ToastMessage";
 
@@ -23,28 +23,29 @@ export function CopyButton({
 }: CopyButtonProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
-  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const removeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
 
-      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
-      if (removeTimeoutRef.current) clearTimeout(removeTimeoutRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
       setMounted(true);
       setVisible(true);
 
-      fadeTimeoutRef.current = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setVisible(false);
-        fadeTimeoutRef.current = null;
+        timeoutRef.current = setTimeout(() => {
+          setMounted(false);
+        }, 200);
       }, 1800);
-
-      removeTimeoutRef.current = setTimeout(() => {
-        setMounted(false);
-        removeTimeoutRef.current = null;
-      }, 2000);
     } catch (err) {
       console.error("복사 실패:", err);
     }
