@@ -6,12 +6,13 @@ import {
 } from "@tanstack/react-query";
 import { getAutocomplete } from "@/apis/photoLab";
 import { useDebouncedValue } from "@/hooks/common";
+import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
 import type { ApiResponse } from "@/types/common/apiResponse";
 
 const MAX_RESULTS = 4;
 
 export function useAutocomplete(keyword: string) {
-  const debouncedKeyword = useDebouncedValue(keyword, 300);
+  const debouncedKeyword = useDebouncedValue(keyword, SEARCH_DEBOUNCE_MS);
   const queryClient = useQueryClient();
 
   // 캐시에서 현재 키워드의 prefix에 해당하는 max 미만 결과 찾기

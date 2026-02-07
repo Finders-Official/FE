@@ -24,6 +24,7 @@ import {
 } from "@/hooks/photoLab";
 import { displayTimeToApiTime } from "@/utils/time";
 import { WEEKDAYS } from "@/constants/date";
+import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
 import type { FilterState } from "@/types/photoLab";
 
 export default function PhotoLabSearchPage() {
@@ -72,7 +73,7 @@ export default function PhotoLabSearchPage() {
   const { data: filteredKeywords = [] } = useAutocomplete(query);
 
   // 검색 미리보기 (경량 API)
-  const debouncedQuery = useDebouncedValue(query, 300);
+  const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
   const { data: filteredLabPreviews = [] } = useSearchPreview(
     {
       q: debouncedQuery,
