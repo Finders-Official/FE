@@ -13,9 +13,9 @@ export default function LabPreviewItem({ lab, onClick }: LabPreviewItemProps) {
       className="flex w-full items-center gap-3.5"
     >
       {/* 이미지 */}
-      {lab.mainImageUrl ? (
+      {lab.imageUrl ? (
         <img
-          src={lab.mainImageUrl}
+          src={lab.imageUrl}
           alt={lab.name}
           className="h-[2.875rem] w-[2.875rem] shrink-0 rounded-[0.625rem] object-cover"
         />
