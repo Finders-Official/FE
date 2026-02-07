@@ -43,7 +43,7 @@ export default function PhotoFeedPage() {
   const posts = data?.pages.flatMap((p) => p.previewList) ?? [];
 
   return (
-    <main className="mx-auto w-full max-w-6xl py-6">
+    <main className="mx-auto w-full max-w-6xl pb-6">
       <Header
         title="사진수다"
         rightAction={{
@@ -53,6 +53,7 @@ export default function PhotoFeedPage() {
             navigate("/photoFeed/search");
           },
         }}
+        className="sticky top-0 z-50 bg-black"
       />
 
       {/* 에러 처리 */}
