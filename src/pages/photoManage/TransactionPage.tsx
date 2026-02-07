@@ -4,9 +4,7 @@ import { AccountInfoCard } from "@/components/photoManage/AccountInfoCard";
 import { DepositorInput } from "@/components/photoManage/DepositorInput";
 import { BankSelectDropdown } from "@/components/photoManage/BankSelectDropdown";
 import { PaymentProofUpload } from "@/components/photoManage/PaymentProofUpload";
-import { ToastItem, ToastList } from "@/components/common/ToastMessage";
 import { CTA_Button } from "@/components/common";
-import { CopyFillIcon } from "@/assets/icon";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import { useAuthStore } from "@/store/useAuth.store";
 import { useMe } from "@/hooks/member";
@@ -47,7 +45,6 @@ export default function TransactionPage() {
   const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
   const { mutateAsync: confirmDeposit } = useConfirmDepositReceipt();
 
-  const [showToast, setShowToast] = useState(false);
   const [depositorName, setDepositorName] = useState("");
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
   const [proofImage, setProofImage] = useState<File | null>(null);
@@ -104,17 +101,6 @@ export default function TransactionPage() {
     }
   };
 
-  const handleCopyAccount = async () => {
-    if (!labAccountInfo) return;
-    try {
-      await navigator.clipboard.writeText(labAccountInfo.accountNumber);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
-    } catch (err) {
-      console.error("복사 실패:", err);
-    }
-  };
-
   return (
     <div className="flex w-full flex-col">
       {/* 금액 안내 */}
@@ -125,10 +111,7 @@ export default function TransactionPage() {
 
         {labAccountInfo && (
           <div className="mt-4">
-            <AccountInfoCard
-              accountInfo={labAccountInfo}
-              onCopy={handleCopyAccount}
-            />
+            <AccountInfoCard accountInfo={labAccountInfo} />
           </div>
         )}
       </section>
@@ -160,16 +143,6 @@ export default function TransactionPage() {
           onClick={handleSubmit}
         />
       </footer>
-
-      {/* Toast */}
-      {showToast && (
-        <ToastList>
-          <ToastItem
-            message="계좌번호가 클립보드에 복사되었습니다."
-            icon={<CopyFillIcon className="h-5 w-5 text-orange-500" />}
-          />
-        </ToastList>
-      )}
     </div>
   );
 }
