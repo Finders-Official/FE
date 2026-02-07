@@ -61,7 +61,7 @@ export function CopyButton({
 
       {mounted && (
         <ToastList>
-          <div className={visible ? "animate-toast-in" : "animate-toast-out"}>
+          <div className={visible ? "" : "animate-toast-out"}>
             <ToastItem
               message={toastMessage}
               icon={<CopyFillIcon className="h-5 w-5 text-orange-500" />}

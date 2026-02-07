@@ -81,19 +81,30 @@
 }
 
 /* 토스트 애니메이션 */
-@keyframes toast-in {
+@keyframes toast-slide {
   from {
     transform: translateY(1.25rem);
-    opacity: 0;
   }
   to {
     transform: translateY(0);
+  }
+}
+
+@keyframes toast-fade {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
 }
 
 .animate-toast-in {
-  animation: toast-in 0.3s ease-out;
+  animation: toast-slide 0.3s ease-out;
+}
+
+.animate-toast-content {
+  animation: toast-fade 0.3s ease-out;
 }
 
 @keyframes toast-out {
