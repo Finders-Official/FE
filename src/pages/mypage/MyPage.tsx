@@ -2,10 +2,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { InfoBar } from "@/components/mypage/InfoBar";
 import { MyPageTabs } from "@/components/mypage/MyPageTab";
 import { OptionLink } from "@/components/mypage/OptionLink";
-import {
-  managelist,
-  servicelist,
-} from "@/constants/mypage/servicelist.constant";
+import { managelist } from "@/constants/mypage/servicelist.constant";
 import { useMe } from "@/hooks/member";
 
 export function MyPage() {
@@ -22,7 +19,7 @@ export function MyPage() {
         <MyPageTabs />
       </header>
       <main>
-        <section className="border-neutral-875 border-b py-4">
+        <section className="py-4">
           {managelist.map((item) => (
             <OptionLink
               key={item.text}
@@ -33,11 +30,6 @@ export function MyPage() {
                   : undefined
               }
             />
-          ))}
-        </section>
-        <section>
-          {servicelist.map(({ to, text, Icon }) => (
-            <OptionLink key={text} to={to} text={text} Icon={Icon} />
           ))}
         </section>
       </main>
