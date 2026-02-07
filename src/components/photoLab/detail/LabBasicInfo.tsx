@@ -73,9 +73,11 @@ export default function LabBasicInfo({
               <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
                 {lab.address}
               </span>
-              <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                ({lab.distanceKm}km)
-              </span>
+              {lab.distanceKm != null && (
+                <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+                  ({lab.distanceKm.toFixed(1)}km)
+                </span>
+              )}
             </div>
 
             {/* 작업 건수 + 소요시간 */}
