@@ -3,6 +3,7 @@ export {
   addFavorite,
   removeFavorite,
   getPopularPhotoLabs,
+  getRegionFilters,
   getPhotoLabDetail,
 } from "./photoLab.api";
 

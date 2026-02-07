@@ -12,6 +12,7 @@ import { buildProcessSteps } from "@/lib/buildProcessSteps";
 import { getActiveStatus } from "@/utils/getActiveStatus";
 import { STATUS_INDEX_MAP } from "@/constants/photomanage/status.constant";
 import { getBannerContent } from "@/lib/getBannerContent";
+import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import { usePrintSkip } from "@/hooks/photoManage";
 
 export default function PhotoManageMainPage() {
@@ -34,11 +35,15 @@ export default function PhotoManageMainPage() {
   const { mutate: printSkip } = usePrintSkip();
 
   const workData = currentWorkResponse?.data;
+  const setDevelopmentOrderId = usePrintOrderStore(
+    (s) => s.setDevelopmentOrderId,
+  );
 
   useEffect(() => {
     if (isSuccess && !workData) navigate("/development-history");
     if (isError) navigate("/development-history");
-  }, [isSuccess, isError, workData, navigate]);
+    if (workData) setDevelopmentOrderId(workData.developmentOrderId);
+  }, [isSuccess, isError, workData, navigate, setDevelopmentOrderId]);
 
   const status: Status = getActiveStatus(workData);
   const receiptMethod = workData?.print?.receiptMethod;

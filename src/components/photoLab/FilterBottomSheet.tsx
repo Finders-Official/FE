@@ -6,7 +6,8 @@ import TimeSlotList from "./TimeSlotList";
 import RegionSelector from "./RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
 import { REGIONS } from "@/constants/photoLab/regions";
-import type { FilterState } from "@/types/photoLab";
+import { useRegionFilters } from "@/hooks/photoLab";
+import type { FilterState, Region } from "@/types/photoLab";
 
 // 컨텐츠에 필요한 최소 높이
 const CONTENT_MIN_HEIGHT_REM = 48;
@@ -28,6 +29,39 @@ export default function FilterBottomSheet({
 }: FilterBottomSheetProps) {
   const [activeTab, setActiveTab] = useState(0);
 
+  // 지역 데이터 API 조회
+  const { data: regionData } = useRegionFilters();
+
+  // API 데이터를 Region[] 형태로 변환 (RegionSelector 호환)
+  const regions: Region[] = useMemo(() => {
+    if (!regionData) return REGIONS; // API 로딩 전 fallback
+    return regionData.parents.map((parent) => {
+      const children = regionData.regions.filter(
+        (r) => r.parentId === parent.parentId,
+      );
+      return {
+        name: parent.parentName,
+        count: children.length,
+        subRegions: ["전체", ...children.map((c) => c.regionName)],
+      };
+    });
+  }, [regionData]);
+
+  // regionId 매핑: "parentName-childName" → regionId
+  const regionIdMap = useMemo(() => {
+    if (!regionData) return new Map<string, number>();
+    const map = new Map<string, number>();
+    for (const child of regionData.regions) {
+      const parent = regionData.parents.find(
+        (p) => p.parentId === child.parentId,
+      );
+      if (parent) {
+        map.set(`${parent.parentName}-${child.regionName}`, child.regionId);
+      }
+    }
+    return map;
+  }, [regionData]);
+
   // 내부 필터 상태
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
     if (initialFilter?.date) {
@@ -45,8 +79,9 @@ export default function FilterBottomSheet({
     string | undefined
   >(initialFilter?.subRegion);
   // 표시할 지역 (선택과 별개로 하위 지역 목록 표시용, 처음 열었을때 뭐라도 보여주기)
+  const defaultDisplayRegion = regionData?.parents[0]?.parentName ?? "서울";
   const [displayedRegion, setDisplayedRegion] = useState<string>(
-    initialFilter?.region ?? "서울",
+    initialFilter?.region ?? defaultDisplayRegion,
   );
 
   // 초기화
@@ -55,7 +90,7 @@ export default function FilterBottomSheet({
     setSelectedTime(undefined);
     setSelectedRegion(undefined);
     setSelectedSubRegion(undefined);
-    setDisplayedRegion("서울");
+    setDisplayedRegion(defaultDisplayRegion);
   };
 
   // 적용
@@ -76,6 +111,18 @@ export default function FilterBottomSheet({
     }
     if (selectedSubRegion) {
       filter.subRegion = selectedSubRegion;
+
+      // regionId 매핑
+      if (selectedSubRegion === "전체") {
+        // TODO: 백엔드에서 parentId로 하위 전체 조회 지원 시 parentId 전달
+        // 현재는 regionId를 보내지 않음 (전체 지역 결과 노출)
+      } else if (selectedRegion) {
+        const key = `${selectedRegion}-${selectedSubRegion}`;
+        const id = regionIdMap.get(key);
+        if (id) {
+          filter.regionId = id;
+        }
+      }
     }
 
     onApply(filter);
@@ -117,6 +164,7 @@ export default function FilterBottomSheet({
       expandedVh={expandedVh}
       collapsedRatio={expandedVh / 100}
       initialSnap="expanded"
+      overlay={true}
     >
       <div className="flex h-full flex-col">
         {/* 탭 */}
@@ -152,7 +200,7 @@ export default function FilterBottomSheet({
           ) : (
             // 지역별 탭
             <RegionSelector
-              regions={REGIONS}
+              regions={regions}
               selectedRegion={selectedRegion}
               selectedSubRegion={selectedSubRegion}
               displayedRegion={displayedRegion}
