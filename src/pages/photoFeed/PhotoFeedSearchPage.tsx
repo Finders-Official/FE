@@ -343,6 +343,7 @@ export default function PhotoFeedSearchPage() {
         <BottomSheet
           open={bottomSheetOpen}
           collapsedRatio={0.44}
+          overlay
           onClose={() => {
             setBottomSheetOpen(false);
           }}
