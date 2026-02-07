@@ -1,4 +1,3 @@
-// src/components/auth/InputForm.tsx
 import type React from "react";
 
 type InputFormSize = "medium" | "large";
