@@ -59,14 +59,7 @@ export function LikedPostPage() {
 
   return (
     <div className="px-4 py-6">
-      <main className="rounded-md border border-neutral-800 p-5 text-neutral-100">
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-[1rem] font-semibold">좋아요한 게시물</h2>
-          <p className="text-xs text-neutral-400">
-            {data?.pages?.[0]?.data.totalCount ?? 0}개
-          </p>
-        </div>
-
+      <main>
         {/* Masonry 느낌: PhotoCard가 break-inside:avoid 쓰고 있어서 columns가 잘 맞음 */}
         <div className="columns-2 gap-4">
           {items.map((photo) => (
@@ -89,9 +82,7 @@ export function LikedPostPage() {
         )}
 
         {!hasNextPage && items.length > 0 && (
-          <div className="mt-3 text-center text-sm text-neutral-500">
-            마지막 페이지야
-          </div>
+          <div className="mt-3 text-center text-sm text-neutral-500"></div>
         )}
 
         {items.length === 0 && !isFetchingNextPage && (
