@@ -74,7 +74,9 @@ export default function PhotoLabDetailPage() {
 
   return (
     <div className="flex w-full flex-col">
-      <Header title={lab.name} showBack onBack={handleBack} />
+      <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
+        <Header title={lab.name} showBack onBack={handleBack} />
+      </div>
 
       <main className="pb-32">
         {/* 메인 이미지 캐러셀 */}
