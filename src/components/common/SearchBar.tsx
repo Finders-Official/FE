@@ -2,7 +2,7 @@ import { useState, useEffect, type RefObject } from "react";
 import { ChevronLeftIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
 import Icon from "./Icon";
 
-type RightIconType = "clear" | "search";
+type RightIconType = "clear" | "search" | "none";
 
 interface SearchBarProps {
   value: string;

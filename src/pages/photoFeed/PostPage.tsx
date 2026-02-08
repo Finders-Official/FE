@@ -174,7 +174,7 @@ export default function PostPage() {
             {postDetail.isSelfDeveloped ? (
               <div className="border-neutral-850 flex items-center gap-2 rounded-2xl border bg-neutral-900 px-5 py-4 text-left text-neutral-500">
                 <HomeIcon className="h-4 w-4 font-semibold" />
-                <p className="text-[1rem] font-semibold text-neutral-200">
+                <p className="font-regular text-[1rem] text-neutral-400">
                   자가 현상했어요
                 </p>
               </div>
@@ -210,7 +210,7 @@ export default function PostPage() {
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
       {renderPostDetail()}
 
-      {/** toast 메세지 */}
+      {/** 게시글 업로드 toast 메세지 */}
       {isNewPost && mounted && (
         <div className="fixed right-0 bottom-0 left-0 z-50 flex justify-center px-5 py-5">
           <div
