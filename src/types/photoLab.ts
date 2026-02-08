@@ -97,7 +97,7 @@ export interface FilterState {
   regionIds?: number[]; // 하위(구/군) regionId 배열 (API용)
 }
 
-// GET /photo-labs/region 응답
+// GET /photo-labs/regions 응답
 export interface RegionParent {
   parentId: number;
   parentName: string;
