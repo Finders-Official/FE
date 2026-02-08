@@ -62,7 +62,7 @@ export async function getRecentSearches(): Promise<SearchHistory[]> {
  */
 export async function deleteRecentSearch(searchHistoryId: number) {
   const res = await axiosInstance.delete<ApiResponse<void>>(
-    `/search/history/${searchHistoryId}`,
+    `/posts/search/history/${searchHistoryId}`,
   );
 
   const body = res.data;
