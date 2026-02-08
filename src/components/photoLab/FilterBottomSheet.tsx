@@ -69,8 +69,8 @@ export default function FilterBottomSheet({
     }
     return undefined;
   });
-  const [selectedTime, setSelectedTime] = useState<string | undefined>(
-    initialFilter?.time,
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(
+    initialFilter?.time ?? [],
   );
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
     initialFilter?.region,
@@ -84,10 +84,17 @@ export default function FilterBottomSheet({
     initialFilter?.region ?? defaultDisplayRegion,
   );
 
+  // 시간 토글 (복수 선택)
+  const handleTimeToggle = (time: string) => {
+    setSelectedTimes((prev) =>
+      prev.includes(time) ? prev.filter((t) => t !== time) : [...prev, time],
+    );
+  };
+
   // 초기화
   const handleReset = () => {
     setSelectedDate(undefined);
-    setSelectedTime(undefined);
+    setSelectedTimes([]);
     setSelectedRegion(undefined);
     setSelectedSubRegion(undefined);
     setDisplayedRegion(defaultDisplayRegion);
@@ -103,8 +110,8 @@ export default function FilterBottomSheet({
       const d = String(selectedDate.getDate()).padStart(2, "0");
       filter.date = `${y}-${m}-${d}`;
     }
-    if (selectedTime) {
-      filter.time = selectedTime;
+    if (selectedTimes.length > 0) {
+      filter.time = selectedTimes;
     }
     if (selectedRegion) {
       filter.region = selectedRegion;
@@ -197,8 +204,8 @@ export default function FilterBottomSheet({
               />
               <TimeSlotList
                 slots={TIME_SLOTS}
-                selectedTime={selectedTime}
-                onTimeSelect={setSelectedTime}
+                selectedTimes={selectedTimes}
+                onTimeToggle={handleTimeToggle}
               />
             </div>
           ) : (

@@ -16,6 +16,7 @@ function serializeListParams(params: PhotoLabListParams) {
     ...params,
     tagIds: params.tagIds?.join(","),
     regionIds: params.regionIds?.join(","),
+    time: params.time?.join(","),
   };
 }
 

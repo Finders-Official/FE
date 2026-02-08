@@ -22,7 +22,7 @@ import {
   useAutocomplete,
   useSearchPreview,
 } from "@/hooks/photoLab";
-import { displayTimeToApiTime } from "@/utils/time";
+import { displayTimesToApiTimes } from "@/utils/time";
 import { WEEKDAYS } from "@/constants/date";
 import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
 import type { FilterState } from "@/types/photoLab";
@@ -92,7 +92,10 @@ export default function PhotoLabSearchPage() {
         parentRegionId: filter.parentRegionId,
         regionIds: filter.regionIds,
         date: filter.date,
-        time: filter.time ? displayTimeToApiTime(filter.time) : undefined,
+        time:
+          filter.time && filter.time.length > 0
+            ? displayTimesToApiTimes(filter.time)
+            : undefined,
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },

@@ -2,14 +2,14 @@ import TimeFilterChip from "@/components/common/chips/TimeFilterChip";
 
 interface TimeSlotListProps {
   slots: string[];
-  selectedTime?: string;
-  onTimeSelect: (time: string) => void;
+  selectedTimes: string[];
+  onTimeToggle: (time: string) => void;
 }
 
 export default function TimeSlotList({
   slots,
-  selectedTime,
-  onTimeSelect,
+  selectedTimes,
+  onTimeToggle,
 }: TimeSlotListProps) {
   return (
     <div className="flex flex-col gap-3">
@@ -24,8 +24,8 @@ export default function TimeSlotList({
           <TimeFilterChip
             key={time}
             time={time}
-            selected={selectedTime === time}
-            onClick={() => onTimeSelect(time)}
+            selected={selectedTimes.includes(time)}
+            onClick={() => onTimeToggle(time)}
           />
         ))}
       </div>

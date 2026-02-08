@@ -14,7 +14,7 @@ import {
   usePhotoLabList,
   useFavoriteToggle,
 } from "@/hooks/photoLab";
-import { displayTimeToApiTime } from "@/utils/time";
+import { displayTimesToApiTimes } from "@/utils/time";
 import type { LabNews, FilterState } from "@/types/photoLab";
 
 // TODO: Rolling 공지 API 엔드포인트 확정 후 연동
@@ -61,7 +61,10 @@ export default function PhotoLabPage() {
         parentRegionId: filter.parentRegionId,
         regionIds: filter.regionIds,
         date: filter.date,
-        time: filter.time ? displayTimeToApiTime(filter.time) : undefined,
+        time:
+          filter.time && filter.time.length > 0
+            ? displayTimesToApiTimes(filter.time)
+            : undefined,
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },

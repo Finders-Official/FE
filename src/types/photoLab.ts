@@ -45,7 +45,7 @@ export interface PhotoLabListParams {
   parentRegionId?: number;
   regionIds?: number[];
   date?: string;
-  time?: string; // "HH:mm:ss" 형식
+  time?: string[]; // ["HH:mm:ss", ...] 형식, 복수 선택
   page?: number;
   size?: number;
   lat?: number;
@@ -86,7 +86,7 @@ export interface LabNews {
 // 필터 상태 (바텀시트용)
 export interface FilterState {
   date?: string; // "2026-01-15" 형식 (yyyy-MM-dd)
-  time?: string; // "오전 10:00" 형식 (display용)
+  time?: string[]; // ["오전 10:00", "오후 2:00"] 형식 (display용, 복수 선택)
   region?: string; // "서울"
   subRegion?: string; // "동작구"
   parentRegionId?: number; // 상위(시/도) regionId
