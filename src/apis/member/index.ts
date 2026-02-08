@@ -7,3 +7,5 @@ export { confirmPhoneVerification } from "./confirmPhoneVerification.api";
 export { me, editMe, withDrawMe } from "./me.api";
 
 export { getAddressList, createAddress } from "./address.api";
+
+export { getCreditBalance } from "./credit.api";
