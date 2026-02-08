@@ -9,6 +9,7 @@ import ImageCardSkeleton from "@/components/common/ImageCardSkeleton";
 import EmptyView from "@/components/common/EmptyView";
 
 type Step = "GRID" | "DETAIL";
+const SKELETON_COUNT = 12;
 
 export default function PhotoDownload() {
   const navigate = useNavigate();
@@ -59,7 +60,6 @@ export default function PhotoDownload() {
     const m = new Map<number, (typeof results)[number]>();
 
     results?.forEach((p) => {
-      if (!p) return; // undefined/null 방어
       m.set(p.scannedPhotoId, p);
     });
 
@@ -157,30 +157,32 @@ export default function PhotoDownload() {
           )}
           {/* 사진 그리드 */}
           <div className="mt-[0.9375rem] grid grid-cols-3 gap-1">
-            {results.map((p) => {
-              const isSelected = selectedSet.has(p.scannedPhotoId);
-              const selectionIndex = isSelected
-                ? selectedIndexMap.get(p.scannedPhotoId)
-                : undefined;
+            {isLoading
+              ? Array.from({ length: SKELETON_COUNT }).map((_, idx) => (
+                  <ImageCardSkeleton key={`skeleton-${idx}`} />
+                ))
+              : results.map((p) => {
+                  const isSelected = selectedSet.has(p.scannedPhotoId);
+                  const selectionIndex = isSelected
+                    ? selectedIndexMap.get(p.scannedPhotoId)
+                    : undefined;
 
-              if (isLoading) return <ImageCardSkeleton />;
-              return (
-                <ImageCard
-                  key={p.scannedPhotoId}
-                  src={p.signedUrl}
-                  mode="multi"
-                  isSelected={isSelected}
-                  selectionIndex={selectionIndex}
-                  onToggle={() => toggle(p.scannedPhotoId)}
-                  onOpen={() => {
-                    setCurrentPhotoId(p.scannedPhotoId);
-                  }}
-                  className="mx-auto"
-                />
-              );
-            })}
-            {/* 센티널 요소 */}
-            <div ref={sentinelRef} style={{ height: 1 }} />
+                  return (
+                    <ImageCard
+                      key={p.scannedPhotoId}
+                      src={p.signedUrl}
+                      mode="multi"
+                      isSelected={isSelected}
+                      selectionIndex={selectionIndex}
+                      onToggle={() => toggle(p.scannedPhotoId)}
+                      onOpen={() => setCurrentPhotoId(p.scannedPhotoId)}
+                      className="mx-auto"
+                    />
+                  );
+                })}
+
+            {/* 센티널은 로딩이 끝났을 때만(또는 항상) */}
+            {!isLoading && <div ref={sentinelRef} style={{ height: 1 }} />}
           </div>
           {/** 다음 버튼 */}
           <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5">
@@ -289,13 +291,11 @@ export default function PhotoDownload() {
 
   return (
     <main className="mx-auto w-full max-w-6xl overflow-x-hidden pt-6">
-      {/* 에러 처리 */}
-      {isError && (
+      {isError ? (
         <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
           <p className="text-red-400">불러오기에 실패했어요.</p>
         </div>
-      )}
-      {results.length === 0 ? (
+      ) : !isLoading && results.length === 0 ? (
         <EmptyView content={"스캔한 사진이 없습니다."} />
       ) : step === "GRID" ? (
         renderGrid()
