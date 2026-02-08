@@ -148,9 +148,13 @@ export default function PhotoLabSearchPage() {
     return parts.length > 0 ? parts.join(" • ") : undefined;
   };
 
-  // 핸들러
+  // 뒤로가기: 검색 결과 → 검색 입력, 검색 입력 → 현상소 목록
   const handleBack = () => {
-    navigate(-1);
+    if (isResultsState) {
+      navigate("/photolab/search", { replace: true });
+    } else {
+      navigate("/photolab", { replace: true });
+    }
   };
 
   // 검색 제출 시 replace로 입력화면을 history에서 제거
