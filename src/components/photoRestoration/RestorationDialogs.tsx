@@ -8,7 +8,8 @@ type DialogType =
   | "SERVER_ERROR"
   | "REGENERATE_CONFIRM"
   | "DISCARD_CONFIRM"
-  | "NO_MASK";
+  | "NO_MASK"
+  | "NO_CREDIT";
 
 interface RestorationDialogsProps {
   activeDialog: DialogType;
@@ -29,7 +30,7 @@ export const RestorationDialogs: React.FC<RestorationDialogsProps> = ({
 }) => {
   return (
     <>
-      {/* 1. 뒤로가기 경고 (MASKING_BACK) */}
+      {/* 뒤로가기 경고 (MASKING_BACK) */}
       <DialogBox
         isOpen={activeDialog === "MASKING_BACK"}
         title="아직 사진을 다듬고 있어요"
@@ -43,7 +44,7 @@ export const RestorationDialogs: React.FC<RestorationDialogsProps> = ({
         confirmButtonStyle="filled"
       />
 
-      {/* 2. 서버 에러 (SERVER_ERROR) */}
+      {/* 서버 에러 (SERVER_ERROR) */}
       <DialogBox
         isOpen={activeDialog === "SERVER_ERROR"}
         title="서버 연결이 불안정합니다"
@@ -54,7 +55,7 @@ export const RestorationDialogs: React.FC<RestorationDialogsProps> = ({
         onConfirm={handleDialogConfirm}
       />
 
-      {/* 3. 마스크 없음 경고 (NO_MASK) */}
+      {/* 마스크 없음 경고 (NO_MASK) */}
       <DialogBox
         isOpen={activeDialog === "NO_MASK"}
         title="영역을 선택해주세요"
@@ -63,7 +64,18 @@ export const RestorationDialogs: React.FC<RestorationDialogsProps> = ({
         onConfirm={handleDialogConfirm}
       />
 
-      {/* 4. 다시 생성 확인 (REGENERATE_CONFIRM) */}
+      {/* 크레딧 부족 */}
+      <DialogBox
+        isOpen={activeDialog === "NO_CREDIT"}
+        title="크레딧을 모두 사용하셨어요!"
+        description="오늘 밤 12시가 넘으면 자동 충전되니, \n조금만 기다려주세요 :)"
+        align="left"
+        confirmButtonStyle="text"
+        confirmText="확인"
+        onConfirm={handleDialogConfirm}
+      />
+
+      {/* 다시 생성 확인 (REGENERATE_CONFIRM) */}
       <DialogBox
         isOpen={activeDialog === "REGENERATE_CONFIRM"}
         title="복원을 한 번 더 진행할까요?"
@@ -74,7 +86,7 @@ export const RestorationDialogs: React.FC<RestorationDialogsProps> = ({
         onCancel={handleDialogCancel}
       />
 
-      {/* 5. 결과 폐기 확인 (DISCARD_CONFIRM) */}
+      {/* 결과 폐기 확인 (DISCARD_CONFIRM) */}
       <DialogBox
         isOpen={activeDialog === "DISCARD_CONFIRM"}
         title="생성된 이미지를 폐기할까요?"

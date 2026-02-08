@@ -24,7 +24,8 @@ type DialogType =
   | "SERVER_ERROR"
   | "REGENERATE_CONFIRM"
   | "DISCARD_CONFIRM"
-  | "NO_MASK";
+  | "NO_MASK"
+  | "NO_CREDIT";
 
 export default function RestorationCanvas() {
   const navigate = useNavigate();
@@ -102,6 +103,10 @@ export default function RestorationCanvas() {
 
   // 복원 시작
   const handleGenerateClick = async () => {
+    if (creditBalance <= 0) {
+      setActiveDialog("NO_CREDIT");
+      return;
+    }
     if (historyStep === -1) {
       setActiveDialog("NO_MASK"); // "색칠해주세요" 알림
       return;
@@ -160,8 +165,11 @@ export default function RestorationCanvas() {
       case "NO_MASK":
         // 확인만 하면 됨
         break;
-      default:
         break;
+      case "NO_CREDIT":
+        // 확인만 누르면 닫기
+        break;
+      default:
     }
     setActiveDialog("NONE");
   };
