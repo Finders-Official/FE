@@ -7,10 +7,11 @@ import RegionSelector from "./RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
 import { REGIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
-import type { FilterState, Region } from "@/types/photoLab";
+import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
 // 컨텐츠에 필요한 최소 높이
 const CONTENT_MIN_HEIGHT_REM = 48;
+const MAX_REGION_SELECTIONS = 10;
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -72,16 +73,14 @@ export default function FilterBottomSheet({
   const [selectedTimes, setSelectedTimes] = useState<string[]>(
     initialFilter?.time ?? [],
   );
-  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
-    initialFilter?.region,
+
+  // 지역 복수 선택 상태
+  const [selectedRegions, setSelectedRegions] = useState<RegionSelection[]>(
+    initialFilter?.regionSelections ?? [],
   );
-  const [selectedSubRegion, setSelectedSubRegion] = useState<
-    string | undefined
-  >(initialFilter?.subRegion);
-  // 표시할 지역 (선택과 별개로 하위 지역 목록 표시용, 처음 열었을때 뭐라도 보여주기)
   const defaultDisplayRegion = regionData?.parents[0]?.parentName ?? "서울";
   const [displayedRegion, setDisplayedRegion] = useState<string>(
-    initialFilter?.region ?? defaultDisplayRegion,
+    initialFilter?.regionSelections?.[0]?.parentName ?? defaultDisplayRegion,
   );
 
   // 시간 토글 (복수 선택)
@@ -91,12 +90,63 @@ export default function FilterBottomSheet({
     );
   };
 
+  // 지역 서브 리전 토글
+  const handleSubRegionToggle = (parentName: string, subRegion: string) => {
+    setSelectedRegions((prev) => {
+      const exists = prev.some(
+        (s) => s.parentName === parentName && s.subRegion === subRegion,
+      );
+      if (exists) {
+        return prev.filter(
+          (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+        );
+      }
+      if (prev.length >= MAX_REGION_SELECTIONS) return prev;
+      return [...prev, { parentName, subRegion }];
+    });
+  };
+
+  // 지역 선택 칩 제거
+  const handleRemoveSelection = (parentName: string, subRegion: string) => {
+    setSelectedRegions((prev) =>
+      prev.filter(
+        (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+      ),
+    );
+  };
+
+  // RegionSelection[] → regionIds[] 변환
+  const selectionsToRegionIds = (selections: RegionSelection[]): number[] => {
+    const ids: number[] = [];
+    for (const sel of selections) {
+      if (sel.subRegion === "전체") {
+        // 해당 부모의 모든 자식 regionId 추가
+        if (regionData) {
+          const parent = regionData.parents.find(
+            (p) => p.parentName === sel.parentName,
+          );
+          if (parent) {
+            const childIds = regionData.regions
+              .filter((r) => r.parentId === parent.parentId)
+              .map((r) => r.regionId);
+            ids.push(...childIds);
+          }
+        }
+      } else {
+        const key = `${sel.parentName}-${sel.subRegion}`;
+        const id = regionIdMap.get(key);
+        if (id) ids.push(id);
+      }
+    }
+    // 중복 제거
+    return [...new Set(ids)];
+  };
+
   // 초기화
   const handleReset = () => {
     setSelectedDate(undefined);
     setSelectedTimes([]);
-    setSelectedRegion(undefined);
-    setSelectedSubRegion(undefined);
+    setSelectedRegions([]);
     setDisplayedRegion(defaultDisplayRegion);
   };
 
@@ -113,38 +163,13 @@ export default function FilterBottomSheet({
     if (selectedTimes.length > 0) {
       filter.time = selectedTimes;
     }
-    if (selectedRegion) {
-      filter.region = selectedRegion;
-
-      const parent = regionData?.parents.find(
-        (p) => p.parentName === selectedRegion,
-      );
-      if (parent) {
-        filter.parentRegionId = parent.parentId;
-      }
-    }
-    if (selectedSubRegion) {
-      filter.subRegion = selectedSubRegion;
-
-      if (selectedSubRegion !== "전체" && selectedRegion) {
-        const key = `${selectedRegion}-${selectedSubRegion}`;
-        const id = regionIdMap.get(key);
-        if (id) {
-          filter.regionIds = [id];
-        }
-      }
-      // "전체" 선택 시: parentRegionId만 전달, regionIds 없음
+    if (selectedRegions.length > 0) {
+      filter.regionSelections = selectedRegions;
+      filter.regionIds = selectionsToRegionIds(selectedRegions);
     }
 
     onApply(filter);
     onClose();
-  };
-
-  // 지역 선택 시 기초 자치단체 초기화, 추후 해보고 변경?
-  const handleRegionSelect = (region: string) => {
-    setSelectedRegion(region);
-    setDisplayedRegion(region);
-    setSelectedSubRegion(undefined);
   };
 
   // 화면 높이 상태
@@ -212,11 +237,11 @@ export default function FilterBottomSheet({
             // 지역별 탭
             <RegionSelector
               regions={regions}
-              selectedRegion={selectedRegion}
-              selectedSubRegion={selectedSubRegion}
+              selectedRegions={selectedRegions}
               displayedRegion={displayedRegion}
-              onRegionSelect={handleRegionSelect}
-              onSubRegionSelect={setSelectedSubRegion}
+              onRegionDisplay={setDisplayedRegion}
+              onSubRegionToggle={handleSubRegionToggle}
+              onRemoveSelection={handleRemoveSelection}
             />
           )}
         </div>
