@@ -16,6 +16,7 @@ function serializeListParams(params: PhotoLabListParams) {
     ...params,
     tagIds: params.tagIds?.join(","),
     regionIds: params.regionIds?.join(","),
+    time: params.time?.join(","),
   };
 }
 
@@ -92,10 +93,9 @@ export async function getPopularPhotoLabs(): Promise<
 export async function getRegionFilters(): Promise<
   ApiResponse<RegionFilterData>
 > {
-  const res =
-    await axiosInstance.get<ApiResponse<RegionFilterData>>(
-      "/photo-labs/region",
-    );
+  const res = await axiosInstance.get<ApiResponse<RegionFilterData>>(
+    "/photo-labs/regions",
+  );
 
   const body = res.data;
 

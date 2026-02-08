@@ -48,7 +48,9 @@ export default function QuickActionGrid() {
       <section className="mt-7.5 mb-7.5 grid h-51 grid-cols-2 grid-rows-2 gap-3">
         {/* 현상 맡기기 */}
         <ActionCard
-          onClick={() => requireAuthNavigate("/photolab")}
+          onClick={() =>
+            requireAuthNavigate("/photolab", { state: { from: "main" } })
+          }
           className="row-span-2 flex flex-col items-center justify-center gap-4 bg-linear-to-br from-[#2a2a2a] to-[#111111]"
         >
           <div className="flex size-12.5 items-center justify-center">

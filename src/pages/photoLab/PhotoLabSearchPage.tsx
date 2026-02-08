@@ -22,10 +22,10 @@ import {
   useAutocomplete,
   useSearchPreview,
 } from "@/hooks/photoLab";
-import { displayTimeToApiTime } from "@/utils/time";
-import { WEEKDAYS } from "@/constants/date";
+import { displayTimesToApiTimes } from "@/utils/time";
+import { formatFilterValue } from "@/utils/filterFormat";
 import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
-import type { FilterState } from "@/types/photoLab";
+import { usePhotoLabFilter } from "@/store/usePhotoLabFilter.store";
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
@@ -64,10 +64,10 @@ export default function PhotoLabSearchPage() {
     useRecentSearches();
   const [isRecentExpanded, setIsRecentExpanded] = useState(false);
 
-  // 필터 상태 (results 화면용)
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  // 필터 상태 (목록 페이지와 공유)
+  const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
+    usePhotoLabFilter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filter, setFilter] = useState<FilterState>({});
 
   // 키워드 자동완성
   const { data: filteredKeywords = [] } = useAutocomplete(query);
@@ -89,10 +89,12 @@ export default function PhotoLabSearchPage() {
       {
         q: searchQuery || undefined,
         tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
-        parentRegionId: filter.parentRegionId,
         regionIds: filter.regionIds,
         date: filter.date,
-        time: filter.time ? displayTimeToApiTime(filter.time) : undefined,
+        time:
+          filter.time && filter.time.length > 0
+            ? displayTimesToApiTimes(filter.time)
+            : undefined,
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },
@@ -121,28 +123,15 @@ export default function PhotoLabSearchPage() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 필터 값 포맷
-  const formatFilterValue = (): string | undefined => {
-    const parts: string[] = [];
-    if (filter.date) {
-      const date = new Date(filter.date);
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const weekday = WEEKDAYS[date.getDay()];
-      parts.push(`${month}.${day}(${weekday})`);
-    }
-    if (filter.region) {
-      const regionText = filter.subRegion
-        ? `${filter.region} ${filter.subRegion}`
-        : filter.region;
-      parts.push(regionText);
-    }
-    return parts.length > 0 ? parts.join(" • ") : undefined;
-  };
+  const filterValue = formatFilterValue(filter);
 
-  // 핸들러
+  // 뒤로가기: 검색 결과 → 검색 입력, 검색 입력 → 현상소 목록
   const handleBack = () => {
-    navigate(-1);
+    if (isResultsState) {
+      navigate("/photolab/search", { replace: true });
+    } else {
+      navigate("/photolab", { replace: true });
+    }
   };
 
   // 검색 제출 시 replace로 입력화면을 history에서 제거
@@ -243,7 +232,7 @@ export default function PhotoLabSearchPage() {
             <div className="flex flex-col gap-4 pb-6">
               <FilterContainer
                 label="날짜 / 지역"
-                value={formatFilterValue()}
+                value={filterValue}
                 onClick={() => setIsFilterOpen(true)}
               />
               <FilterTagList

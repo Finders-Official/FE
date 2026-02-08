@@ -74,6 +74,7 @@ export function TextArea({
       <textarea
         ref={textareaRef}
         value={value}
+        maxLength={maxLength}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}

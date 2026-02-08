@@ -37,6 +37,10 @@ export function useOnBoardingForm(options?: Options) {
     null,
   );
 
+  const [phoneVerifyMessage, setPhoneVerifyMessage] = useState<string>(""); // 성공 문구
+  const [phoneVerifyError, setPhoneVerifyError] = useState<string>(""); // 실패 문구
+
+  // 닉네임 인증
   const debouncedNickname = useDebouncedValue(nickname, 400);
   const nicknameTrimmed = useMemo(
     () => debouncedNickname.trim(),
@@ -55,47 +59,6 @@ export function useOnBoardingForm(options?: Options) {
 
   const nicknameAvailable = nicknameRes?.data.available ?? false;
 
-  const setUser = useAuthStore((s) => s.setUser);
-
-  const { mutate: requestCode, isPending: isRequestingCode } =
-    useRequestPhoneVerification({
-      onSuccess: (res) => {
-        setIsSending(true);
-        setRemainSec(res.data.expiresIn);
-        setRequestId(res.data.requestId);
-
-        setIsVerified(false);
-        setVerifiedPhoneToken(null);
-      },
-      onError: (e) => console.error(e.message),
-    });
-
-  const { mutate: confirmCode, isPending: isConfirmingCode } =
-    useConfirmPhoneVerification({
-      onSuccess: (res) => {
-        if (res.data.phoneVerified) {
-          setIsVerified(true);
-          setVerifiedPhoneToken(res.data.verifiedPhoneToken);
-        } else {
-          setIsVerified(false);
-          setVerifiedPhoneToken(null);
-        }
-      },
-      onError: (e) => {
-        console.error(e.message);
-        setIsVerified(false);
-        setVerifiedPhoneToken(null);
-      },
-    });
-
-  useEffect(() => {
-    if (!isSending) return;
-    if (remainSec <= 0) return;
-
-    const id = window.setTimeout(() => setRemainSec((prev) => prev - 1), 1000);
-    return () => window.clearTimeout(id);
-  }, [isSending, remainSec]);
-
   const nicknameStatusText =
     nickname.length === 0
       ? ""
@@ -108,6 +71,107 @@ export function useOnBoardingForm(options?: Options) {
             : nicknameAvailable
               ? "사용 가능한 닉네임이에요."
               : "이미 사용 중인 닉네임이에요.";
+
+  const hasNicknameInput = nicknameTrimmed.length > 0;
+
+  const isDuplicateNickname =
+    hasNicknameInput &&
+    nicknameValid &&
+    !isCheckingNickname &&
+    !nicknameError &&
+    nicknameRes !== undefined &&
+    nicknameAvailable === false;
+
+  const isInvalidNickname = hasNicknameInput && !nicknameValid;
+
+  const isNicknameError = isInvalidNickname || isDuplicateNickname;
+
+  // 닉네임 에러 깜빡임 방지
+  const debouncedNicknameError = useDebouncedValue(isNicknameError, 100);
+
+  const nicknameBorderClass = `transition-colors duration-100 ${
+    debouncedNicknameError ? "border-orange-500" : "border-neutral-800"
+  }`;
+  const nicknameTextClass = `transition-colors duration-100 ${
+    debouncedNicknameError ? "text-orange-500" : "text-neutral-100"
+  }`;
+
+  // 폰 인증
+  const setUser = useAuthStore((s) => s.setUser);
+
+  const { mutate: requestCode, isPending: isRequestingCode } =
+    useRequestPhoneVerification({
+      onSuccess: (res) => {
+        setIsSending(true);
+        setRemainSec(res.data.expiresIn);
+        setRequestId(res.data.requestId);
+
+        setIsVerified(false);
+        setVerifiedPhoneToken(null);
+
+        //상태 문구 초기화
+        setPhoneVerifyMessage("");
+        setPhoneVerifyError("");
+      },
+      onError: (e) => console.error(e.message),
+    });
+
+  const { mutate: confirmCode, isPending: isConfirmingCode } =
+    useConfirmPhoneVerification({
+      onSuccess: (res) => {
+        if (res.data.phoneVerified) {
+          setIsVerified(true);
+          setVerifiedPhoneToken(res.data.verifiedPhoneToken);
+
+          setPhoneVerifyMessage("인증이 완료되었습니다.");
+          setPhoneVerifyError("");
+        } else {
+          setIsVerified(false);
+          setVerifiedPhoneToken(null);
+
+          setPhoneVerifyMessage("");
+          setPhoneVerifyError("인증번호가 올바르지 않습니다.");
+        }
+      },
+      onError: (e) => {
+        console.error(e.message);
+        setIsVerified(false);
+        setVerifiedPhoneToken(null);
+
+        setPhoneVerifyMessage("");
+        setPhoneVerifyError("인증번호가 올바르지 않습니다.");
+      },
+    });
+
+  useEffect(() => {
+    if (!isSending) return;
+    if (remainSec <= 0) return;
+
+    const id = window.setTimeout(() => setRemainSec((prev) => prev - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [isSending, remainSec]);
+
+  // 폰 상태 문구
+  const phoneStatusText = useMemo(() => {
+    if (phoneVerifyError) return phoneVerifyError;
+    if (phoneVerifyMessage) return phoneVerifyMessage;
+    return "";
+  }, [phoneVerifyError, phoneVerifyMessage]);
+
+  const isPhoneError = phoneVerifyError.length > 0;
+
+  //깜빡임 방지: 에러 ON을 100ms 지연
+  const debouncedPhoneError = useDebouncedValue(isPhoneError, 100);
+
+  const phoneBorderClass = `transition-colors duration-100 ${
+    debouncedPhoneError ? "border-orange-500" : "border-neutral-800"
+  }`;
+  const phoneTextClass = `transition-colors duration-100 ${
+    debouncedPhoneError ? "text-orange-500" : "text-neutral-100"
+  }`;
+
+  // 인증 완료 후 비활성화를 위함
+  const lockPhoneForm = isVerified;
 
   const canSubmit =
     isVerified && !!verifiedPhoneToken && nicknameValid && nicknameAvailable;
@@ -130,13 +194,17 @@ export function useOnBoardingForm(options?: Options) {
     onError: (e) => console.error(e.message),
   });
 
-  // ✅ 여기만 목적에 따라 달라짐
   const handleSend = () => requestCode({ phone, purpose: phonePurpose });
 
   const handleVerify = () => {
     if (remainSec <= 0) return;
     if (!requestId) return;
     if (verifiedNumber.length !== 6) return;
+
+    //확인 누를 때 이전 문구 초기화
+    setPhoneVerifyMessage("");
+    setPhoneVerifyError("");
+
     confirmCode({ requestId, code: verifiedNumber });
   };
 
@@ -150,6 +218,10 @@ export function useOnBoardingForm(options?: Options) {
     setIsVerified(false);
     setRequestId(null);
     setVerifiedPhoneToken(null);
+
+    //문구 초기화
+    setPhoneVerifyMessage("");
+    setPhoneVerifyError("");
   };
 
   const handleVerifiedNumberChange = (
@@ -157,6 +229,10 @@ export function useOnBoardingForm(options?: Options) {
   ) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
     setVerifiedNumber(digits);
+
+    //문구 초기화
+    setPhoneVerifyMessage("");
+    setPhoneVerifyError("");
   };
 
   const initPhone = (rawPhone: string) => {
@@ -169,6 +245,10 @@ export function useOnBoardingForm(options?: Options) {
     setIsVerified(false);
     setRequestId(null);
     setVerifiedPhoneToken(null);
+
+    //문구 초기화
+    setPhoneVerifyMessage("");
+    setPhoneVerifyError("");
   };
 
   const handleSubmit = () => {
@@ -211,12 +291,18 @@ export function useOnBoardingForm(options?: Options) {
     nicknameValid,
     nicknameAvailable,
     isCheckingNickname,
+    nicknameBorderClass,
+    nicknameTextClass,
 
     // phone edit
     verifiedPhoneToken,
     initPhone,
-
-    //  지금 목적이 뭔지 화면에서 쓸 수 있게
     phonePurpose,
+
+    // phone status like nickname
+    phoneStatusText,
+    phoneBorderClass,
+    phoneTextClass,
+    lockPhoneForm,
   };
 }
