@@ -117,28 +117,21 @@ export default function FilterBottomSheet({
 
   // RegionSelection[] → regionIds[] 변환
   const selectionsToRegionIds = (selections: RegionSelection[]): number[] => {
-    const ids: number[] = [];
-    for (const sel of selections) {
+    const ids = selections.flatMap((sel) => {
       if (sel.subRegion === "전체") {
-        // 해당 부모의 모든 자식 regionId 추가
-        if (regionData) {
-          const parent = regionData.parents.find(
-            (p) => p.parentName === sel.parentName,
-          );
-          if (parent) {
-            const childIds = regionData.regions
-              .filter((r) => r.parentId === parent.parentId)
-              .map((r) => r.regionId);
-            ids.push(...childIds);
-          }
-        }
-      } else {
-        const key = `${sel.parentName}-${sel.subRegion}`;
-        const id = regionIdMap.get(key);
-        if (id) ids.push(id);
+        if (!regionData) return [];
+        const parent = regionData.parents.find(
+          (p) => p.parentName === sel.parentName,
+        );
+        if (!parent) return [];
+        return regionData.regions
+          .filter((r) => r.parentId === parent.parentId)
+          .map((r) => r.regionId);
       }
-    }
-    // 중복 제거
+      const key = `${sel.parentName}-${sel.subRegion}`;
+      const id = regionIdMap.get(key);
+      return id ? [id] : [];
+    });
     return [...new Set(ids)];
   };
 
