@@ -21,7 +21,7 @@ export interface PostPreviewDto {
   likeCount: number;
   commentCount: number;
   isLiked: boolean;
-  //date: string;
+  createdAt: string;
 }
 
 export interface PostPreviewPageDto {

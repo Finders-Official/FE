@@ -4,6 +4,7 @@ import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import type { Post } from "@/types/mypage/post";
 import { useMyPostsInfinite } from "@/hooks/my";
 import { PostCardSkeleton } from "@/components/mypage";
+import { formatYmdDot } from "@/utils/dateFormat";
 
 const SKELETON_COUNT = 6;
 
@@ -30,7 +31,7 @@ export function MyPostPage() {
         src: p.image.imageUrl,
         title: p.title,
         likes: p.likeCount,
-        date: "", // 서버가 createdAt 주면 여기서 변환해서 넣기
+        date: formatYmdDot(p.createdAt),
       })),
     [previews],
   );
@@ -66,8 +67,6 @@ export function MyPostPage() {
       </div>
     );
   }
-
-  // const totalCount = data?.pages?.[0]?.data.totalCount ?? 0;
 
   return (
     <div className="px-4 py-6">
