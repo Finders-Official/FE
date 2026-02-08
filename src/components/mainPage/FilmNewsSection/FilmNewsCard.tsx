@@ -21,6 +21,7 @@ export default function FilmNewsCard({ news }: FilmNewsCardProps) {
       {/* 배경 이미지 */}
       <img
         src={news.thumbnail}
+        alt="필름 소식 썸네일"
         className="absolute inset-0 h-57.5 w-full object-cover"
       />
     </div>
