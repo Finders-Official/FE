@@ -5,13 +5,12 @@ import Calendar from "./Calendar";
 import TimeSlotList from "./TimeSlotList";
 import RegionSelector from "./RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
-import { REGIONS } from "@/constants/photoLab/regions";
+import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
 // 컨텐츠에 필요한 최소 높이
 const CONTENT_MIN_HEIGHT_REM = 48;
-const MAX_REGION_SELECTIONS = 10;
 
 interface FilterBottomSheetProps {
   open: boolean;

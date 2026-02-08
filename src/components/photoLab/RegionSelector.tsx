@@ -1,8 +1,7 @@
 import LocationChip from "@/components/common/chips/LocationChip";
 import { XMarkIcon } from "@/assets/icon";
+import { MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import type { Region, RegionSelection } from "@/types/photoLab";
-
-const MAX_SELECTIONS = 10;
 
 interface RegionSelectorProps {
   regions: Region[];
@@ -71,7 +70,7 @@ export default function RegionSelector({
                 type="button"
                 onClick={() => onSubRegionToggle(displayedRegion, subRegion)}
                 disabled={
-                  !isSelected && selectedRegions.length >= MAX_SELECTIONS
+                  !isSelected && selectedRegions.length >= MAX_REGION_SELECTIONS
                 }
                 className={`flex items-center px-4 py-2 text-left ${
                   isLastItem ? "border-b-0" : "border-b border-neutral-800"
@@ -105,7 +104,9 @@ export default function RegionSelector({
       {selectedRegions.length > 0 && (
         <div className="flex flex-col gap-2 border-t border-neutral-800 pt-4">
           <p className="text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
-            <span className="text-orange-500">최대 {MAX_SELECTIONS}개</span>
+            <span className="text-orange-500">
+              최대 {MAX_REGION_SELECTIONS}개
+            </span>
             까지 선택할 수 있어요.
           </p>
 
