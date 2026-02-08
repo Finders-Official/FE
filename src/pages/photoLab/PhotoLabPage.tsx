@@ -37,8 +37,8 @@ export default function PhotoLabPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 뒤로가기 버튼 표시 여부
-  const showBack = !!location.state?.from || window.history.length > 2;
+  // 메인 페이지 "현상 맡기기" 버튼을 통한 진입여부
+  const isFromMain = location.state?.from === "main";
 
   // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
   // 필터 상태
@@ -156,8 +156,8 @@ export default function PhotoLabPage() {
     <div className="flex w-full flex-col">
       {/* 헤더 */}
       <Header
-        title="현상 맡기기"
-        showBack={showBack}
+        title={isFromMain ? "현상 맡기기" : "현상소 보기"}
+        showBack={isFromMain}
         onBack={() => navigate(-1)}
         rightAction={{
           type: "icon",
