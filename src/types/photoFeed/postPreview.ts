@@ -10,6 +10,7 @@ export type PostPreview = {
   likeCount: number;
   commentCount: number;
   isLiked: boolean;
+  createdAt: string;
 };
 
 export type PostImage = {
@@ -39,6 +40,7 @@ export const photoMock: PhotoFeedResponse = {
       likeCount: 0,
       commentCount: 0,
       isLiked: false,
+      createdAt: "",
     },
     {
       postId: 6,
@@ -52,6 +54,7 @@ export const photoMock: PhotoFeedResponse = {
       likeCount: 12,
       commentCount: 3,
       isLiked: true,
+      createdAt: "",
     },
     {
       postId: 5,
@@ -65,6 +68,7 @@ export const photoMock: PhotoFeedResponse = {
       likeCount: 4,
       commentCount: 1,
       isLiked: false,
+      createdAt: "",
     },
   ],
   totalCount: 5,
