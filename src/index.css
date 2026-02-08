@@ -12,6 +12,7 @@
   --color-orange-700: #8c2f0d;
   --color-orange-600: #bb3f11;
   --color-orange-500: #e94e16;
+  --color-orange-450: #ec602d;
   --color-orange-400: #ee7244;
   --color-orange-300: #f29573;
   --color-orange-200: #f6b8a2;
@@ -81,19 +82,43 @@
 }
 
 /* 토스트 애니메이션 */
-@keyframes toast-in {
+@keyframes toast-slide {
   from {
     transform: translateY(1.25rem);
-    opacity: 0;
   }
   to {
     transform: translateY(0);
+  }
+}
+
+@keyframes toast-fade {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
 }
 
 .animate-toast-in {
-  animation: toast-in 0.3s ease-out;
+  animation: toast-slide 0.3s ease-out;
+}
+
+.animate-toast-content {
+  animation: toast-fade 0.3s ease-out;
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-toast-out {
+  animation: toast-out 0.1s ease-in forwards;
 }
 
 .bg-splash-gradient {
