@@ -83,14 +83,18 @@ export interface LabNews {
   content: string;
 }
 
+// 지역 선택 항목 (복수 선택용)
+export interface RegionSelection {
+  parentName: string; // "서울"
+  subRegion: string; // "전체" | "강남구" 등
+}
+
 // 필터 상태 (바텀시트용)
 export interface FilterState {
   date?: string; // "2026-01-15" 형식 (yyyy-MM-dd)
   time?: string[]; // ["오전 10:00", "오후 2:00"] 형식 (display용, 복수 선택)
-  region?: string; // "서울"
-  subRegion?: string; // "동작구"
-  parentRegionId?: number; // 상위(시/도) regionId
-  regionIds?: number[]; // 하위(구/군) regionId 배열
+  regionSelections?: RegionSelection[]; // 지역 선택 목록 (복수, 최대 10개)
+  regionIds?: number[]; // 하위(구/군) regionId 배열 (API용)
 }
 
 // GET /photo-labs/region 응답
