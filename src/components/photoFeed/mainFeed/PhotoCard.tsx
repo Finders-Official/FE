@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { HeartIcon } from "@/assets/icon";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { Link } from "react-router";
@@ -5,22 +6,44 @@ import { Link } from "react-router";
 type Props = {
   photo: PostPreview;
   isLiked?: boolean; // optional override (없으면 photo.isLiked 사용)
+  isShowLiked?: boolean; // 포토 카드에서 좋아요 표시 여부에 대한 props
   onToggleLike?: (id: number) => void;
 };
 
-export default function PhotoCard({ photo, isLiked, onToggleLike }: Props) {
+export default function PhotoCard({
+  photo,
+  isLiked,
+  onToggleLike,
+  isShowLiked,
+}: Props) {
   const { width, height } = photo.image;
   const aspect = width && height ? `${width} / ${height}` : "1 / 1";
 
-  const liked = isLiked ?? photo.isLiked;
+  //서버/상위에서 내려오는 현재값
+  const likedFromProps = isLiked ?? photo.isLiked;
 
-  const heartColorClass = liked
+  //Optimistic UI 상태
+  const [prevLikedFromProps, setPrevLikedFromProps] = useState(likedFromProps);
+  const [optimisticLiked, setOptimisticLiked] = useState(likedFromProps);
+
+  //상위값이 바뀌면(캐시 갱신/refetch 등) 로컬 optimistic 상태를 동기화
+  if (likedFromProps !== prevLikedFromProps) {
+    setPrevLikedFromProps(likedFromProps);
+    setOptimisticLiked(likedFromProps);
+  }
+
+  const heartColorClass = optimisticLiked
     ? "fill-orange-500 text-orange-500"
     : "text-white fill-none";
 
   const handleClickLike = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Link 이동 방지
     e.stopPropagation();
+
+    //UI 즉시 반영
+    setOptimisticLiked((prev) => !prev);
+
+    //서버 토글 트리거
     onToggleLike?.(photo.postId);
   };
 
@@ -46,7 +69,7 @@ export default function PhotoCard({ photo, isLiked, onToggleLike }: Props) {
           </div>
         </Link>
 
-        {liked ? (
+        {isShowLiked ? (
           <button
             type="button"
             className="absolute right-2 bottom-7"
