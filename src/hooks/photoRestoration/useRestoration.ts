@@ -47,34 +47,29 @@ export const useRestoration = () => {
     setProgress(10);
 
     try {
-      setStatusMessage("이미지 처리 중...");
       const originalBlob = await fetch(originalImageUrl).then((r) => r.blob());
       const originalFile = new File([originalBlob], "original.png", {
         type: "image/png",
       });
       setProgress(30);
 
-      setStatusMessage("업로드 URL 발급 중...");
       const [originalPresigned, maskPresigned] = await Promise.all([
         getPresignedUrl("RESTORATION_ORIGINAL", "original.png"),
         getPresignedUrl("RESTORATION_MASK", "mask.png"),
       ]);
       setProgress(50);
 
-      setStatusMessage("클라우드 업로드 중...");
       await Promise.all([
         uploadToGCS(originalPresigned.data.url, originalFile),
         uploadToGCS(maskPresigned.data.url, maskBlob),
       ]);
       setProgress(70);
 
-      setStatusMessage("AI 복원 요청 중...");
       const restorationRes = await requestRestoration(
         originalPresigned.data.objectPath,
         maskPresigned.data.objectPath,
       );
 
-      setStatusMessage("AI가 열심히 복원하고 있어요...");
       setProgress(85);
 
       // restorationId로 폴링 시작
