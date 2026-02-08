@@ -8,18 +8,11 @@ interface TooltipProps {
   className?: string;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({
-  used,
-  total,
-  onClose,
-  className = "",
-}) => {
+export const Tooltip: React.FC<TooltipProps> = ({ used, total, onClose }) => {
   return (
     <div
       className={
-        "pointer-events-auto relative flex h-11 w-40.25 items-center rounded-[0.625rem] " +
-        "bg-[#E94E16] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] " +
-        className
+        "pointer-events-auto relative flex h-11 w-40.25 items-center rounded-[0.625rem] bg-orange-500 text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
       }
       role="status"
       aria-live="polite"
