@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/common/Header";
+import { Tooltip } from "@/components/common/ToolTip";
+import { getCreditBalance } from "@/apis/member";
 
 import { RestorationImageContainer } from "./RestorationImageContainer";
 import { RestorationActionButtons } from "./RestorationActionButtons";
@@ -36,6 +39,18 @@ export default function RestorationCanvas() {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isComparing, setIsComparing] = useState(false);
   const [activeDialog, setActiveDialog] = useState<DialogType>("NONE");
+
+  const [isCreditTooltipOpen, setIsCreditTooltipOpen] = useState(true);
+
+  const { data: creditRes, isLoading: isCreditLoading } = useQuery({
+    queryKey: ["credit-balance"],
+    queryFn: getCreditBalance,
+    enabled: !!localStorage.getItem("accessToken"), // 토큰 없으면 요청 안 함(선택)
+  });
+
+  const creditBalance = creditRes?.data.creditBalance ?? 0;
+  const totalFree = 3;
+  const usedFree = Math.max(0, totalFree - creditBalance);
 
   // 1. 커스텀 훅: 복원 API 로직 (수정된 버전 사용)
   const {
@@ -159,6 +174,16 @@ export default function RestorationCanvas() {
 
   if (!receivedImageUrl) return null;
 
+  // 생성하기 or 다시 생성하기 캡슐 버튼이 보일 때만
+  const shouldShowCapsuleAction =
+    (!restoredImageUrl && historyStep >= 0) || !!restoredImageUrl;
+
+  const shouldShowCreditTooltip =
+    isCreditTooltipOpen &&
+    !isGenerating &&
+    !isCreditLoading &&
+    shouldShowCapsuleAction;
+
   return (
     <div className="flex min-h-dvh w-full flex-col bg-neutral-900">
       <Header
@@ -189,6 +214,7 @@ export default function RestorationCanvas() {
           endCompare={endCompare}
           setIsImageLoaded={setIsImageLoaded}
         />
+
         {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
         {restoredImageUrl && !isGenerating && (
           <div className="mt-3 flex w-85.75 justify-end">
@@ -225,14 +251,29 @@ export default function RestorationCanvas() {
           restoredImageUrl={restoredImageUrl}
           isGenerating={isGenerating}
         />
-        <RestorationActionButtons
-          historyStep={historyStep}
-          currentPath={currentPath}
-          restoredImageUrl={restoredImageUrl}
-          isGenerating={isGenerating}
-          handleGenerateClick={handleGenerateClick}
-          handleRegenerateClick={handleRegenerateClick}
-        />
+
+        <div className="relative mt-2 inline-flex">
+          {shouldShowCreditTooltip && (
+            <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2">
+              <div className="pointer-events-auto mb-4.5">
+                <Tooltip
+                  used={usedFree}
+                  total={totalFree}
+                  onClose={() => setIsCreditTooltipOpen(false)}
+                />
+              </div>
+            </div>
+          )}
+
+          <RestorationActionButtons
+            historyStep={historyStep}
+            currentPath={currentPath}
+            restoredImageUrl={restoredImageUrl}
+            isGenerating={isGenerating}
+            handleGenerateClick={handleGenerateClick}
+            handleRegenerateClick={handleRegenerateClick}
+          />
+        </div>
       </div>
 
       <RestorationDialogs
