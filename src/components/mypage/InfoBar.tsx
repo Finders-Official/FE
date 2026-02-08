@@ -13,7 +13,7 @@ export const InfoBar = ({ name, nickname, profile }: InfoBarProps) => {
       {/* 프로필 이미지 */}
       <div className="h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border border-2 border-orange-400 bg-orange-600">
         <img
-          src={profile}
+          src={`https://storage.googleapis.com/finders-public/${profile}`}
           alt="프로필 이미지"
           draggable={false}
           className="h-full w-full object-cover"
