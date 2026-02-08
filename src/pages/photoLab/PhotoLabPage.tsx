@@ -58,7 +58,6 @@ export default function PhotoLabPage() {
     usePhotoLabList(
       {
         tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
-        parentRegionId: filter.parentRegionId,
         regionIds: filter.regionIds,
         date: filter.date,
         time:
@@ -89,11 +88,17 @@ export default function PhotoLabPage() {
       parts.push(`${month}.${day}(${weekday})`);
     }
 
-    if (filter.region) {
-      const regionText = filter.subRegion
-        ? `${filter.region} ${filter.subRegion}`
-        : filter.region;
-      parts.push(regionText);
+    if (filter.regionSelections && filter.regionSelections.length > 0) {
+      const first = filter.regionSelections[0];
+      const firstLabel =
+        first.subRegion === "전체"
+          ? `${first.parentName} 전체`
+          : `${first.parentName} ${first.subRegion}`;
+      if (filter.regionSelections.length === 1) {
+        parts.push(firstLabel);
+      } else {
+        parts.push(`${firstLabel} 외 ${filter.regionSelections.length - 1}개`);
+      }
     }
 
     return parts.length > 0 ? parts.join(" • ") : undefined;
