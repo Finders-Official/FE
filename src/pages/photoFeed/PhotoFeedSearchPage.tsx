@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import { ChevronLeftIcon, FloatingIcon } from "@/assets/icon";
@@ -40,13 +40,17 @@ const SKELETON_HEIGHTS = [
 
 export default function PhotoFeedSearchPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialLabName = location.state?.labName as string | undefined;
 
-  const [filter, setFilter] = useState<Filter>("TITLE");
+  const [filter, setFilter] = useState<Filter>(
+    initialLabName ? "LAB_NAME" : "TITLE",
+  );
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
-  const [inputText, setInputText] = useState(""); // 입력 중
-  const [searchText, setSearchText] = useState(""); // 제출된 검색어
+  const [inputText, setInputText] = useState(initialLabName ?? ""); // 입력 중
+  const [searchText, setSearchText] = useState(initialLabName ?? ""); // 제출된 검색어
   const [isSearching, setIsSearching] = useState(false); // input focus 상태
 
   const inputTrimmed = inputText.trim();
