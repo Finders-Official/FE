@@ -111,5 +111,9 @@ export const useNewPostState = create<NewPostState>((set) => ({
 
   setIsNewPost: (isNewPost) => set({ isNewPost }),
 
-  reset: () => set(initialState),
+  reset: () =>
+    set((state) => {
+      state.previewUrls.forEach((u) => URL.revokeObjectURL(u));
+      return initialState;
+    }),
 }));

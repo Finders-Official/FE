@@ -210,7 +210,7 @@ export default function PostPage() {
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
       {renderPostDetail()}
 
-      {/** toast 메세지 */}
+      {/** 게시글 업로드 toast 메세지 */}
       {isNewPost && mounted && (
         <div className="fixed right-0 bottom-0 left-0 z-50 flex justify-center px-5 py-5">
           <div
