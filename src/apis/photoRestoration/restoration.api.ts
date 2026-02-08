@@ -1,15 +1,8 @@
 import { useAuthStore } from "@/store/useAuth.store";
 import { jwtDecode } from "jwt-decode";
+import type { ApiResponse } from "@/types/common/apiResponse";
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_API_URL;
-
-export interface ApiResponse<T> {
-  success: boolean;
-  code: string;
-  message: string;
-  timestamp: string;
-  data: T;
-}
 
 interface PresignedUrlResponse {
   success: boolean;
