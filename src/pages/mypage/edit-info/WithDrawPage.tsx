@@ -1,5 +1,6 @@
-import { CTA_Button, ToastItem } from "@/components/common";
+import { CTA_Button } from "@/components/common";
 import { Checkbox } from "@/components/common/CheckBox";
+import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { NoticeCard } from "@/components/mypage";
 import { useWithDrawMe } from "@/hooks/member";
@@ -26,6 +27,7 @@ export function WithDrawPage() {
   const [agreed, setAgreed] = useState(false);
 
   const [toastMessage, setToastMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   const showToastWithTimeout = (msg: string) => {
@@ -100,11 +102,28 @@ export function WithDrawPage() {
           text="탈퇴하기"
           color={agreed ? "orange" : "black"}
           disabled={!agreed}
-          onClick={handleSubmit}
+          onClick={() => setShowDialog(true)}
         />
       </footer>
       <LoadingSpinner open={isPending} />
-      {showToast ? <ToastItem message={toastMessage} /> : null}
+      <DialogBox
+        title="탈퇴하기"
+        description="정말 '파인더스'를 떠나시겠어요?"
+        isOpen={showDialog}
+        confirmText="탈퇴하기"
+        cancelText="뒤로 가기"
+        onCancel={() => setShowDialog(false)}
+        onConfirm={handleSubmit}
+      />
+      <DialogBox
+        title={toastMessage}
+        description="진행 중인 작업이 모두 완료된 후에 탈퇴가 가능합니다!"
+        isOpen={showToast}
+        confirmButtonStyle="text"
+        align="left"
+        confirmText="확인"
+        onConfirm={() => setShowToast(false)}
+      />
     </div>
   );
 }
