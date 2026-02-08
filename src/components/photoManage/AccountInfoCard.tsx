@@ -1,12 +1,11 @@
-import { CopyIcon } from "@/assets/icon";
+import { CopyButton } from "@/components/common";
 import type { LabAccountInfo } from "@/types/photomanage/transaction";
 
 interface AccountInfoCardProps {
   accountInfo: LabAccountInfo;
-  onCopy: () => void;
 }
 
-export function AccountInfoCard({ accountInfo, onCopy }: AccountInfoCardProps) {
+export function AccountInfoCard({ accountInfo }: AccountInfoCardProps) {
   const { bankName, accountNumber, accountHolder } = accountInfo;
 
   return (
@@ -20,14 +19,13 @@ export function AccountInfoCard({ accountInfo, onCopy }: AccountInfoCardProps) {
           <span>{accountNumber}</span>
           <span>{accountHolder}</span>
         </div>
-        <button
-          type="button"
-          onClick={onCopy}
+        <CopyButton
+          text={accountNumber}
+          toastMessage="계좌번호가 클립보드에 복사되었습니다."
           className="flex items-center justify-center"
-          aria-label="계좌번호 복사"
-        >
-          <CopyIcon className="h-4.5 w-4.5 text-neutral-200" />
-        </button>
+          iconClassName="h-4.5 w-4.5 text-neutral-200"
+          ariaLabel="계좌번호 복사"
+        />
       </div>
     </div>
   );

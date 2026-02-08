@@ -15,6 +15,7 @@ export { Checkbox } from "./CheckBox";
 export { ImageCard } from "./ImageCard";
 export { TextArea } from "./TextArea";
 export { ToastItem, ToastList } from "./ToastMessage";
+export { CopyButton } from "./CopyButton";
 export { default as ConfirmationIcon } from "./ConfirmationIcon";
 
 export { default as UnderlineTabs } from "./UnderlineTabs";

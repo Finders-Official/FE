@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CopyIcon, MapPinIcon } from "@/assets/icon";
+import { CopyButton } from "@/components/common";
 import customPinUrl from "@/assets/icon/custom-pin.svg";
 import type { PhotoLabLocation } from "@/types/photoLab";
 
@@ -104,10 +105,6 @@ export default function LabLocationSection({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location?.latitude, location?.longitude]);
 
-  const handleCopyAddress = async () => {
-    await navigator.clipboard.writeText(fullAddress);
-  };
-
   const handleDirectionsClick = () => {
     if (!location) return;
     const encodedName = encodeURIComponent(labName);
@@ -123,9 +120,9 @@ export default function LabLocationSection({
           위치
         </h3>
         <div className="flex flex-col gap-1">
-          <button
-            type="button"
-            onClick={handleCopyAddress}
+          <CopyButton
+            text={fullAddress}
+            toastMessage="클립보드에 주소가 복사되었어요."
             className="flex w-full items-center gap-1.5"
           >
             <div className="flex h-6 w-6 shrink-0 items-center justify-center">
@@ -134,7 +131,7 @@ export default function LabLocationSection({
             <span className="min-w-0 flex-1 truncate text-left text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
               {fullAddress}
             </span>
-          </button>
+          </CopyButton>
           {distanceKm != null && (
             <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-300">
               지금 내 위치에서 약 {distanceKm.toFixed(1)}km 거리에 있어요
