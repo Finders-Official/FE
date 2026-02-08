@@ -94,7 +94,11 @@ export default function PhotoLabDetailPage() {
         <LabWorkResultsSection
           labName={lab.name}
           postImageUrls={lab.postImageUrls}
-          onMoreClick={() => navigate("/photoFeed")}
+          onMoreClick={() =>
+            navigate("/photoFeed/search", {
+              state: { labName: lab.name },
+            })
+          }
         />
 
         {/* 지도 */}
