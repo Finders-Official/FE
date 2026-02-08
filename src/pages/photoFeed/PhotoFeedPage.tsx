@@ -73,7 +73,7 @@ export default function PhotoFeedPage() {
             navigate("/photoFeed/search");
           },
         }}
-        className="sticky top-0 z-50 bg-black"
+        className="sticky top-0 z-50 bg-neutral-900"
       />
 
       {/* 에러 처리 */}
