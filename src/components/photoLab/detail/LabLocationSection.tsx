@@ -122,7 +122,7 @@ export default function LabLocationSection({
         <div className="flex flex-col gap-1">
           <CopyButton
             text={fullAddress}
-            toastMessage="주소가 복사되었습니다."
+            toastMessage="클립보드에 주소가 복사되었어요."
             className="flex w-full items-center gap-1.5"
           >
             <div className="flex h-6 w-6 shrink-0 items-center justify-center">

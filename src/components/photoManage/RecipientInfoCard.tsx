@@ -20,6 +20,7 @@ export function RecipientInfoCard({ items }: RecipientInfoCardProps) {
           {item.copyValue && (
             <CopyButton
               text={item.copyValue}
+              toastMessage="송장번호가 클립보드에 복사되었습니다."
               className="text-neutral-400 hover:text-white"
               iconClassName="h-3.5 w-3.5"
               aboveTabBar
