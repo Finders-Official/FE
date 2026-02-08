@@ -132,9 +132,11 @@ export default function LabLocationSection({
               {fullAddress}
             </span>
           </CopyButton>
-          <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-300">
-            지금 내 위치에서 약 {distanceKm}km 거리에 있어요
-          </p>
+          {distanceKm != null && (
+            <p className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-300">
+              지금 내 위치에서 약 {distanceKm.toFixed(1)}km 거리에 있어요
+            </p>
+          )}
         </div>
       </div>
 

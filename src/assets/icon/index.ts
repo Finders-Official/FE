@@ -83,6 +83,7 @@ export { default as CheckBoxIcon } from "./check-box-fill.svg?react";
 export { default as CircleIcon } from "./circle.svg?react";
 export { default as CircleFillIcon } from "./circle-fill.svg?react";
 export { default as CircleGlareFillIcon } from "./circle-glare-fill.svg?react";
+export { default as BigLogoIcon } from "./bigLogo.svg?react";
 export { default as DeleteIcon } from "./delete.svg?react";
 export { default as EllipsisVerticalIcon } from "./ellipsis-vertical.svg?react";
 export { default as FlimIcon } from "./flim.svg?react";
