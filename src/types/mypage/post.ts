@@ -1,4 +1,5 @@
 import type { ApiResponse } from "@/types/common/apiResponse";
+import type { PhotoFeedResponse } from "../photoFeed/postPreview";
 
 export type Post = {
   id: number;
@@ -8,26 +9,4 @@ export type Post = {
   likes: number;
 };
 
-export interface PostPreviewImageDto {
-  imageUrl: string;
-  width: number;
-  height: number;
-}
-
-export interface PostPreviewDto {
-  postId: number;
-  image: PostPreviewImageDto;
-  title: string;
-  likeCount: number;
-  commentCount: number;
-  isLiked: boolean;
-  createdAt: string;
-}
-
-export interface PostPreviewPageDto {
-  previewList: PostPreviewDto[];
-  totalCount: number;
-  isLast: boolean;
-}
-
-export type GetPostPreviewPageResponse = ApiResponse<PostPreviewPageDto>;
+export type GetPostPreviewPageResponse = ApiResponse<PhotoFeedResponse>;
