@@ -6,18 +6,21 @@ import { EmptyCheckCircleIcon } from "@/assets/icon";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import { useInfiniteScanResults } from "@/hooks/photoManage";
 import ImageCardSkeleton from "@/components/common/ImageCardSkeleton";
+import EmptyView from "@/components/common/EmptyView";
 
 type Step = "GRID" | "DETAIL";
 
 export default function PhotoDownload() {
   const navigate = useNavigate();
   const location = useLocation();
-  const developedOrderId = (location.state as { developedOrderId: number })
-    ?.developedOrderId;
+  const developmentOrderId = (location.state as { developmentOrderId: number })
+    ?.developmentOrderId;
 
   useEffect(() => {
-    if (!developedOrderId) navigate("/photoManage/main", { replace: true });
-  }, [developedOrderId, navigate]);
+    if (!developmentOrderId) {
+      navigate("/photoManage/main", { replace: true });
+    }
+  }, [developmentOrderId, navigate]);
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(null);
@@ -37,10 +40,10 @@ export default function PhotoDownload() {
     isError,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteScanResults(developedOrderId);
+  } = useInfiniteScanResults(developmentOrderId);
 
   const results = useMemo(
-    () => data?.pages.flatMap((page) => page.data.scanResultList) ?? [],
+    () => data?.pages.flatMap((page) => page.data) ?? [],
     [data],
   );
 
@@ -54,7 +57,12 @@ export default function PhotoDownload() {
 
   const photoById = useMemo(() => {
     const m = new Map<number, (typeof results)[number]>();
-    results.forEach((p) => m.set(p.scannedPhotoId, p));
+
+    results?.forEach((p) => {
+      if (!p) return; // undefined/null 방어
+      m.set(p.scannedPhotoId, p);
+    });
+
     return m;
   }, [results]);
 
@@ -175,7 +183,7 @@ export default function PhotoDownload() {
             <div ref={sentinelRef} style={{ height: 1 }} />
           </div>
           {/** 다음 버튼 */}
-          <div className="py-5">
+          <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5">
             <CTA_Button
               text="다운로드"
               size="xlarge"
@@ -287,7 +295,13 @@ export default function PhotoDownload() {
           <p className="text-red-400">불러오기에 실패했어요.</p>
         </div>
       )}
-      {step === "GRID" ? renderGrid() : renderDetail()}
+      {results.length === 0 ? (
+        <EmptyView />
+      ) : step === "GRID" ? (
+        renderGrid()
+      ) : (
+        renderDetail()
+      )}
     </main>
   );
 }

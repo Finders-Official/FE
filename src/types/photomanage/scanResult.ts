@@ -7,7 +7,3 @@ export type ScanResult = {
   expiresAt: number;
   createdAt: string;
 };
-
-export type ScanResultList = {
-  scanResultList: ScanResult[];
-};

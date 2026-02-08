@@ -4,7 +4,7 @@ import type {
   ApiResponseWithSlice,
 } from "@/types/common/apiResponse";
 import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
-import type { ScanResultList } from "@/types/photomanage/scanResult";
+import type { ScanResult } from "@/types/photomanage/scanResult";
 
 /**
  * 인화 안 함 확정
@@ -29,8 +29,8 @@ export async function printSkip(developmentOrderId: number) {
 export async function getScanResults(
   developmentOrderId: number,
   pageParam = 0,
-): Promise<ApiResponseWithSlice<ScanResultList>> {
-  const res = await axiosInstance.get<ApiResponseWithSlice<ScanResultList>>(
+): Promise<ApiResponseWithSlice<ScanResult[]>> {
+  const res = await axiosInstance.get<ApiResponseWithSlice<ScanResult[]>>(
     `/photos/development-orders/${developmentOrderId}/scan-results`,
     {
       params: {

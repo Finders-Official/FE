@@ -1,10 +1,10 @@
 import { getScanResults } from "@/apis/photoManage/developmentOrder.api";
 import type { ApiResponseWithSlice } from "@/types/common/apiResponse";
-import type { ScanResultList } from "@/types/photomanage/scanResult";
+import type { ScanResult } from "@/types/photomanage/scanResult";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function useInfiniteScanResults(developmentOrderId: number) {
-  return useInfiniteQuery<ApiResponseWithSlice<ScanResultList>>({
+  return useInfiniteQuery<ApiResponseWithSlice<ScanResult[]>>({
     queryKey: ["scanResults", developmentOrderId],
     queryFn: ({ pageParam = 0 }) =>
       getScanResults(developmentOrderId, pageParam as number),
