@@ -3,5 +3,5 @@ import type { OptionLinkItem } from "@/types/mypage/optionlink";
 
 export const managelist: OptionLinkItem[] = [
   { to: "/mypage", text: "티켓 충전", Icon: TicketIcon },
-  { to: "/auth/terms#service, ", text: "이용 약관", Icon: SecurityIcon },
+  { to: "/auth/terms#service", text: "이용 약관", Icon: SecurityIcon },
 ];

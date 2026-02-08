@@ -3,6 +3,7 @@ import { ToastItem } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { OptionLink } from "@/components/mypage/OptionLink";
+import { GCS_PUBLIC_BASE } from "@/constants/gcsUrl";
 import { useLogout } from "@/hooks/auth/login";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useMe, useEditMe } from "@/hooks/member";
@@ -18,9 +19,6 @@ type LocationState = { toast?: string } | null;
 
 // fallback 이미지
 const FALLBACK_PROFILE_SRC = "/MainLogo.svg";
-
-//버킷 공개 base
-const GCS_PUBLIC_BASE = "https://storage.googleapis.com/finders-public";
 
 function resolveProfileSrc(raw: string) {
   if (!raw) return FALLBACK_PROFILE_SRC;
