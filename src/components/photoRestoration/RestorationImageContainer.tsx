@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { RefObject } from "react";
 
 interface RestorationImageContainerProps {
@@ -42,11 +42,24 @@ export const RestorationImageContainer: React.FC<
 }) => {
   const showOriginal = !restoredImageUrl || isComparing;
   const currentImageSrc = showOriginal ? imageUrl : restoredImageUrl;
+  const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
+
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth, naturalHeight } = e.currentTarget;
+    if (naturalWidth && naturalHeight) {
+      setAspectRatio(naturalWidth / naturalHeight);
+    }
+    setIsImageLoaded(true);
+  };
 
   return (
     <div
       ref={containerRef}
-      className="relative grid h-58 w-85.75 place-items-center overflow-hidden rounded-[0.625rem] bg-neutral-800"
+      className="relative mx-auto flex w-full max-w-md items-center justify-center overflow-hidden rounded-[0.625rem] bg-neutral-800"
+      style={{
+        aspectRatio: aspectRatio,
+        maxHeight: "calc(100dvh - 260px)",
+      }}
       onMouseDown={startCompare}
       onMouseUp={endCompare}
       onMouseLeave={endCompare}
@@ -56,8 +69,8 @@ export const RestorationImageContainer: React.FC<
       <img
         src={currentImageSrc}
         alt="Target"
-        className="pointer-events-none block max-h-full max-w-full object-contain select-none"
-        onLoad={() => setIsImageLoaded(true)}
+        className="pointer-events-none absolute inset-0 block h-full w-full object-contain select-none"
+        onLoad={handleImageLoad}
       />
 
       {isGenerating && (
@@ -70,7 +83,7 @@ export const RestorationImageContainer: React.FC<
       {!restoredImageUrl && !isGenerating && (
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 z-10 cursor-crosshair touch-none"
+          className="absolute inset-0 z-10 h-full w-full cursor-crosshair touch-none"
           onMouseDown={startDrawing}
           onMouseUp={stopDrawing}
           onMouseLeave={stopDrawing}

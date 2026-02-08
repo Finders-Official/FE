@@ -34,9 +34,18 @@ export default function RestorationSavedOverlay({
         }}
       />
 
-      <main className="flex flex-1 flex-col items-center pt-24 text-white">
-        <div className="w-full max-w-140 overflow-hidden rounded-2xl border border-white/10">
-          <img src={imageUrl} alt="saved" className="block h-auto w-full" />
+      <main className="flex flex-1 items-center justify-center text-white">
+        <div
+          className="flex w-full max-w-140 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-neutral-900"
+          style={{
+            maxHeight: "calc(100dvh - 160px)",
+          }}
+        >
+          <img
+            src={imageUrl}
+            alt="saved"
+            className="block h-full w-full object-contain"
+          />
         </div>
       </main>
     </div>
