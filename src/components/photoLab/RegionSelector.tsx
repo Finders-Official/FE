@@ -41,7 +41,7 @@ export default function RegionSelector({
       </h3>
 
       {/* 2열 레이아웃 */}
-      <div className="flex min-h-0 flex-1 gap-[3.75rem]">
+      <div className="flex min-h-0 flex-1 gap-[3.75rem] overflow-hidden">
         {/* 왼쪽: 광역 자치단체 */}
         <div className="scrollbar-hide flex w-[4.9375rem] flex-col gap-[0.625rem] overflow-y-auto">
           {regions.map((region) => (
@@ -102,7 +102,7 @@ export default function RegionSelector({
 
       {/* 선택된 지역 칩 영역 */}
       {selectedRegions.length > 0 && (
-        <div className="flex flex-col gap-2 border-t border-neutral-800 pt-4">
+        <div className="-mx-4 flex flex-col gap-2 border-t-2 border-neutral-800 px-4 pt-4">
           <p className="text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
             <span className="text-orange-500">
               최대 {MAX_REGION_SELECTIONS}개
@@ -129,7 +129,7 @@ export default function RegionSelector({
                   <span className="text-[0.8125rem] leading-[155%] font-normal tracking-[-0.02em] text-white">
                     {chipLabel}
                   </span>
-                  <XMarkIcon className="h-4 w-4 text-neutral-400" />
+                  <XMarkIcon className="h-3 w-3 text-neutral-200" />
                 </button>
               );
             })}
