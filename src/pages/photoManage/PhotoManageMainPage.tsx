@@ -80,7 +80,7 @@ export default function PhotoManageMainPage() {
   if (!workData || !currentBanner) return null;
 
   return (
-    <div className="mx-auto w-full max-w-6xl overflow-x-hidden pt-6">
+    <div className="mx-auto w-full max-w-6xl overflow-x-hidden">
       <Header
         title=""
         rightAction={{

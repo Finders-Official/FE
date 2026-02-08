@@ -69,13 +69,13 @@ export function buildProcessSteps({
       buttons: status === "SCAN" && (
         <div className="flex flex-col gap-2.5">
           <ActionButton
-            leftIcon={<PrinterIcon />}
+            leftIcon={<PrinterIcon className="h-4 w-4" />}
             message="인화 여부 확정하기"
             showNext
             onClick={onOpenPrintConfirmDialog}
           />
           <ActionButton
-            leftIcon={<DownloadIcon />}
+            leftIcon={<DownloadIcon className="h-4 w-4" />}
             message="사진 다운로드 하러 가기"
             showNext
             onClick={onGoDownload}
