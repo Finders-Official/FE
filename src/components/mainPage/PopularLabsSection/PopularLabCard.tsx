@@ -14,11 +14,14 @@ interface PopularLabCardProps {
 
 export default function PopularLabCard({ lab }: PopularLabCardProps) {
   const { requireAuthNavigate } = useRequireAuth();
-  const baseUrl = import.meta.env.VITE_PUBLIC_API_URL;
+  const apiBase = import.meta.env.VITE_PUBLIC_API_URL;
+  const origin = apiBase.replace(/\/api\/?$/, "");
 
-  const imageUrl = lab.mainImageUrl.startsWith("http")
-    ? lab.mainImageUrl
-    : `${baseUrl}/${lab.mainImageUrl}`;
+  const raw = (lab.mainImageUrl ?? "").trim();
+
+  const imageUrl = raw.startsWith("http")
+    ? raw
+    : `${origin}/${raw.replace(/^\/+/, "")}`;
 
   const fallbackImage =
     "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80";
