@@ -3,24 +3,20 @@ import { useNavigate, useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import Header from "@/components/common/Header";
-import { Tooltip } from "@/components/common/ToolTip";
 import RestorationSavedOverlay from "@/components/photoRestoration/RestorationSavedOverlay";
-import { CapsuleButton } from "@/components/common/CapsuleButton";
 import { getCreditBalance } from "@/apis/member";
 
-import { RestorationImageContainer } from "./RestorationImageContainer";
-import { RestorationActionButtons } from "./RestorationActionButtons";
-import { RestorationHintTooltip } from "./RestorationHintTooltip";
-import { RestorationDialogs } from "./RestorationDialogs";
-import { RestorationLoadingOverlay } from "./RestorationLoadingOverlay";
-import RestorationControls from "./RestorationControls";
+import { RestorationImageContainer } from "@/components/photoRestoration/RestorationImageContainer";
+import { RestorationDialogs } from "@/components/photoRestoration/RestorationDialogs";
+import { RestorationLoadingOverlay } from "@/components/photoRestoration/RestorationLoadingOverlay";
+import RestorationControls from "@/components/photoRestoration/RestorationControls";
+import { RestorationFooter } from "@/components/photoRestoration/RestorationFooter";
 
 import { useCanvasDrawing } from "@/hooks/photoRestoration/useCanvasDrawing";
 import { useRestoration } from "@/hooks/photoRestoration/useRestoration";
 import { useRestorationSave } from "@/hooks/photoRestoration/useRestorationSave";
 
 import { RestorationCompareIcon } from "@/assets/icon";
-import { PhotoFillIcon } from "@/assets/icon";
 
 type ViewMode = "MAIN" | "SAVED";
 
@@ -33,7 +29,7 @@ type DialogType =
   | "NO_MASK"
   | "NO_CREDIT";
 
-export default function RestorationCanvas() {
+export default function PhotoRestorationPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -278,49 +274,19 @@ export default function RestorationCanvas() {
         />
       )}
 
-      {/* CTA 버튼 (하단 고정) */}
-      <div className="pointer-events-none absolute right-0 bottom-13 left-0 z-50 flex w-full flex-col items-center px-4">
-        {viewMode === "MAIN" && (
-          <RestorationHintTooltip
-            historyStep={historyStep}
-            currentPath={currentPath}
-            restoredImageUrl={restoredImageUrl}
-            isGenerating={isGenerating}
-          />
-        )}
-
-        <div className="pointer-events-auto relative mt-2 inline-flex">
-          {shouldShowCreditTooltip && (
-            <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2">
-              <div className="pointer-events-auto mb-4.5">
-                <Tooltip
-                  used={usedFree}
-                  total={totalFree}
-                  onClose={() => setIsCreditTooltipOpen(false)}
-                />
-              </div>
-            </div>
-          )}
-
-          {viewMode === "SAVED" ? (
-            <CapsuleButton
-              text="사진수다에 자랑하기"
-              image={PhotoFillIcon}
-              size="medium"
-              onClick={() => navigate("/photoFeed")}
-            />
-          ) : (
-            <RestorationActionButtons
-              historyStep={historyStep}
-              currentPath={currentPath}
-              restoredImageUrl={restoredImageUrl}
-              isGenerating={isGenerating}
-              handleGenerateClick={handleGenerateClick}
-              handleRegenerateClick={handleRegenerateClick}
-            />
-          )}
-        </div>
-      </div>
+      <RestorationFooter
+        viewMode={viewMode}
+        historyStep={historyStep}
+        currentPath={currentPath}
+        restoredImageUrl={restoredImageUrl}
+        isGenerating={isGenerating}
+        shouldShowCreditTooltip={shouldShowCreditTooltip}
+        usedFree={usedFree}
+        totalFree={totalFree}
+        setIsCreditTooltipOpen={setIsCreditTooltipOpen}
+        handleGenerateClick={handleGenerateClick}
+        handleRegenerateClick={handleRegenerateClick}
+      />
     </div>
   );
 }
