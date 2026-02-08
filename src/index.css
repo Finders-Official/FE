@@ -1,7 +1,6 @@
 @import "pretendard/dist/web/variable/pretendardvariable.css";
 @import "tailwindcss";
 
-/* ✅ Tailwind v4 theme variables: 이 형태여야 bg-neutral-900 같은 유틸이 자동 생성됨 */
 @theme {
   /* Animation */
   --animate-slide-up: slide-up 0.4s ease-out;
@@ -37,24 +36,50 @@
 
 :root {
   --tabbar-height: 5.5625rem;
-  --fab-gap: 0.8rem; /* spacing.4 */
+  --fab-gap: 0.8rem;
 }
 
 @layer base {
-  /* 화면 꽉 차게: 루트 높이 고정 */
+  /* 화면 전체를 고정. (PWA 웹앱) */
   html,
-  body,
-  #root {
-    height: 100%;
+  body {
+    height: 100%; /* 100dvh 대신 100% 사용 (내부 스크롤 방식) */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Body 스크롤 원천 차단 (주소창 춤춤 방지) */
+    overscroll-behavior: none; /* 전체 화면 바운스(텐션) 제거 */
+
+    /* iOS 터치 하이라이트 & 텍스트 선택 방지 */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
-  /* 모바일 주소창 변화에도 안정적인 최소 높이 + 전역 폰트 */
+  /* 배경색 및 폰트 설정 */
   body {
-    min-height: 100dvh;
-    overflow-x: hidden;
     background-color: var(--color-neutral-900);
-
     font-family: "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  }
+
+  /* 앱 컨테이너 */
+  #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* 이중 스크롤 방지 */
+  }
+}
+
+/* 스크롤바 숨김 유틸리티 */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox, Safari 17+ */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 }
 

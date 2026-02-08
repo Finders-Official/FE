@@ -73,7 +73,6 @@ export const likePost = async (postId: number): Promise<void> => {
     await axiosInstance.post(`/posts/${postId}/likes`);
   } catch (error) {
     if (isAxiosError(error) && error.response?.data?.code === "MEMBER_404") {
-      localStorage.removeItem("accessToken");
       throw new Error("회원 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
     }
     throw error;

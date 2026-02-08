@@ -1,12 +1,14 @@
 import type { FilmCameraGuide } from "../../types/filmCameraGuide";
+import thumb1 from "@/assets/filmNews/film-news-section-1.png";
+import thumb2 from "@/assets/filmNews/film-news-section-2.png";
+import thumb3 from "@/assets/filmNews/film-news-section-3.png";
 
 export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
   {
     id: 1,
     title: "동작구 출사 맛집 Best 5.",
     summary: "추운 날씨도 따뜻해보이게 만드는 사진 명소 추천합니다",
-    thumbnailUrl:
-      "https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=11053361&filePath=L2Rpc2sxL25ld2RhdGEvMjAxNC8yMS9DTFM2L2RpZ2lfMTEwNTMzNjFfMDEyMDE0MTEwNzA3&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10006",
+    thumbnailUrl: thumb1,
     toc: [
       "노을이 예쁜 한강 뷰",
       "필름 감성 골목",
@@ -48,8 +50,7 @@ export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
     id: 2,
     title: "현상소 사장님과 Q&A",
     summary: "현상소 사장님이 다 답해준다!",
-    thumbnailUrl:
-      "https://www.koreafilm.or.kr/upload/editorimage/8e1a2352-a41f-43d5-a2e7-70f4f71e77d8.jpg",
+    thumbnailUrl: thumb2,
     toc: [
       "필름은 어떻게 보관하면 좋을까요?",
       "한 롤은 다 못 찍어도 괜찮을까요?",
@@ -78,9 +79,8 @@ export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
   {
     id: 3,
     title: "내 카메라랑 더 친해지기",
-    summary: "카메라 부품 별 기능들을 알려드립니다! 😎",
-    thumbnailUrl:
-      "https://www.koreafilm.or.kr/upload/editorimage/8e1a2352-a41f-43d5-a2e7-70f4f71e77d8.jpg",
+    summary: "카메라 부품 별 기능들을 알려드립니다!",
+    thumbnailUrl: thumb3,
     toc: [
       "카메라를 천천히 들여다보는 시간",
       "셔터를 누르기 전, 한 번 더 바라보기",
