@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
-type ActionSheetAction = {
+export type ActionSheetAction = {
   label: string;
   onClick: () => void;
+  disabled?: boolean;
   variant?: "default" | "danger";
 };
 

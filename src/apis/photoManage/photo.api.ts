@@ -16,7 +16,7 @@ export async function getPrintOptions(): Promise<
   ApiResponse<PrintOptionsResponse>
 > {
   const res = await axiosInstance.get<ApiResponse<PrintOptionsResponse>>(
-    "/photos/print/options",
+    "/photos/print-orders/options",
   );
 
   const body = res.data;
@@ -33,7 +33,7 @@ export async function quotePrintPrice(
   request: PrintQuoteRequest,
 ): Promise<ApiResponse<PrintQuoteResponse>> {
   const res = await axiosInstance.post<ApiResponse<PrintQuoteResponse>>(
-    "/photos/print/quote",
+    "/photos/print-orders/quote",
     request,
   );
 

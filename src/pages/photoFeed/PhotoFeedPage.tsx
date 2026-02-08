@@ -1,9 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
-import { FloatingIcon, SearchIcon } from "@/assets/icon";
-import { Header } from "@/components/common";
-import { useNavigate } from "react-router";
+import { CheckCircleIcon, FloatingIcon, SearchIcon } from "@/assets/icon";
+import { Header, ToastItem } from "@/components/common";
+import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
@@ -21,7 +21,27 @@ const SKELETON_HEIGHTS = [
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // 게시글 삭제 여부 정보
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isDeleted } = location.state ?? {};
+
+  // 토스트 메세지 관련 상태
+  const [toastVisible, setToastVisible] = useState(isDeleted);
+  const [mounted, setMounted] = useState(isDeleted);
+
+  useEffect(() => {
+    if (!isDeleted) return;
+
+    const fadeTimer = setTimeout(() => setToastVisible(false), 1600);
+    const removeTimer = setTimeout(() => setMounted(false), 3000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [isDeleted]);
 
   const {
     data,
@@ -43,7 +63,7 @@ export default function PhotoFeedPage() {
   const posts = data?.pages.flatMap((p) => p.previewList) ?? [];
 
   return (
-    <main className="mx-auto w-full max-w-6xl py-6">
+    <main className="mx-auto w-full max-w-6xl pb-6">
       <Header
         title="사진수다"
         rightAction={{
@@ -53,12 +73,29 @@ export default function PhotoFeedPage() {
             navigate("/photoFeed/search");
           },
         }}
+        className="sticky top-0 z-50 bg-black"
       />
 
       {/* 에러 처리 */}
       {isError && (
         <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
           <p className="text-red-400">불러오기에 실패했어요.</p>
+        </div>
+      )}
+
+      {/** toast 메세지 */}
+      {isDeleted && mounted && (
+        <div className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5">
+          <div
+            className={`transition-opacity duration-300 ease-out ${
+              toastVisible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <ToastItem
+              message="게시글이 삭제되었습니다"
+              icon={<CheckCircleIcon className="h-5 w-5" />}
+            />
+          </div>
         </div>
       )}
 

@@ -4,7 +4,7 @@ export interface PhotoLabItem {
   name: string;
   tags: string[];
   address: string;
-  distanceKm: number;
+  distanceKm: number | null;
   workCount: number;
   avgWorkTime: number;
   imageUrls: string[];
