@@ -35,7 +35,7 @@ export const DialogBox = ({
     <div
       // 1. 배경(Wrapper)에 직접 onClick 이벤트 할당
       onClick={onCancel}
-      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
     >
       <div
         // 2. 모달 내부 클릭 시 상위(배경)로 클릭 이벤트가 전파되지 않도록 차단
