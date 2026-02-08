@@ -16,28 +16,65 @@ import { Link, useLocation, useNavigate } from "react-router";
 
 type LocationState = { toast?: string } | null;
 
+// fallback 이미지
+const FALLBACK_PROFILE_SRC = "/MainLogo.svg";
+
+//버킷 공개 base
+const GCS_PUBLIC_BASE = "https://storage.googleapis.com/finders-public";
+
+function resolveProfileSrc(raw: string) {
+  if (!raw) return FALLBACK_PROFILE_SRC;
+
+  // 업로드 직후 objectUrl
+  if (raw.startsWith("blob:")) return raw;
+
+  // 이미 완전한 URL
+  if (/^https?:\/\//i.test(raw)) return raw;
+
+  // 로컬 public 경로
+  if (raw.startsWith("/")) return raw;
+
+  // 스토리지 key로 보고 base 붙이기 + 인코딩(한글/공백 대응)
+  const key = raw.replace(/^\/+/, "");
+  return `${GCS_PUBLIC_BASE}/${encodeURI(key)}`;
+}
+
 export function EditInfoPage() {
   const { data: me, isLoading } = useMe({ refetchOnMount: "always" });
-  const phone = formatPhoneKorea(me?.member.phone);
+
+  const phone = useMemo(() => {
+    const raw = me?.member?.phone;
+    return raw ? formatPhoneKorea(raw) : "";
+  }, [me?.member?.phone]);
 
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const objectUrlRef = useRef<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
+  const [error, setError] = useState<string | null>(null);
   const [isUploadingProfile, setIsUploadingProfile] = useState(false);
 
-  // 서버 프로필 URL
-  const serverProfileUrl = useMemo(() => {
-    const url = me?.roleData.user?.profileImage;
-    return typeof url === "string" ? url : "";
-  }, [me?.roleData.user?.profileImage]);
+  // 서버가 내려주는 값(키 또는 URL)
+  const serverProfileUrlOrKey = useMemo(() => {
+    const v = me?.roleData?.user?.profileImage;
+    return typeof v === "string" ? v : "";
+  }, [me?.roleData?.user?.profileImage]);
 
-  // src="" 방지: 없으면 null
-  const previewSrc =
-    objectUrl ?? (serverProfileUrl.length > 0 ? serverProfileUrl : null);
+  // 우선순위: objectUrl(즉시 미리보기) > server > fallback
+  const basePreviewSrc = useMemo(() => {
+    if (objectUrl) return objectUrl;
+    if (serverProfileUrlOrKey && serverProfileUrlOrKey.length > 0)
+      return serverProfileUrlOrKey;
+    return FALLBACK_PROFILE_SRC;
+  }, [objectUrl, serverProfileUrlOrKey]);
+
+  // 실제 img src (resolve 적용)
+  const imgSrc = useMemo(
+    () => resolveProfileSrc(basePreviewSrc),
+    [basePreviewSrc],
+  );
 
   // 토스트
   const navigate = useNavigate();
@@ -89,21 +126,17 @@ export function EditInfoPage() {
     return null;
   };
 
-  // presigned -> put upload -> editMe 3단계 프로세스 처리
   const { mutateAsync: issuePresignedUrl } = useIssuePresignedUrl();
   const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
+
   const { mutateAsync: editMe } = useEditMe();
 
   const uploadProfileImage = async (picked: File) => {
     if (!me) throw new Error("내 정보가 아직 없어요.");
 
-    const memberId = me.member.memberId;
-
-    if (typeof memberId !== "number") {
-      throw new Error(
-        "memberId를 찾을 수 없어요. me DTO(member.id/memberId) 확인해줘.",
-      );
-    }
+    const memberId = me.member?.memberId;
+    if (typeof memberId !== "number")
+      throw new Error("memberId를 찾을 수 없어요.");
 
     setIsUploadingProfile(true);
 
@@ -127,13 +160,8 @@ export function EditInfoPage() {
         putUrl,
       );
 
+      //  여기서 서버에  url 저장
       await editMe({ profileImageUrl: publicUrlOrKey });
-
-      if (objectUrlRef.current) {
-        URL.revokeObjectURL(objectUrlRef.current);
-        objectUrlRef.current = null;
-      }
-      setObjectUrl(null);
       setError(null);
     } finally {
       setIsUploadingProfile(false);
@@ -158,20 +186,27 @@ export function EditInfoPage() {
       objectUrlRef.current = null;
     }
 
-    // 미리보기 세팅
+    // 미리보기 세팅 (즉시 보여야 함)
     const url = URL.createObjectURL(picked);
     objectUrlRef.current = url;
     setObjectUrl(url);
 
-    // 업로드 + editMe
     try {
       await uploadProfileImage(picked);
     } catch (err) {
-      const m =
-        err instanceof Error ? err.message : "프로필 사진 업로드에 실패했어요.";
-      setError(m);
+      console.log(err);
     }
   };
+
+  useEffect(() => {
+    if (!objectUrlRef.current) return;
+    if (!serverProfileUrlOrKey) return;
+
+    // 서버 값이 들어왔으니 blob 미리보기 정리
+    URL.revokeObjectURL(objectUrlRef.current);
+    objectUrlRef.current = null;
+    setObjectUrl(null);
+  }, [serverProfileUrlOrKey]);
 
   useEffect(() => {
     return () => {
@@ -186,16 +221,20 @@ export function EditInfoPage() {
     <div className="relative flex h-full flex-1 flex-col">
       <header className="border-neutral-875 flex flex-col items-center justify-center gap-3 border-b-[0.4rem] pt-8 pb-6">
         <div className="border-radius-100 h-[5rem] w-[5rem] overflow-hidden rounded-full border border-orange-400">
-          {previewSrc ? (
-            <img
-              src={previewSrc}
-              alt="프로필 이미지"
-              draggable={false}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="h-full w-full bg-neutral-800" />
-          )}
+          <img
+            src={imgSrc}
+            alt="프로필 이미지"
+            draggable={false}
+            className="h-full w-full object-cover"
+            onError={(e) => {
+              const resolvedFallback = resolveProfileSrc(FALLBACK_PROFILE_SRC);
+              if (
+                (e.currentTarget as HTMLImageElement).src !== resolvedFallback
+              ) {
+                (e.currentTarget as HTMLImageElement).src = resolvedFallback;
+              }
+            }}
+          />
         </div>
 
         <button
@@ -226,13 +265,13 @@ export function EditInfoPage() {
         <OptionLink
           to="./nickname"
           text="닉네임"
-          info={me?.roleData.user?.nickname}
+          info={me?.roleData?.user?.nickname ?? ""}
           infoColor="gray"
         />
 
         <div className="flex justify-between p-4">
           <p>이름</p>
-          <p className="mr-8 text-neutral-500">{me?.member.name}</p>
+          <p className="mr-8 text-neutral-500">{me?.member?.name ?? ""}</p>
         </div>
 
         <OptionLink to="./phone" text="연락처" info={phone} infoColor="gray" />
@@ -263,6 +302,7 @@ export function EditInfoPage() {
           onCancel={() => setIsLogoutModalOpen(false)}
         />
       </main>
+
       <LoadingSpinner open={isLoading} />
 
       {showToast ? (
