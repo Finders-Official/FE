@@ -199,8 +199,8 @@ export default function PhotoFeedSearchPage() {
           <div className="flex flex-col gap-4">
             {recentSearches.map((search) => (
               <SearchPost
-                key={search.id}
-                historyId={search.id}
+                key={search.searchHistoryId}
+                historyId={search.searchHistoryId}
                 image={search.imageUrl}
                 text={search.keyword}
                 onClick={() => handleSearch(search.keyword)}

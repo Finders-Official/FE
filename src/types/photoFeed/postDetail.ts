@@ -20,6 +20,7 @@ export type PostDetailResponse = {
 };
 
 type LabReview = {
+  postId: number;
   labId: number;
   labName: string;
   content: string;
@@ -56,6 +57,7 @@ export type LikesResponse = {
  */
 export type PostComment = {
   commentId: number;
+  postId: number;
   nickname: string;
   profileImageUrl: string;
   content: string;
