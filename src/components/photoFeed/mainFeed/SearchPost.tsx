@@ -1,4 +1,4 @@
-import { LogoIcon, XMarkIcon } from "@/assets/icon";
+import { BigLogoIcon, XMarkIcon } from "@/assets/icon";
 
 export type SearchPostProps = {
   historyId: number;
@@ -37,7 +37,7 @@ export default function SearchPost({
           />
         ) : (
           <div className="flex h-21 w-21 items-center justify-center rounded-2xl">
-            <LogoIcon className="h-8 w-8" />
+            <BigLogoIcon className="h-full w-full" />
           </div>
         )}
         <span className="text-4 leading-[155%] tracking-[-0.02em] text-neutral-200">
