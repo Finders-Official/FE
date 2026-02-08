@@ -17,7 +17,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
   if (photoLab.isFavorite !== prevFavorite) {
     setPrevFavorite(photoLab.isFavorite);
     setIsFavorite(photoLab.isFavorite);
-  }
+  } // TODO: useEffect 사용 or 페이지에서 override
 
   const starColorClass = isFavorite
     ? "fill-orange-500 text-orange-500"

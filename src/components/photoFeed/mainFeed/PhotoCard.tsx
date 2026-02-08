@@ -30,7 +30,7 @@ export default function PhotoCard({
   if (likedFromProps !== prevLikedFromProps) {
     setPrevLikedFromProps(likedFromProps);
     setOptimisticLiked(likedFromProps);
-  }
+  } // TODO : useEffect 사용 or 페이지에서 override
 
   const heartColorClass = optimisticLiked
     ? "fill-orange-500 text-orange-500"
