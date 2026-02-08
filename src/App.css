@@ -48,10 +48,6 @@
   scrollbar-width: none; /* Firefox */
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
 /* 스크롤 영역 오른쪽 fade-out, webkit은 부분 지원 브라우저를 위해 */
 .scroll-fade-right {
   --scroll-fade-gradient: linear-gradient(

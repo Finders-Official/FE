@@ -25,8 +25,8 @@ export default function ReviewPhotoLabPage() {
   const files = useNewPostState((s) => s.files);
   const imageMetas = useNewPostState((s) => s.imageMetas);
 
-  const labId = useNewPostState((s) => s.labId);
-  const labName = useNewPostState((s) => s.labName);
+  const labId = useNewPostState((s) => s.labInfo?.labId);
+  const labName = useNewPostState((s) => s.labInfo?.name);
 
   const isSelfDeveloped = useNewPostState((s) => s.isSelfDeveloped);
 

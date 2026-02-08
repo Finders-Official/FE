@@ -4,6 +4,6 @@ import type { MyCurrentWorkResponse } from "@/types/photomanage/process";
 export const getCurrentWork = async (): Promise<{
   data: MyCurrentWorkResponse | null;
 }> => {
-  const { data } = await axiosInstance.get("/photos/current-work");
+  const { data } = await axiosInstance.get("/photos/me/work-in-progress");
   return data;
 };

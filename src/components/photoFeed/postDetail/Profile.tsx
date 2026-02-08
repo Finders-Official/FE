@@ -1,8 +1,9 @@
 import { DefaultProfileIcon, EllipsisVerticalIcon } from "@/assets/icon";
-import { useState } from "react";
-import ActionSheet from "./ActionSheet";
+import { useCallback, useMemo, useState } from "react";
+import ActionSheet, { type ActionSheetAction } from "./ActionSheet";
 import { timeAgo } from "@/utils/timeAgo";
 import { useDeletePost, useDeleteComment } from "@/hooks/photoFeed";
+import { useNavigate } from "react-router";
 
 type ProfileType = "post" | "comment";
 
@@ -16,6 +17,28 @@ interface ProfileProps {
   objectId: number; // postId or commentId
 }
 
+function formatKoreanDate(iso: string) {
+  // "2026-02-08T12:34:56" -> "2026년 2월 8일"
+  const [splitDate] = iso.split("T");
+  const [year, month, day] = splitDate.split("-");
+  return `${year}년 ${Number(month)}월 ${Number(day)}일`;
+}
+
+async function shareCurrentUrl() {
+  const url = window.location.href;
+
+  if (navigator.share) {
+    await navigator.share({
+      title: "파인더스",
+      text: "게시글 공유",
+      url,
+    });
+    return;
+  }
+
+  await navigator.clipboard.writeText(url);
+}
+
 export default function Profile({
   type,
   userName,
@@ -25,18 +48,101 @@ export default function Profile({
   isOwner,
   objectId,
 }: ProfileProps) {
+  const navigate = useNavigate();
   const [moreMenu, setMoreMenu] = useState(false);
 
-  // date에서 시간 추출
-  const time = timeAgo(date);
+  const { mutateAsync: deletePostAsync, isPending: isPostPending } =
+    useDeletePost();
+  const { mutateAsync: deleteCommentAsync, isPending: isCommentPending } =
+    useDeleteComment();
 
-  // 0000년 00월 00일 포맷으로 변환
-  const [splitDate] = date.split("T");
-  const [year, month, day] = splitDate.split("-");
-  const formattedDate = `${year}년 ${Number(month)}월 ${Number(day)}일`;
+  const isPost = type === "post";
+  const isComment = type === "comment";
 
-  const { mutate: deletePost } = useDeletePost();
-  const { mutate: deleteComment } = useDeleteComment();
+  const time = useMemo(() => timeAgo(date), [date]);
+  const formattedDate = useMemo(() => formatKoreanDate(date), [date]);
+
+  // 게시글 삭제 핸들러
+  const handleDeletePost = useCallback(async () => {
+    if (isPostPending) return;
+
+    try {
+      await deletePostAsync(objectId);
+      setMoreMenu(false);
+      navigate("/photoFeed", { state: { isDeleted: true } });
+    } catch (e) {
+      console.error(e); // TODO 토스트 메세지
+    }
+  }, [isPostPending, deletePostAsync, objectId, navigate]);
+
+  // 코멘트 삭제 핸들러
+  const handleDeleteComment = useCallback(async () => {
+    if (isCommentPending) return;
+
+    try {
+      await deleteCommentAsync(objectId);
+      setMoreMenu(false);
+    } catch (e) {
+      console.error(e); // TODO 토스트 메세지
+    }
+  }, [isCommentPending, deleteCommentAsync, objectId]);
+
+  const actions: ActionSheetAction[] = useMemo(() => {
+    // 메뉴 없는 케이스는 빈 배열
+    if (isComment && !isOwner) return [];
+    if (isPost && !isOwner) {
+      return [
+        {
+          label: "공유하기",
+          disabled: isPostPending,
+          onClick: async () => {
+            if (isPostPending) return;
+            await shareCurrentUrl();
+            setMoreMenu(false);
+          },
+        },
+      ];
+    }
+
+    if (isPost && isOwner) {
+      return [
+        {
+          label: "공유하기",
+          disabled: isPostPending,
+          onClick: async () => {
+            await shareCurrentUrl();
+            setMoreMenu(false);
+          },
+        },
+        {
+          label: "삭제하기",
+          disabled: isPostPending,
+          variant: "danger",
+          onClick: handleDeletePost,
+        },
+      ];
+    }
+
+    // comment + owner
+    return [
+      {
+        label: "삭제하기",
+        disabled: isCommentPending,
+        variant: "danger",
+        onClick: handleDeleteComment,
+      },
+    ];
+  }, [
+    handleDeletePost,
+    handleDeleteComment,
+    isComment,
+    isOwner,
+    isPost,
+    isPostPending,
+    isCommentPending,
+  ]);
+
+  const showMenu = actions.length > 0;
 
   return (
     <div className="flex items-start gap-2">
@@ -44,22 +150,22 @@ export default function Profile({
       {avatarUrl ? (
         <img
           src={avatarUrl}
-          alt={userName}
+          alt={userName ?? "프로필"}
           className="h-9 w-9 rounded-full"
-          width="36"
-          height="36"
+          width={36}
+          height={36}
         />
       ) : (
         <DefaultProfileIcon
           className="h-9 w-9 rounded-full"
-          width="36"
-          height="36"
+          width={36}
+          height={36}
         />
       )}
 
       {/* content */}
       <div className="flex flex-1 flex-col">
-        {type === "post" && (
+        {isPost && (
           <>
             <p className="text-[0.8125rem] font-semibold text-neutral-200">
               {userName}
@@ -70,7 +176,7 @@ export default function Profile({
           </>
         )}
 
-        {type === "comment" && (
+        {isComment && (
           <>
             <div className="flex gap-3">
               <p className="text-[0.8125rem] font-semibold text-neutral-200">
@@ -87,63 +193,24 @@ export default function Profile({
         )}
       </div>
 
-      {/* owner menu icon */}
-      {isOwner && (
+      {/* menu icon */}
+      {showMenu && (
         <button
           type="button"
           className="inline-flex h-9 w-9 items-center justify-center"
           aria-label="더보기"
-          onClick={() => {
-            setMoreMenu(true);
-          }}
+          onClick={() => setMoreMenu(true)}
         >
           <EllipsisVerticalIcon className="h-4 w-[3px]" />
         </button>
       )}
 
-      {/* more menu */}
-      {moreMenu && type === "post" && (
+      {/* ActionSheet */}
+      {showMenu && (
         <ActionSheet
           open={moreMenu}
           onClose={() => setMoreMenu(false)}
-          actions={[
-            {
-              label: "공유하기",
-              onClick: async () => {
-                if (navigator.share) {
-                  await navigator.share({
-                    title: "파인더스",
-                    text: "게시글 공유",
-                    url: location.href,
-                  });
-                } else {
-                  await navigator.clipboard.writeText(location.href);
-                }
-              },
-            },
-            {
-              label: "삭제하기",
-              variant: "danger",
-              onClick: () => {
-                deletePost(objectId);
-              },
-            },
-          ]}
-        />
-      )}
-      {moreMenu && type === "comment" && (
-        <ActionSheet
-          open={moreMenu}
-          onClose={() => setMoreMenu(false)}
-          actions={[
-            {
-              label: "삭제하기",
-              variant: "danger",
-              onClick: () => {
-                deleteComment(objectId);
-              },
-            },
-          ]}
+          actions={actions}
         />
       )}
     </div>

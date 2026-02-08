@@ -16,6 +16,8 @@ type AuthState = {
   setMemberId: (memberId: number) => void;
 };
 
+const AUTH_STORAGE_KEY = "finders-auth";
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -23,7 +25,18 @@ export const useAuthStore = create<AuthState>()(
 
       setUser: (user) => set({ user }),
 
-      clearUser: () => set({ user: null }),
+      // 완전 로그아웃: zustand state + persist 모두 제거
+      clearUser: () => {
+        set({ user: null });
+        try {
+          localStorage.removeItem(AUTH_STORAGE_KEY);
+        } catch (e) {
+          console.error(
+            "로그아웃 처리 중 로컬 스토리지 삭제에 실패했습니다.",
+            e,
+          );
+        }
+      },
 
       setNickname: (nickname) => {
         const cur = get().user;

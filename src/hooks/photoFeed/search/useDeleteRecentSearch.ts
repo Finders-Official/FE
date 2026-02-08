@@ -6,10 +6,11 @@ export function useDeleteRecentSearch() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (historyId: number) => deleteRecentSearch(historyId),
+    mutationFn: (searchHistoryId: number) =>
+      deleteRecentSearch(searchHistoryId),
 
     // 1. 요청 직전에 UI 먼저 변경
-    onMutate: async (historyId: number) => {
+    onMutate: async (searchHistoryId: number) => {
       // 진행 중인 refetch 중단 (덮어쓰기 방지)
       await queryClient.cancelQueries({
         queryKey: ["recentSearches"],
@@ -23,7 +24,8 @@ export function useDeleteRecentSearch() {
       // 캐시에서 해당 검색어 즉시 제거
       queryClient.setQueryData<SearchHistory[]>(
         ["recentSearches"],
-        (old) => old?.filter((item) => item.id !== historyId) ?? [],
+        (old) =>
+          old?.filter((item) => item.searchHistoryId !== searchHistoryId) ?? [],
       );
 
       // onError에서 쓸 컨텍스트 반환

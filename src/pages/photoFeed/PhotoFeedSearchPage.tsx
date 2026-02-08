@@ -8,16 +8,13 @@ import BottomSheet from "@/components/common/BottomSheet";
 import SelectFilter from "@/components/photoFeed/mainFeed/SelectFilter";
 import { TabBar } from "@/components/common/TabBar";
 import SearchPost from "@/components/photoFeed/mainFeed/SearchPost";
-
-import {
-  useRecentSearches,
-  useRelatedSearches,
-  useSearchPosts,
-  useDeleteRecentSearch,
-  useDeleteRecentSearchesAll,
-} from "@/hooks/photoFeed";
+import { useRecentSearches } from "@/hooks/photoFeed/search/useRecentSearches";
 import type { Filter } from "@/types/photoFeed/postSearch";
+import { useRelatedSearches } from "@/hooks/photoFeed/search/useRelatedSearches";
 import { KeywordSuggestionSection } from "@/components/photoLab/search";
+import { useSearchPosts } from "@/hooks/photoFeed/search/useSearchPosts";
+import { useDeleteRecentSearch } from "@/hooks/photoFeed/search/useDeleteRecentSearch";
+import { useDeleteRecentSearchesAll } from "@/hooks/photoFeed/search/useDeleteRecentSearchesAll";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import SearchItemSkeleton from "@/components/photoFeed/mainFeed/SearchItemSkeleton";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
@@ -108,17 +105,29 @@ export default function PhotoFeedSearchPage() {
   const resetToRecent = () => {
     setInputText("");
     setSearchText("");
-    setIsSearching(false);
+    setIsSearching(false); // 완전 나가기(blur/뒤로가기/clear 버튼 등)
+    refetchRecentSearches();
+  };
+
+  const resetToRecentButKeepSearching = () => {
+    setInputText("");
+    setSearchText("");
+    setIsSearching(true); // 포커스 유지 + 다시 타이핑하면 related로 갈 수 있게
     refetchRecentSearches();
   };
 
   // 검색어 변경 핸들러
   const handleQueryChange = (value: string) => {
+    setInputText(value);
     if (value === "") {
-      resetToRecent();
+      if (mode === "result") {
+        setSearchText("");
+        setIsSearching(true);
+        return;
+      }
+      resetToRecentButKeepSearching();
       return;
     }
-    setInputText(value);
   };
 
   // 검색 제출 핸들러
@@ -142,20 +151,16 @@ export default function PhotoFeedSearchPage() {
     onIntersect: onIntersect,
   });
 
-  {
-    /** API 요청 실패 */
-  }
+  /** API 요청 실패 */
   const errorResponse = () => {
     return (
-      <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-        <p className="text-red-400">불러오기에 실패했어요.</p>
+      <div className="flex items-center justify-center py-6 text-red-400">
+        데이터 불러오기에 실패했어요.
       </div>
     );
   };
 
-  {
-    /** 최근 검색 기록 */
-  }
+  /** 최근 검색 기록 */
   const renderRecent = () => {
     if (isRecentPending) {
       return (
@@ -194,8 +199,8 @@ export default function PhotoFeedSearchPage() {
           <div className="flex flex-col gap-4">
             {recentSearches.map((search) => (
               <SearchPost
-                key={search.id}
-                historyId={search.id}
+                key={search.searchHistoryId}
+                historyId={search.searchHistoryId}
                 image={search.imageUrl}
                 text={search.keyword}
                 onClick={() => handleSearch(search.keyword)}
@@ -227,7 +232,7 @@ export default function PhotoFeedSearchPage() {
 
     if (isRelatedError) return errorResponse();
 
-    if (relatedSearches && relatedSearches.length === 0) {
+    if (relatedSearches && relatedSearches.length !== 0) {
       return (
         <div className="flex flex-col gap-[1.875rem] pt-5">
           <KeywordSuggestionSection
@@ -299,21 +304,26 @@ export default function PhotoFeedSearchPage() {
     }
   };
 
+  const searchBarProps = {
+    value: inputText,
+    onChange: handleQueryChange,
+    placeholder: "게시글 제목, 본문, 현상소 이름 검색",
+    showBack: true,
+    onBack: () => {
+      if (mode === "recent" || mode === "related") navigate(-1);
+      else if (mode === "result") resetToRecent();
+    },
+    onSearch: handleSearch,
+    onFocus: () => setIsSearching(true),
+    rightIcon: mode === "related" ? ("clear" as const) : ("none" as const),
+    onClear: resetToRecent,
+  };
+
   return (
     <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
       <div className="py-3">
-        <SearchBar
-          value={inputText}
-          onChange={handleQueryChange}
-          placeholder="게시글 제목, 본문, 현상소 이름 검색"
-          showBack
-          onBack={() => navigate(-1)}
-          onSearch={handleSearch}
-          onFocus={() => setIsSearching(true)}
-          rightIcon="clear"
-          onClear={resetToRecent}
-        />
+        <SearchBar {...searchBarProps} />
       </div>
 
       {/* mode에 따른 분기 */}
@@ -322,14 +332,16 @@ export default function PhotoFeedSearchPage() {
       {mode === "result" && renderResult()}
 
       {/* 새 게시물 작성 플로팅 버튼 */}
-      <button
-        type="button"
-        aria-label="새 게시물 작성"
-        onClick={() => setIsCreateModalOpen(true)}
-        className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
-      >
-        <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
-      </button>
+      {mode === "result" && (
+        <button
+          type="button"
+          aria-label="새 게시물 작성"
+          onClick={() => setIsCreateModalOpen(true)}
+          className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
+        >
+          <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
+        </button>
+      )}
 
       {isCreateModalOpen && (
         <NewPostModal

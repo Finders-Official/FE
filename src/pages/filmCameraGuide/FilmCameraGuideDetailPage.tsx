@@ -40,16 +40,6 @@ const FilmCameraGuideDetailPage = () => {
           alt={data.title}
           className="h-full w-full object-cover"
         />
-
-        {/* 히어로 텍스트 */}
-        <div className="absolute bottom-6 left-0 px-4">
-          <h2 className="mb-2 text-[1.125rem] leading-tight font-semibold text-neutral-100">
-            {data.title}
-          </h2>
-          <p className="font-regular text-[1rem] text-neutral-100">
-            {data.summary}
-          </p>
-        </div>
       </section>
 
       {/* 3. 본문 영역 */}

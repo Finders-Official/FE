@@ -6,6 +6,7 @@ import { OptionLink } from "@/components/mypage/OptionLink";
 import { useLogout } from "@/hooks/auth/login";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useMe, useEditMe } from "@/hooks/member";
+import { useAuthStore } from "@/store/useAuth.store";
 import { formatPhoneKorea } from "@/utils/formatPhoneKorea";
 import {
   pickPresignedPutUrl,
@@ -49,9 +50,18 @@ export function EditInfoPage() {
   // 로그아웃 모달
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
+  // 완전 로그아웃
+  const clearUser = useAuthStore((s) => s.clearUser);
+
   const { mutate: doLogout, isPending: isLogoutPending } = useLogout({
-    onSuccess: () => navigate("/auth/login", { replace: true }),
-    onError: () => navigate("/auth/login", { replace: true }),
+    onSuccess: () => {
+      clearUser();
+      navigate("/auth/login", { replace: true });
+    },
+    onError: () => {
+      clearUser();
+      navigate("/auth/login", { replace: true });
+    },
   });
 
   const handleLogout = () => setIsLogoutModalOpen(true);

@@ -108,21 +108,25 @@ export default function FilterBottomSheet({
     }
     if (selectedRegion) {
       filter.region = selectedRegion;
+
+      const parent = regionData?.parents.find(
+        (p) => p.parentName === selectedRegion,
+      );
+      if (parent) {
+        filter.parentRegionId = parent.parentId;
+      }
     }
     if (selectedSubRegion) {
       filter.subRegion = selectedSubRegion;
 
-      // regionId 매핑
-      if (selectedSubRegion === "전체") {
-        // TODO: 백엔드에서 parentId로 하위 전체 조회 지원 시 parentId 전달
-        // 현재는 regionId를 보내지 않음 (전체 지역 결과 노출)
-      } else if (selectedRegion) {
+      if (selectedSubRegion !== "전체" && selectedRegion) {
         const key = `${selectedRegion}-${selectedSubRegion}`;
         const id = regionIdMap.get(key);
         if (id) {
-          filter.regionId = id;
+          filter.regionIds = [id];
         }
       }
+      // "전체" 선택 시: parentRegionId만 전달, regionIds 없음
     }
 
     onApply(filter);
@@ -164,6 +168,7 @@ export default function FilterBottomSheet({
       expandedVh={expandedVh}
       collapsedRatio={expandedVh / 100}
       initialSnap="expanded"
+      overlay={true}
     >
       <div className="flex h-full flex-col">
         {/* 탭 */}
