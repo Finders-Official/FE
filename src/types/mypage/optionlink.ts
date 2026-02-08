@@ -7,4 +7,5 @@ export type OptionLinkItem = {
   info?: ReactNode;
   infoColor?: "white" | "gray";
   Icon?: IconComponent;
+  onClick?: () => void;
 };

@@ -1,7 +1,19 @@
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import { useLikedPostsInfinite } from "@/hooks/my";
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
+import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
+import { useLikePost, useUnlikePost } from "@/hooks/photoFeed";
+
+const SKELETON_COUNT = 8;
+
+const SKELETON_HEIGHTS = [
+  "h-[180px]",
+  "h-[220px]",
+  "h-[260px]",
+  "h-[300px]",
+  "h-[340px]",
+];
 
 export function LikedPostPage() {
   const {
@@ -14,11 +26,28 @@ export function LikedPostPage() {
     refetch,
   } = useLikedPostsInfinite(10);
 
+  const { mutate: unlikePost } = useUnlikePost();
+  const { mutate: likePost } = useLikePost();
+
+  //페이지 안에서만 유지되는 좋아요 상태 덮어쓰기
+  const [likedOverrideById, setLikedOverrideById] = useState<
+    Record<number, boolean>
+  >({});
+
   // 서버 pages -> flat list
   const items = useMemo(
     () => data?.pages.flatMap((p) => p.data.previewList) ?? [],
     [data],
   );
+
+  //화면에 뿌릴 때 override를 적용한 items
+  const viewItems = useMemo(() => {
+    return items.map((p) => {
+      const override = likedOverrideById[p.postId];
+      const isLiked = typeof override === "boolean" ? override : p.isLiked;
+      return { ...p, isLiked };
+    });
+  }, [items, likedOverrideById]);
 
   // 바닥 감지용 sentinel
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -38,9 +67,43 @@ export function LikedPostPage() {
     threshold: 0,
   });
 
-  if (isLoading) {
-    return <div className="p-6 text-neutral-100">로딩중...</div>;
-  }
+  /*
+   * - prevIsLiked(토글 전 상태) 기준으로 서버 호출
+   * - UI는 즉시 override로 토글
+   * - 실패하면 rollback
+   */
+  const handleToggleLike = useCallback(
+    (postId: number, prevIsLiked: boolean) => {
+      // 1) UI 즉시 반영
+      setLikedOverrideById((prev) => ({
+        ...prev,
+        [postId]: !prevIsLiked,
+      }));
+
+      // 2) 서버 호출(토글 전 상태 기준)
+      if (prevIsLiked) {
+        unlikePost(postId, {
+          onError: () => {
+            // 3) 실패 롤백
+            setLikedOverrideById((prev) => ({
+              ...prev,
+              [postId]: prevIsLiked,
+            }));
+          },
+        });
+      } else {
+        likePost(postId, {
+          onError: () => {
+            setLikedOverrideById((prev) => ({
+              ...prev,
+              [postId]: prevIsLiked,
+            }));
+          },
+        });
+      }
+    },
+    [likePost, unlikePost],
+  );
 
   if (isError) {
     return (
@@ -58,28 +121,34 @@ export function LikedPostPage() {
   }
 
   return (
-    <div className="px-4 py-6">
-      <main className="rounded-md border border-neutral-800 p-5 text-neutral-100">
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-[1rem] font-semibold">좋아요한 게시물</h2>
-          <p className="text-xs text-neutral-400">
-            {data?.pages?.[0]?.data.totalCount ?? 0}개
-          </p>
-        </div>
-
-        {/* Masonry 느낌: PhotoCard가 break-inside:avoid 쓰고 있어서 columns가 잘 맞음 */}
+    <div className="px-4">
+      <main>
         <div className="columns-2 gap-4">
-          {items.map((photo) => (
-            <PhotoCard
-              key={photo.postId}
-              photo={photo}
-              isLiked={true}
-              // onToggleLike={...}  // 나중에 좋아요 해제 API
-            />
-          ))}
+          {isLoading
+            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
+                const heightClass =
+                  SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
+
+                return (
+                  <PhotoCardSkeleton
+                    key={`skeleton-${i}`}
+                    className={heightClass}
+                  />
+                );
+              })
+            : viewItems.map((photo) => (
+                <PhotoCard
+                  key={photo.postId}
+                  photo={photo}
+                  isLiked={photo.isLiked} //override 반영된 값
+                  isShowLiked={true}
+                  onToggleLike={() =>
+                    handleToggleLike(photo.postId, photo.isLiked)
+                  }
+                />
+              ))}
         </div>
 
-        {/* sentinel */}
         <div ref={bottomRef} className="h-10" />
 
         {isFetchingNextPage && (
@@ -88,15 +157,13 @@ export function LikedPostPage() {
           </div>
         )}
 
-        {!hasNextPage && items.length > 0 && (
-          <div className="mt-3 text-center text-sm text-neutral-500">
-            마지막 페이지야
-          </div>
+        {!hasNextPage && viewItems.length > 0 && (
+          <div className="mt-3 text-center text-sm text-neutral-500"></div>
         )}
 
-        {items.length === 0 && !isFetchingNextPage && (
+        {viewItems.length === 0 && !isFetchingNextPage && (
           <div className="py-10 text-center text-sm text-neutral-400">
-            아직 좋아요한 게시물이 없어
+            아직 좋아요한 게시물이 없습니다.
           </div>
         )}
       </main>
