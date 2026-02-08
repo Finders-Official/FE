@@ -25,7 +25,7 @@ import {
 import { displayTimesToApiTimes } from "@/utils/time";
 import { WEEKDAYS } from "@/constants/date";
 import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
-import type { FilterState } from "@/types/photoLab";
+import { usePhotoLabFilter } from "@/store/usePhotoLabFilter.store";
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
@@ -64,10 +64,10 @@ export default function PhotoLabSearchPage() {
     useRecentSearches();
   const [isRecentExpanded, setIsRecentExpanded] = useState(false);
 
-  // 필터 상태 (results 화면용)
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  // 필터 상태 (목록 페이지와 공유)
+  const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
+    usePhotoLabFilter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filter, setFilter] = useState<FilterState>({});
 
   // 키워드 자동완성
   const { data: filteredKeywords = [] } = useAutocomplete(query);

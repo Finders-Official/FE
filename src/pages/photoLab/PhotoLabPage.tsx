@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
+import { usePhotoLabFilter } from "@/store/usePhotoLabFilter.store";
 import { useNavigate, useLocation } from "react-router";
 import { Header, FilterContainer } from "@/components/common";
 import {
@@ -15,7 +16,8 @@ import {
   useFavoriteToggle,
 } from "@/hooks/photoLab";
 import { displayTimesToApiTimes } from "@/utils/time";
-import type { LabNews, FilterState } from "@/types/photoLab";
+import type { LabNews } from "@/types/photoLab";
+import type { FilterState } from "@/types/photoLab";
 
 // TODO: Rolling 공지 API 엔드포인트 확정 후 연동
 const mockNews: LabNews[] = [
@@ -40,11 +42,10 @@ export default function PhotoLabPage() {
   // 메인 페이지 "현상 맡기기" 버튼을 통한 진입여부
   const isFromMain = location.state?.from === "main";
 
-  // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
-  // 필터 상태
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  // 필터 상태 (검색 페이지와 공유)
+  const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
+    usePhotoLabFilter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filter, setFilter] = useState<FilterState>({});
 
   // 위치 정보
   const {
@@ -107,13 +108,16 @@ export default function PhotoLabPage() {
   const filterValue = formatFilterValue();
 
   // 태그 토글
-  const handleTagToggle = useCallback((tagId: number) => {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId)
-        ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId],
-    );
-  }, []);
+  const handleTagToggle = useCallback(
+    (tagId: number) => {
+      setSelectedTagIds((prev) =>
+        prev.includes(tagId)
+          ? prev.filter((id) => id !== tagId)
+          : [...prev, tagId],
+      );
+    },
+    [setSelectedTagIds],
+  );
 
   // 즐겨찾기 토글
   const { mutate: toggleFavorite } = useFavoriteToggle();
