@@ -21,3 +21,15 @@ export interface Pagination {
 export type ApiResponseWithPagination<T> = ApiResponse<T> & {
   pagination: Pagination;
 };
+
+export interface Slice {
+  page: number;
+  size: number;
+  first: boolean;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+export type ApiResponseWithSlice<T> = ApiResponse<T> & {
+  slice: Slice;
+};
