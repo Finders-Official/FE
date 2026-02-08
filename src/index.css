@@ -47,7 +47,7 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Body 스크롤 원천 차단 (주소창 춤춤 방지) */
+    overflow: auto; /* Body 스크롤 원천 차단 (주소창 춤춤 방지) -> auto로 일단 롤백 */
     overscroll-behavior: none; /* 전체 화면 바운스(텐션) 제거 */
 
     /* iOS 터치 하이라이트 & 텍스트 선택 방지 */
@@ -67,7 +67,7 @@
   #root {
     height: 100%;
     width: 100%;
-    overflow: hidden; /* 이중 스크롤 방지 */
+    overflow: auto; /* 이중 스크롤 방지 -> auto로 일단 롤백 */
   }
 }
 
