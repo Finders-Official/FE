@@ -8,7 +8,16 @@ import type {
   PagedApiResponse,
   RegionFilterData,
 } from "@/types/photoLab";
-import type { PopularLab } from "@/types/photoLabSearch";
+import type { PopularLab, LabPreview } from "@/types/photoLabSearch";
+
+// 배열 파라미터 직렬화
+function serializeListParams(params: PhotoLabListParams) {
+  return {
+    ...params,
+    tagIds: params.tagIds?.join(","),
+    regionIds: params.regionIds?.join(","),
+  };
+}
 
 // 현상소 목록 조회
 export async function getPhotoLabList(
@@ -16,7 +25,7 @@ export async function getPhotoLabList(
 ): Promise<PagedApiResponse<PhotoLabItem[]>> {
   const res = await axiosInstance.get<PagedApiResponse<PhotoLabItem[]>>(
     "/photo-labs",
-    { params },
+    { params: serializeListParams(params) },
   );
 
   const body = res.data;
@@ -87,6 +96,44 @@ export async function getRegionFilters(): Promise<
     await axiosInstance.get<ApiResponse<RegionFilterData>>(
       "/photo-labs/region",
     );
+
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
+}
+
+// 검색어 자동완성
+export async function getAutocomplete(
+  keyword: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<string[]>> {
+  const res = await axiosInstance.get<ApiResponse<string[]>>(
+    "/photo-labs/search/autocomplete",
+    { params: { keyword }, signal },
+  );
+
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
+}
+
+// 검색 미리보기 (경량)
+export async function getSearchPreview(
+  params: PhotoLabListParams,
+  signal?: AbortSignal,
+): Promise<PagedApiResponse<LabPreview[]>> {
+  const res = await axiosInstance.get<PagedApiResponse<LabPreview[]>>(
+    "/photo-labs/search/preview",
+    { params: serializeListParams(params), signal },
+  );
 
   const body = res.data;
 

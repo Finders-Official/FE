@@ -14,9 +14,10 @@ import {
   usePhotoLabList,
   useFavoriteToggle,
 } from "@/hooks/photoLab";
+import { displayTimeToApiTime } from "@/utils/time";
 import type { LabNews, FilterState } from "@/types/photoLab";
 
-// Mock 데이터 (추후 API 연동)
+// TODO: Rolling 공지 API 엔드포인트 확정 후 연동
 const mockNews: LabNews[] = [
   {
     id: 1,
@@ -57,8 +58,10 @@ export default function PhotoLabPage() {
     usePhotoLabList(
       {
         tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
-        regionId: filter.regionId,
+        parentRegionId: filter.parentRegionId,
+        regionIds: filter.regionIds,
         date: filter.date,
+        time: filter.time ? displayTimeToApiTime(filter.time) : undefined,
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },

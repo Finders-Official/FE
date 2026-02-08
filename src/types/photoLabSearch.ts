@@ -15,11 +15,10 @@ export interface PopularLab {
   name: string;
 }
 
-// 현상소 프리뷰 (자동완성용)
+// 현상소 프리뷰 (검색 미리보기용)
 export interface LabPreview {
   photoLabId: number;
   name: string;
   address: string;
-  distanceKm: number | null;
-  mainImageUrl: string | null;
+  imageUrl: string | null;
 }
