@@ -296,7 +296,7 @@ export default function PhotoDownload() {
         </div>
       )}
       {results.length === 0 ? (
-        <EmptyView />
+        <EmptyView content={"스캔한 사진이 없습니다."} />
       ) : step === "GRID" ? (
         renderGrid()
       ) : (
