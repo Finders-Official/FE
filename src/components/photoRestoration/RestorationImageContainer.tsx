@@ -60,6 +60,13 @@ export const RestorationImageContainer: React.FC<
         onLoad={() => setIsImageLoaded(true)}
       />
 
+      {isGenerating && (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div className="absolute inset-0 bg-[#E94E16]/30" />
+          <div className="absolute inset-0 bg-black/10" />
+        </div>
+      )}
+
       {!restoredImageUrl && !isGenerating && (
         <canvas
           ref={canvasRef}
