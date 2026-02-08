@@ -3,12 +3,16 @@ import { Checkbox } from "@/components/common/CheckBox";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { NoticeCard } from "@/components/mypage";
+import {
+  getWithdrawMessageByCode,
+  type WithdrawBlockMessage,
+} from "@/constants/mypage/withdrawErrorMessage.constant";
 import { useWithDrawMe } from "@/hooks/member";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 function getApiResponseCode(err: unknown): string | undefined {
@@ -16,33 +20,26 @@ function getApiResponseCode(err: unknown): string | undefined {
   return e?.response?.data?.code;
 }
 
+type BlockDialogState = {
+  isOpen: boolean;
+  message: WithdrawBlockMessage;
+};
+
 export function WithDrawPage() {
   const navigate = useNavigate();
-
   const qc = useQueryClient();
 
-  const toastTimerRef = useRef<number | null>(null);
-
-  //체크박스 동의 상태
+  // 체크박스 동의 상태
   const [agreed, setAgreed] = useState(false);
 
-  const [toastMessage, setToastMessage] = useState("");
-  const [showDialog, setShowDialog] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  // 확인 다이얼로그(탈퇴 확인)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  const showToastWithTimeout = (msg: string) => {
-    setToastMessage(msg);
-    setShowToast(true);
-
-    if (toastTimerRef.current !== null) {
-      window.clearTimeout(toastTimerRef.current);
-    }
-
-    toastTimerRef.current = window.setTimeout(() => {
-      setShowToast(false);
-      toastTimerRef.current = null;
-    }, 2000);
-  };
+  // 에러 다이얼로그
+  const [blockDialog, setBlockDialog] = useState<BlockDialogState>({
+    isOpen: false,
+    message: { title: "", description: "" },
+  });
 
   const { mutate: withdraw, isPending } = useWithDrawMe({
     onSuccess: () => {
@@ -52,23 +49,25 @@ export function WithDrawPage() {
     },
     onError: (e) => {
       const code = getApiResponseCode(e);
+      const msg = getWithdrawMessageByCode(code);
 
-      if (code === "MEMBER_400") {
-        showToastWithTimeout("진행 중인 예약이 있어 탈퇴할 수 없어요.");
-        return;
-      }
-
-      // 기타 에러 처리 정책 선택
-      showToastWithTimeout("탈퇴 처리 중 오류가 발생했어요.");
+      // 확인 다이얼로그 닫고, 에러 다이얼로그 오픈
+      setShowConfirmDialog(false);
+      setBlockDialog({ isOpen: true, message: msg });
     },
   });
 
-  //체크박스 토글
+  // 체크박스 토글
   const handleAgreeChange = (nextChecked: boolean) => {
     setAgreed(nextChecked);
   };
 
-  //CTA 클릭 시 로그인으로 리다이렉트
+  // CTA 클릭 시 확인 다이얼로그 오픈
+  const handleClickWithdraw = () => {
+    if (!agreed) return;
+    setShowConfirmDialog(true);
+  };
+
   const handleSubmit = () => {
     if (!agreed) return;
     withdraw();
@@ -102,27 +101,32 @@ export function WithDrawPage() {
           text="탈퇴하기"
           color={agreed ? "orange" : "black"}
           disabled={!agreed}
-          onClick={() => setShowDialog(true)}
+          onClick={handleClickWithdraw}
         />
       </footer>
+
       <LoadingSpinner open={isPending} />
+
+      {/* 탈퇴 확인 다이얼로그 */}
       <DialogBox
         title="탈퇴하기"
         description="정말 '파인더스'를 떠나시겠어요?"
-        isOpen={showDialog}
+        isOpen={showConfirmDialog}
         confirmText="탈퇴하기"
         cancelText="뒤로 가기"
-        onCancel={() => setShowDialog(false)}
+        onCancel={() => setShowConfirmDialog(false)}
         onConfirm={handleSubmit}
       />
+
+      {/* 에러 코드 기반 안내 다이얼로그 */}
       <DialogBox
-        title={toastMessage}
-        description="진행 중인 작업이 모두 완료된 후에 탈퇴가 가능합니다!"
-        isOpen={showToast}
+        title={blockDialog.message.title}
+        description={blockDialog.message.description}
+        isOpen={blockDialog.isOpen}
         confirmButtonStyle="text"
         align="left"
         confirmText="확인"
-        onConfirm={() => setShowToast(false)}
+        onConfirm={() => setBlockDialog((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );
