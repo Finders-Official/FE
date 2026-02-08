@@ -23,7 +23,7 @@ import {
   useSearchPreview,
 } from "@/hooks/photoLab";
 import { displayTimesToApiTimes } from "@/utils/time";
-import { WEEKDAYS } from "@/constants/date";
+import { formatFilterValue } from "@/utils/filterFormat";
 import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
 import { usePhotoLabFilter } from "@/store/usePhotoLabFilter.store";
 
@@ -123,30 +123,7 @@ export default function PhotoLabSearchPage() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 필터 값 포맷
-  const formatFilterValue = (): string | undefined => {
-    const parts: string[] = [];
-    if (filter.date) {
-      const date = new Date(filter.date);
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const weekday = WEEKDAYS[date.getDay()];
-      parts.push(`${month}.${day}(${weekday})`);
-    }
-    if (filter.regionSelections && filter.regionSelections.length > 0) {
-      const first = filter.regionSelections[0];
-      const firstLabel =
-        first.subRegion === "전체"
-          ? `${first.parentName} 전체`
-          : `${first.parentName} ${first.subRegion}`;
-      if (filter.regionSelections.length === 1) {
-        parts.push(firstLabel);
-      } else {
-        parts.push(`${firstLabel} 외 ${filter.regionSelections.length - 1}개`);
-      }
-    }
-    return parts.length > 0 ? parts.join(" • ") : undefined;
-  };
+  const filterValue = formatFilterValue(filter);
 
   // 뒤로가기: 검색 결과 → 검색 입력, 검색 입력 → 현상소 목록
   const handleBack = () => {
@@ -255,7 +232,7 @@ export default function PhotoLabSearchPage() {
             <div className="flex flex-col gap-4 pb-6">
               <FilterContainer
                 label="날짜 / 지역"
-                value={formatFilterValue()}
+                value={filterValue}
                 onClick={() => setIsFilterOpen(true)}
               />
               <FilterTagList

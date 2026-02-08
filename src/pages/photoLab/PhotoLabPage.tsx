@@ -9,15 +9,14 @@ import {
   FilterBottomSheet,
 } from "@/components/photoLab";
 import { SearchIcon } from "@/assets/icon";
-import { WEEKDAYS } from "@/constants/date";
 import {
   useGeolocation,
   usePhotoLabList,
   useFavoriteToggle,
 } from "@/hooks/photoLab";
 import { displayTimesToApiTimes } from "@/utils/time";
-import type { LabNews } from "@/types/photoLab";
-import type { FilterState } from "@/types/photoLab";
+import { formatFilterValue } from "@/utils/filterFormat";
+import type { LabNews, FilterState } from "@/types/photoLab";
 
 // TODO: Rolling 공지 API 엔드포인트 확정 후 연동
 const mockNews: LabNews[] = [
@@ -77,35 +76,7 @@ export default function PhotoLabPage() {
     [data],
   );
 
-  // 필터 값 표시 문자열 계산
-  const formatFilterValue = (): string | undefined => {
-    const parts: string[] = [];
-
-    if (filter.date) {
-      const date = new Date(filter.date);
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const weekday = WEEKDAYS[date.getDay()];
-      parts.push(`${month}.${day}(${weekday})`);
-    }
-
-    if (filter.regionSelections && filter.regionSelections.length > 0) {
-      const first = filter.regionSelections[0];
-      const firstLabel =
-        first.subRegion === "전체"
-          ? `${first.parentName} 전체`
-          : `${first.parentName} ${first.subRegion}`;
-      if (filter.regionSelections.length === 1) {
-        parts.push(firstLabel);
-      } else {
-        parts.push(`${firstLabel} 외 ${filter.regionSelections.length - 1}개`);
-      }
-    }
-
-    return parts.length > 0 ? parts.join(" • ") : undefined;
-  };
-
-  const filterValue = formatFilterValue();
+  const filterValue = formatFilterValue(filter);
 
   // 태그 토글
   const handleTagToggle = useCallback(
