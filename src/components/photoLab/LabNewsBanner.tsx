@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
-import type { LabNews } from "@/types/photoLab";
+import type { PhotoLabNoticeRolling, NoticeType } from "@/types/photoLab";
+
+const NOTICE_TYPE_LABEL: Record<NoticeType, string> = {
+  GENERAL: "공지",
+  EVENT: "이벤트",
+  POLICY: "정책",
+};
 
 interface LabNewsBannerProps {
-  newsList: LabNews[];
+  newsList: PhotoLabNoticeRolling[];
   intervalMs?: number;
   className?: string;
-  onNewsClick?: (news: LabNews) => void;
+  onNewsClick?: (news: PhotoLabNoticeRolling) => void;
 }
 
 export default function LabNewsBanner({
@@ -49,16 +55,16 @@ export default function LabNewsBanner({
       >
         {/* 타입 뱃지 */}
         <span className="shrink-0 rounded-full border border-neutral-300 px-2 py-1 text-[0.625rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-300">
-          {news.type}
+          {NOTICE_TYPE_LABEL[news.noticeType]}
         </span>
 
         {/* 현상소명 + 내용 */}
         <div className="flex items-center gap-1.5 overflow-hidden">
           <span className="shrink-0 text-[0.75rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-300">
-            {news.labName}
+            {news.photoLabName}
           </span>
           <span className="truncate text-[0.75rem] leading-[126%] font-normal tracking-[-0.02em] text-neutral-300">
-            {news.content}
+            {news.noticeTitle}
           </span>
         </div>
       </div>
