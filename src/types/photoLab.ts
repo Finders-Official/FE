@@ -83,6 +83,9 @@ export interface PhotoLabNoticeRolling {
   photoLabName: string;
   noticeTitle: string;
   noticeType: NoticeType;
+  // TODO: 백엔드 response에 startDate, endDate 추가 예정
+  startDate?: string;
+  endDate?: string;
 }
 
 // 지역 선택 항목 (복수 선택용)
