@@ -75,12 +75,14 @@ export type FilterTag =
   | "영화용 필름"
   | "택배 접수";
 
-// 현상소 공지
-export interface LabNews {
-  id: number;
-  type: "공지" | "이벤트" | "할인";
-  labName: string;
-  content: string;
+// 현상소 롤링 공지
+export type NoticeType = "GENERAL" | "EVENT" | "POLICY";
+
+export interface PhotoLabNoticeRolling {
+  photoLabId: number;
+  photoLabName: string;
+  noticeTitle: string;
+  noticeType: NoticeType;
 }
 
 // 지역 선택 항목 (복수 선택용)
