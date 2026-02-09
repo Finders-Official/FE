@@ -61,8 +61,11 @@ import {
 } from "@/pages/mypage";
 
 type RouteHandle =
-  | { title: string; isTab?: boolean; showBack?: boolean }
-  | { isTab: boolean; showBack?: boolean }
+  | {
+      title?: string;
+      isTab?: boolean;
+      showBack?: boolean;
+    }
   | undefined;
 
 // 공통적으로 쓰는 handle 생성기(타이틀 오타/중복 방지)
