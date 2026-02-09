@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-import type { PhotoLabNoticeRolling, NoticeType } from "@/types/photoLab";
-
-const NOTICE_TYPE_LABEL: Record<NoticeType, string> = {
-  GENERAL: "공지",
-  EVENT: "이벤트",
-  POLICY: "정책",
-};
+import type { PhotoLabNoticeRolling } from "@/types/photoLab";
+import { NOTICE_TYPE_LABEL } from "@/constants/photoLab";
 
 interface LabNewsBannerProps {
   newsList: PhotoLabNoticeRolling[];
