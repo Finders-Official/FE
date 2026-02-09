@@ -16,7 +16,10 @@ export default function NoticeSection() {
       {/* 가로 스크롤 리스트 */}
       <div className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-20">
         {notices.map((notice, index) => (
-          <div key={index} className="flex-none snap-start">
+          <div
+            key={`${notice.photoLabId}-${notice.noticeTitle}-${index}`}
+            className="flex-none snap-start"
+          >
             <NoticeSectionCard notice={notice} />
           </div>
         ))}
