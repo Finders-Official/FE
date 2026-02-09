@@ -13,7 +13,7 @@ import { getActiveStatus } from "@/utils/getActiveStatus";
 import { STATUS_INDEX_MAP } from "@/constants/photomanage/status.constant";
 import { getBannerContent } from "@/lib/getBannerContent";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
-import { usePrintSkip } from "@/hooks/photoManage";
+import { usePrintSkip, useConfirmReceipt } from "@/hooks/photoManage";
 
 export default function PhotoManageMainPage() {
   const navigate = useNavigate();
@@ -33,6 +33,9 @@ export default function PhotoManageMainPage() {
 
   // 인화 안 함 확정
   const { mutate: printSkip } = usePrintSkip();
+
+  // 수령 확정
+  const { mutate: confirmReceiptMutate } = useConfirmReceipt();
 
   const workData = currentWorkResponse?.data;
   const setDevelopmentOrderId = usePrintOrderStore(
@@ -67,7 +70,8 @@ export default function PhotoManageMainPage() {
           }),
         onGoFeed: () => navigate("/photoFeed"),
         onGoTrackDelivery: () => {},
-        onConfirmReceived: () => {},
+        onConfirmReceived: () =>
+          confirmReceiptMutate(workData.developmentOrderId),
       })
     : [];
 
