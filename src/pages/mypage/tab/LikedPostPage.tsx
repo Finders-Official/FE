@@ -5,6 +5,7 @@ import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import { useLikePost, useUnlikePost } from "@/hooks/photoFeed";
 import { EmptyOrderState } from "@/components/mypage";
+import Masonry from "react-masonry-css";
 
 const SKELETON_COUNT = 8;
 
@@ -15,6 +16,12 @@ const SKELETON_HEIGHTS = [
   "h-[300px]",
   "h-[340px]",
 ];
+
+const breakpointColumnsObj = {
+  default: 2, // 디자인이 2열이라 고정
+  768: 2,
+  1024: 2,
+};
 
 export function LikedPostPage() {
   const {
@@ -30,7 +37,7 @@ export function LikedPostPage() {
   const { mutate: unlikePost } = useUnlikePost();
   const { mutate: likePost } = useLikePost();
 
-  //페이지 안에서만 유지되는 좋아요 상태 덮어쓰기
+  // 페이지 안에서만 유지되는 좋아요 상태 덮어쓰기
   const [likedOverrideById, setLikedOverrideById] = useState<
     Record<number, boolean>
   >({});
@@ -41,12 +48,12 @@ export function LikedPostPage() {
     [data],
   );
 
-  //화면에 뿌릴 때 override를 적용한 items
+  // 화면에 뿌릴 때 override를 적용한 items
   const viewItems = useMemo(() => {
     return items.map((p) => {
       const override = likedOverrideById[p.postId];
-      const isLiked = typeof override === "boolean" ? override : p.isLiked;
-      return { ...p, isLiked };
+      const nextIsLiked = typeof override === "boolean" ? override : p.isLiked;
+      return { ...p, isLiked: nextIsLiked };
     });
   }, [items, likedOverrideById]);
 
@@ -124,7 +131,11 @@ export function LikedPostPage() {
   return (
     <div>
       <main>
-        <div className="columns-2 gap-4">
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
           {isLoading
             ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
                 const heightClass =
@@ -141,14 +152,14 @@ export function LikedPostPage() {
                 <PhotoCard
                   key={photo.postId}
                   photo={photo}
-                  isLiked={photo.isLiked} //override 반영된 값
+                  isLiked={photo.isLiked}
                   isShowLiked={true}
                   onToggleLike={() =>
                     handleToggleLike(photo.postId, photo.isLiked)
                   }
                 />
               ))}
-        </div>
+        </Masonry>
 
         {isFetchingNextPage && (
           <div className="mt-3 text-center text-sm text-neutral-300">
@@ -157,12 +168,15 @@ export function LikedPostPage() {
         )}
 
         {!hasNextPage && viewItems.length > 0 && (
-          <div className="mt-3 text-center text-sm text-neutral-500"></div>
+          <div className="mt-3 text-center text-sm text-neutral-500" />
         )}
 
         {viewItems.length === 0 && !isFetchingNextPage && (
           <EmptyOrderState description="아직 마음에 드는 글을 담지 않았어요." />
         )}
+
+        {/* sentinel */}
+        <div ref={bottomRef} />
       </main>
     </div>
   );

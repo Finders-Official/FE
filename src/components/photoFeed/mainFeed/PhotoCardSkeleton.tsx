@@ -4,8 +4,8 @@ type Props = {
 
 export default function PhotoCardSkeleton({ className = "" }: Props) {
   return (
-    <div className="mb-4 break-inside-avoid">
-      <div className="w-full animate-pulse">
+    <div className="[break-inside:avoid]">
+      <div className="block w-full animate-pulse">
         {/* 이미지 영역 */}
         <div
           className={`aspect-[3/4] w-full rounded-2xl bg-neutral-700 ${className}`}
