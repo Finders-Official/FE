@@ -29,11 +29,25 @@ export default function PopularLabsSection() {
 
   // 스크롤 이벤트 핸들러
   const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const scrollLeft = scrollRef.current.scrollLeft;
-    const clientWidth = scrollRef.current.clientWidth;
-    const newIndex = Math.round(scrollLeft / clientWidth);
-    setCurrentIndex(newIndex);
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const centerX = container.scrollLeft + container.clientWidth / 2;
+
+    let bestIndex = 0;
+    let bestDist = Number.POSITIVE_INFINITY;
+
+    const pages = Array.from(container.children) as HTMLElement[];
+    pages.forEach((page, idx) => {
+      const pageCenter = page.offsetLeft + page.clientWidth / 2;
+      const dist = Math.abs(centerX - pageCenter);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestIndex = idx;
+      }
+    });
+
+    setCurrentIndex(bestIndex);
   };
 
   if (labs.length === 0) return null;
@@ -52,7 +66,16 @@ export default function PopularLabsSection() {
           className="scrollbar-hide flex w-full snap-x snap-mandatory overflow-x-auto pb-8"
         >
           {chunkedLabs.map((group, groupIndex) => (
-            <div key={groupIndex} className="min-w-full shrink-0 snap-center">
+            <div
+              key={groupIndex}
+              className={`min-w-full shrink-0 snap-center ${
+                groupIndex === 0
+                  ? "mr-2"
+                  : groupIndex === chunkedLabs.length - 1
+                    ? "ml-2"
+                    : "mx-2"
+              }`}
+            >
               <div className="grid grid-cols-2 gap-4">
                 {group.map((lab) => (
                   <PopularLabCard key={lab.photoLabId} lab={lab} />
