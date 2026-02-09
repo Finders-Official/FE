@@ -1,14 +1,22 @@
-import { useCallback, useMemo, useRef } from "react";
-import { PostCard } from "@/components/mypage/PostCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
-import type { Post } from "@/types/mypage/post";
-import { useMyPostsInfinite } from "@/hooks/my";
-import { PostCardSkeleton } from "@/components/mypage";
-import { formatYmdDot } from "@/utils/dateFormat";
+import { useLikedPostsInfinite } from "@/hooks/my";
+import { useCallback, useMemo, useRef, useState } from "react";
+import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
+import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
+import { useLikePost, useUnlikePost } from "@/hooks/photoFeed";
+import { EmptyOrderState } from "@/components/mypage";
 
-const SKELETON_COUNT = 6;
+const SKELETON_COUNT = 8;
 
-export function MyPostPage() {
+const SKELETON_HEIGHTS = [
+  "h-[180px]",
+  "h-[220px]",
+  "h-[260px]",
+  "h-[300px]",
+  "h-[340px]",
+];
+
+export function LikedPostPage() {
   const {
     data,
     isLoading,
@@ -17,28 +25,35 @@ export function MyPostPage() {
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useMyPostsInfinite(10);
+  } = useLikedPostsInfinite(10);
 
-  const previews = useMemo(
+  const { mutate: unlikePost } = useUnlikePost();
+  const { mutate: likePost } = useLikePost();
+
+  //페이지 안에서만 유지되는 좋아요 상태 덮어쓰기
+  const [likedOverrideById, setLikedOverrideById] = useState<
+    Record<number, boolean>
+  >({});
+
+  // 서버 pages -> flat list
+  const items = useMemo(
     () => data?.pages.flatMap((p) => p.data.previewList) ?? [],
     [data],
   );
 
-  const posts: Post[] = useMemo(
-    () =>
-      previews.map((p) => ({
-        id: p.postId,
-        src: p.image.imageUrl,
-        title: p.title,
-        likes: p.likeCount,
-        date: formatYmdDot(p.createdAt),
-      })),
-    [previews],
-  );
+  //화면에 뿌릴 때 override를 적용한 items
+  const viewItems = useMemo(() => {
+    return items.map((p) => {
+      const override = likedOverrideById[p.postId];
+      const isLiked = typeof override === "boolean" ? override : p.isLiked;
+      return { ...p, isLiked };
+    });
+  }, [items, likedOverrideById]);
 
+  // 바닥 감지용 sentinel
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const onIntersect = useCallback(() => {
+  const handleIntersect = useCallback(() => {
     if (!hasNextPage) return;
     if (isFetchingNextPage) return;
     fetchNextPage();
@@ -46,12 +61,50 @@ export function MyPostPage() {
 
   useInfiniteScroll({
     target: bottomRef,
-    onIntersect,
+    onIntersect: handleIntersect,
     enabled: !isLoading && !isError,
     root: null,
     rootMargin: "200px",
     threshold: 0,
   });
+
+  /*
+   * - prevIsLiked(토글 전 상태) 기준으로 서버 호출
+   * - UI는 즉시 override로 토글
+   * - 실패하면 rollback
+   */
+  const handleToggleLike = useCallback(
+    (postId: number, prevIsLiked: boolean) => {
+      // 1) UI 즉시 반영
+      setLikedOverrideById((prev) => ({
+        ...prev,
+        [postId]: !prevIsLiked,
+      }));
+
+      // 2) 서버 호출(토글 전 상태 기준)
+      if (prevIsLiked) {
+        unlikePost(postId, {
+          onError: () => {
+            // 3) 실패 롤백
+            setLikedOverrideById((prev) => ({
+              ...prev,
+              [postId]: prevIsLiked,
+            }));
+          },
+        });
+      } else {
+        likePost(postId, {
+          onError: () => {
+            setLikedOverrideById((prev) => ({
+              ...prev,
+              [postId]: prevIsLiked,
+            }));
+          },
+        });
+      }
+    },
+    [likePost, unlikePost],
+  );
 
   if (isError) {
     return (
@@ -69,17 +122,33 @@ export function MyPostPage() {
   }
 
   return (
-    <div className="px-4 py-6">
+    <div>
       <main>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="columns-2 gap-4">
           {isLoading
             ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
-                return <PostCardSkeleton key={`post-skeleton-${i}`} />;
-              })
-            : posts.map((post) => <PostCard key={post.id} post={post} />)}
-        </div>
+                const heightClass =
+                  SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
 
-        <div ref={bottomRef} className="h-10" />
+                return (
+                  <PhotoCardSkeleton
+                    key={`skeleton-${i}`}
+                    className={heightClass}
+                  />
+                );
+              })
+            : viewItems.map((photo) => (
+                <PhotoCard
+                  key={photo.postId}
+                  photo={photo}
+                  isLiked={photo.isLiked} //override 반영된 값
+                  isShowLiked={true}
+                  onToggleLike={() =>
+                    handleToggleLike(photo.postId, photo.isLiked)
+                  }
+                />
+              ))}
+        </div>
 
         {isFetchingNextPage && (
           <div className="mt-3 text-center text-sm text-neutral-300">
@@ -87,14 +156,12 @@ export function MyPostPage() {
           </div>
         )}
 
-        {!hasNextPage && posts.length > 0 && (
+        {!hasNextPage && viewItems.length > 0 && (
           <div className="mt-3 text-center text-sm text-neutral-500"></div>
         )}
 
-        {posts.length === 0 && !isFetchingNextPage && (
-          <div className="py-10 text-center text-sm text-neutral-400">
-            아직 작성한 게시물이 없습니다.
-          </div>
+        {viewItems.length === 0 && !isFetchingNextPage && (
+          <EmptyOrderState description="아직 마음에 드는 글을 담지 않았어요." />
         )}
       </main>
     </div>

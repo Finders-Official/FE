@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import { useLikePost, useUnlikePost } from "@/hooks/photoFeed";
+import { EmptyOrderState } from "@/components/mypage";
 
 const SKELETON_COUNT = 8;
 
@@ -121,7 +122,7 @@ export function LikedPostPage() {
   }
 
   return (
-    <div className="px-4">
+    <div>
       <main>
         <div className="columns-2 gap-4">
           {isLoading
@@ -149,8 +150,6 @@ export function LikedPostPage() {
               ))}
         </div>
 
-        <div ref={bottomRef} className="h-10" />
-
         {isFetchingNextPage && (
           <div className="mt-3 text-center text-sm text-neutral-300">
             더 불러오는 중...
@@ -162,9 +161,7 @@ export function LikedPostPage() {
         )}
 
         {viewItems.length === 0 && !isFetchingNextPage && (
-          <div className="py-10 text-center text-sm text-neutral-400">
-            아직 좋아요한 게시물이 없습니다.
-          </div>
+          <EmptyOrderState description="아직 마음에 드는 글을 담지 않았어요." />
         )}
       </main>
     </div>
