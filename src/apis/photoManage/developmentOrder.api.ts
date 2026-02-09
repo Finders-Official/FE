@@ -48,3 +48,21 @@ export async function getScanResults(
 
   return body;
 }
+
+// 수령 확정
+
+export async function confirmReceipt(
+  developmentOrderId: number,
+): Promise<ApiResponse<number>> {
+  const res = await axiosInstance.post<ApiResponse<number>>(
+    `/photos/development-orders/${developmentOrderId}/receipt`,
+  );
+
+  const body = res.data;
+
+  if (!body.success) {
+    throw new Error(body.message);
+  }
+
+  return body;
+}
