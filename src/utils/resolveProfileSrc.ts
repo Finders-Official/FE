@@ -1,10 +1,10 @@
 import { FALLBACK_PROFILE_SRC, GCS_PUBLIC_BASE } from "@/constants/gcsUrl";
 
-type resolveProfieSrcProps = {
+type resolveProfileSrcProps = {
   raw?: string;
 };
 
-export function resolveProfileSrc({ raw }: resolveProfieSrcProps) {
+export function resolveProfileSrc({ raw }: resolveProfileSrcProps) {
   if (!raw) return FALLBACK_PROFILE_SRC;
 
   // 업로드 직후 objectUrl
