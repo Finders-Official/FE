@@ -1,14 +1,8 @@
-export interface NoticeData {
-  id: number;
-  type: "이벤트" | "공지" | "휴무";
-  title: string;
-  labName: string;
-  labId: number;
-  period: string;
-}
+import type { PhotoLabNoticeRolling } from "@/types/photoLab";
+import { NOTICE_TYPE_LABEL } from "@/constants/photoLab";
 
 interface NoticeSectionCardProps {
-  notice: NoticeData;
+  notice: PhotoLabNoticeRolling;
 }
 
 export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
@@ -16,12 +10,12 @@ export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
     <div className="group bg-neutral-875/50 flex h-54.75 w-50 cursor-pointer flex-col justify-between overflow-hidden rounded-[0.625rem] border border-neutral-800 p-5">
       <div className="flex flex-col items-start gap-3">
         <span className="flex items-center justify-center rounded-[6.25rem] bg-orange-500 px-2.5 py-1 text-[0.625rem] font-semibold text-neutral-100">
-          {notice.type}
+          {NOTICE_TYPE_LABEL[notice.noticeType]}
         </span>
 
         {/* 제목 */}
         <h3 className="line-clamp-3 text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] whitespace-pre-wrap text-neutral-100">
-          {notice.title}
+          {notice.noticeTitle}
         </h3>
       </div>
 
@@ -52,39 +46,40 @@ export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
             />
           </svg>
           <span className="text-[0.75rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">
-            {notice.labName}
+            {notice.photoLabName}
           </span>
         </div>
-
-        {/* 기간 */}
-        <div className="flex items-center gap-1.5 text-[#999999]">
-          {/* 시계 아이콘 */}
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 14 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7 12.8333C10.2217 12.8333 12.8333 10.2217 12.8333 7C12.8333 3.77834 10.2217 1.16666 7 1.16666C3.77834 1.16666 1.16667 3.77834 1.16667 7C1.16667 10.2217 3.77834 12.8333 7 12.8333Z"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M7 3.5V7L9.33333 8.16667"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className="text-[0.75rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">
-            {notice.period}
-          </span>
-        </div>
+        {/* 기간, 빠지면 렌더링 안함 */}
+        {notice.startDate && notice.endDate && (
+          <div className="flex items-center gap-1.5 text-[#999999]">
+            {/* 시계 아이콘 */}
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7 12.8333C10.2217 12.8333 12.8333 10.2217 12.8333 7C12.8333 3.77834 10.2217 1.16666 7 1.16666C3.77834 1.16666 1.16667 3.77834 1.16667 7C1.16667 10.2217 3.77834 12.8333 7 12.8333Z"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M7 3.5V7L9.33333 8.16667"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="text-[0.75rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">
+              {notice.startDate}~{notice.endDate}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

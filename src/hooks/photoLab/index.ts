@@ -9,3 +9,4 @@ export { useReservationDetail } from "./useReservationDetail";
 export { useRegionFilters } from "./useRegionFilters";
 export { useAutocomplete } from "./useAutocomplete";
 export { useSearchPreview } from "./useSearchPreview";
+export { usePhotoLabNotices } from "./usePhotoLabNotices";
