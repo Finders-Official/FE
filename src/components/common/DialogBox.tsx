@@ -50,7 +50,7 @@ export const DialogBox = ({
           </h2>
           {description && (
             <p className="font-regular text-[0.875rem] leading-[155%] tracking-[-0.02em] whitespace-pre-line text-neutral-200">
-              {description}
+              {description.replaceAll("\\n", "\n")}
             </p>
           )}
         </div>

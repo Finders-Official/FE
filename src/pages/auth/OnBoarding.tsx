@@ -24,6 +24,8 @@ export function OnBoardingPage() {
           invalidText={f.nicknameStatusText || "닉네임을 입력해 주세요"}
           value={f.nickname}
           onChange={(e) => f.setNickname(e.target.value)}
+          borderClass={f.nicknameBorderClass}
+          textClass={f.nicknameTextClass}
         />
 
         <section className="flex gap-[1.25rem]">
@@ -31,45 +33,67 @@ export function OnBoardingPage() {
             name="전화번호"
             placeholder="'-'제외하고 입력"
             size="medium"
-            className="focus:border-orange-500"
+            borderClass={`focus:border-orange-500 ${
+              f.lockPhoneForm ? "bg-neutral-850" : ""
+            }`}
             value={f.phone}
             onChange={f.handlePhoneChange}
+            disabled={f.lockPhoneForm}
           />
           <ActionButton
             type="button"
             text={f.isSending ? "재발송" : "인증하기"}
             onClick={f.handleSend}
-            disabled={!f.phone || f.isRequestingCode || f.isCompleting}
+            disabled={
+              !f.phone ||
+              f.isRequestingCode ||
+              f.isCompleting ||
+              f.lockPhoneForm
+            }
+            className={f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""}
           />
         </section>
 
         {f.isSending && (
-          <section className="flex gap-[1.25rem]">
-            <InputForm
-              placeholder="인증번호 입력"
-              size="medium"
-              className="focus:border-orange-500"
-              value={f.verifiedNumber}
-              timer={
-                <span className="text-sm text-orange-500">
-                  {formatMMSS(Math.max(f.remainSec, 0))}
-                </span>
-              }
-              onChange={f.handleVerifiedNumberChange}
-            />
-            <ActionButton
-              type="button"
-              text={f.isConfirmingCode ? "확인중..." : "확인"}
-              onClick={f.handleVerify}
-              disabled={
-                !f.verifiedNumber ||
-                f.verifiedNumber.length !== 6 ||
-                f.remainSec <= 0 ||
-                f.isConfirmingCode ||
-                f.isCompleting
-              }
-            />
-          </section>
+          <>
+            <section className="flex gap-[1.25rem]">
+              <InputForm
+                placeholder="인증번호 입력"
+                size="medium"
+                borderClass={`focus:border-orange-500 ${f.phoneBorderClass} ${
+                  f.lockPhoneForm ? "bg-neutral-850" : ""
+                }`}
+                value={f.verifiedNumber}
+                timer={
+                  !f.lockPhoneForm ? (
+                    <span className="text-sm text-orange-500">
+                      {formatMMSS(Math.max(f.remainSec, 0))}
+                    </span>
+                  ) : null
+                }
+                onChange={f.handleVerifiedNumberChange}
+                disabled={f.lockPhoneForm}
+              />
+              <ActionButton
+                type="button"
+                text={f.isConfirmingCode ? "확인중..." : "확인"}
+                onClick={f.handleVerify}
+                disabled={
+                  !f.verifiedNumber ||
+                  f.verifiedNumber.length !== 6 ||
+                  f.remainSec <= 0 ||
+                  f.isConfirmingCode ||
+                  f.isCompleting
+                }
+                className={
+                  f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""
+                }
+              />
+            </section>
+            <p className={`mt-2 px-2 text-sm ${f.phoneTextClass}`}>
+              {f.phoneStatusText}
+            </p>
+          </>
         )}
       </form>
 

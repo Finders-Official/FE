@@ -6,38 +6,40 @@ import PopularLabsSection from "@/components/mainPage/PopularLabsSection/Popular
 import FilmNewsSection from "@/components/mainPage/FilmNewsSection/FilmNewsSection";
 import CommunityGallerySection from "@/components/mainPage/ComunityGallarySection/CommunityGallerySection";
 import NoticeSection from "@/components/mainPage/NoticeSection/NoticeSection";
+import { useAnchorScroll } from "@/hooks/common";
+
+const SectionWrapper = ({
+  id,
+  children,
+}: {
+  id: string;
+  children: React.ReactNode;
+}) => <div data-anchor={id}>{children}</div>;
 
 export default function MainPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const resetScroll = () => {
-      // 모달/바텀시트 등이 남긴 scroll lock 해제
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
-
       const el = scrollRef.current;
       if (!el) return;
-
-      // scroll layer 재생성 (iOS + Android 공통)
       el.style.overflowY = "hidden";
       el.getBoundingClientRect();
       el.style.overflowY = "";
     };
 
-    const onPageShow = () => resetScroll(); // iOS bfcache 복원 대응
-    const onFocus = () => resetScroll(); // Android resume 대응
-
     resetScroll();
-
-    window.addEventListener("pageshow", onPageShow);
-    window.addEventListener("focus", onFocus);
-
+    window.addEventListener("pageshow", resetScroll);
+    window.addEventListener("focus", resetScroll);
     return () => {
-      window.removeEventListener("pageshow", onPageShow);
-      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("pageshow", resetScroll);
+      window.removeEventListener("focus", resetScroll);
     };
   }, []);
+
+  useAnchorScroll(scrollRef);
 
   return (
     <div
@@ -45,16 +47,31 @@ export default function MainPage() {
       style={{
         WebkitOverflowScrolling: "auto",
         touchAction: "pan-y",
+        overflowAnchor: "none",
       }}
       className="scrollbar-hide mx-auto h-dvh w-full max-w-sm overflow-y-auto overscroll-y-none bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] text-white"
     >
-      <Header />
-      <PromotionBanner />
-      <QuickMenuButton />
-      <PopularLabsSection />
-      <FilmNewsSection />
-      <CommunityGallerySection />
-      <NoticeSection />
+      <SectionWrapper id="header">
+        <Header />
+      </SectionWrapper>
+      <SectionWrapper id="promotion">
+        <PromotionBanner />
+      </SectionWrapper>
+      <SectionWrapper id="quick-menu">
+        <QuickMenuButton />
+      </SectionWrapper>
+      <SectionWrapper id="popular-labs">
+        <PopularLabsSection />
+      </SectionWrapper>
+      <SectionWrapper id="film-news">
+        <FilmNewsSection />
+      </SectionWrapper>
+      <SectionWrapper id="community">
+        <CommunityGallerySection />
+      </SectionWrapper>
+      <SectionWrapper id="notice">
+        <NoticeSection />
+      </SectionWrapper>
     </div>
   );
 }

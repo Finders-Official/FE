@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
+import { usePhotoLabFilter } from "@/store/usePhotoLabFilter.store";
 import { useNavigate, useLocation } from "react-router";
 import { Header, FilterContainer } from "@/components/common";
 import {
@@ -8,43 +9,27 @@ import {
   FilterBottomSheet,
 } from "@/components/photoLab";
 import { SearchIcon } from "@/assets/icon";
-import { WEEKDAYS } from "@/constants/date";
 import {
   useGeolocation,
   usePhotoLabList,
   useFavoriteToggle,
+  usePhotoLabNotices,
 } from "@/hooks/photoLab";
-import { displayTimeToApiTime } from "@/utils/time";
-import type { LabNews, FilterState } from "@/types/photoLab";
-
-// TODO: Rolling 공지 API 엔드포인트 확정 후 연동
-const mockNews: LabNews[] = [
-  {
-    id: 1,
-    type: "공지",
-    labName: "파인더스 동작점",
-    content: "택배 접수 시작합니다",
-  },
-  {
-    id: 2,
-    type: "이벤트",
-    labName: "파인더스 홍대점",
-    content: "첫 방문 고객 대상 500원 할인",
-  },
-];
+import { displayTimesToApiTimes } from "@/utils/time";
+import { formatFilterValue } from "@/utils/filterFormat";
+import type { FilterState } from "@/types/photoLab";
 
 export default function PhotoLabPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 뒤로가기 버튼 표시 여부
-  const showBack = !!location.state?.from || window.history.length > 2;
+  // 메인 페이지 "현상 맡기기" 버튼을 통한 진입여부
+  const isFromMain = location.state?.from === "main";
 
-  // TODO: FilterBottomSheet API 연동 (regionId, date 매핑)
-  // 필터 상태
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  // 필터 상태 (검색 페이지와 공유)
+  const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
+    usePhotoLabFilter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filter, setFilter] = useState<FilterState>({});
 
   // 위치 정보
   const {
@@ -53,15 +38,23 @@ export default function PhotoLabPage() {
     isLoading: isLocationLoading,
   } = useGeolocation();
 
+  // 현상소 공지
+  const { data: notices } = usePhotoLabNotices({
+    lat: latitude ?? undefined,
+    lng: longitude ?? undefined,
+  });
+
   // 현상소 목록 조회
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePhotoLabList(
       {
         tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
-        parentRegionId: filter.parentRegionId,
         regionIds: filter.regionIds,
         date: filter.date,
-        time: filter.time ? displayTimeToApiTime(filter.time) : undefined,
+        time:
+          filter.time && filter.time.length > 0
+            ? displayTimesToApiTimes(filter.time)
+            : undefined,
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },
@@ -74,38 +67,19 @@ export default function PhotoLabPage() {
     [data],
   );
 
-  // 필터 값 표시 문자열 계산
-  const formatFilterValue = (): string | undefined => {
-    const parts: string[] = [];
-
-    if (filter.date) {
-      const date = new Date(filter.date);
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const weekday = WEEKDAYS[date.getDay()];
-      parts.push(`${month}.${day}(${weekday})`);
-    }
-
-    if (filter.region) {
-      const regionText = filter.subRegion
-        ? `${filter.region} ${filter.subRegion}`
-        : filter.region;
-      parts.push(regionText);
-    }
-
-    return parts.length > 0 ? parts.join(" • ") : undefined;
-  };
-
-  const filterValue = formatFilterValue();
+  const filterValue = formatFilterValue(filter);
 
   // 태그 토글
-  const handleTagToggle = useCallback((tagId: number) => {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId)
-        ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId],
-    );
-  }, []);
+  const handleTagToggle = useCallback(
+    (tagId: number) => {
+      setSelectedTagIds((prev) =>
+        prev.includes(tagId)
+          ? prev.filter((id) => id !== tagId)
+          : [...prev, tagId],
+      );
+    },
+    [setSelectedTagIds],
+  );
 
   // 즐겨찾기 토글
   const { mutate: toggleFavorite } = useFavoriteToggle();
@@ -148,8 +122,8 @@ export default function PhotoLabPage() {
     <div className="flex w-full flex-col">
       {/* 헤더 */}
       <Header
-        title="현상 맡기기"
-        showBack={showBack}
+        title={isFromMain ? "현상 맡기기" : "현상소 보기"}
+        showBack={isFromMain}
         onBack={() => navigate(-1)}
         rightAction={{
           type: "icon",
@@ -160,7 +134,10 @@ export default function PhotoLabPage() {
 
       {/* 현상소 소식 배너 */}
       <div className="pb-4">
-        <LabNewsBanner newsList={mockNews} />
+        <LabNewsBanner
+          newsList={notices ?? []}
+          onNewsClick={(news) => navigate(`/photolab/${news.photoLabId}`)}
+        />
       </div>
 
       {/* 필터 섹션 - 스크롤 시 상단 고정 */}

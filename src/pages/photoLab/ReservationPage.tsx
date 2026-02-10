@@ -54,6 +54,7 @@ export default function ReservationPage() {
   const distanceKm = state?.distanceKm ?? null;
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [viewDate, setViewDate] = useState(() => new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedTasks, setSelectedTasks] = useState<TaskType[]>([]);
   const [filmRollCount, setFilmRollCount] = useState(0);
@@ -238,6 +239,8 @@ export default function ReservationPage() {
           <Calendar
             selectedDate={selectedDate ?? undefined}
             onDateSelect={handleDateSelect}
+            viewDate={viewDate}
+            onViewDateChange={setViewDate}
           />
 
           {/* 시간 선택 */}

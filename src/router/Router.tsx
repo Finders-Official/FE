@@ -1,35 +1,53 @@
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+
+// 레이아웃
 import RootLayout from "@/layouts/RootLayout";
+import { FooterLayout } from "@/layouts/FooterLayout";
+import MyPageLayout from "@/layouts/MyPageLayout";
+import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
+
+// 로그인, 회원가입 페이지
 import {
   KakaoCallbackPage,
   LoginPage,
   OnBoardingPage,
   TermsPage,
 } from "@/pages/auth";
-import PhotoFeedPage from "@/pages/photoFeed/PhotoFeedPage";
-import PostPage from "@/pages/photoFeed/PostPage";
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
-import { FooterLayout } from "@/layouts/FooterLayout";
-import NewPostPage from "@/pages/photoFeed/NewPostPage";
-import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
-import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+
+// 메인페이지
 import MainPage from "@/pages/mainPage/MainPage";
-import MyPageLayout from "@/layouts/MyPageLayout";
-import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import DevelopmentHistoryPage from "@/pages/developmentHistory/DevelopmentHistoryPage";
-import FilmCameraGuidePage from "@/pages/filmCameraGuide/FilmCameraGuidePage";
 import FilmCameraGuideDetailPage from "@/pages/filmCameraGuide/FilmCameraGuideDetailPage";
-import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
-import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
-import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
-import ReservationPage from "@/pages/photoLab/ReservationPage";
-import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
+import FilmCameraGuidePage from "@/pages/filmCameraGuide/FilmCameraGuidePage";
+import PhotoRestorationPage from "@/pages/photoRestoration/PhotoRestorationPage";
+
+// 현상관리 페이지
+import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
+import PhotoDownloadPage from "@/pages/photoManage/PhotoDownloadPage";
 import PhotoManageMainPage from "@/pages/photoManage/PhotoManageMainPage";
-import { PhotoManageLayout } from "@/layouts/PhotoManageLayout";
+import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
+import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
 import { PrintRequestPage } from "@/pages/photoManage/PrintRequestPage";
 import { SelectAddressPage } from "@/pages/photoManage/SelectAddressPage";
-import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
-import { PrintOptionPage } from "@/pages/photoManage/PrintOptionPage";
-import { PickUpMethodPage } from "@/pages/photoManage/PickUpMethodPage";
+import SplashPage from "@/pages/photoManage/SplashPage";
+import TransactionPage from "@/pages/photoManage/TransactionPage";
+
+// 사진수다 페이지
+import FindPhotoLabPage from "@/pages/photoFeed/FindPhotoLabPage";
+import NewPostPage from "@/pages/photoFeed/NewPostPage";
+import PhotoFeedPage from "@/pages/photoFeed/PhotoFeedPage";
+import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
+import PostPage from "@/pages/photoFeed/PostPage";
+import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
+
+// 현상소 보기 페이지
+import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
+import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
+import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
+import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
+import ReservationPage from "@/pages/photoLab/ReservationPage";
+
+// 마이페이지
 import {
   EditInfoPage,
   LikedPhotoLabPage,
@@ -41,205 +59,185 @@ import {
   SocialPage,
   WithDrawPage,
 } from "@/pages/mypage";
-import TransactionPage from "@/pages/photoManage/TransactionPage";
-import PhotoFeedSearchPage from "@/pages/photoFeed/PhotoFeedSearchPage";
-import RestorationCanvas from "@/components/photoRestoration/RestorationCanvas";
-import SplashPage from "@/pages/photoManage/SplashPage";
 
+type RouteHandle =
+  | {
+      title?: string;
+      isTab?: boolean;
+      showBack?: boolean;
+    }
+  | undefined;
+
+// 공통적으로 쓰는 handle 생성기(타이틀 오타/중복 방지)
+const h = (handle: RouteHandle) => handle;
+
+// ------------------
+// 도메인별 라우트 묶음
+// ------------------
+const authRoutes = [
+  { path: "login", Component: LoginPage },
+  { path: "kakao/callback", Component: KakaoCallbackPage },
+  { path: "onboarding", Component: OnBoardingPage },
+  { path: "terms", Component: TermsPage },
+];
+
+const guideRoutes = [
+  { path: "film-camera-guide", Component: FilmCameraGuidePage },
+  { path: "film-camera-guide/:id", Component: FilmCameraGuideDetailPage },
+  { path: "restore/editor", Component: PhotoRestorationPage },
+];
+
+const photoFeedStandaloneRoutes = [
+  { path: "photoFeed/search", Component: PhotoFeedSearchPage },
+  { path: "photoFeed/lab/find", Component: FindPhotoLabPage },
+  { path: "photoFeed/lab/review", Component: ReviewPhotoLabPage },
+  { path: "photoFeed/post/:postId", Component: PostPage },
+  { path: "photoFeed/post/new", Component: NewPostPage },
+];
+
+const photoLabStandaloneRoutes = [
+  { path: "photolab/search", Component: PhotoLabSearchPage },
+  { path: "photolab/:photoLabId", Component: PhotoLabDetailPage },
+  { path: "photolab/:photoLabId/reservation", Component: ReservationPage },
+  {
+    path: "photolab/:photoLabId/reservation/complete",
+    Component: ReservationCompletePage,
+  },
+];
+
+const photoManageStandaloneRoutes = [
+  { path: "photoManage/download", Component: PhotoDownloadPage },
+];
+
+// FooterLayout이 필요한 페이지들
+const footerRoutes = [
+  { path: "mainpage", Component: MainPage },
+  { path: "photoFeed", Component: PhotoFeedPage },
+  { path: "photolab", Component: PhotoLabPage },
+  { path: "photoManage/main", Component: PhotoManageMainPage },
+  { path: "development-history", Component: DevelopmentHistoryPage },
+  { path: "photoManage/splash", Component: SplashPage },
+];
+
+// PhotoManageLayout 하위(공통 prefix: photoManage)
+const photoManageRoutes = [
+  {
+    path: "print-request",
+    Component: PrintRequestPage,
+    handle: h({ title: "인화 요청하기" }),
+  },
+  {
+    path: "pickup-method",
+    Component: PickUpMethodPage,
+    handle: h({ title: "인화 요청하기" }),
+  },
+  {
+    path: "select-address",
+    Component: SelectAddressPage,
+    handle: h({ title: "주소 입력하기" }),
+  },
+  {
+    path: "select-address/detail",
+    Component: DetailInfoPage,
+    handle: h({ title: "상세 정보 입력하기" }),
+  },
+  {
+    path: "print-option",
+    Component: PrintOptionPage,
+    handle: h({ title: "결제 내역" }),
+  },
+  {
+    path: "transaction",
+    Component: TransactionPage,
+    handle: h({ title: "송금하기" }),
+  },
+];
+
+// MyPageLayout 하위(공통 prefix: mypage)
+const mypageRoutes = [
+  {
+    index: true,
+    Component: MyPage,
+    handle: h({ isTab: true, showBack: false }),
+  },
+  {
+    path: "edit-info",
+    Component: EditInfoPage,
+    handle: h({ title: "내정보 수정", isTab: true }),
+  },
+  {
+    path: "edit-info/nickname",
+    Component: NickNameEditPage,
+    handle: h({ title: "닉네임 변경" }),
+  },
+  {
+    path: "edit-info/phone",
+    Component: PhoneEditPage,
+    handle: h({ title: "전화번호 변경" }),
+  },
+  {
+    path: "edit-info/social",
+    Component: SocialPage,
+    handle: h({ title: "연동된 소셜계정" }),
+  },
+  {
+    path: "liked-posts",
+    Component: LikedPostPage,
+    handle: h({ title: "관심 게시글" }),
+  },
+  {
+    path: "liked-photolabs",
+    Component: LikedPhotoLabPage,
+    handle: h({ title: "관심 현상소" }),
+  },
+  {
+    path: "my-posts",
+    Component: MyPostPage,
+    handle: h({ title: "내가 쓴 글" }),
+  },
+  {
+    path: "edit-info/withdraw",
+    Component: WithDrawPage,
+    handle: h({ title: "회원 탈퇴" }),
+  },
+];
+
+// ---------------
+//  최종 router
+// ---------------
 const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
-      { index: true, element: <Navigate to="/auth/login" /> }, // 기본 경로 설정
-      {
-        path: "/auth/login",
-        Component: LoginPage,
-      },
-      {
-        path: "/auth/kakao/callback",
-        Component: KakaoCallbackPage,
-      },
-      {
-        path: "/auth/onboarding",
-        Component: OnBoardingPage,
-      },
-      {
-        path: "/auth/terms",
-        Component: TermsPage,
-      },
-      // {
-      //   path: "/development-history",
-      //   Component: DevelopmentHistoryPage,
-      // },
-      {
-        path: "/film-camera-guide",
-        Component: FilmCameraGuidePage,
-      },
-      {
-        path: `/film-camera-guide/:id`,
-        Component: FilmCameraGuideDetailPage,
-      },
-      {
-        path: "/photoFeed/search",
-        Component: PhotoFeedSearchPage,
-      },
-      {
-        path: "/photoFeed/lab/find",
-        Component: FindPhotoLabPage,
-      },
-      {
-        path: "/photoFeed/lab/review",
-        Component: ReviewPhotoLabPage,
-      },
-      {
-        path: "/photoFeed/post/:postId",
-        Component: PostPage,
-      },
-      {
-        path: "/photoManage/download",
-        Component: PhotoDownloadPage,
-      },
-      {
-        path: "/photolab/search",
-        Component: PhotoLabSearchPage,
-      },
-      {
-        path: "/photolab/:photoLabId",
-        Component: PhotoLabDetailPage,
-      },
-      {
-        path: "/photolab/:photoLabId/reservation",
-        Component: ReservationPage,
-      },
-      {
-        path: "/photolab/:photoLabId/reservation/complete",
-        Component: ReservationCompletePage,
-      },
-      {
-        path: "/photoFeed/post/new",
-        Component: NewPostPage,
-      },
-      {
-        path: "/restore/editor",
-        Component: RestorationCanvas,
-      },
+      { index: true, element: <Navigate to="/auth/login" /> },
 
-      // FooterLayout 적용 필요한 페이지들
+      // auth prefix를 한 번만
+      { path: "auth", children: authRoutes },
+
+      // 단독 라우트들
+      ...guideRoutes,
+      ...photoFeedStandaloneRoutes,
+      ...photoLabStandaloneRoutes,
+      ...photoManageStandaloneRoutes,
+
+      // FooterLayout 그룹
       {
         Component: FooterLayout,
-        children: [
-          {
-            path: "/mainpage",
-            Component: MainPage,
-          },
-          {
-            path: "/photoFeed",
-            Component: PhotoFeedPage,
-          },
-          {
-            path: "/photolab",
-            Component: PhotoLabPage,
-          },
-          {
-            path: "/photoManage/main",
-            Component: PhotoManageMainPage,
-          },
-          {
-            path: "/development-history",
-            Component: DevelopmentHistoryPage,
-          },
-          {
-            path: "/photoManage/splash",
-            Component: SplashPage,
-          },
-        ],
+        children: footerRoutes,
       },
-      //마이페이지 전용 레이아웃
+
+      // photoManage prefix 올려서 중복 제거
       {
+        path: "photoManage",
         Component: PhotoManageLayout,
-        children: [
-          {
-            path: "/photoManage/print-request",
-            Component: PrintRequestPage,
-            handle: { title: "인화 요청하기" },
-          },
-          {
-            path: "/photoManage/pickup-method",
-            Component: PickUpMethodPage,
-            handle: { title: "인화 요청하기" },
-          },
-          {
-            path: "/photoManage/select-address",
-            Component: SelectAddressPage,
-            handle: { title: "주소 입력하기" },
-          },
-          {
-            path: "/photoManage/select-address/detail",
-            Component: DetailInfoPage,
-            handle: { title: "상세 정보 입력하기" },
-          },
-          {
-            path: "/photoManage/print-option",
-            Component: PrintOptionPage,
-            handle: { title: "결제 내역" },
-          },
-          {
-            path: "/photoManage/transaction",
-            Component: TransactionPage,
-            handle: { title: "송금하기" },
-          },
-        ],
+        children: photoManageRoutes,
       },
+
+      // mypage prefix 올려서 중복 제거
       {
-        path: "/mypage",
+        path: "mypage",
         element: <MyPageLayout />,
-        children: [
-          {
-            index: true,
-            Component: MyPage,
-            handle: { isTab: true, showBack: false },
-          },
-          {
-            path: "edit-info",
-            Component: EditInfoPage,
-            handle: { title: "내정보 수정", isTab: true },
-          },
-          {
-            path: "edit-info/nickname",
-            Component: NickNameEditPage,
-            handle: { title: "닉네임 변경" },
-          },
-          {
-            path: "edit-info/phone",
-            Component: PhoneEditPage,
-            handle: { title: "전화번호 변경" },
-          },
-          {
-            path: "edit-info/social",
-            Component: SocialPage,
-            handle: { title: "연동된 소셜계정" },
-          },
-          {
-            path: "liked-posts",
-            Component: LikedPostPage,
-            handle: { title: "관심 게시글" },
-          },
-          {
-            path: "liked-photolabs",
-            Component: LikedPhotoLabPage,
-            handle: { title: "관심 현상소" },
-          },
-          {
-            path: "my-posts",
-            Component: MyPostPage,
-            handle: { title: "내가 쓴 글" },
-          },
-          {
-            path: "edit-info/withdraw",
-            Component: WithDrawPage,
-            handle: { title: "회원 탈퇴" },
-          },
-        ],
+        children: mypageRoutes,
       },
     ],
   },
@@ -248,9 +246,3 @@ const router = createBrowserRouter([
 export default function Router() {
   return <RouterProvider router={router} />;
 }
-
-//Router 설정 파일
-// 1. Footer 가 존재하는 레이아웃이면 FooterLayout 으로 감싸기
-// 2. Header 가 존재하는 레이아웃이면 HeaderLayout 으로 감싸기
-// 3. 둘 다 존재하는 레이아웃이면 HeaderFooterLayout 으로 감싸기
-//Home 컴포넌트는 테스트용

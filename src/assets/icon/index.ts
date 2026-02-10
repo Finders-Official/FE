@@ -55,6 +55,7 @@ export { default as MyPostIcon } from "./post.svg?react";
 export { default as LikedPostIcon } from "./liked-heart.svg?react";
 export { default as RestorationCompareIcon } from "./restoration-compare.svg?react";
 export { default as RestoraionSparkleIcon } from "./restoration-sparkle.svg?react";
+export { default as TooltipXIcon } from "./tooltip-x.svg?react";
 
 // 소셜 / 브랜드
 export { default as AppleIcon } from "./Apple.svg?react";
@@ -114,3 +115,5 @@ export { default as MainCamera } from "./main-camera.svg?react";
 export { default as MainFilm } from "./main-film.svg?react";
 export { default as MainSparkle } from "./main-sparkle.svg?react";
 export { default as PaintBrushIcon } from "./paint-brush.svg?react";
+export { default as NoticeLocationIcon } from "./notice-location.svg?react";
+export { default as NoticeTimeIcon } from "./notice-time.svg?react";

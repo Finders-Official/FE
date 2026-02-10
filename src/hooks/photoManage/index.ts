@@ -6,3 +6,4 @@ export { useCreatePrintOrder } from "./useCreatePrintOrder";
 export { useScanResults } from "./useScanResults";
 export { usePhotoLabAccount } from "./usePhotoLabAccount";
 export { useConfirmDepositReceipt } from "./useConfirmDepositReceipt";
+export { useConfirmReceipt } from "./useConfirmReceipt";

@@ -84,6 +84,8 @@ export function NickNameEditPage() {
             if (!touched) setTouched(true);
             f.setNickname(e.target.value);
           }}
+          borderClass={f.nicknameBorderClass}
+          textClass={f.nicknameTextClass}
         />
       </form>
 

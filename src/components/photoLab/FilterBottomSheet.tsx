@@ -1,16 +1,19 @@
 import { useState, useMemo, useEffect } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
-import Calendar from "./Calendar";
-import TimeSlotList from "./TimeSlotList";
-import RegionSelector from "./RegionSelector";
+import Calendar from "@/components/photoLab/Calendar";
+import { calcVisibleRows } from "@/utils/calendar";
+import TimeSlotList from "@/components/photoLab/TimeSlotList";
+import RegionSelector from "@/components/photoLab/RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
-import { REGIONS } from "@/constants/photoLab/regions";
+import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
-import type { FilterState, Region } from "@/types/photoLab";
+import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
-// 컨텐츠에 필요한 최소 높이
-const CONTENT_MIN_HEIGHT_REM = 48;
+// 전체 시트 높이 (Handle + Tabs + ContentPad + Calendar + TimeSlot + Buttons + Gaps)
+const CONTENT_BASE_HEIGHT_REM = 46; // 캘린더 6줄 기준
+const MAX_CALENDAR_ROWS = 6;
+const ROW_HEIGHT_REM = 3.125; // 3rem (DateChip) + 0.125rem (gap)
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -69,27 +72,76 @@ export default function FilterBottomSheet({
     }
     return undefined;
   });
-  const [selectedTime, setSelectedTime] = useState<string | undefined>(
-    initialFilter?.time,
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(
+    initialFilter?.time ?? [],
   );
-  const [selectedRegion, setSelectedRegion] = useState<string | undefined>(
-    initialFilter?.region,
+
+  // 지역 복수 선택 상태
+  const [selectedRegions, setSelectedRegions] = useState<RegionSelection[]>(
+    initialFilter?.regionSelections ?? [],
   );
-  const [selectedSubRegion, setSelectedSubRegion] = useState<
-    string | undefined
-  >(initialFilter?.subRegion);
-  // 표시할 지역 (선택과 별개로 하위 지역 목록 표시용, 처음 열었을때 뭐라도 보여주기)
   const defaultDisplayRegion = regionData?.parents[0]?.parentName ?? "서울";
   const [displayedRegion, setDisplayedRegion] = useState<string>(
-    initialFilter?.region ?? defaultDisplayRegion,
+    initialFilter?.regionSelections?.[0]?.parentName ?? defaultDisplayRegion,
   );
+
+  // 시간 토글 (복수 선택)
+  const handleTimeToggle = (time: string) => {
+    setSelectedTimes((prev) =>
+      prev.includes(time) ? prev.filter((t) => t !== time) : [...prev, time],
+    );
+  };
+
+  // 지역 서브 리전 토글
+  const handleSubRegionToggle = (parentName: string, subRegion: string) => {
+    setSelectedRegions((prev) => {
+      const exists = prev.some(
+        (s) => s.parentName === parentName && s.subRegion === subRegion,
+      );
+      if (exists) {
+        return prev.filter(
+          (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+        );
+      }
+      if (prev.length >= MAX_REGION_SELECTIONS) return prev;
+      return [...prev, { parentName, subRegion }];
+    });
+  };
+
+  // 지역 선택 칩 제거
+  const handleRemoveSelection = (parentName: string, subRegion: string) => {
+    setSelectedRegions((prev) =>
+      prev.filter(
+        (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+      ),
+    );
+  };
+
+  // RegionSelection[] → regionIds[] 변환
+  const selectionsToRegionIds = (selections: RegionSelection[]): number[] => {
+    const ids = selections.flatMap((sel) => {
+      if (sel.subRegion === "전체") {
+        if (!regionData) return [];
+        const parent = regionData.parents.find(
+          (p) => p.parentName === sel.parentName,
+        );
+        if (!parent) return [];
+        return regionData.regions
+          .filter((r) => r.parentId === parent.parentId)
+          .map((r) => r.regionId);
+      }
+      const key = `${sel.parentName}-${sel.subRegion}`;
+      const id = regionIdMap.get(key);
+      return id ? [id] : [];
+    });
+    return [...new Set(ids)];
+  };
 
   // 초기화
   const handleReset = () => {
     setSelectedDate(undefined);
-    setSelectedTime(undefined);
-    setSelectedRegion(undefined);
-    setSelectedSubRegion(undefined);
+    setSelectedTimes([]);
+    setSelectedRegions([]);
     setDisplayedRegion(defaultDisplayRegion);
   };
 
@@ -103,42 +155,32 @@ export default function FilterBottomSheet({
       const d = String(selectedDate.getDate()).padStart(2, "0");
       filter.date = `${y}-${m}-${d}`;
     }
-    if (selectedTime) {
-      filter.time = selectedTime;
+    if (selectedTimes.length > 0) {
+      filter.time = selectedTimes;
     }
-    if (selectedRegion) {
-      filter.region = selectedRegion;
-
-      const parent = regionData?.parents.find(
-        (p) => p.parentName === selectedRegion,
-      );
-      if (parent) {
-        filter.parentRegionId = parent.parentId;
-      }
-    }
-    if (selectedSubRegion) {
-      filter.subRegion = selectedSubRegion;
-
-      if (selectedSubRegion !== "전체" && selectedRegion) {
-        const key = `${selectedRegion}-${selectedSubRegion}`;
-        const id = regionIdMap.get(key);
-        if (id) {
-          filter.regionIds = [id];
-        }
-      }
-      // "전체" 선택 시: parentRegionId만 전달, regionIds 없음
+    if (selectedRegions.length > 0) {
+      filter.regionSelections = selectedRegions;
+      filter.regionIds = selectionsToRegionIds(selectedRegions);
     }
 
     onApply(filter);
     onClose();
   };
 
-  // 지역 선택 시 기초 자치단체 초기화, 추후 해보고 변경?
-  const handleRegionSelect = (region: string) => {
-    setSelectedRegion(region);
-    setDisplayedRegion(region);
-    setSelectedSubRegion(undefined);
-  };
+  // 캘린더 viewDate (controlled)
+  const [viewDate, setViewDate] = useState(() => {
+    if (initialFilter?.date) return new Date(initialFilter.date);
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  // 캘린더 줄 수 (viewDate에서 파생)
+  const calendarRows = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return calcVisibleRows(viewDate, today);
+  }, [viewDate]);
 
   // 화면 높이 상태
   const [vh, setVh] = useState(() => window.innerHeight);
@@ -149,17 +191,17 @@ export default function FilterBottomSheet({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // 화면 높이 기반으로 expandedVh 계산, bottomsheet 너무 작거나 크게 열리는거 방지
+  // 화면 높이 기반으로 expandedVh 계산
   const expandedVh = useMemo(() => {
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
-    const contentHeightPx = CONTENT_MIN_HEIGHT_REM * rootFontSize;
-    // 컨텐츠 최소 높이를 vh 퍼센트로 변환, 최대 92%
+    const rowDiff = MAX_CALENDAR_ROWS - calendarRows;
+    const contentHeightRem = CONTENT_BASE_HEIGHT_REM - rowDiff * ROW_HEIGHT_REM;
+    const contentHeightPx = contentHeightRem * rootFontSize;
     const calculated = Math.min(92, (contentHeightPx / vh) * 100);
-    // 최소 75%
-    return Math.max(75, calculated);
-  }, [vh]);
+    return Math.max(70, calculated);
+  }, [vh, calendarRows]);
 
   return (
     <BottomSheet
@@ -194,22 +236,24 @@ export default function FilterBottomSheet({
               <Calendar
                 selectedDate={selectedDate}
                 onDateSelect={setSelectedDate}
+                viewDate={viewDate}
+                onViewDateChange={setViewDate}
               />
               <TimeSlotList
                 slots={TIME_SLOTS}
-                selectedTime={selectedTime}
-                onTimeSelect={setSelectedTime}
+                selectedTimes={selectedTimes}
+                onTimeToggle={handleTimeToggle}
               />
             </div>
           ) : (
             // 지역별 탭
             <RegionSelector
               regions={regions}
-              selectedRegion={selectedRegion}
-              selectedSubRegion={selectedSubRegion}
+              selectedRegions={selectedRegions}
               displayedRegion={displayedRegion}
-              onRegionSelect={handleRegionSelect}
-              onSubRegionSelect={setSelectedSubRegion}
+              onRegionDisplay={setDisplayedRegion}
+              onSubRegionToggle={handleSubRegionToggle}
+              onRemoveSelection={handleRemoveSelection}
             />
           )}
         </div>

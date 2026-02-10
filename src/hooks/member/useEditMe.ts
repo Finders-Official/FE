@@ -13,8 +13,19 @@ type Variables = EditMeReqDto;
 type TError = Error;
 type TContext = unknown;
 
+// 동기화 지연을 위한 함수
 function sleep(ms: number) {
   return new Promise((r) => window.setTimeout(r, ms));
+}
+
+function isRecord(x: unknown): x is Record<string, unknown> {
+  return typeof x === "object" && x !== null;
+}
+
+// 타입 가드 함수
+function isApiResponseLike(x: unknown): x is ApiResponse<MyPageDataDto> {
+  if (!isRecord(x)) return false;
+  return "data" in x;
 }
 
 export function useEditMe(
@@ -28,42 +39,52 @@ export function useEditMe(
   return useMutation<Response, TError, Variables, TContext>({
     mutationFn: (payload) => editMe(payload),
 
-    onSuccess: async (data, variables, onMutateResult, context) => {
+    onSuccess: async (res, variables, onMutateResult, context) => {
       const nextNick = variables.nickname?.trim();
       const nextProfileImage = variables.profileImageUrl?.trim();
 
-      // UI 즉시 반영 (닉네임, 프로필 이미지)
       if (nextNick || nextProfileImage) {
-        qc.setQueryData<MyPageDataDto>(ME_QUERY_KEY, (prev) => {
+        qc.setQueryData(ME_QUERY_KEY, (prev) => {
           if (!prev) return prev;
 
-          if (prev.roleData.role === "USER") {
-            return {
-              ...prev,
-              roleData: {
-                ...prev.roleData,
-                user: {
-                  ...prev.roleData.user,
-                  ...(nextNick && { nickname: nextNick }),
-                  ...(nextProfileImage && { profileImage: nextProfileImage }),
-                },
-              },
-            };
+          // dto로 ApiResponse or MyPageDataDto가 들어오든 타입 에러를 잡아줌
+          const dto = isApiResponseLike(prev)
+            ? prev.data
+            : (prev as MyPageDataDto);
+
+          const roleData = dto.roleData;
+          if (!roleData || roleData.role !== "USER") return prev;
+
+          const user = roleData.user;
+          const nextUser = { ...user };
+
+          if (nextNick) nextUser.nickname = nextNick;
+          if (nextProfileImage) nextUser.profileImage = nextProfileImage;
+
+          const nextDto: MyPageDataDto = {
+            ...dto,
+            roleData: {
+              ...roleData,
+              user: nextUser,
+            },
+          };
+
+          if (isApiResponseLike(prev)) {
+            return { ...prev, data: nextDto };
           }
-          return prev;
+          return nextDto;
+          // prettier-ignore
         });
       }
 
-      //stale 처리(나중에 자연스럽게 재검증)
       await qc.invalidateQueries({ queryKey: ME_QUERY_KEY });
 
-      //refetch를 잠깐 늦춰서(서버 반영 기다림)
       void (async () => {
-        await sleep(600); // 0.6초 delay
+        await sleep(600);
         await qc.refetchQueries({ queryKey: ME_QUERY_KEY, type: "all" });
       })();
 
-      options?.onSuccess?.(data, variables, onMutateResult, context);
+      options?.onSuccess?.(res, variables, onMutateResult, context);
     },
 
     onError: (error, variables, onMutateResult, context) => {

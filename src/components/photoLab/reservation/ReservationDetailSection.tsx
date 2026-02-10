@@ -6,7 +6,7 @@ import {
   ChatBubbleIcon,
   PencilLineIcon,
 } from "@/assets/icon";
-import ReservationInfoRow from "./ReservationInfoRow";
+import ReservationInfoRow from "@/components/photoLab/reservation/ReservationInfoRow";
 
 interface ReservationDetailSectionProps {
   schedule: string;

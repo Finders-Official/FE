@@ -9,12 +9,15 @@ interface PostCardProps {
 export const PostCard = ({ post }: PostCardProps) => {
   return (
     <div>
-      <Link to={`/post/${post.id}`} className="">
-        <img
-          src={post.src}
-          alt={post.title}
-          className="h-[14.25rem] w-[11.25rem] overflow-hidden rounded-md"
-        />
+      <Link to={`/photoFeed/post/${post.id}`} className="block">
+        <div className="h-[14.25rem] w-full overflow-hidden rounded-md">
+          <img
+            src={post.src}
+            alt={post.title}
+            className="h-full w-full object-cover object-center"
+            loading="lazy"
+          />
+        </div>
       </Link>
 
       <p className="truncate py-1">{post.title}</p>

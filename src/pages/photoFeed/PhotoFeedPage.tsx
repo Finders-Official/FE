@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
+import Masonry from "react-masonry-css";
 
 const SKELETON_COUNT = 8;
 
@@ -17,6 +18,12 @@ const SKELETON_HEIGHTS = [
   "h-[300px]",
   "h-[340px]",
 ];
+
+const breakpointColumnsObj = {
+  default: 2, // 디자인이 2열이면 고정이 가장 안정적
+  768: 2,
+  1024: 2,
+};
 
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -73,7 +80,7 @@ export default function PhotoFeedPage() {
             navigate("/photoFeed/search");
           },
         }}
-        className="sticky top-0 z-50 bg-black"
+        className="sticky top-0 z-50 bg-neutral-900"
       />
 
       {/* 에러 처리 */}
@@ -100,25 +107,32 @@ export default function PhotoFeedPage() {
       )}
 
       {/* Masonry 레이아웃 */}
-      <section className="mb-20 columns-2 gap-4 md:columns-3 xl:columns-4">
-        {isLoading
-          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
-              const heightClass = SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
+      <section className="mb-20">
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
+          {isLoading
+            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
+                const heightClass =
+                  SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
 
-              return (
-                <PhotoCardSkeleton
-                  key={`skeleton-${i}`}
-                  className={heightClass}
+                return (
+                  <PhotoCardSkeleton
+                    key={`skeleton-${i}`}
+                    className={heightClass}
+                  />
+                );
+              })
+            : posts.map((postPreview) => (
+                <PhotoCard
+                  key={postPreview.postId}
+                  photo={postPreview}
+                  isLiked={false}
                 />
-              );
-            })
-          : posts.map((postPreview) => (
-              <PhotoCard
-                key={postPreview.postId}
-                photo={postPreview}
-                isLiked={false}
-              />
-            ))}
+              ))}
+        </Masonry>
       </section>
 
       {/* 새 게시물 작성 플로팅 버튼 */}

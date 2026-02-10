@@ -1,5 +1,8 @@
 import type { Region } from "@/types/photoLab";
 
+// 지역 최대 선택 개수
+export const MAX_REGION_SELECTIONS = 10;
+
 // 서울
 const SEOUL_AREAS = [
   "전체",
