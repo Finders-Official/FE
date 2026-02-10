@@ -125,7 +125,7 @@ export function PhoneEditPage() {
         )}
       </form>
 
-      <footer className="border-neutral-850 mt-auto border-t px-4 py-5">
+      <footer className="border-neutral-850 mt-auto border-t py-5">
         <CTA_Button
           size="xlarge"
           text={isEditing ? "변경 중..." : "변경 완료"}
