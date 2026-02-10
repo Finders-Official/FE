@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { getDevelopmentOrders } from "@/apis/developmentHistory/developmentHistory.api";
 import { formatDevelopmentOrder } from "@/utils/developmentHistory/formatters";
-import { CloseIcon, FlimImageIcon } from "@/assets/icon";
+import { CloseIcon, LogoIcon } from "@/assets/icon";
 import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
 import DevelopmentOrderCard from "@/components/developmentHistory/DevelopmentOrderCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
@@ -135,13 +135,11 @@ const DevelopmentHistoryPage = () => {
 
 const EmptyOrderState = () => (
   <div className="flex h-[calc(100vh-6.25rem)] w-full flex-col items-center justify-center">
-    <div className="flex flex-col items-center gap-5">
-      <h2 className="text-center text-[1.1875rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
+    <div className="flex flex-col items-center gap-4">
+      <LogoIcon className="h-23.5 w-23.5" />
+      <p className="font-regular text-center text-[1rem] leading-[128%] tracking-[-0.02em] text-neutral-100">
         아직 맡기신 현상 작업이 없어요
-      </h2>
-      <div className="flex h-23.5 w-23.5 items-center justify-center rounded-full bg-[#484848]/36">
-        <FlimImageIcon className="h-11.5 w-11.5 text-neutral-400" />
-      </div>
+      </p>
     </div>
   </div>
 );
