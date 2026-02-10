@@ -7,3 +7,4 @@ export { default as Calendar } from "./Calendar";
 export { default as TimeSlotList } from "./TimeSlotList";
 export { default as RegionSelector } from "./RegionSelector";
 export { default as FilterBottomSheet } from "./FilterBottomSheet";
+export { default as LabCardSkeleton } from "./LabCardSkeleton";
