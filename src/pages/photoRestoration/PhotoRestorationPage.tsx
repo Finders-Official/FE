@@ -204,84 +204,88 @@ export default function PhotoRestorationPage() {
 
   return (
     <div className="relative flex min-h-dvh w-full flex-col bg-neutral-900">
-      <Header
-        title="탄 사진 복원하기"
-        showBack
-        onBack={handleBack}
-        rightAction={
-          restoredImageUrl && !isGenerating && viewMode === "MAIN"
-            ? {
-                type: "text",
-                text: "저장",
-                onClick: handleSaveClick,
-                loading: isSaving,
-                disabled: isSaving,
-              }
-            : undefined
-        }
-      />
-
-      <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
-        <div className="flex w-full -translate-y-[30.5px] flex-col items-center">
-          <RestorationLoadingOverlay
-            isGenerating={isGenerating}
-            statusMessage={statusMessage}
-            progress={progress}
+      {viewMode === "MAIN" && (
+        <>
+          <Header
+            title="탄 사진 복원하기"
+            showBack
+            onBack={handleBack}
+            rightAction={
+              restoredImageUrl && !isGenerating
+                ? {
+                    type: "text",
+                    text: "저장",
+                    onClick: handleSaveClick,
+                    loading: isSaving,
+                    disabled: isSaving,
+                  }
+                : undefined
+            }
           />
 
-          <RestorationImageContainer
-            imageUrl={imageUrl}
-            restoredImageUrl={restoredImageUrl}
-            isComparing={isComparing}
-            isGenerating={isGenerating}
-            canvasRef={canvasRef}
-            containerRef={containerRef}
-            startDrawing={startDrawing}
-            draw={draw}
-            stopDrawing={stopDrawing}
-            startCompare={startCompare}
-            endCompare={endCompare}
-            setIsImageLoaded={setIsImageLoaded}
-          />
-
-          {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
-          {restoredImageUrl && !isGenerating && (
-            <div className="mt-3 flex w-85.75 justify-end">
-              <div
-                onMouseDown={startCompare}
-                onMouseUp={endCompare}
-                onMouseLeave={endCompare}
-                onTouchStart={startCompare}
-                onTouchEnd={endCompare}
-                className="pointer-events-auto cursor-pointer rounded-full p-2"
-              >
-                <RestorationCompareIcon className="h-10 w-10" />
-              </div>
-            </div>
-          )}
-
-          {/* 편집 모드일 때: Undo/Redo 컨트롤러 */}
-          {!restoredImageUrl && !isGenerating && (
-            <div className="mt-4">
-              <RestorationControls
-                onUndo={handleUndo}
-                onRedo={handleRedo}
-                canUndo={historyStep >= 0}
-                canRedo={historyStep < paths.length - 1}
+          <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
+            <div className="flex w-full -translate-y-[30.5px] flex-col items-center">
+              <RestorationLoadingOverlay
+                isGenerating={isGenerating}
+                statusMessage={statusMessage}
+                progress={progress}
               />
-            </div>
-          )}
-        </div>
-      </div>
 
-      <RestorationDialogs
-        activeDialog={visibleDialog}
-        setActiveDialog={setActiveDialog}
-        handleDialogConfirm={handleDialogConfirm}
-        handleDialogCancel={handleDialogCancel}
-        setError={setError}
-        resetRestoration={resetRestoration}
-      />
+              <RestorationImageContainer
+                imageUrl={imageUrl}
+                restoredImageUrl={restoredImageUrl}
+                isComparing={isComparing}
+                isGenerating={isGenerating}
+                canvasRef={canvasRef}
+                containerRef={containerRef}
+                startDrawing={startDrawing}
+                draw={draw}
+                stopDrawing={stopDrawing}
+                startCompare={startCompare}
+                endCompare={endCompare}
+                setIsImageLoaded={setIsImageLoaded}
+              />
+
+              {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
+              {restoredImageUrl && !isGenerating && (
+                <div className="mt-3 flex w-85.75 justify-end">
+                  <div
+                    onMouseDown={startCompare}
+                    onMouseUp={endCompare}
+                    onMouseLeave={endCompare}
+                    onTouchStart={startCompare}
+                    onTouchEnd={endCompare}
+                    className="pointer-events-auto cursor-pointer rounded-full p-2"
+                  >
+                    <RestorationCompareIcon className="h-10 w-10" />
+                  </div>
+                </div>
+              )}
+
+              {/* 편집 모드일 때: Undo/Redo 컨트롤러 */}
+              {!restoredImageUrl && !isGenerating && (
+                <div className="mt-4">
+                  <RestorationControls
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
+                    canUndo={historyStep >= 0}
+                    canRedo={historyStep < paths.length - 1}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <RestorationDialogs
+            activeDialog={visibleDialog}
+            setActiveDialog={setActiveDialog}
+            handleDialogConfirm={handleDialogConfirm}
+            handleDialogCancel={handleDialogCancel}
+            setError={setError}
+            resetRestoration={resetRestoration}
+          />
+        </>
+      )}
 
       {viewMode === "SAVED" && restoredImageUrl && (
         <RestorationSavedOverlay
