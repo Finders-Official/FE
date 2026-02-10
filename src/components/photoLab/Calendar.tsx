@@ -1,22 +1,25 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useMemo } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import DateChip from "@/components/common/chips/DateChip";
 import { WEEKDAYS } from "@/constants/date";
+import { buildCalendarGrid, getVisibleDays } from "@/utils/calendar";
 
 interface CalendarProps {
   selectedDate?: Date;
   onDateSelect: (date: Date) => void;
-  minDate?: Date; // 선택 가능한 최소 날짜 (기본: 오늘)
+  viewDate: Date;
+  onViewDateChange: (date: Date) => void;
+  minDate?: Date;
   isDateDisabled?: (date: Date) => boolean;
-  onVisibleRowsChange?: (rows: number) => void;
 }
 
 export default function Calendar({
   selectedDate,
   onDateSelect,
+  viewDate,
+  onViewDateChange,
   minDate,
   isDateDisabled,
-  onVisibleRowsChange,
 }: CalendarProps) {
   const today = useMemo(() => {
     const d = new Date();
@@ -26,117 +29,26 @@ export default function Calendar({
 
   const effectiveMinDate = minDate ?? today;
 
-  const [viewDate, setViewDate] = useState(() => selectedDate ?? today);
-
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
 
-  // 이전 달로 이동 가능 여부 (minDate가 있는 달 이전으로는 못 감)
+  // 이전 달로 이동 가능 여부
   const canGoPrev = useMemo(() => {
     const minYear = effectiveMinDate.getFullYear();
     const minMonth = effectiveMinDate.getMonth();
     return year > minYear || (year === minYear && month > minMonth);
   }, [year, month, effectiveMinDate]);
 
-  // 이전 달로 이동
-  const goToPrevMonth = () => {
-    if (canGoPrev) {
-      setViewDate(new Date(year, month - 1, 1));
-    }
-  };
-
-  // 다음 달로 이동
-  const goToNextMonth = () => {
-    setViewDate(new Date(year, month + 1, 1));
-  };
-
-  // 해당 월의 날짜 배열 생성 (이전/다음 달 포함)
-  const calendarDays = useMemo(() => {
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
-    const startDayOfWeek = firstDayOfMonth.getDay();
-    const daysInMonth = lastDayOfMonth.getDate();
-
-    const days: { date: Date; isCurrentMonth: boolean }[] = [];
-
-    // 이전 달의 날짜들
-    const prevMonthLastDay = new Date(year, month, 0).getDate();
-    for (let i = startDayOfWeek - 1; i >= 0; i--) {
-      days.push({
-        date: new Date(year, month - 1, prevMonthLastDay - i),
-        isCurrentMonth: false,
-      });
-    }
-
-    // 해당 월의 날짜들
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push({
-        date: new Date(year, month, day),
-        isCurrentMonth: true,
-      });
-    }
-
-    // 다음 달의 날짜들 (6주 채우기)
-    const remainingDays = 42 - days.length;
-    for (let day = 1; day <= remainingDays; day++) {
-      days.push({
-        date: new Date(year, month + 1, day),
-        isCurrentMonth: false,
-      });
-    }
-
-    return days;
-  }, [year, month]);
-
-  // 날짜 비교 (년월일만)
-  const isSameDay = (d1: Date, d2: Date) => {
-    return (
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate()
-    );
-  };
-
-  // 날짜가 비활성화되어야 하는지
-  const isDisabled = useCallback(
-    (date: Date) => {
-      if (date < effectiveMinDate) return true;
-      if (isDateDisabled?.(date)) return true;
-      return false;
-    },
-    [effectiveMinDate, isDateDisabled],
-  );
-
-  // 오늘인지 확인
-  const isToday = (date: Date) => {
-    return isSameDay(date, today);
-  };
-
-  // 표시할 날짜 필터링 (모두 비활성인 줄 제거, 최소 4줄 유지)
+  // 표시할 날짜 (비활성 줄 제거됨)
   const visibleDays = useMemo(() => {
-    const MIN_ROWS = 4;
-    const weeks: (typeof calendarDays)[number][][] = [];
-    for (let i = 0; i < calendarDays.length; i += 7) {
-      weeks.push(calendarDays.slice(i, i + 7));
-    }
+    const grid = buildCalendarGrid(year, month);
+    return getVisibleDays(grid, effectiveMinDate, isDateDisabled);
+  }, [year, month, effectiveMinDate, isDateDisabled]);
 
-    const isRowAllInactive = (week: (typeof calendarDays)[number][]) =>
-      week.every(({ date, isCurrentMonth }) => {
-        if (!isCurrentMonth) return true;
-        return isDisabled(date);
-      });
-
-    const filtered = weeks.filter((week) => !isRowAllInactive(week));
-
-    if (filtered.length >= MIN_ROWS) return filtered.flat();
-    return weeks.slice(0, Math.max(MIN_ROWS, filtered.length)).flat();
-  }, [calendarDays, isDisabled]);
-
-  const visibleRowCount = visibleDays.length / 7;
-
-  useEffect(() => {
-    onVisibleRowsChange?.(visibleRowCount);
-  }, [visibleRowCount, onVisibleRowsChange]);
+  const isSameDay = (d1: Date, d2: Date) =>
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
 
   return (
     <div className="flex flex-col gap-3">
@@ -144,7 +56,9 @@ export default function Calendar({
       <div className="flex items-center justify-center gap-5">
         <button
           type="button"
-          onClick={goToPrevMonth}
+          onClick={() =>
+            canGoPrev && onViewDateChange(new Date(year, month - 1, 1))
+          }
           disabled={!canGoPrev}
           className="flex h-6 w-6 items-center justify-center disabled:cursor-not-allowed"
           aria-label="이전 달"
@@ -158,7 +72,7 @@ export default function Calendar({
         </span>
         <button
           type="button"
-          onClick={goToNextMonth}
+          onClick={() => onViewDateChange(new Date(year, month + 1, 1))}
           className="flex h-6 w-6 items-center justify-center"
           aria-label="다음 달"
         >
@@ -181,7 +95,6 @@ export default function Calendar({
       {/* 날짜 그리드 */}
       <div className="grid grid-cols-7 gap-x-[0.125rem] gap-y-[0.125rem]">
         {visibleDays.map(({ date, isCurrentMonth }, index) => {
-          // 현재 달이 아닌 날짜는 회색으로 표시만
           if (!isCurrentMonth) {
             return (
               <div
@@ -193,9 +106,9 @@ export default function Calendar({
             );
           }
 
-          const disabled = isDisabled(date);
+          const disabled = date < effectiveMinDate || !!isDateDisabled?.(date);
           const selected = selectedDate ? isSameDay(date, selectedDate) : false;
-          const todayLabel = isToday(date) ? "오늘" : undefined;
+          const todayLabel = isSameDay(date, today) ? "오늘" : undefined;
 
           return (
             <DateChip
