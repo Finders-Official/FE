@@ -122,26 +122,26 @@ export function buildProcessSteps({
 
     // 직접수령
     if (
-      workData.print?.receiptMethod === "PICKUP" &&
-      workData.print?.status === "SHIPPED"
+      (workData.print?.receiptMethod === "PICKUP" &&
+        workData.print?.status === "READY") ||
+      workData.print?.status === "COMPLETED"
     ) {
       return (
         <>
-          <div>
-            <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+          <div className="gap-1 pb-2">
+            <p className="flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
               <ClockIcon className="h-3 w-3" />
               {`작업 완료 시간: ${formatEstimatedTime(workData.print.completedAt)}`}
             </p>
+            {earlyHours !== -1 && (
+              <div>
+                <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-neutral-600">
+                  {`예상 작업 시간보다 ${earlyHours}시간 빨리 완료되었어요!`}
+                </p>
+              </div>
+            )}
             <hr className="mb-1.5 border-orange-500/30" />
           </div>
-
-          {earlyHours !== -1 && (
-            <div>
-              <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem]">
-                {`예상 작업 시간보다 ${earlyHours}시간 빨리 완료되었어요!`}
-              </p>
-            </div>
-          )}
         </>
       );
     }
@@ -192,7 +192,7 @@ export function buildProcessSteps({
           { label: "수령 방식", value: "직접 수령" },
           {
             label: "수령 상태",
-            value: workData.print.status === "SHIPPED" ? "미수령" : "수령 완료",
+            value: workData.print.status === "READY" ? "미수령" : "수령 완료",
           },
         ]}
       />
@@ -291,14 +291,15 @@ export function buildProcessSteps({
               onClick={onGoTrackDelivery}
             />
           )}
-          {workData.delivery?.status === "DELIVERED" && (
-            <ActionButton
-              leftIcon={<CheckEmptyIcon className="h-4 w-4" />}
-              message="수령 확정 하기"
-              showNext
-              onClick={onConfirmReceived}
-            />
-          )}
+          {workData.delivery?.status === "DELIVERED" ||
+            (workData.print?.status === "COMPLETED" && (
+              <ActionButton
+                leftIcon={<CheckEmptyIcon className="h-4 w-4" />}
+                message="수령 확정 하기"
+                showNext
+                onClick={onConfirmReceived}
+              />
+            ))}
         </div>
       ),
       index: 4,

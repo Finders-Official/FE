@@ -13,7 +13,7 @@ interface RecipientInfoCardProps {
 
 export function RecipientInfoCard({ items }: RecipientInfoCardProps) {
   return (
-    <div className="grid grid-cols-[7.5rem_1fr] gap-x-6 gap-y-6 text-[0.8125rem]">
+    <div className="grid grid-cols-[3.75rem_1fr] gap-x-4 gap-y-1.5 text-[0.8125rem]">
       {items.map((item) => (
         <>
           {/* 라벨 셀 */}

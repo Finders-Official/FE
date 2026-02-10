@@ -28,7 +28,7 @@ export function getBannerContent(params: {
         return "사진이 안전하게 배송되었어요";
       } else return null;
     } else if (receiptMethod === "PICKUP") {
-      if (printStatus === "SHIPPED") {
+      if (printStatus === "READY") {
         return "인화 작업이 완료되었어요";
       } else if (printStatus === "COMPLETED") {
         return "사진 수령이 완료되었어요";
@@ -45,7 +45,7 @@ export function getBannerContent(params: {
         return "발송된 사진을 확인 후, 수령 확정해주세요!";
       } else return null;
     } else if (receiptMethod === "PICKUP") {
-      if (printStatus === "SHIPPED") {
+      if (printStatus === "READY") {
         return "소중한 결과물을 수령해가세요!";
       } else if (printStatus === "COMPLETED") {
         return "수령한 사진을 확인 후, 수령 확정해주세요!";
