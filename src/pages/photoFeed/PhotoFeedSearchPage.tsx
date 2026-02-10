@@ -238,7 +238,7 @@ export default function PhotoFeedSearchPage() {
 
     if (relatedSearches && relatedSearches.length !== 0) {
       return (
-        <div className="flex flex-col gap-[1.875rem] pt-5">
+        <div className="flex flex-col gap-[1.875rem]">
           <KeywordSuggestionSection
             keywords={relatedSearches}
             onKeywordClick={handleSearch}
@@ -326,7 +326,7 @@ export default function PhotoFeedSearchPage() {
   return (
     <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
-      <div className="py-3">
+      <div className="mb-5">
         <SearchBar {...searchBarProps} />
       </div>
 
@@ -336,7 +336,7 @@ export default function PhotoFeedSearchPage() {
       {mode === "result" && renderResult()}
 
       {/* 새 게시물 작성 플로팅 버튼 */}
-      {mode === "result" && (
+      {mode === "result" && !bottomSheetOpen && (
         <button
           type="button"
           aria-label="새 게시물 작성"
