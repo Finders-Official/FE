@@ -1,29 +1,13 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import PopularLabCard from "./PopularLabCard";
-import { fetchPopularLabs, type Lab } from "@/apis/mainPage/mainPage.api";
+import type { Lab } from "@/apis/mainPage/mainPage.api";
+import { usePopularLabsQuery } from "@/hooks/mainPage/useMainPageQueries";
 
 export default function PopularLabsSection() {
-  const [labs, setLabs] = useState<Lab[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: labs = [], isLoading } = usePopularLabsQuery();
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const getPopularLabs = async () => {
-      try {
-        setIsLoading(true);
-        const data = await fetchPopularLabs();
-        setLabs(data);
-      } catch (error) {
-        console.error("Error fetching popular labs:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getPopularLabs();
-  }, []);
 
   // 데이터 4개씩 묶기 (Memoized)
   const chunkedLabs = useMemo(() => {
