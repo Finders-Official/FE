@@ -1,5 +1,5 @@
 import type { LabPreview } from "@/types/photoLabSearch";
-import LabPreviewItem from "./LabPreviewItem";
+import LabPreviewItem from "@/components/photoLab/search/LabPreviewItem";
 
 interface LabPreviewSectionProps {
   labs: LabPreview[];

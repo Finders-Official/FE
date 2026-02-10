@@ -1,8 +1,8 @@
 import { useCallback, useRef } from "react";
 import type { PhotoLabItem } from "@/types/photoLab";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
-import LabCard from "./LabCard";
-import { LabCardSkeleton } from "@/components/photoLab";
+import LabCard from "@/components/photoLab/LabCard";
+import LabCardSkeleton from "@/components/photoLab/LabCardSkeleton";
 import EmptyView from "@/components/common/EmptyView";
 
 interface LabListProps {

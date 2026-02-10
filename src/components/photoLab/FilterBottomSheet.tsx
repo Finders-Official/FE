@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
-import Calendar from "./Calendar";
+import Calendar from "@/components/photoLab/Calendar";
 import { calcVisibleRows } from "@/utils/calendar";
-import TimeSlotList from "./TimeSlotList";
-import RegionSelector from "./RegionSelector";
+import TimeSlotList from "@/components/photoLab/TimeSlotList";
+import RegionSelector from "@/components/photoLab/RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
