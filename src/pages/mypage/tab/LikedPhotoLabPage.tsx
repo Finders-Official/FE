@@ -1,5 +1,9 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { PhotoLabCard, PhotoLabCardSkeleton } from "@/components/mypage";
+import {
+  EmptyOrderState,
+  PhotoLabCard,
+  PhotoLabCardSkeleton,
+} from "@/components/mypage";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { useLikedPhotoLabsInfinite } from "@/hooks/my";
@@ -130,9 +134,6 @@ export function LikedPhotoLabPage() {
               />
             ))}
 
-        {/* sentinel */}
-        <div ref={bottomRef} className="h-10" />
-
         {isFetchingNextPage && (
           <div className="py-2 text-center text-sm text-neutral-300">
             더 불러오는 중...
@@ -144,10 +145,11 @@ export function LikedPhotoLabPage() {
         )}
 
         {labs.length === 0 && !isFetchingNextPage && (
-          <div className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 text-center text-sm text-neutral-400">
-            아직 관심 현상소가 없습니다.
-          </div>
+          <EmptyOrderState description="아직 마음에 담아둔 현상소가 없어요" />
         )}
+
+        {/* sentinel */}
+        <div ref={bottomRef} />
       </main>
     </div>
   );

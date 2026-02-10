@@ -27,7 +27,7 @@ export default function DateChip({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex h-[3rem] w-[3rem] flex-col items-center justify-center rounded-[0.625rem] px-[0.875rem] py-[0.375rem] transition-colors ${
+      className={`relative flex h-[3rem] w-[3rem] items-center justify-center rounded-[0.625rem] px-[0.875rem] py-[0.375rem] transition-colors ${
         selected ? "bg-orange-500" : ""
       } ${disabled ? "cursor-not-allowed" : ""} ${className}`}
     >
@@ -38,7 +38,7 @@ export default function DateChip({
       </span>
       {label && (
         <span
-          className={`text-[0.625rem] leading-[126%] font-normal tracking-[-0.02em] ${getTextColor()}`}
+          className={`absolute bottom-[0.25rem] text-[0.625rem] leading-[126%] font-normal tracking-[-0.02em] ${getTextColor()}`}
         >
           {label}
         </span>
