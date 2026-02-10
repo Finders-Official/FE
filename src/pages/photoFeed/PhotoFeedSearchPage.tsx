@@ -254,7 +254,7 @@ export default function PhotoFeedSearchPage() {
   const renderResult = () => {
     if (isSearchPending) {
       return (
-        <section className="mb-20 columns-2 gap-4 md:columns-3 xl:columns-4">
+        <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
           {Array.from({ length: SKELETON_COUNT }).map((_, i) => {
             const heightClass = SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
 
@@ -298,7 +298,7 @@ export default function PhotoFeedSearchPage() {
               <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
             </button>
           </div>
-          <section className="mb-25 columns-2 gap-4 md:columns-3 xl:columns-4">
+          <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
             {previewList.map((photo) => (
               <PhotoCard key={photo.postId} photo={photo} />
             ))}
