@@ -298,7 +298,10 @@ export function EditInfoPage() {
 
       {showToast ? (
         <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-          <ToastItem message={message} icon={<CheckCircleIcon />} />
+          <ToastItem
+            message={message}
+            icon={<CheckCircleIcon className="h-5 w-5" />}
+          />
         </div>
       ) : null}
     </div>
