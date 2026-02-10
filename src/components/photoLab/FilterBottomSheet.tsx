@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import Calendar from "./Calendar";
-import { calcVisibleCalendarRows } from "@/utils/calcVisibleCalendarRows";
+import { calcVisibleRows } from "@/utils/calendar";
 import TimeSlotList from "./TimeSlotList";
 import RegionSelector from "./RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
@@ -167,13 +167,20 @@ export default function FilterBottomSheet({
     onClose();
   };
 
-  // 캘린더 표시 줄 수 (초기값 미리 계산)
-  const [calendarRows, setCalendarRows] = useState(() => {
+  // 캘린더 viewDate (controlled)
+  const [viewDate, setViewDate] = useState(() => {
+    if (initialFilter?.date) return new Date(initialFilter.date);
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  // 캘린더 줄 수 (viewDate에서 파생)
+  const calendarRows = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const viewDate = initialFilter?.date ? new Date(initialFilter.date) : today;
-    return calcVisibleCalendarRows(viewDate, today);
-  });
+    return calcVisibleRows(viewDate, today);
+  }, [viewDate]);
 
   // 화면 높이 상태
   const [vh, setVh] = useState(() => window.innerHeight);
@@ -229,7 +236,8 @@ export default function FilterBottomSheet({
               <Calendar
                 selectedDate={selectedDate}
                 onDateSelect={setSelectedDate}
-                onVisibleRowsChange={setCalendarRows}
+                viewDate={viewDate}
+                onViewDateChange={setViewDate}
               />
               <TimeSlotList
                 slots={TIME_SLOTS}
