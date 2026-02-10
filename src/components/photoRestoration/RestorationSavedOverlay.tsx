@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Header from "@/components/common/Header";
 import { shareImageFromUrl } from "@/utils/photoRestoration/shareImage";
 import { ShareIcon } from "@/assets/icon";
@@ -11,6 +12,12 @@ export default function RestorationSavedOverlay({
   imageUrl,
   onClose,
 }: RestorationSavedOverlayProps) {
+  // === ADD LOGS ===
+  useEffect(() => {
+    console.log(`[Overlay] Mounted with imageUrl:`, imageUrl);
+  }, [imageUrl]);
+  // ================
+
   const handleShare = async () => {
     try {
       await shareImageFromUrl(imageUrl, {
@@ -46,6 +53,20 @@ export default function RestorationSavedOverlay({
               src={imageUrl}
               alt="saved"
               className="block h-full w-full object-contain"
+              // === ADD PROPS ===
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                console.log(`[Overlay] Image Load Success`);
+                console.log(
+                  `[Overlay] Natural Dims: ${img.naturalWidth}x${img.naturalHeight}`,
+                );
+                console.log(`[Overlay] CurrentSrc: ${img.currentSrc}`);
+              }}
+              onError={(e) => {
+                console.error(`[Overlay] Image Load Error`);
+                console.error(`[Overlay] Event:`, e);
+              }}
+              // ================
             />
           </div>
         </div>
