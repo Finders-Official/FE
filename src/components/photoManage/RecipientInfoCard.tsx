@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { CopyButton } from "@/components/common";
+import React from "react";
 
 interface InfoItem {
   label: string;
@@ -15,20 +16,12 @@ export function RecipientInfoCard({ items }: RecipientInfoCardProps) {
   return (
     <div className="mt-2 grid grid-cols-[3.75rem_1fr] gap-x-4 gap-y-1.5 text-[0.8125rem]">
       {items.map((item) => (
-        <>
+        <React.Fragment key={item.label}>
           {/* 라벨 셀 */}
-          <div
-            key={`${item.label}-label`}
-            className="text-left text-neutral-400"
-          >
-            {item.label}
-          </div>
+          <div className="text-left text-neutral-400">{item.label}</div>
 
           {/* 값 셀 */}
-          <div
-            key={`${item.label}-value`}
-            className="flex items-start gap-2 text-left break-words text-white"
-          >
+          <div className="flex items-start gap-2 text-left break-words text-white">
             {item.copyValue && (
               <CopyButton
                 text={item.copyValue}
@@ -40,7 +33,7 @@ export function RecipientInfoCard({ items }: RecipientInfoCardProps) {
             )}
             <div className="min-w-0">{item.value}</div>
           </div>
-        </>
+        </React.Fragment>
       ))}
     </div>
   );

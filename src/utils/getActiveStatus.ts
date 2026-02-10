@@ -17,10 +17,7 @@ export function getActiveStatus(
 
   if (
     workData.print?.status === "READY" ||
-    workData.print?.status === "COMPLETED"
-  )
-    return "DELIVERY";
-  else if (
+    workData.print?.status === "COMPLETED" ||
     workData.delivery?.status === "SHIPPED" ||
     workData.delivery?.status === "DELIVERED"
   )
