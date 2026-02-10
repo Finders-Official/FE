@@ -326,7 +326,7 @@ export default function PhotoFeedSearchPage() {
   return (
     <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
-      <div className="mb-5">
+      <div className="mt-3 mb-5">
         <SearchBar {...searchBarProps} />
       </div>
 
