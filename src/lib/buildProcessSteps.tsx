@@ -9,7 +9,6 @@ import {
   DownloadIcon,
   PencilLineIcon,
   ClockIcon,
-  TruckIcon,
   CheckEmptyIcon,
   PackageIcon,
 } from "@/assets/icon";
@@ -37,7 +36,6 @@ export function buildProcessSteps({
   onOpenPrintConfirmDialog,
   onGoDownload,
   onGoFeed,
-  onGoTrackDelivery,
   onConfirmReceived,
 }: BuildStepsArgs): StepConfig[] {
   // 전체 주소지 생성
@@ -94,7 +92,7 @@ export function buildProcessSteps({
                 value:
                   getFullAddress(
                     workData.delivery?.recipientAddress ?? null,
-                    workData.delivery?.AddressDetail ?? null,
+                    workData.delivery?.recipientAddressDetail ?? null,
                   ) || "-",
               },
             ]}
@@ -154,41 +152,38 @@ export function buildProcessSteps({
   // 수령/배송 단계 content
   const getDeliveryContent = () => {
     if (!workData.print) return null;
+    if (status !== "DELIVERY") return "안전하게 포장하여 수령/배송";
 
     // 배송
     if (receiptMethod === "DELIVERY" && workData.delivery) {
-      if (workData.delivery.status === "PENDING") {
-        return "안전하게 포장하여 수령/배송";
-      } else {
-        return (
-          <RecipientInfoCard
-            items={[
-              {
-                label: "보낸 사람",
-                value: workData.delivery.sender ?? "-",
-              },
-              {
-                label: "주소",
-                value:
-                  getFullAddress(
-                    workData.delivery.recipientAddress,
-                    workData.delivery.AddressDetail,
-                  ) || "-",
-              },
-              {
-                label: "발송일",
-                value: formatShippedDate(workData.delivery.shippedAt) ?? "-",
-              },
-              { label: "택배사", value: workData.delivery.carrier ?? "-" },
-              {
-                label: "송장 번호",
-                value: workData.delivery.trackingNumber ?? "-",
-                copyValue: workData.delivery.trackingNumber ?? undefined,
-              },
-            ]}
-          />
-        );
-      }
+      return (
+        <RecipientInfoCard
+          items={[
+            {
+              label: "보낸 사람",
+              value: workData.delivery.sender ?? "-",
+            },
+            {
+              label: "주소",
+              value:
+                getFullAddress(
+                  workData.delivery.recipientAddress,
+                  workData.delivery.recipientAddressDetail,
+                ) || "-",
+            },
+            {
+              label: "발송일",
+              value: formatShippedDate(workData.delivery.shippedAt) ?? "-",
+            },
+            { label: "택배사", value: workData.delivery.carrier ?? "-" },
+            {
+              label: "송장 번호",
+              value: workData.delivery.trackingNumber ?? "-",
+              copyValue: workData.delivery.trackingNumber ?? undefined,
+            },
+          ]}
+        />
+      );
     }
 
     // 직접 수령
@@ -289,14 +284,6 @@ export function buildProcessSteps({
       content: getDeliveryContent(),
       buttons: status === "DELIVERY" && (
         <div className="flex flex-col gap-2.5">
-          {receiptMethod === "DELIVERY" && (
-            <ActionButton
-              leftIcon={<TruckIcon className="text-orange-450 h-4.5 w-4.5" />}
-              message="배송 조회하러 가기"
-              showNext
-              onClick={onGoTrackDelivery}
-            />
-          )}
           {isCompleted && (
             <ActionButton
               leftIcon={<CheckEmptyIcon className="h-4 w-4" />}
