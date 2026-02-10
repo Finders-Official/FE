@@ -1,14 +1,36 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PostCard } from "@/components/mypage/PostCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import type { Post } from "@/types/mypage/post";
 import { useMyPostsInfinite } from "@/hooks/my";
 import { EmptyOrderState, PostCardSkeleton } from "@/components/mypage";
 import { formatYmdDot } from "@/utils/dateFormat";
+import { useLocation } from "react-router";
+import { ToastItem } from "@/components/common";
+import { CheckCircleIcon } from "@/assets/icon";
 
 const SKELETON_COUNT = 6;
 
 export function MyPostPage() {
+  const location = useLocation();
+  const { isDeleted } = location.state ?? {};
+
+  // 토스트 메세지 관련 상태
+  const [toastVisible, setToastVisible] = useState(isDeleted);
+  const [mounted, setMounted] = useState(isDeleted);
+
+  useEffect(() => {
+    if (!isDeleted) return;
+
+    const fadeTimer = setTimeout(() => setToastVisible(false), 1600);
+    const removeTimer = setTimeout(() => setMounted(false), 3000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [isDeleted]);
+
   const {
     data,
     isLoading,
@@ -73,7 +95,7 @@ export function MyPostPage() {
   }
 
   return (
-    <div className="py-6">
+    <div className="py-4">
       <main>
         <div className="grid grid-cols-2 gap-4">
           {isLoading
@@ -99,6 +121,21 @@ export function MyPostPage() {
 
         {/* 선택적 sentinel */}
         {shouldShowSentinel ? <div ref={bottomRef} /> : null}
+
+        {isDeleted && mounted && (
+          <div className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5">
+            <div
+              className={`transition-opacity duration-300 ease-out ${
+                toastVisible ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <ToastItem
+                message="게시글이 삭제되었습니다"
+                icon={<CheckCircleIcon className="h-5 w-5" />}
+              />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
