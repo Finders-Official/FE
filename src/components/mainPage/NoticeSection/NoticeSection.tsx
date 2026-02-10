@@ -1,9 +1,13 @@
+import { useRef } from "react";
 import NoticeSectionCard from "./NoticeSectionCard";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { usePhotoLabNotices } from "@/hooks/photoLab";
+import { useHorizontalScrollRestore } from "@/hooks/common";
 
 export default function NoticeSection() {
   const { data: notices, isLoading, isError } = usePhotoLabNotices();
+  const containerRef = useRef<HTMLDivElement>(null);
+  useHorizontalScrollRestore(containerRef, "notice_section");
 
   if (isLoading) return null;
   if (isError || !notices || notices.length === 0) return null;
@@ -14,15 +18,22 @@ export default function NoticeSection() {
       <SectionHeader title="현상소에서 알려드립니다" />
 
       {/* 가로 스크롤 리스트 */}
-      <div className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-20">
-        {notices.map((notice, index) => (
-          <div
-            key={`${notice.photoLabId}-${notice.noticeTitle}-${index}`}
-            className="flex-none snap-start"
-          >
-            <NoticeSectionCard notice={notice} />
-          </div>
-        ))}
+      <div
+        ref={containerRef}
+        className="scrollbar-hide relative flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-20"
+      >
+        {notices.map((notice, index) => {
+          const anchorId = `notice-${notice.photoLabId}-${index}`;
+          return (
+            <div
+              key={`${notice.photoLabId}-${notice.noticeTitle}-${index}`}
+              data-anchor-id={anchorId}
+              className="flex-none snap-start"
+            >
+              <NoticeSectionCard notice={notice} />
+            </div>
+          );
+        })}
       </div>
     </section>
   );
