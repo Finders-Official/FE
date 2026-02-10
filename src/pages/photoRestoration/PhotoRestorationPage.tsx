@@ -76,7 +76,13 @@ export default function PhotoRestorationPage() {
     resetRestoration,
   } = useRestoration();
 
-  // Derived state: Error dialog takes priority
+  // 디버깅
+  useEffect(() => {
+    if (viewMode === "SAVED") {
+      console.log("[SAVED] restoredImageUrl:", restoredImageUrl);
+    }
+  }, [viewMode, restoredImageUrl]);
+
   const visibleDialog = error ? "SERVER_ERROR" : activeDialog;
 
   const {
