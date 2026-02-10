@@ -6,7 +6,7 @@ import {
   BriefcaseIcon,
   ClockIcon,
 } from "@/assets/icon";
-import TagBadge from "./TagBadge";
+import TagBadge from "@/components/photoLab/TagBadge";
 
 interface LabCardProps {
   lab: PhotoLabItem;

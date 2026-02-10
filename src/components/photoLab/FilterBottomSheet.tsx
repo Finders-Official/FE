@@ -1,16 +1,19 @@
 import { useState, useMemo, useEffect } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
-import Calendar from "./Calendar";
-import TimeSlotList from "./TimeSlotList";
-import RegionSelector from "./RegionSelector";
+import Calendar from "@/components/photoLab/Calendar";
+import { calcVisibleRows } from "@/utils/calendar";
+import TimeSlotList from "@/components/photoLab/TimeSlotList";
+import RegionSelector from "@/components/photoLab/RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
-// 컨텐츠에 필요한 최소 높이
-const CONTENT_MIN_HEIGHT_REM = 48;
+// 전체 시트 높이 (Handle + Tabs + ContentPad + Calendar + TimeSlot + Buttons + Gaps)
+const CONTENT_BASE_HEIGHT_REM = 46; // 캘린더 6줄 기준
+const MAX_CALENDAR_ROWS = 6;
+const ROW_HEIGHT_REM = 3.125; // 3rem (DateChip) + 0.125rem (gap)
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -164,6 +167,21 @@ export default function FilterBottomSheet({
     onClose();
   };
 
+  // 캘린더 viewDate (controlled)
+  const [viewDate, setViewDate] = useState(() => {
+    if (initialFilter?.date) return new Date(initialFilter.date);
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  // 캘린더 줄 수 (viewDate에서 파생)
+  const calendarRows = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return calcVisibleRows(viewDate, today);
+  }, [viewDate]);
+
   // 화면 높이 상태
   const [vh, setVh] = useState(() => window.innerHeight);
 
@@ -173,17 +191,17 @@ export default function FilterBottomSheet({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // 화면 높이 기반으로 expandedVh 계산, bottomsheet 너무 작거나 크게 열리는거 방지
+  // 화면 높이 기반으로 expandedVh 계산
   const expandedVh = useMemo(() => {
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
-    const contentHeightPx = CONTENT_MIN_HEIGHT_REM * rootFontSize;
-    // 컨텐츠 최소 높이를 vh 퍼센트로 변환, 최대 92%
+    const rowDiff = MAX_CALENDAR_ROWS - calendarRows;
+    const contentHeightRem = CONTENT_BASE_HEIGHT_REM - rowDiff * ROW_HEIGHT_REM;
+    const contentHeightPx = contentHeightRem * rootFontSize;
     const calculated = Math.min(92, (contentHeightPx / vh) * 100);
-    // 최소 75%
-    return Math.max(75, calculated);
-  }, [vh]);
+    return Math.max(70, calculated);
+  }, [vh, calendarRows]);
 
   return (
     <BottomSheet
@@ -218,6 +236,8 @@ export default function FilterBottomSheet({
               <Calendar
                 selectedDate={selectedDate}
                 onDateSelect={setSelectedDate}
+                viewDate={viewDate}
+                onViewDateChange={setViewDate}
               />
               <TimeSlotList
                 slots={TIME_SLOTS}

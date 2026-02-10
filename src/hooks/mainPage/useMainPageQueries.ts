@@ -14,7 +14,7 @@ export const useCommunityPostsQuery = () => {
 
 export const usePopularLabsQuery = () => {
   return useQuery({
-    queryKey: ["labs", "popular"],
+    queryKey: ["popularLabs"],
     queryFn: fetchPopularLabs,
   });
 };

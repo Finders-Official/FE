@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
@@ -42,6 +42,10 @@ export default function PhotoFeedSearchPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const initialLabName = location.state?.labName as string | undefined;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const [filter, setFilter] = useState<Filter>(
     initialLabName ? "LAB_NAME" : "TITLE",
@@ -238,7 +242,7 @@ export default function PhotoFeedSearchPage() {
 
     if (relatedSearches && relatedSearches.length !== 0) {
       return (
-        <div className="flex flex-col gap-[1.875rem] pt-5">
+        <div className="flex flex-col gap-[1.875rem]">
           <KeywordSuggestionSection
             keywords={relatedSearches}
             onKeywordClick={handleSearch}
@@ -254,7 +258,7 @@ export default function PhotoFeedSearchPage() {
   const renderResult = () => {
     if (isSearchPending) {
       return (
-        <section className="mb-20 columns-2 gap-4 md:columns-3 xl:columns-4">
+        <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
           {Array.from({ length: SKELETON_COUNT }).map((_, i) => {
             const heightClass = SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
 
@@ -298,7 +302,7 @@ export default function PhotoFeedSearchPage() {
               <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
             </button>
           </div>
-          <section className="mb-25 columns-2 gap-4 md:columns-3 xl:columns-4">
+          <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
             {previewList.map((photo) => (
               <PhotoCard key={photo.postId} photo={photo} />
             ))}
@@ -326,7 +330,7 @@ export default function PhotoFeedSearchPage() {
   return (
     <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
-      <div className="py-3">
+      <div className="mt-3 mb-5">
         <SearchBar {...searchBarProps} />
       </div>
 
@@ -336,7 +340,7 @@ export default function PhotoFeedSearchPage() {
       {mode === "result" && renderResult()}
 
       {/* 새 게시물 작성 플로팅 버튼 */}
-      {mode === "result" && (
+      {mode === "result" && !bottomSheetOpen && (
         <button
           type="button"
           aria-label="새 게시물 작성"

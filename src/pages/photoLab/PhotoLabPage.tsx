@@ -13,26 +13,11 @@ import {
   useGeolocation,
   usePhotoLabList,
   useFavoriteToggle,
+  usePhotoLabNotices,
 } from "@/hooks/photoLab";
 import { displayTimesToApiTimes } from "@/utils/time";
 import { formatFilterValue } from "@/utils/filterFormat";
-import type { LabNews, FilterState } from "@/types/photoLab";
-
-// TODO: Rolling 공지 API 엔드포인트 확정 후 연동
-const mockNews: LabNews[] = [
-  {
-    id: 1,
-    type: "공지",
-    labName: "파인더스 동작점",
-    content: "택배 접수 시작합니다",
-  },
-  {
-    id: 2,
-    type: "이벤트",
-    labName: "파인더스 홍대점",
-    content: "첫 방문 고객 대상 500원 할인",
-  },
-];
+import type { FilterState } from "@/types/photoLab";
 
 export default function PhotoLabPage() {
   const navigate = useNavigate();
@@ -52,6 +37,12 @@ export default function PhotoLabPage() {
     longitude,
     isLoading: isLocationLoading,
   } = useGeolocation();
+
+  // 현상소 공지
+  const { data: notices } = usePhotoLabNotices({
+    lat: latitude ?? undefined,
+    lng: longitude ?? undefined,
+  });
 
   // 현상소 목록 조회
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -143,7 +134,10 @@ export default function PhotoLabPage() {
 
       {/* 현상소 소식 배너 */}
       <div className="pb-4">
-        <LabNewsBanner newsList={mockNews} />
+        <LabNewsBanner
+          newsList={notices ?? []}
+          onNewsClick={(news) => navigate(`/photolab/${news.photoLabId}`)}
+        />
       </div>
 
       {/* 필터 섹션 - 스크롤 시 상단 고정 */}
