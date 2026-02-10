@@ -3,7 +3,7 @@ import { PostCard } from "@/components/mypage/PostCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import type { Post } from "@/types/mypage/post";
 import { useMyPostsInfinite } from "@/hooks/my";
-import { PostCardSkeleton } from "@/components/mypage";
+import { EmptyOrderState, PostCardSkeleton } from "@/components/mypage";
 import { formatYmdDot } from "@/utils/dateFormat";
 
 const SKELETON_COUNT = 6;
@@ -69,7 +69,7 @@ export function MyPostPage() {
   }
 
   return (
-    <div className="px-4 py-6">
+    <div className="py-6">
       <main>
         <div className="grid grid-cols-2 gap-4">
           {isLoading
@@ -78,8 +78,6 @@ export function MyPostPage() {
               })
             : posts.map((post) => <PostCard key={post.id} post={post} />)}
         </div>
-
-        <div ref={bottomRef} className="h-10" />
 
         {isFetchingNextPage && (
           <div className="mt-3 text-center text-sm text-neutral-300">
@@ -92,10 +90,11 @@ export function MyPostPage() {
         )}
 
         {posts.length === 0 && !isFetchingNextPage && (
-          <div className="py-10 text-center text-sm text-neutral-400">
-            아직 작성한 게시물이 없습니다.
-          </div>
+          <EmptyOrderState description="아직 기록된 나만의 사진이 없어요" />
         )}
+
+        {/* sentinel */}
+        <div ref={bottomRef} />
       </main>
     </div>
   );

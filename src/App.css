@@ -59,3 +59,19 @@
   -webkit-mask-image: var(--scroll-fade-gradient);
   mask-image: var(--scroll-fade-gradient);
 }
+
+/* react-masonry-css 기본 레이아웃 보정 */
+.my-masonry-grid {
+  display: flex;
+  margin-left: -16px; /* gap 값이 16px(=gap-4)라면 -16px */
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 16px; /* gap 값과 동일 */
+  background-clip: padding-box;
+}
+
+.my-masonry-grid_column > * {
+  margin-bottom: 16px; /* 세로 간격 */
+}
