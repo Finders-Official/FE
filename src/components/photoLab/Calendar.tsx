@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import DateChip from "@/components/common/chips/DateChip";
 import { WEEKDAYS } from "@/constants/date";
@@ -96,16 +96,39 @@ export default function Calendar({
   };
 
   // 날짜가 비활성화되어야 하는지
-  const isDisabled = (date: Date) => {
-    if (date < effectiveMinDate) return true;
-    if (isDateDisabled?.(date)) return true;
-    return false;
-  };
+  const isDisabled = useCallback(
+    (date: Date) => {
+      if (date < effectiveMinDate) return true;
+      if (isDateDisabled?.(date)) return true;
+      return false;
+    },
+    [effectiveMinDate, isDateDisabled],
+  );
 
   // 오늘인지 확인
   const isToday = (date: Date) => {
     return isSameDay(date, today);
   };
+
+  // 표시할 날짜 필터링 (모두 비활성인 줄 제거, 최소 4줄 유지)
+  const visibleDays = useMemo(() => {
+    const MIN_ROWS = 4;
+    const weeks: (typeof calendarDays)[number][][] = [];
+    for (let i = 0; i < calendarDays.length; i += 7) {
+      weeks.push(calendarDays.slice(i, i + 7));
+    }
+
+    const isRowAllInactive = (week: (typeof calendarDays)[number][]) =>
+      week.every(({ date, isCurrentMonth }) => {
+        if (!isCurrentMonth) return true;
+        return isDisabled(date);
+      });
+
+    const filtered = weeks.filter((week) => !isRowAllInactive(week));
+
+    if (filtered.length >= MIN_ROWS) return filtered.flat();
+    return weeks.slice(0, Math.max(MIN_ROWS, filtered.length)).flat();
+  }, [calendarDays, isDisabled]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -149,7 +172,7 @@ export default function Calendar({
 
       {/* 날짜 그리드 */}
       <div className="grid grid-cols-7 gap-x-[0.125rem] gap-y-[0.125rem]">
-        {calendarDays.map(({ date, isCurrentMonth }, index) => {
+        {visibleDays.map(({ date, isCurrentMonth }, index) => {
           // 현재 달이 아닌 날짜는 회색으로 표시만
           if (!isCurrentMonth) {
             return (
