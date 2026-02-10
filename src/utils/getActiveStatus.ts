@@ -9,8 +9,12 @@ export function getActiveStatus(
 ): Status {
   if (!workData) return "DEVELOP";
 
-  if (workData.delivery?.deliveryId != null) return "DELIVERY";
-  if (workData.print?.printOrderId != null) return "PRINT";
+  if (workData.delivery?.status === "PENDING") return "PRINT";
+  else if (
+    workData.delivery?.status === "SHIPPED" ||
+    workData.delivery?.status === "DELIVERED"
+  )
+    return "DELIVERY";
 
   const devStatusMap: Record<DevelopmentStatus, Status> = {
     RECEIVED: "DEVELOP",
