@@ -13,21 +13,34 @@ interface RecipientInfoCardProps {
 
 export function RecipientInfoCard({ items }: RecipientInfoCardProps) {
   return (
-    <div className="flex flex-col gap-[0.25rem] text-[0.8125rem]">
+    <div className="grid grid-cols-[7.5rem_1fr] gap-x-6 gap-y-6 text-[0.8125rem]">
       {items.map((item) => (
-        <div key={item.label} className="flex items-center gap-[0.5rem]">
-          <span className="text-neutral-400">{item.label}</span>
-          {item.copyValue && (
-            <CopyButton
-              text={item.copyValue}
-              toastMessage="송장번호가 클립보드에 복사되었습니다."
-              className="text-neutral-400 hover:text-white"
-              iconClassName="h-3.5 w-3.5"
-              aboveTabBar
-            />
-          )}
-          <span className="text-white">{item.value}</span>
-        </div>
+        <>
+          {/* 라벨 셀 */}
+          <div
+            key={`${item.label}-label`}
+            className="text-left text-neutral-400"
+          >
+            {item.label}
+          </div>
+
+          {/* 값 셀 */}
+          <div
+            key={`${item.label}-value`}
+            className="flex items-start gap-2 text-left break-words text-white"
+          >
+            {item.copyValue && (
+              <CopyButton
+                text={item.copyValue}
+                toastMessage="송장번호가 클립보드에 복사되었습니다."
+                className="text-neutral-400 hover:text-white"
+                iconClassName="h-3.5 w-3.5"
+                aboveTabBar
+              />
+            )}
+            <div className="min-w-0">{item.value}</div>
+          </div>
+        </>
       ))}
     </div>
   );
