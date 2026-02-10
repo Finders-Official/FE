@@ -175,7 +175,6 @@ export default function PhotoManageMainPage() {
                 ),
               )}
             </div>
-            <div className="h-10 shrink-0 bg-transparent" />
           </div>
         </BottomSheet>
       </main>
