@@ -2,6 +2,7 @@ import { useCallback, useRef } from "react";
 import type { PhotoLabItem } from "@/types/photoLab";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import LabCard from "./LabCard";
+import { LabCardSkeleton } from "@/components/photoLab";
 import EmptyView from "@/components/common/EmptyView";
 
 interface LabListProps {
@@ -43,9 +44,14 @@ export default function LabList({
     threshold: 0.1,
   });
 
-  // TODO: 스켈레톤 로딩 추가 예정
   if (isLoading) {
-    return null;
+    return (
+      <div className={`flex flex-col ${className}`}>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <LabCardSkeleton key={`lab-skeleton-${i}`} />
+        ))}
+      </div>
+    );
   }
 
   if (labs.length === 0) {
