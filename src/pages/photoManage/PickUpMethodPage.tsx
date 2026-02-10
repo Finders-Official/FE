@@ -3,7 +3,7 @@ import { CTA_Button } from "@/components/common";
 import { BigButton } from "@/components/photoManage/BigButton";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import type { ReceiptMethod } from "@/types/photomanage/process";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 type PickUpMethod = "pickup" | "delivery";
@@ -11,26 +11,53 @@ type PickUpMethod = "pickup" | "delivery";
 const toReceiptMethod = (m: PickUpMethod): ReceiptMethod =>
   m === "pickup" ? "PICKUP" : "DELIVERY";
 
+const fromReceiptMethod = (
+  m: ReceiptMethod | null | undefined,
+): PickUpMethod | null => {
+  if (m === "PICKUP") return "pickup";
+  if (m === "DELIVERY") return "delivery";
+  return null;
+};
+
 export function PickUpMethodPage() {
   const navigate = useNavigate();
+
+  const receiptMethod = usePrintOrderStore((s) => s.receiptMethod);
   const setReceiptMethod = usePrintOrderStore((s) => s.setReceiptMethod);
   const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
+
   const [selectedMethod, setSelectedMethod] = useState<PickUpMethod | null>(
-    null,
+    fromReceiptMethod(receiptMethod),
   );
 
-  const isNextEnabled = selectedMethod;
+  useEffect(() => {
+    setSelectedMethod(fromReceiptMethod(receiptMethod));
+  }, [receiptMethod]);
+
+  const isNextEnabled = useMemo(
+    () => Boolean(selectedMethod),
+    [selectedMethod],
+  );
+
+  const handlePick = (m: PickUpMethod) => {
+    setSelectedMethod(m);
+    //선택은 store에 유지
+    setReceiptMethod(toReceiptMethod(m));
+  };
 
   const handleNext = () => {
     if (!selectedMethod) return;
-    setReceiptMethod(toReceiptMethod(selectedMethod));
 
-    if (selectedMethod === "delivery") {
-      navigate("/photoManage/select-address");
-    } else {
-      setDeliveryAddress(null);
+    // 다음을 누르면 항상 주소 초기화(새로 입력 유도)
+    setDeliveryAddress(null);
+
+    if (selectedMethod === "pickup") {
       navigate("/photoManage/print-option");
+      return;
     }
+
+    // delivery
+    navigate("/photoManage/select-address");
   };
 
   return (
@@ -48,14 +75,14 @@ export function PickUpMethodPage() {
           description="매장 방문 후 직접 수령"
           icon={ShoeIcon}
           isSelected={selectedMethod === "pickup"}
-          onClick={() => setSelectedMethod("pickup")}
+          onClick={() => handlePick("pickup")}
         />
         <BigButton
           title="배송"
           description="배송비 3000원 추가"
           icon={TruckIcon}
           isSelected={selectedMethod === "delivery"}
-          onClick={() => setSelectedMethod("delivery")}
+          onClick={() => handlePick("delivery")}
         />
       </main>
 
