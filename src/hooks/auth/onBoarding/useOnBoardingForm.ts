@@ -146,7 +146,7 @@ export function useOnBoardingForm(options?: Options) {
         setIsVerified(false);
         setVerifiedPhoneToken(null);
 
-        setPhoneVerifyMessage("");
+        setPhoneVerifyMessage("인증번호를 재발송해주세요.");
         setPhoneVerifyError("인증번호가 올바르지 않습니다.");
       },
     });
@@ -206,7 +206,6 @@ export function useOnBoardingForm(options?: Options) {
   const handleSend = () => requestCode({ phone, purpose: phonePurpose });
 
   const handleVerify = () => {
-    if (remainSec <= 0) return;
     if (!requestId) return;
     if (verifiedNumber.length !== 6) return;
 

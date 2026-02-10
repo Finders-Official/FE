@@ -106,13 +106,9 @@ export function PhoneEditPage() {
 
               <ActionButton
                 type="button"
-                text="확인"
+                text={f.isConfirmingCode ? "확인중..." : "확인"}
                 onClick={f.handleVerify}
-                disabled={
-                  f.lockPhoneForm ||
-                  f.verifiedNumber.length !== 6 ||
-                  f.remainSec <= 0
-                }
+                disabled={f.lockPhoneForm || f.verifiedNumber.length !== 6}
                 className={
                   f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""
                 }
