@@ -26,10 +26,10 @@ export function PickUpMethodPage() {
     setReceiptMethod(toReceiptMethod(selectedMethod));
 
     if (selectedMethod === "delivery") {
-      navigate("../photoManage/select-address");
+      navigate("/photoManage/select-address");
     } else {
       setDeliveryAddress(null);
-      navigate("../photoManage/print-option");
+      navigate("/photoManage/print-option");
     }
   };
 
