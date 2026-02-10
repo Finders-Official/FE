@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import Calendar from "./Calendar";
+import { calcVisibleCalendarRows } from "@/utils/calcVisibleCalendarRows";
 import TimeSlotList from "./TimeSlotList";
 import RegionSelector from "./RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
@@ -10,7 +11,9 @@ import { useRegionFilters } from "@/hooks/photoLab";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
 // 전체 시트 높이 (Handle + Tabs + ContentPad + Calendar + TimeSlot + Buttons + Gaps)
-const CONTENT_MIN_HEIGHT_REM = 46;
+const CONTENT_BASE_HEIGHT_REM = 46; // 캘린더 6줄 기준
+const MAX_CALENDAR_ROWS = 6;
+const ROW_HEIGHT_REM = 3.125; // 3rem (DateChip) + 0.125rem (gap)
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -164,6 +167,14 @@ export default function FilterBottomSheet({
     onClose();
   };
 
+  // 캘린더 표시 줄 수 (초기값 미리 계산)
+  const [calendarRows, setCalendarRows] = useState(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const viewDate = initialFilter?.date ? new Date(initialFilter.date) : today;
+    return calcVisibleCalendarRows(viewDate, today);
+  });
+
   // 화면 높이 상태
   const [vh, setVh] = useState(() => window.innerHeight);
 
@@ -178,10 +189,12 @@ export default function FilterBottomSheet({
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
-    const contentHeightPx = CONTENT_MIN_HEIGHT_REM * rootFontSize;
+    const rowDiff = MAX_CALENDAR_ROWS - calendarRows;
+    const contentHeightRem = CONTENT_BASE_HEIGHT_REM - rowDiff * ROW_HEIGHT_REM;
+    const contentHeightPx = contentHeightRem * rootFontSize;
     const calculated = Math.min(92, (contentHeightPx / vh) * 100);
     return Math.max(70, calculated);
-  }, [vh]);
+  }, [vh, calendarRows]);
 
   return (
     <BottomSheet
@@ -216,6 +229,7 @@ export default function FilterBottomSheet({
               <Calendar
                 selectedDate={selectedDate}
                 onDateSelect={setSelectedDate}
+                onVisibleRowsChange={setCalendarRows}
               />
               <TimeSlotList
                 slots={TIME_SLOTS}

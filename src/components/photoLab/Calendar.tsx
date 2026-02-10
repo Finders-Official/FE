@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import DateChip from "@/components/common/chips/DateChip";
 import { WEEKDAYS } from "@/constants/date";
@@ -8,6 +8,7 @@ interface CalendarProps {
   onDateSelect: (date: Date) => void;
   minDate?: Date; // 선택 가능한 최소 날짜 (기본: 오늘)
   isDateDisabled?: (date: Date) => boolean;
+  onVisibleRowsChange?: (rows: number) => void;
 }
 
 export default function Calendar({
@@ -15,6 +16,7 @@ export default function Calendar({
   onDateSelect,
   minDate,
   isDateDisabled,
+  onVisibleRowsChange,
 }: CalendarProps) {
   const today = useMemo(() => {
     const d = new Date();
@@ -129,6 +131,12 @@ export default function Calendar({
     if (filtered.length >= MIN_ROWS) return filtered.flat();
     return weeks.slice(0, Math.max(MIN_ROWS, filtered.length)).flat();
   }, [calendarDays, isDisabled]);
+
+  const visibleRowCount = visibleDays.length / 7;
+
+  useEffect(() => {
+    onVisibleRowsChange?.(visibleRowCount);
+  }, [visibleRowCount, onVisibleRowsChange]);
 
   return (
     <div className="flex flex-col gap-3">
