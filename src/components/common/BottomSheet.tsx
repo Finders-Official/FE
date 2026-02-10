@@ -68,6 +68,14 @@ export default function BottomSheet({
     }
   }
 
+  // expandedH/collapsedH가 동적으로 바뀔 때 sheetH도 동기화 (드래그 중엔 제외)
+  const snapTargetH = snap === "expanded" ? expandedH : collapsedH;
+  const [prevSnapTargetH, setPrevSnapTargetH] = useState(snapTargetH);
+  if (open && !dragging && snapTargetH !== prevSnapTargetH) {
+    setPrevSnapTargetH(snapTargetH);
+    setSheetH(snapTargetH);
+  }
+
   // open 상태에서 뷰포트/키보드 등으로 높이가 바뀌면 현재 snap 기준으로 높이 보정
   useEffect(() => {
     if (!open) return;

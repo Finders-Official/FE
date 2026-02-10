@@ -9,8 +9,8 @@ import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
-// 컨텐츠에 필요한 최소 높이
-const CONTENT_MIN_HEIGHT_REM = 48;
+// 전체 시트 높이 (Handle + Tabs + ContentPad + Calendar + TimeSlot + Buttons + Gaps)
+const CONTENT_MIN_HEIGHT_REM = 46;
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -173,16 +173,14 @@ export default function FilterBottomSheet({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // 화면 높이 기반으로 expandedVh 계산, bottomsheet 너무 작거나 크게 열리는거 방지
+  // 화면 높이 기반으로 expandedVh 계산
   const expandedVh = useMemo(() => {
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
     const contentHeightPx = CONTENT_MIN_HEIGHT_REM * rootFontSize;
-    // 컨텐츠 최소 높이를 vh 퍼센트로 변환, 최대 92%
     const calculated = Math.min(92, (contentHeightPx / vh) * 100);
-    // 최소 75%
-    return Math.max(75, calculated);
+    return Math.max(70, calculated);
   }, [vh]);
 
   return (
