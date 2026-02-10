@@ -41,7 +41,7 @@ export function PrintRequestPage() {
       .map(([id, qty]) => ({ scannedPhotoId: Number(id), quantity: qty }));
     setSelectedPhotos(photos);
 
-    navigate("../photoManage/pickup-method");
+    navigate("/photoManage/pickup-method");
   };
 
   const isNextEnabled = totalQty > 0;

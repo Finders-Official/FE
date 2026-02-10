@@ -31,7 +31,7 @@ export function DetailInfoPage() {
       recipientName: recipientName.trim(),
       phone,
     });
-    navigate("../photoManage/print-option");
+    navigate("/photoManage/print-option");
   };
 
   return (
