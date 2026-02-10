@@ -1,27 +1,43 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router";
 
+type ScrollAnchorData = {
+  anchorId: string;
+  offset: number;
+};
+
+function isScrollAnchorData(value: unknown): value is ScrollAnchorData {
+  if (!value || typeof value !== "object") return false;
+
+  const v = value as Record<string, unknown>;
+  return typeof v.anchorId === "string" && typeof v.offset === "number";
+}
+
 export function useAnchorScroll(
   scrollRef: React.RefObject<HTMLDivElement | null>,
 ) {
   const location = useLocation();
-  const STORAGE_KEY = `scroll_anchor_${location.pathname}`;
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
 
+    const STORAGE_KEY = `scroll_anchor_${location.pathname}`;
+
     const stored = sessionStorage.getItem(STORAGE_KEY);
     if (!stored) return;
 
-    let parsed;
+    let parsed: unknown;
     try {
       parsed = JSON.parse(stored);
-    } catch {
+    } catch (error) {
+      console.error("Failed to parse scroll anchor data:", error);
       return;
     }
+
+    if (!isScrollAnchorData(parsed)) return;
+
     const { anchorId, offset } = parsed;
-    if (!anchorId) return;
 
     let isUserInteracting = false;
     const onUserInteraction = () => {
@@ -39,15 +55,16 @@ export function useAnchorScroll(
 
       const anchor = container.querySelector(
         `[data-anchor="${anchorId}"]`,
-      ) as HTMLElement;
-      if (anchor) {
-        // 상대적 오프셋을 유지하기 위해 필요한 절대적 scrollTop 계산
-        const targetScroll = anchor.offsetTop + offset;
+      ) as HTMLElement | null;
 
-        // 미세한 떨림을 방지하기 위해 유의미한 차이가 있을 때만 적용
-        if (Math.abs(container.scrollTop - targetScroll) > 1) {
-          container.scrollTop = targetScroll;
-        }
+      if (!anchor) return;
+
+      // 상대적 오프셋을 유지하기 위해 필요한 절대적 scrollTop 계산
+      const targetScroll = anchor.offsetTop + offset;
+
+      // 미세한 떨림을 방지하기 위해 유의미한 차이가 있을 때만 적용
+      if (Math.abs(container.scrollTop - targetScroll) > 1) {
+        container.scrollTop = targetScroll;
       }
     };
 
@@ -59,7 +76,6 @@ export function useAnchorScroll(
     observer.observe(container, { childList: true, subtree: true });
     requestAnimationFrame(restore);
 
-    // 무한한 관찰을 방지하기 위해 5초 후 복원 로직 중단
     const timeoutId = setTimeout(() => {
       observer.disconnect();
       container.removeEventListener("touchstart", onUserInteraction);
@@ -72,11 +88,13 @@ export function useAnchorScroll(
       container.removeEventListener("touchstart", onUserInteraction);
       container.removeEventListener("wheel", onUserInteraction);
     };
-  }, [scrollRef, STORAGE_KEY]);
+  }, [scrollRef, location.pathname]);
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
+
+    const STORAGE_KEY = `scroll_anchor_${location.pathname}`;
 
     const handleScroll = () => {
       const children = Array.from(container.children) as HTMLElement[];
@@ -107,16 +125,15 @@ export function useAnchorScroll(
           children.find((c) => c.hasAttribute("data-anchor")) || null;
       }
 
-      if (bestAnchor) {
-        const anchorId = bestAnchor.getAttribute("data-anchor");
-        if (anchorId) {
-          const offset = scrollTop - bestAnchor.offsetTop;
-          sessionStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({ anchorId, offset }),
-          );
-        }
-      }
+      if (!bestAnchor) return;
+
+      const anchorId = bestAnchor.getAttribute("data-anchor");
+      if (!anchorId) return;
+
+      const offset = scrollTop - bestAnchor.offsetTop;
+
+      const payload: ScrollAnchorData = { anchorId, offset };
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     };
 
     let debounceTimer: ReturnType<typeof setTimeout>;
@@ -126,9 +143,10 @@ export function useAnchorScroll(
     };
 
     container.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
       container.removeEventListener("scroll", onScroll);
       clearTimeout(debounceTimer);
     };
-  }, [scrollRef, STORAGE_KEY]);
+  }, [scrollRef, location.pathname]);
 }
