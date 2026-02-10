@@ -168,8 +168,6 @@ export default function BottomSheet({
         style={{
           height: `${sheetH}px`,
           transition,
-          // iOS safe-area 대응
-          paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
         <div
@@ -198,7 +196,12 @@ export default function BottomSheet({
           </div>
 
           {/* Content 영역 */}
-          <div className="min-h-0 flex-1">{children}</div>
+          <div
+            className="min-h-0 flex-1"
+            style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </>
