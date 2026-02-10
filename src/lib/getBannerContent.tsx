@@ -4,14 +4,54 @@ import {
   PrintPicIcon,
   ScanPicIcon,
 } from "@/assets/icon";
-import type { ReceiptMethod, Status } from "@/types/photomanage/process";
+import type {
+  DeliveryStatus,
+  PrintOrderStatus,
+  ReceiptMethod,
+  Status,
+} from "@/types/photomanage/process";
 
 export function getBannerContent(params: {
   status: Status;
   receiptMethod?: ReceiptMethod;
-  printStatus?: string;
+  printStatus?: PrintOrderStatus;
+  deliveryStatus?: DeliveryStatus;
 }) {
-  const { status, receiptMethod, printStatus } = params;
+  const { status, receiptMethod, printStatus, deliveryStatus } = params;
+
+  // 수령/배송 단계 타이틀
+  const deliveryTitle = () => {
+    if (receiptMethod === "DELIVERY") {
+      if (deliveryStatus === "SHIPPED") {
+        return "사진을 배송하고 있어요";
+      } else if (deliveryStatus === "DELIVERED") {
+        return "사진이 안전하게 배송되었어요";
+      } else return null;
+    } else if (receiptMethod === "PICKUP") {
+      if (printStatus === "READY") {
+        return "인화 작업이 완료되었어요";
+      } else if (printStatus === "COMPLETED") {
+        return "사진 수령이 완료되었어요";
+      } else return null;
+    }
+  };
+
+  // 수령/배송 단계 콘텐츠
+  const deliveryContent = () => {
+    if (receiptMethod === "DELIVERY") {
+      if (deliveryStatus === "SHIPPED") {
+        return "현상소에서 발송된 사진이 안전하게 이동 중이에요!";
+      } else if (deliveryStatus === "DELIVERED") {
+        return "발송된 사진을 확인 후, 수령 확정해주세요!";
+      } else return null;
+    } else if (receiptMethod === "PICKUP") {
+      if (printStatus === "READY") {
+        return "소중한 결과물을 수령해가세요!";
+      } else if (printStatus === "COMPLETED") {
+        return "수령한 사진을 확인 후, 수령 확정해주세요!";
+      } else return null;
+    }
+  };
 
   const bannerMap = {
     DEVELOP: {
@@ -28,20 +68,17 @@ export function getBannerContent(params: {
       icon: <PrintPicIcon />,
       title:
         printStatus === "PENDING"
-          ? "현상소에서 확인 중이에요"
+          ? "현상소에서 인화신청을 확인 중이에요"
           : "인화 작업이 진행 중이에요",
-      content: "배송이 시작되면 알려드릴게요!",
+      content:
+        printStatus === "PENDING"
+          ? "인화가 확인되면 완료 시간을 알 수 있어요!"
+          : "배송이 시작되면 알려드릴게요!",
     },
     DELIVERY: {
       icon: <DeliveryPicIcon />,
-      title:
-        receiptMethod === "PICKUP"
-          ? "사진 수령이 가능해요"
-          : "사진을 배송하고 있어요",
-      content:
-        receiptMethod === "PICKUP"
-          ? "현상소에 방문하여 사진을 찾아주세요!"
-          : "현상소에서 발송된 사진이 이동 중이에요!",
+      title: deliveryTitle(),
+      content: deliveryContent(),
     },
   };
   return bannerMap[status];

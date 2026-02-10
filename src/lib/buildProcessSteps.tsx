@@ -11,10 +11,12 @@ import {
   ClockIcon,
   TruckIcon,
   CheckEmptyIcon,
+  PackageIcon,
 } from "@/assets/icon";
 import { ActionButton } from "@/components/photoManage/ActionButton";
 import { RecipientInfoCard } from "@/components/photoManage/RecipientInfoCard";
 import { formatEstimatedTime, formatShippedDate } from "@/utils/dateFormat";
+import { getEarlyFinishedHours } from "@/utils/getEarlyFinishedHours";
 
 type BuildStepsArgs = {
   workData: MyCurrentWorkResponse;
@@ -38,6 +40,171 @@ export function buildProcessSteps({
   onGoTrackDelivery,
   onConfirmReceived,
 }: BuildStepsArgs): StepConfig[] {
+  // 전체 주소지 생성
+  const getFullAddress = (
+    address: string | null,
+    addressDetail: string | null,
+  ) => {
+    return [address, addressDetail].filter(Boolean).join(" ");
+  };
+
+  const earlyHours = workData.print
+    ? getEarlyFinishedHours(
+        workData.print.estimatedAt,
+        workData.print.completedAt,
+      )
+    : -1;
+
+  const isCompleted =
+    workData.delivery?.status === "DELIVERED" ||
+    workData.print?.status === "COMPLETED";
+
+  // 인화 단계 content
+  const getPrintContent = () => {
+    // 인화 단계인 경우
+    if (status === "PRINT" && workData.print) {
+      // 직접 수령인 경우
+      if (receiptMethod === "PICKUP") {
+        return (
+          <RecipientInfoCard
+            items={[
+              {
+                label: "수령 방식",
+                value: "직접 수령",
+              },
+            ]}
+          />
+        );
+      }
+      // 배송인 경우
+      else {
+        return (
+          <RecipientInfoCard
+            items={[
+              {
+                label: "배송자명",
+                value: workData.delivery?.recipient ?? "-",
+              },
+              {
+                label: "연락처",
+                value: workData.delivery?.recipientNumber ?? "-",
+              },
+              {
+                label: "주소",
+                value:
+                  getFullAddress(
+                    workData.delivery?.recipientAddress ?? null,
+                    workData.delivery?.AddressDetail ?? null,
+                  ) || "-",
+              },
+            ]}
+          />
+        );
+      }
+    } else {
+      // 그 외의 단계인 경우
+      return "선명한 사진 프린트 작업";
+    }
+  };
+
+  // 수령/배송 단계 subContent
+  const getDeliverySubComtent = () => {
+    // 배송
+    if (workData.print?.receiptMethod === "DELIVERY") {
+      return (
+        <div>
+          <p className="mb-2 flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
+            <PackageIcon className="h-3 w-3" />
+            {workData.delivery?.status === "SHIPPED"
+              ? "배송 상태: 배송중"
+              : "배송 상태: 배송 완료"}
+          </p>
+          <hr className="mb-1.5 border-orange-500/30" />
+        </div>
+      );
+    }
+
+    // 직접수령
+    if (
+      (workData.print?.receiptMethod === "PICKUP" &&
+        workData.print?.status === "READY") ||
+      workData.print?.status === "COMPLETED"
+    ) {
+      return (
+        <>
+          <div className="gap-1 pb-2">
+            <p className="flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
+              <ClockIcon className="h-3 w-3" />
+              {`작업 완료 시간: ${formatEstimatedTime(workData.print.completedAt)}`}
+            </p>
+            {earlyHours !== -1 && (
+              <div>
+                <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-neutral-600">
+                  {`예상 작업 시간보다 ${earlyHours}시간 빨리 완료되었어요!`}
+                </p>
+              </div>
+            )}
+            <hr className="mb-1.5 border-orange-500/30" />
+          </div>
+        </>
+      );
+    }
+  };
+
+  // 수령/배송 단계 content
+  const getDeliveryContent = () => {
+    if (!workData.print) return null;
+
+    // 배송
+    if (receiptMethod === "DELIVERY" && workData.delivery) {
+      if (workData.delivery.status === "PENDING") {
+        return "안전하게 포장하여 수령/배송";
+      } else {
+        return (
+          <RecipientInfoCard
+            items={[
+              {
+                label: "보낸 사람",
+                value: workData.delivery.sender ?? "-",
+              },
+              {
+                label: "주소",
+                value:
+                  getFullAddress(
+                    workData.delivery.recipientAddress,
+                    workData.delivery.AddressDetail,
+                  ) || "-",
+              },
+              {
+                label: "발송일",
+                value: formatShippedDate(workData.delivery.shippedAt) ?? "-",
+              },
+              { label: "택배사", value: workData.delivery.carrier ?? "-" },
+              {
+                label: "송장 번호",
+                value: workData.delivery.trackingNumber ?? "-",
+                copyValue: workData.delivery.trackingNumber ?? undefined,
+              },
+            ]}
+          />
+        );
+      }
+    }
+
+    // 직접 수령
+    return (
+      <RecipientInfoCard
+        items={[
+          { label: "수령 방식", value: "직접 수령" },
+          {
+            label: "수령 상태",
+            value: workData.print.status === "READY" ? "미수령" : "수령 완료",
+          },
+        ]}
+      />
+    );
+  };
+
   return [
     {
       key: "DEVELOP",
@@ -46,7 +213,7 @@ export function buildProcessSteps({
       title: "필름 현상",
       content:
         status === "DEVELOP" ? (
-          <div className="flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
+          <div className="mb-2 flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
             <ClockIcon className="h-3 w-3" />
             <p className="">
               {`작업 완료 시간: ${formatEstimatedTime(workData.completedAt)}`}
@@ -69,13 +236,13 @@ export function buildProcessSteps({
       buttons: status === "SCAN" && (
         <div className="flex flex-col gap-2.5">
           <ActionButton
-            leftIcon={<PrinterIcon />}
+            leftIcon={<PrinterIcon className="h-4 w-4" />}
             message="인화 여부 확정하기"
             showNext
             onClick={onOpenPrintConfirmDialog}
           />
           <ActionButton
-            leftIcon={<DownloadIcon />}
+            leftIcon={<DownloadIcon className="h-4 w-4" />}
             message="사진 다운로드 하러 가기"
             showNext
             onClick={onGoDownload}
@@ -92,19 +259,16 @@ export function buildProcessSteps({
       title: "사진 인화",
       subComment: status === "PRINT" && workData.print && (
         <div>
-          <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+          <p className="mb-2 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
             <ClockIcon className="h-3 w-3" />
-            {workData.print.status === "PENDING"
-              ? "작업 예정 시간 확인 중"
-              : `예상 작업 완료 시간: ${formatEstimatedTime(workData.print.estimatedAt)}`}
+            {workData.print.estimatedAt
+              ? `예상 작업 완료 시간: ${formatEstimatedTime(workData.print.estimatedAt)}`
+              : "예상 작업 완료 시간: 현재 확인 중"}
           </p>
           <hr className="mb-1.5 border-orange-500/30" />
         </div>
       ),
-      content:
-        status === "PRINT" && workData.print?.status === "PRINTING"
-          ? "종이 위에 추억이 새겨지는 중..."
-          : "선명한 사진 프린트 작업",
+      content: getPrintContent(),
       buttons: status === "PRINT" && (
         <ActionButton
           leftIcon={<PencilLineIcon className="h-4 w-4" />}
@@ -120,41 +284,9 @@ export function buildProcessSteps({
       step: "DELIVERY",
       receiptMethod,
       isCurrent: status === "DELIVERY",
-      title: receiptMethod === "PICKUP" ? "방문 수령" : "택배 배송",
-      subComment: status === "DELIVERY" && workData.delivery && (
-        <div>
-          <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
-            {workData.delivery.status === "DELIVERED" ? (
-              <CheckEmptyIcon className="h-3 w-3" />
-            ) : (
-              <TruckIcon className="text-orange-450 h-3 w-3" />
-            )}
-            {workData.delivery.status === "DELIVERED" ? "배송 완료" : "배송 중"}
-          </p>
-          <hr className="mb-1.5 border-orange-500/30" />
-        </div>
-      ),
-      content:
-        status === "DELIVERY" && workData.delivery ? (
-          <RecipientInfoCard
-            items={[
-              {
-                label: "발송일",
-                value: formatShippedDate(workData.delivery.shippedAt),
-              },
-              { label: "택배사", value: workData.delivery.carrier ?? "-" },
-              {
-                label: "송장 번호",
-                value: workData.delivery.trackingNumber ?? "-",
-                copyValue: workData.delivery.trackingNumber ?? undefined,
-              },
-            ]}
-          />
-        ) : receiptMethod === "PICKUP" ? (
-          "현상소 방문 후 수령해 주세요"
-        ) : (
-          "안전하게 포장하여 배송"
-        ),
+      title: "수령/배송",
+      subComment: status === "DELIVERY" && getDeliverySubComtent(),
+      content: getDeliveryContent(),
       buttons: status === "DELIVERY" && (
         <div className="flex flex-col gap-2.5">
           {receiptMethod === "DELIVERY" && (
@@ -165,7 +297,7 @@ export function buildProcessSteps({
               onClick={onGoTrackDelivery}
             />
           )}
-          {workData.delivery?.status === "DELIVERED" && (
+          {isCompleted && (
             <ActionButton
               leftIcon={<CheckEmptyIcon className="h-4 w-4" />}
               message="수령 확정 하기"

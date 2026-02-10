@@ -36,6 +36,11 @@ export interface PrintProgressResponse {
 export interface DeliveryProgressResponse {
   deliveryId: number;
   status: DeliveryStatus;
+  recipient: string | null;
+  recipientNumber: string | null;
+  recipientAddress: string | null;
+  AddressDetail: string | null;
+  sender: string | null;
   carrier: string | null;
   trackingNumber: string | null;
   shippedAt: string | null;
