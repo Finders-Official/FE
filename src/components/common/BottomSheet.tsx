@@ -58,6 +58,16 @@ export default function BottomSheet({
     initialSnap === "expanded" ? expandedH : collapsedH,
   );
 
+  // open이 false → true로 전환될 때 높이를 초기값으로 리셋
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setSnap(initialSnap);
+      setSheetH(initialSnap === "expanded" ? expandedH : collapsedH);
+    }
+  }
+
   // open 상태에서 뷰포트/키보드 등으로 높이가 바뀌면 현재 snap 기준으로 높이 보정
   useEffect(() => {
     if (!open) return;
