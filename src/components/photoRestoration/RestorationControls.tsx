@@ -17,7 +17,7 @@ export default function RestorationControls({
   canRedo,
 }: Props) {
   return (
-    <div className="mt-4 flex w-85.75 justify-start">
+    <div className="flex w-85.75 justify-start">
       <div className="flex h-10 items-center gap-3 px-2">
         {/* Undo 버튼 */}
         <button

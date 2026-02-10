@@ -223,8 +223,10 @@ export default function PhotoRestorationPage() {
             }
           />
 
-          <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
-            <div className="flex w-full -translate-y-[30.5px] flex-col items-center">
+          {/* Main Content Area: Flex column to manage available space */}
+          <div className="relative flex w-full flex-1 flex-col overflow-hidden">
+            {/* 1. Image Stage Area: Takes all available space, shrinking image if needed */}
+            <div className="relative flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-22.5">
               <RestorationLoadingOverlay
                 isGenerating={isGenerating}
                 statusMessage={statusMessage}
@@ -248,7 +250,7 @@ export default function PhotoRestorationPage() {
 
               {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
               {restoredImageUrl && !isGenerating && (
-                <div className="mt-3 flex w-85.75 justify-end">
+                <div className="mt-4 flex w-85.75 justify-end">
                   <div
                     onMouseDown={startCompare}
                     onMouseUp={endCompare}
