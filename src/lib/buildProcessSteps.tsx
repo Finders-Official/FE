@@ -55,6 +55,10 @@ export function buildProcessSteps({
       )
     : -1;
 
+  const isCompleted =
+    workData.delivery?.status === "DELIVERED" ||
+    workData.print?.status === "COMPLETED";
+
   // 인화 단계 content
   const getPrintContent = () => {
     // 인화 단계인 경우
@@ -109,7 +113,7 @@ export function buildProcessSteps({
     if (workData.print?.receiptMethod === "DELIVERY") {
       return (
         <div>
-          <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+          <p className="mb-2 flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
             <PackageIcon className="h-3 w-3" />
             {workData.delivery?.status === "SHIPPED"
               ? "배송 상태: 배송중"
@@ -129,7 +133,7 @@ export function buildProcessSteps({
       return (
         <>
           <div className="gap-1 pb-2">
-            <p className="flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+            <p className="flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
               <ClockIcon className="h-3 w-3" />
               {`작업 완료 시간: ${formatEstimatedTime(workData.print.completedAt)}`}
             </p>
@@ -148,41 +152,43 @@ export function buildProcessSteps({
   };
 
   // 수령/배송 단계 content
-  // 수령/배송 단계 content
   const getDeliveryContent = () => {
-    if (status !== "DELIVERY") return null;
     if (!workData.print) return null;
 
     // 배송
     if (receiptMethod === "DELIVERY" && workData.delivery) {
-      return (
-        <RecipientInfoCard
-          items={[
-            {
-              label: "보낸 사람",
-              value: workData.delivery.sender ?? "-",
-            },
-            {
-              label: "주소",
-              value:
-                getFullAddress(
-                  workData.delivery.recipientAddress,
-                  workData.delivery.AddressDetail,
-                ) || "-",
-            },
-            {
-              label: "발송일",
-              value: formatShippedDate(workData.delivery.shippedAt) ?? "-",
-            },
-            { label: "택배사", value: workData.delivery.carrier ?? "-" },
-            {
-              label: "송장 번호",
-              value: workData.delivery.trackingNumber ?? "-",
-              copyValue: workData.delivery.trackingNumber ?? undefined,
-            },
-          ]}
-        />
-      );
+      if (workData.delivery.status === "PENDING") {
+        return "안전하게 포장하여 수령/배송";
+      } else {
+        return (
+          <RecipientInfoCard
+            items={[
+              {
+                label: "보낸 사람",
+                value: workData.delivery.sender ?? "-",
+              },
+              {
+                label: "주소",
+                value:
+                  getFullAddress(
+                    workData.delivery.recipientAddress,
+                    workData.delivery.AddressDetail,
+                  ) || "-",
+              },
+              {
+                label: "발송일",
+                value: formatShippedDate(workData.delivery.shippedAt) ?? "-",
+              },
+              { label: "택배사", value: workData.delivery.carrier ?? "-" },
+              {
+                label: "송장 번호",
+                value: workData.delivery.trackingNumber ?? "-",
+                copyValue: workData.delivery.trackingNumber ?? undefined,
+              },
+            ]}
+          />
+        );
+      }
     }
 
     // 직접 수령
@@ -207,7 +213,7 @@ export function buildProcessSteps({
       title: "필름 현상",
       content:
         status === "DEVELOP" ? (
-          <div className="flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
+          <div className="mb-2 flex items-center gap-2 text-[0.8125rem] text-[#EC602D]">
             <ClockIcon className="h-3 w-3" />
             <p className="">
               {`작업 완료 시간: ${formatEstimatedTime(workData.completedAt)}`}
@@ -253,7 +259,7 @@ export function buildProcessSteps({
       title: "사진 인화",
       subComment: status === "PRINT" && workData.print && (
         <div>
-          <p className="mb-0.5 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
+          <p className="mb-2 flex items-center gap-1 text-[0.8125rem] text-[#EC602D]">
             <ClockIcon className="h-3 w-3" />
             {workData.print.estimatedAt
               ? `예상 작업 완료 시간: ${formatEstimatedTime(workData.print.estimatedAt)}`
@@ -291,15 +297,14 @@ export function buildProcessSteps({
               onClick={onGoTrackDelivery}
             />
           )}
-          {workData.delivery?.status === "DELIVERED" ||
-            (workData.print?.status === "COMPLETED" && (
-              <ActionButton
-                leftIcon={<CheckEmptyIcon className="h-4 w-4" />}
-                message="수령 확정 하기"
-                showNext
-                onClick={onConfirmReceived}
-              />
-            ))}
+          {isCompleted && (
+            <ActionButton
+              leftIcon={<CheckEmptyIcon className="h-4 w-4" />}
+              message="수령 확정 하기"
+              showNext
+              onClick={onConfirmReceived}
+            />
+          )}
         </div>
       ),
       index: 4,

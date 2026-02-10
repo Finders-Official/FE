@@ -56,6 +56,7 @@ export default function PhotoManageMainPage() {
     status,
     receiptMethod,
     printStatus: workData?.print?.status,
+    deliveryStatus: workData?.delivery?.status,
   });
 
   const steps = workData
@@ -179,8 +180,8 @@ export default function PhotoManageMainPage() {
                 ),
               )}
             </div>
+            <div className="h-10 shrink-0 bg-transparent" />
           </div>
-          <div className="h-10 shrink-0 bg-transparent" />
         </BottomSheet>
       </main>
     </div>
