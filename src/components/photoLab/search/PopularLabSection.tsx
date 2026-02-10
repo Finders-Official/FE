@@ -1,5 +1,5 @@
 import type { PopularLab } from "@/types/photoLabSearch";
-import PopularLabItem from "./PopularLabItem";
+import PopularLabItem from "@/components/photoLab/search/PopularLabItem";
 
 interface PopularLabSectionProps {
   labs: PopularLab[];

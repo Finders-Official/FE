@@ -58,6 +58,24 @@ export default function BottomSheet({
     initialSnap === "expanded" ? expandedH : collapsedH,
   );
 
+  // open이 false → true로 전환될 때 높이를 초기값으로 리셋
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setSnap(initialSnap);
+      setSheetH(initialSnap === "expanded" ? expandedH : collapsedH);
+    }
+  }
+
+  // expandedH/collapsedH가 동적으로 바뀔 때 sheetH도 동기화 (드래그 중엔 제외)
+  const snapTargetH = snap === "expanded" ? expandedH : collapsedH;
+  const [prevSnapTargetH, setPrevSnapTargetH] = useState(snapTargetH);
+  if (open && !dragging && snapTargetH !== prevSnapTargetH) {
+    setPrevSnapTargetH(snapTargetH);
+    setSheetH(snapTargetH);
+  }
+
   // open 상태에서 뷰포트/키보드 등으로 높이가 바뀌면 현재 snap 기준으로 높이 보정
   useEffect(() => {
     if (!open) return;
@@ -168,8 +186,6 @@ export default function BottomSheet({
         style={{
           height: `${sheetH}px`,
           transition,
-          // iOS safe-area 대응
-          paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
         <div
@@ -198,7 +214,12 @@ export default function BottomSheet({
           </div>
 
           {/* Content 영역 */}
-          <div className="min-h-0 flex-1">{children}</div>
+          <div
+            className="min-h-0 flex-1"
+            style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </>

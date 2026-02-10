@@ -134,7 +134,10 @@ export default function PhotoLabPage() {
 
       {/* 현상소 소식 배너 */}
       <div className="pb-4">
-        <LabNewsBanner newsList={notices ?? []} />
+        <LabNewsBanner
+          newsList={notices ?? []}
+          onNewsClick={(news) => navigate(`/photolab/${news.photoLabId}`)}
+        />
       </div>
 
       {/* 필터 섹션 - 스크롤 시 상단 고정 */}

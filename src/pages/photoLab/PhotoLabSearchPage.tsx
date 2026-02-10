@@ -8,6 +8,7 @@ import {
 } from "@/components/photoLab";
 import {
   PopularLabSection,
+  PopularLabSkeleton,
   RecentSearchSection,
   KeywordSuggestionSection,
   LabPreviewSection,
@@ -57,7 +58,8 @@ export default function PhotoLabSearchPage() {
   } = useGeolocation();
 
   // 인기 현상소
-  const { data: popularLabs = [] } = usePopularPhotoLabs();
+  const { data: popularLabs = [], isLoading: isPopularLoading } =
+    usePopularPhotoLabs();
 
   // 최근 검색어
   const { recentSearches, addSearch, removeSearch, clearAll } =
@@ -70,18 +72,20 @@ export default function PhotoLabSearchPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // 키워드 자동완성
-  const { data: filteredKeywords = [] } = useAutocomplete(query);
+  const { data: filteredKeywords = [], isPlaceholderData: isKeywordStale } =
+    useAutocomplete(query);
 
   // 검색 미리보기 (경량 API)
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
-  const { data: filteredLabPreviews = [] } = useSearchPreview(
-    {
-      q: debouncedQuery,
-      lat: latitude ?? undefined,
-      lng: longitude ?? undefined,
-    },
-    !isResultsState,
-  );
+  const { data: filteredLabPreviews = [], isPlaceholderData: isPreviewStale } =
+    useSearchPreview(
+      {
+        q: debouncedQuery,
+        lat: latitude ?? undefined,
+        lng: longitude ?? undefined,
+      },
+      !isResultsState,
+    );
 
   // 검색 결과 API 연동
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -205,13 +209,21 @@ export default function PhotoLabSearchPage() {
             onDelete={removeSearch}
             onClearAll={clearAll}
           />
-          <PopularLabSection labs={popularLabs} onLabClick={handleLabClick} />
+          {isPopularLoading ? (
+            <PopularLabSkeleton />
+          ) : (
+            <PopularLabSection labs={popularLabs} onLabClick={handleLabClick} />
+          )}
         </div>
       )}
 
       {/* PL-011-2: 검색어 입력 중 */}
       {!isResultsState && query.trim() && (
-        <div className="flex flex-col gap-[1.875rem] pt-5">
+        <div
+          className={`flex flex-col gap-[1.875rem] pt-5 transition-opacity duration-200 ${
+            isKeywordStale || isPreviewStale ? "opacity-40" : "opacity-100"
+          }`}
+        >
           <KeywordSuggestionSection
             keywords={filteredKeywords}
             query={query}
