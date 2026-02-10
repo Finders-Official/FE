@@ -53,9 +53,17 @@ export default function PhotoRestorationPage() {
     enabled: !!localStorage.getItem("accessToken"),
   });
 
-  const creditBalance = creditRes?.data.creditBalance ?? 0;
-  const totalFree = 3;
-  const usedFree = Math.max(0, totalFree - creditBalance);
+  const FREE_CREDIT_CAP = 5;
+
+  const creditBalanceRaw = creditRes?.data.creditBalance ?? 0;
+  // 데모 정책(최대 보유 5)에 맞춰 UI/차감 로직 모두 동일 기준 사용
+  const creditBalance = Math.min(
+    Math.max(creditBalanceRaw, 0),
+    FREE_CREDIT_CAP,
+  );
+
+  const totalFree = FREE_CREDIT_CAP;
+  const usedFree = totalFree - creditBalance;
 
   const {
     isGenerating,
