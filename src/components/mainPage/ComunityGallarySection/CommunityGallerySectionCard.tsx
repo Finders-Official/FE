@@ -15,7 +15,6 @@ export default function CommunityGallerySectionCard({
 }: CommunityGallerySectionCardProps) {
   const { requireAuth, requireAuthNavigate } = useRequireAuth();
 
-  // 좋아요 상태와 카운트 모두 로컬 state로 관리
   const [isLiked, setIsLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likeCount);
 
@@ -33,7 +32,6 @@ export default function CommunityGallerySectionCard({
     e.stopPropagation();
 
     requireAuth(async () => {
-      // Optimistic UI update
       const prevIsLiked = isLiked;
       const prevLikeCount = likeCount;
 
@@ -48,7 +46,6 @@ export default function CommunityGallerySectionCard({
         }
       } catch (error) {
         console.error("좋아요 처리 중 오류 발생:", error);
-        // Revert UI on error
         setIsLiked(prevIsLiked);
         setLikeCount(prevLikeCount);
         if (error instanceof Error) {
