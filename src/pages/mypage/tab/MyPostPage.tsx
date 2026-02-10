@@ -53,6 +53,10 @@ export function MyPostPage() {
     threshold: 0,
   });
 
+  // sentinel 렌더 조건 설정 (data가 없을 때는 렌더링 되지 않게)
+  const shouldShowSentinel =
+    !isLoading && !isError && hasNextPage && posts.length > 0;
+
   if (isError) {
     return (
       <div className="p-6 text-neutral-100">
@@ -93,8 +97,8 @@ export function MyPostPage() {
           <EmptyOrderState description="아직 기록된 나만의 사진이 없어요" />
         )}
 
-        {/* sentinel */}
-        <div ref={bottomRef} />
+        {/* 선택적 sentinel */}
+        {shouldShowSentinel ? <div ref={bottomRef} /> : null}
       </main>
     </div>
   );

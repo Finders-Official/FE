@@ -75,6 +75,10 @@ export function LikedPostPage() {
     threshold: 0,
   });
 
+  // sentinel 렌더 조건 설정 (data가 없을 때는 렌더링 되지 않게)
+  const shouldShowSentinel =
+    !isLoading && !isError && hasNextPage && viewItems.length > 0;
+
   /*
    * - prevIsLiked(토글 전 상태) 기준으로 서버 호출
    * - UI는 즉시 override로 토글
@@ -172,11 +176,11 @@ export function LikedPostPage() {
         )}
 
         {viewItems.length === 0 && !isFetchingNextPage && (
-          <EmptyOrderState description="아직 마음에 드는 글을 담지 않았어요." />
+          <EmptyOrderState description="아직 마음에 드는 글을 담지 않았어요" />
         )}
 
-        {/* sentinel */}
-        <div ref={bottomRef} />
+        {/* 선택적 sentinel */}
+        {shouldShowSentinel ? <div ref={bottomRef} /> : null}
       </main>
     </div>
   );
