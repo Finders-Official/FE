@@ -54,10 +54,10 @@ export default function Process({
   ].join(" ");
 
   const cardClass = [
-    "flex flex-col justify-start rounded-xl border px-4 py-[0.625rem]",
+    "flex flex-col justify-start rounded-xl border px-4",
     isCurrent
-      ? "border-orange-500/30 w-[17.3125rem]"
-      : "border-neutral-600 w-[15.375rem]",
+      ? "border-orange-500/30 w-[17.3125rem] py-5"
+      : "border-neutral-600 w-[15.375rem] py-[0.625rem]",
   ].join(" ");
 
   const titleClass = isCurrent

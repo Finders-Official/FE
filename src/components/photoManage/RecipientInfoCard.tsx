@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { CopyButton } from "@/components/common";
+import React from "react";
 
 interface InfoItem {
   label: string;
@@ -13,21 +14,26 @@ interface RecipientInfoCardProps {
 
 export function RecipientInfoCard({ items }: RecipientInfoCardProps) {
   return (
-    <div className="flex flex-col gap-[0.25rem] text-[0.8125rem]">
+    <div className="mt-2 grid grid-cols-[3.75rem_1fr] gap-x-4 gap-y-1.5 text-[0.8125rem]">
       {items.map((item) => (
-        <div key={item.label} className="flex items-center gap-[0.5rem]">
-          <span className="text-neutral-400">{item.label}</span>
-          {item.copyValue && (
-            <CopyButton
-              text={item.copyValue}
-              toastMessage="송장번호가 클립보드에 복사되었습니다."
-              className="text-neutral-400 hover:text-white"
-              iconClassName="h-3.5 w-3.5"
-              aboveTabBar
-            />
-          )}
-          <span className="text-white">{item.value}</span>
-        </div>
+        <React.Fragment key={item.label}>
+          {/* 라벨 셀 */}
+          <div className="text-left text-neutral-400">{item.label}</div>
+
+          {/* 값 셀 */}
+          <div className="flex items-start gap-2 text-left break-words text-white">
+            {item.copyValue && (
+              <CopyButton
+                text={item.copyValue}
+                toastMessage="송장번호가 클립보드에 복사되었습니다."
+                className="text-neutral-400 hover:text-white"
+                iconClassName="h-3.5 w-3.5"
+                aboveTabBar
+              />
+            )}
+            <div className="min-w-0">{item.value}</div>
+          </div>
+        </React.Fragment>
       ))}
     </div>
   );

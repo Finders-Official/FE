@@ -290,7 +290,7 @@ export default function PhotoDownload() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl overflow-x-hidden pt-6">
+    <main className="mx-auto w-full max-w-6xl overflow-x-hidden">
       {isError ? (
         <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
           <p className="text-red-400">불러오기에 실패했어요.</p>
