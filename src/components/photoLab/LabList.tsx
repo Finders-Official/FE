@@ -2,6 +2,7 @@ import { useCallback, useRef } from "react";
 import type { PhotoLabItem } from "@/types/photoLab";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import LabCard from "./LabCard";
+import EmptyView from "@/components/common/EmptyView";
 
 interface LabListProps {
   labs: PhotoLabItem[];
@@ -48,11 +49,7 @@ export default function LabList({
   }
 
   if (labs.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <p className="text-neutral-400">{emptyMessage}</p>
-      </div>
-    );
+    return <EmptyView content={emptyMessage} />;
   }
 
   return (
