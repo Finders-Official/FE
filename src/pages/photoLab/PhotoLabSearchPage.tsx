@@ -8,6 +8,7 @@ import {
 } from "@/components/photoLab";
 import {
   PopularLabSection,
+  PopularLabSkeleton,
   RecentSearchSection,
   KeywordSuggestionSection,
   LabPreviewSection,
@@ -57,7 +58,8 @@ export default function PhotoLabSearchPage() {
   } = useGeolocation();
 
   // 인기 현상소
-  const { data: popularLabs = [] } = usePopularPhotoLabs();
+  const { data: popularLabs = [], isLoading: isPopularLoading } =
+    usePopularPhotoLabs();
 
   // 최근 검색어
   const { recentSearches, addSearch, removeSearch, clearAll } =
@@ -207,7 +209,11 @@ export default function PhotoLabSearchPage() {
             onDelete={removeSearch}
             onClearAll={clearAll}
           />
-          <PopularLabSection labs={popularLabs} onLabClick={handleLabClick} />
+          {isPopularLoading ? (
+            <PopularLabSkeleton />
+          ) : (
+            <PopularLabSection labs={popularLabs} onLabClick={handleLabClick} />
+          )}
         </div>
       )}
 
