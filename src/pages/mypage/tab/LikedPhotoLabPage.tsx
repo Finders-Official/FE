@@ -147,6 +147,9 @@ export function LikedPhotoLabPage() {
         {labs.length === 0 && !isFetchingNextPage && (
           <EmptyOrderState description="아직 마음에 담아둔 현상소가 없어요" />
         )}
+
+        {/* sentinel */}
+        <div ref={bottomRef} />
       </main>
     </div>
   );

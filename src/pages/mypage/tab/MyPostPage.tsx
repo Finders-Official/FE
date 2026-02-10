@@ -92,6 +92,9 @@ export function MyPostPage() {
         {posts.length === 0 && !isFetchingNextPage && (
           <EmptyOrderState description="아직 기록된 나만의 사진이 없어요" />
         )}
+
+        {/* sentinel */}
+        <div ref={bottomRef} />
       </main>
     </div>
   );
