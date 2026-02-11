@@ -66,7 +66,9 @@ export { default as DevelopPicIcon } from "./develop.svg?react";
 export { default as ScanPicIcon } from "./scanPic.svg?react";
 export { default as PrintPicIcon } from "./print.svg?react";
 export { default as DeliveryPicIcon } from "./delivery.svg?react";
-export { default as PromotionBannerAiIcon } from "./promotion-banner-1.svg?react";
+export { default as PromotionBannerIcon1 } from "./promotion-banner-1.svg?react";
+export { default as PromotionBannerIcon2 } from "./promotion-banner-2.svg?react";
+export { default as PromotionBannerIcon3 } from "./promotion-banner-3.svg?react";
 
 // Fill 아이콘
 export { default as BellFillIcon } from "./bell-fill.svg?react";

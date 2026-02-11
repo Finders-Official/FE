@@ -39,36 +39,39 @@ export function EditInfoPage() {
   // img fallback 고정용 state
   const [imgFailed, setImgFailed] = useState(false);
 
-  // 서버가 내려주는 값(키 또는 URL)
+  //fallback은 "그대로" 쓸 고정 src (resolve 태우지 않음)
+  const fallbackSrc = FALLBACK_PROFILE_SRC;
+
+  //서버가 내려주는 값(키 또는 URL) - 공백 방지 trim
   const serverProfileUrlOrKey = useMemo(() => {
     const v = me?.roleData?.user?.profileImage;
-    return typeof v === "string" ? v : "";
+    return typeof v === "string" ? v.trim() : "";
   }, [me?.roleData?.user?.profileImage]);
 
   // 우선순위: objectUrl(즉시 미리보기) > server > fallback
   const basePreviewSrc = useMemo(() => {
     if (objectUrl) return objectUrl;
-    if (serverProfileUrlOrKey && serverProfileUrlOrKey.length > 0)
-      return serverProfileUrlOrKey;
-    return FALLBACK_PROFILE_SRC;
-  }, [objectUrl, serverProfileUrlOrKey]);
+    if (serverProfileUrlOrKey.length > 0) return serverProfileUrlOrKey;
+    return fallbackSrc;
+  }, [objectUrl, serverProfileUrlOrKey, fallbackSrc]);
 
-  // 실제 img src (resolve 적용)
-  const imgSrc = useMemo(
-    () => resolveProfileSrc({ raw: basePreviewSrc }),
-    [basePreviewSrc],
-  );
+  //resolve는 "server/key/objectUrl"에만 의미가 있음
+  // fallback일 땐 resolve를 굳이 태우지 않게 분기
+  const imgSrc = useMemo(() => {
+    if (basePreviewSrc === fallbackSrc) return fallbackSrc;
+    return resolveProfileSrc({ raw: basePreviewSrc });
+  }, [basePreviewSrc, fallbackSrc]);
 
-  //src가 바뀌면(다른 이미지로 시도) 실패 플래그 리셋
+  // src가 바뀌면(다른 이미지로 시도) 실패 플래그 리셋
   useEffect(() => {
     setImgFailed(false);
   }, [imgSrc]);
 
-  //최종 렌더 src (에러 났으면 fallback 고정)
+  // 최종 렌더 src (에러 났으면 fallback 고정)
   const finalImgSrc = useMemo(() => {
     if (!imgFailed) return imgSrc;
-    return resolveProfileSrc({ raw: FALLBACK_PROFILE_SRC });
-  }, [imgFailed, imgSrc]);
+    return fallbackSrc;
+  }, [imgFailed, imgSrc, fallbackSrc]);
 
   // 토스트
   const navigate = useNavigate();
@@ -162,7 +165,6 @@ export function EditInfoPage() {
         putUrl,
       );
 
-      // 여기서 서버에 url 저장
       await editMe({ profileImageUrl: publicUrlOrKey });
       setError(null);
     } finally {
@@ -204,7 +206,6 @@ export function EditInfoPage() {
     if (!objectUrlRef.current) return;
     if (!serverProfileUrlOrKey) return;
 
-    // 서버 값이 들어왔으니 blob 미리보기 정리
     URL.revokeObjectURL(objectUrlRef.current);
     objectUrlRef.current = null;
     setObjectUrl(null);
@@ -229,11 +230,10 @@ export function EditInfoPage() {
             draggable={false}
             className="h-full w-full object-cover"
             onError={(e) => {
-              const fallback = resolveProfileSrc({ raw: FALLBACK_PROFILE_SRC });
-              // fallback인데도 에러면 무한루프 방지
-              if (e.currentTarget.src === fallback) return;
-
+              // fallback에서도 error면 무한루프 방지
+              if (e.currentTarget.src === fallbackSrc) return;
               setImgFailed(true);
+              //prettier-ignore
             }}
           />
         </div>
