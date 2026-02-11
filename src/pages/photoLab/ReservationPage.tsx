@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef, useLayoutEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router";
 import {
   Header,
@@ -70,8 +70,8 @@ export default function ReservationPage() {
   const { data: availableTimes } = useAvailableTimes(labId, dateKey);
   const { mutate: createReservation } = useCreateReservation();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    document.getElementById("root")?.scrollTo(0, 0);
   }, []);
 
   const handleBack = useCallback(() => {

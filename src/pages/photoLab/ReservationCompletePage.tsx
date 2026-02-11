@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { useNavigate, useLocation, useParams } from "react-router";
 import { Header } from "@/components/common";
 import { LabLocationSection } from "@/components/photoLab/detail";
@@ -52,8 +52,8 @@ export default function ReservationCompletePage() {
     return formatKoreanDateTime(reservation.estimatedCompletion);
   }, [reservation]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    document.getElementById("root")?.scrollTo(0, 0);
   }, []);
 
   const handleClose = () => {
