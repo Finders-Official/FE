@@ -142,7 +142,6 @@ export function buildProcessSteps({
 
   // 수령/배송 단계 content
   const getDeliveryContent = () => {
-    if (!workData.print) return null;
     if (status !== "DELIVERY") return "안전하게 포장하여 수령/배송";
 
     // 배송
@@ -184,7 +183,7 @@ export function buildProcessSteps({
           { label: "수령 방식", value: "직접 수령" },
           {
             label: "수령 상태",
-            value: workData.print.status === "READY" ? "미수령" : "수령 완료",
+            value: workData.print?.status === "READY" ? "미수령" : "수령 완료",
           },
         ]}
       />
