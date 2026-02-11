@@ -26,7 +26,7 @@ export default function NoticeSection() {
           const anchorId = `notice-${notice.photoLabId}-${index}`;
           return (
             <div
-              key={`${notice.photoLabId}-${notice.noticeTitle}-${index}`}
+              key={anchorId}
               data-anchor-id={anchorId}
               className="flex-none snap-start"
             >
