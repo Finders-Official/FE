@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 type ScrollAnchorData = {
   anchorId: string;
@@ -92,7 +92,10 @@ export function useHorizontalScrollRestore(
     if (!container) return;
 
     const handleScroll = () => {
-      const children = Array.from(container.children) as HTMLElement[];
+      const children = Array.from(container.children).filter(
+        (child): child is HTMLElement => child instanceof HTMLElement,
+      );
+
       const scrollLeft = container.scrollLeft;
 
       let bestAnchor: HTMLElement | null = null;
@@ -143,9 +146,9 @@ export function useHorizontalScrollRestore(
     };
   }, [scrollRef, STORAGE_KEY]);
 
-  const hasRestoredPosition = () => {
+  const hasRestoredPosition = useCallback(() => {
     return !!sessionStorage.getItem(STORAGE_KEY);
-  };
+  }, [STORAGE_KEY]);
 
   return { hasRestoredPosition };
 }
