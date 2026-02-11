@@ -10,7 +10,7 @@ export function getActiveStatus(
   if (!workData) return "DEVELOP";
 
   if (
-    workData.print?.status === "PENDING" ||
+    workData.print?.status === "CONFIRMED" ||
     workData.print?.status === "PRINTING"
   )
     return "PRINT";
