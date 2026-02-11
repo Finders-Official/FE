@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Header } from "@/components/common";
 import {
@@ -30,8 +30,8 @@ export default function PhotoLabDetailPage() {
     latitude && longitude ? { lat: latitude, lng: longitude } : undefined,
   );
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    document.getElementById("root")?.scrollTo(0, 0);
   }, []);
 
   const handleBack = () => {
