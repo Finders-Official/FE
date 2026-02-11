@@ -81,11 +81,11 @@ export default function Calendar({
       </div>
 
       {/* 요일 헤더 */}
-      <div className="grid grid-cols-7 gap-x-[0.125rem] px-[0.4375rem]">
+      <div className="grid grid-cols-7 justify-items-center gap-x-[0.125rem]">
         {WEEKDAYS.map((day) => (
           <div
             key={day}
-            className="flex h-[1.375rem] items-center justify-center text-[0.875rem] leading-[154%] font-normal tracking-[-0.02em] text-neutral-100"
+            className="flex h-[1.375rem] w-[3rem] items-center justify-center text-[0.875rem] leading-[154%] font-normal tracking-[-0.02em] text-neutral-100"
           >
             {day}
           </div>
@@ -93,7 +93,7 @@ export default function Calendar({
       </div>
 
       {/* 날짜 그리드 */}
-      <div className="grid grid-cols-7 gap-x-[0.125rem] gap-y-[0.125rem]">
+      <div className="grid grid-cols-7 justify-items-center gap-x-[0.125rem] gap-y-[0.125rem]">
         {visibleDays.map(({ date, isCurrentMonth }, index) => {
           if (!isCurrentMonth) {
             return (
