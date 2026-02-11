@@ -132,6 +132,7 @@ export default function PhotoLabSearchPage() {
   // 뒤로가기: 검색 결과 → 검색 입력, 검색 입력 → 현상소 목록
   const handleBack = () => {
     if (isResultsState) {
+      setQuery("");
       navigate("/photolab/search", { replace: true });
     } else {
       navigate("/photolab", { replace: true });
