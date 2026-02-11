@@ -44,6 +44,11 @@ export default function PhotoDownload() {
   const previewRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  // 렌더링 유발 방지를 위해 useRef 사용
+  const touchStart = useRef<number>(0);
+  const touchEnd = useRef<number>(0);
+  const minSwipeDistance = 50;
+
   const {
     data,
     fetchNextPage,
@@ -77,6 +82,51 @@ export default function PhotoDownload() {
 
     return m;
   }, [results]);
+
+  // DETAIL에서 사진 스와이프
+  const swipeIds = useMemo(() => {
+    return selectedIds.length > 0
+      ? selectedIds
+      : results.map((p) => p.scannedPhotoId);
+  }, [selectedIds, results]);
+
+  const goPrev = useCallback(() => {
+    if (currentPhotoId == null || swipeIds.length === 0) return;
+
+    const idx = swipeIds.indexOf(currentPhotoId);
+    const safeIdx = idx === -1 ? 0 : idx;
+    const prevId = swipeIds[(safeIdx - 1 + swipeIds.length) % swipeIds.length];
+    setCurrentPhotoId(prevId);
+  }, [currentPhotoId, swipeIds]);
+
+  const goNext = useCallback(() => {
+    if (currentPhotoId == null || swipeIds.length === 0) return;
+
+    const idx = swipeIds.indexOf(currentPhotoId);
+    const safeIdx = idx === -1 ? 0 : idx;
+    const nextId = swipeIds[(safeIdx + 1) % swipeIds.length];
+    setCurrentPhotoId(nextId);
+  }, [currentPhotoId, swipeIds]);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEnd.current = 0;
+    touchStart.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEnd.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart.current || !touchEnd.current) return;
+
+    const distance = touchStart.current - touchEnd.current;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) goNext();
+    if (isRightSwipe) goPrev();
+  };
 
   // 확대하는 이미지가 바뀔 때마다 중앙으로 오게
   useEffect(() => {
@@ -290,7 +340,12 @@ export default function PhotoDownload() {
         </div>
 
         {/** 확대한 사진 노출 영역 */}
-        <div className="mb-10 flex h-[23.6875rem] w-full">
+        <div
+          className="mb-10 flex h-[23.6875rem] w-full"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
           {(() => {
             const currentPhoto =
               currentPhotoId !== null ? photoById.get(currentPhotoId) : null;

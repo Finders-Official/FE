@@ -56,7 +56,7 @@ export default function Process({
   const cardClass = [
     "flex flex-col justify-start rounded-xl border px-4",
     isCurrent
-      ? "border-orange-500/30 w-[17.3125rem] py-4 gap-[13px]"
+      ? "border-orange-500/30 w-[17.3125rem] py-4"
       : "border-neutral-600 w-[15.375rem] py-[0.625rem]",
   ].join(" ");
 
