@@ -89,12 +89,13 @@ export function useOnBoardingForm(options?: Options) {
   // 닉네임 에러 깜빡임 방지
   const debouncedNicknameError = useDebouncedValue(isNicknameError, 100);
 
-  const nicknameBorderClass = `transition-colors duration-100 ${
-    debouncedNicknameError ? "border-orange-500" : "border-neutral-800"
-  }`;
-  const nicknameTextClass = `transition-colors duration-100 ${
-    debouncedNicknameError ? "text-orange-500" : "text-neutral-100"
-  }`;
+  const nicknameBorderClass = debouncedNicknameError
+    ? "transition-colors duration-100 border-orange-500"
+    : undefined;
+
+  const nicknameTextClass = debouncedNicknameError
+    ? "transition-colors duration-100 text-orange-500"
+    : undefined;
 
   // 폰 인증
   const setUser = useAuthStore((s) => s.setUser);
@@ -102,6 +103,9 @@ export function useOnBoardingForm(options?: Options) {
   const { mutate: requestCode, isPending: isRequestingCode } =
     useRequestPhoneVerification({
       onSuccess: (res) => {
+        //지금 요청이 재발송인지 판단
+        const isResend = isSending;
+
         setIsSending(true);
         setRemainSec(res.data.expiresIn);
         setRequestId(res.data.requestId);
@@ -109,9 +113,13 @@ export function useOnBoardingForm(options?: Options) {
         setIsVerified(false);
         setVerifiedPhoneToken(null);
 
-        //상태 문구 초기화
-        setPhoneVerifyMessage("");
         setPhoneVerifyError("");
+        if (isResend) {
+        setPhoneVerifyMessage("인증번호를 재발송 하였습니다.");
+      } else {
+        setPhoneVerifyMessage(""); // 첫 발송은 굳이 문구 안 띄움
+      }
+        // prettier-ignore
       },
       onError: (e) => console.error(e.message),
     });
@@ -138,7 +146,7 @@ export function useOnBoardingForm(options?: Options) {
         setIsVerified(false);
         setVerifiedPhoneToken(null);
 
-        setPhoneVerifyMessage("");
+        setPhoneVerifyMessage("인증번호를 재발송해주세요.");
         setPhoneVerifyError("인증번호가 올바르지 않습니다.");
       },
     });
@@ -163,12 +171,13 @@ export function useOnBoardingForm(options?: Options) {
   //깜빡임 방지: 에러 ON을 100ms 지연
   const debouncedPhoneError = useDebouncedValue(isPhoneError, 100);
 
-  const phoneBorderClass = `transition-colors duration-100 ${
-    debouncedPhoneError ? "border-orange-500" : "border-neutral-800"
-  }`;
-  const phoneTextClass = `transition-colors duration-100 ${
-    debouncedPhoneError ? "text-orange-500" : "text-neutral-100"
-  }`;
+  const phoneBorderClass = debouncedPhoneError
+    ? "transition-colors duration-100 border-orange-500"
+    : undefined;
+
+  const phoneTextClass = debouncedPhoneError
+    ? "transition-colors duration-100 text-orange-500"
+    : undefined;
 
   // 인증 완료 후 비활성화를 위함
   const lockPhoneForm = isVerified;
@@ -197,7 +206,6 @@ export function useOnBoardingForm(options?: Options) {
   const handleSend = () => requestCode({ phone, purpose: phonePurpose });
 
   const handleVerify = () => {
-    if (remainSec <= 0) return;
     if (!requestId) return;
     if (verifiedNumber.length !== 6) return;
 

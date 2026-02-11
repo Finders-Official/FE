@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import ActionSheet, { type ActionSheetAction } from "./ActionSheet";
 import { timeAgo } from "@/utils/timeAgo";
 import { useDeletePost, useDeleteComment } from "@/hooks/photoFeed";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 type ProfileType = "post" | "comment";
 
@@ -49,6 +49,11 @@ export default function Profile({
   objectId,
 }: ProfileProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  // 내가 쓴 게시글에서 진입해서 삭제시 내가 쓴 게시글로 리다이렉 처리
+  const fromMyPost = location.state === "mypost";
+  const afterDeletePath = fromMyPost ? "/mypage/my-posts" : "/photoFeed";
+
   const [moreMenu, setMoreMenu] = useState(false);
 
   const { mutateAsync: deletePostAsync, isPending: isPostPending } =
@@ -69,11 +74,11 @@ export default function Profile({
     try {
       await deletePostAsync(objectId);
       setMoreMenu(false);
-      navigate("/photoFeed", { state: { isDeleted: true } });
+      navigate(afterDeletePath, { replace: true, state: { isDeleted: true } });
     } catch (e) {
       console.error(e); // TODO 토스트 메세지
     }
-  }, [isPostPending, deletePostAsync, objectId, navigate]);
+  }, [isPostPending, deletePostAsync, objectId, navigate, afterDeletePath]);
 
   // 코멘트 삭제 핸들러
   const handleDeleteComment = useCallback(async () => {

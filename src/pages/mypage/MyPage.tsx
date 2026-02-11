@@ -25,7 +25,7 @@ export function MyPage() {
       <main>
         <section className="py-4">
           {managelist.map((item) => {
-            const isTicket = item.text === "티켓 충전";
+            const isTicket = item.text === "크레딧 개수";
 
             return (
               <OptionLink
