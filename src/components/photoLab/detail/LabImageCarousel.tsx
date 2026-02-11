@@ -30,6 +30,8 @@ export default function LabImageCarousel({
               src={src}
               alt={`${altPrefix}-${i + 1}`}
               className="h-[13.6875rem] w-full object-cover"
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : "auto"}
               draggable={false}
             />
           </div>
