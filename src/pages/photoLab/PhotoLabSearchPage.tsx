@@ -267,16 +267,16 @@ export default function PhotoLabSearchPage() {
             emptyMessage="검색 결과가 없어요"
             className="pt-4"
           />
-
-          {/* 필터 바텀시트 */}
-          <FilterBottomSheet
-            open={isFilterOpen}
-            onClose={() => setIsFilterOpen(false)}
-            initialFilter={filter}
-            onApply={setFilter}
-          />
         </>
       )}
+
+      {/* 필터 바텀시트 (vh 초기값 유지) */}
+      <FilterBottomSheet
+        open={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        initialFilter={filter}
+        onApply={setFilter}
+      />
     </div>
   );
 }
