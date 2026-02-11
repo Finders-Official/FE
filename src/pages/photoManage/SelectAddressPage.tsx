@@ -29,7 +29,21 @@ export function SelectAddressPage() {
       },
       {
         onSuccess: (res) => {
+          //1) 선택 처리
           setSelectedId(res.data.addressId);
+
+          //2) store에 바로 넣고 (상세는 detail에서 입력)
+          setDeliveryAddress({
+            recipientName: "",
+            phone: "",
+            zipcode: data.zipcode,
+            address: data.address,
+            addressDetail: "",
+          });
+
+          //3) 상세 입력 페이지로 바로 이동
+          navigate("../address-detail");
+          //prettier-ignore
         },
       },
     );
@@ -46,6 +60,7 @@ export function SelectAddressPage() {
       address: selected.address,
       addressDetail: selected.addressDetail,
     });
+
     navigate("./detail");
   };
 
