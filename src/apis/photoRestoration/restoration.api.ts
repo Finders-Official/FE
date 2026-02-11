@@ -100,7 +100,9 @@ export interface RestorationStatusData {
   restoredWidth: number | null;
   restoredHeight: number | null;
   status: RestorationStatus;
-  tokenUsed: number;
+  creditUsed: number;
+  /** @deprecated use creditUsed */
+  tokenUsed?: number;
   feedbackRating: "GOOD" | "BAD" | null;
   feedbackComment: string | null;
   errorMessage: string | null;
@@ -135,7 +137,7 @@ export async function requestRestoration(
   return body;
 }
 
-// 4. 상태 조회 (GET) - tokenUsed 포함
+// 4. 상태 조회 (GET) - creditUsed 포함
 export async function getRestorationStatus(
   id: number,
 ): Promise<ApiResponse<RestorationStatusData>> {
