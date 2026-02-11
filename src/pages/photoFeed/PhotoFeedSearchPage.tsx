@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
@@ -43,8 +43,8 @@ export default function PhotoFeedSearchPage() {
   const location = useLocation();
   const initialLabName = location.state?.labName as string | undefined;
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    document.getElementById("root")?.scrollTo(0, 0);
   }, []);
 
   const [filter, setFilter] = useState<Filter>(

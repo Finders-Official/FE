@@ -72,7 +72,7 @@ export default function QuickActionGrid() {
               strokeWidth={0}
             />
           </div>
-          <span className="mt-2 text-[1rem] font-semibold text-neutral-100">
+          <span className="mt-2 text-[0.875rem] font-semibold text-neutral-100">
             사진 복원하기
           </span>
         </ActionCard>
@@ -85,7 +85,7 @@ export default function QuickActionGrid() {
           <div className="flex size-8 items-center justify-center">
             <MainCamera className="size-8 text-[#FF5A00]" strokeWidth={2} />
           </div>
-          <span className="mt-2 text-[1rem] font-semibold text-neutral-100">
+          <span className="mt-2 text-[0.875rem] font-semibold text-neutral-100">
             필카 입문 101
           </span>
         </ActionCard>

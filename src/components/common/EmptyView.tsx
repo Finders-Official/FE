@@ -13,7 +13,9 @@ export default function EmptyView({ icon, content }: EmptyViewProps) {
 
       <div className="flex flex-col items-center justify-center">
         {content ? (
-          <p className="text-[16px] text-neutral-200">{content}</p>
+          <p className="text-[16px] whitespace-pre-line text-neutral-200">
+            {content}
+          </p>
         ) : (
           <>
             <p className="text-[16px] text-neutral-200">

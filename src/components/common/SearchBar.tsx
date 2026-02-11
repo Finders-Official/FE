@@ -34,14 +34,23 @@ export default function SearchBar({
   onClear,
 }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
+  // 마지막으로 onChange로 보낸 값 추적 (ref 대신 state로, lint..)
+  const [lastEmitted, setLastEmitted] = useState(value);
 
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
+  // 외부 변경만 동기화
+  const [prevValue, setPrevValue] = useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    if (value !== lastEmitted) {
+      setLocalValue(value);
+    }
+    setLastEmitted(value);
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (localValue !== value) {
+        setLastEmitted(localValue);
         onChange(localValue);
       }
     }, debounceMs);
@@ -51,6 +60,7 @@ export default function SearchBar({
 
   const handleClear = () => {
     setLocalValue("");
+    setLastEmitted("");
     onChange("");
     onClear?.();
     inputRef?.current?.blur();

@@ -121,7 +121,7 @@ export function LoginPage() {
           >
             <CTA_Button
               text="홈으로"
-              link="../mainpage"
+              link="/mainpage"
               color="orange"
               size="compact"
             />

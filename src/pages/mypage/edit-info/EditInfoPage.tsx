@@ -3,7 +3,7 @@ import { ToastItem } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { OptionLink } from "@/components/mypage/OptionLink";
-import { GCS_PUBLIC_BASE } from "@/constants/gcsUrl";
+import { FALLBACK_PROFILE_SRC } from "@/constants/gcsUrl";
 import { useLogout } from "@/hooks/auth/login";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useMe, useEditMe } from "@/hooks/member";
@@ -15,28 +15,9 @@ import {
 } from "@/utils/pickPresignedUrl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
 
 type LocationState = { toast?: string } | null;
-
-// fallback 이미지
-const FALLBACK_PROFILE_SRC = "/MainLogo.svg";
-
-function resolveProfileSrc(raw: string) {
-  if (!raw) return FALLBACK_PROFILE_SRC;
-
-  // 업로드 직후 objectUrl
-  if (raw.startsWith("blob:")) return raw;
-
-  // 이미 완전한 URL
-  if (/^https?:\/\//i.test(raw)) return raw;
-
-  // 로컬 public 경로
-  if (raw.startsWith("/")) return raw;
-
-  // 스토리지 key로 보고 base 붙이기 + 인코딩(한글/공백 대응)
-  const key = raw.replace(/^\/+/, "");
-  return `${GCS_PUBLIC_BASE}/${encodeURI(key)}`;
-}
 
 export function EditInfoPage() {
   const { data: me, isLoading } = useMe({ refetchOnMount: "always" });
@@ -71,7 +52,7 @@ export function EditInfoPage() {
 
   // 실제 img src (resolve 적용)
   const imgSrc = useMemo(
-    () => resolveProfileSrc(basePreviewSrc),
+    () => resolveProfileSrc({ raw: basePreviewSrc }),
     [basePreviewSrc],
   );
 
@@ -235,7 +216,9 @@ export function EditInfoPage() {
             draggable={false}
             className="h-full w-full object-cover"
             onError={(e) => {
-              const resolvedFallback = resolveProfileSrc(FALLBACK_PROFILE_SRC);
+              const resolvedFallback = resolveProfileSrc({
+                raw: FALLBACK_PROFILE_SRC,
+              });
               if (
                 (e.currentTarget as HTMLImageElement).src !== resolvedFallback
               ) {
@@ -315,7 +298,10 @@ export function EditInfoPage() {
 
       {showToast ? (
         <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-          <ToastItem message={message} icon={<CheckCircleIcon />} />
+          <ToastItem
+            message={message}
+            icon={<CheckCircleIcon className="h-5 w-5" />}
+          />
         </div>
       ) : null}
     </div>

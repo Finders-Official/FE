@@ -47,6 +47,7 @@ export default function LabWorkResultsSection({
               key={index}
               src={url}
               alt={`작업 결과물 ${index + 1}`}
+              loading="lazy"
               className="max-h-full w-auto rounded-[0.625rem] object-contain"
             />
           ))}

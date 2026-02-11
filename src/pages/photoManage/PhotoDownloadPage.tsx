@@ -1,5 +1,5 @@
 import { CTA_Button, Header, ImageCard } from "@/components/common";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { PhotoCardPreview } from "@/components/photoManage/PhotoCardPreview";
 import { EmptyCheckCircleIcon } from "@/assets/icon";
@@ -7,6 +7,7 @@ import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import { useInfiniteScanResults } from "@/hooks/photoManage";
 import ImageCardSkeleton from "@/components/common/ImageCardSkeleton";
 import EmptyView from "@/components/common/EmptyView";
+import { useImageDownload } from "@/hooks/common/useImageDownload";
 
 type Step = "GRID" | "DETAIL";
 const SKELETON_COUNT = 12;
@@ -17,18 +18,27 @@ export default function PhotoDownload() {
   const developmentOrderId = (location.state as { developmentOrderId: number })
     ?.developmentOrderId;
 
+  const { downloadOne, downloadAll } = useImageDownload({
+    prefixSingle: "scan",
+    prefixAll: "scan_all",
+    delayMs: 300,
+    extension: "jpg",
+  });
+
   useEffect(() => {
     if (!developmentOrderId) {
       navigate("/photoManage/main", { replace: true });
     }
   }, [developmentOrderId, navigate]);
 
+  // 선택된 이미지 Id 배열
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  // 이미지 확대 보기용
   const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(null);
   const step: Step = currentPhotoId ? "DETAIL" : "GRID";
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
-
   const checked = selectedSet.size > 0;
 
   const previewRefs = useRef<Map<number, HTMLDivElement>>(new Map());
@@ -48,7 +58,9 @@ export default function PhotoDownload() {
     [data],
   );
 
-  const onIntersect = () => fetchNextPage();
+  const onIntersect = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
 
   useInfiniteScroll({
     target: sentinelRef,
@@ -81,11 +93,10 @@ export default function PhotoDownload() {
   }, [currentPhotoId]);
 
   const handleAllSelect = () => {
-    if (selectedIds.length === results.length) {
-      setSelectedIds([]); // 모두 선택된 상태면 전체 해제
-    } else {
-      setSelectedIds(results.map((p) => p.scannedPhotoId)); // 전체 선택
-    }
+    setSelectedIds((prev) => {
+      const allIds = results.map((p) => p.scannedPhotoId);
+      return prev.length === allIds.length ? [] : allIds;
+    });
   };
 
   const toggle = (id: number) => {
@@ -104,6 +115,53 @@ export default function PhotoDownload() {
 
   const currentIndex =
     currentPhotoId !== null ? selectedIndexMap.get(currentPhotoId) : undefined;
+
+  // 선택된 Id로부터 signedUrl 목록 만들기
+  const getSelectedUrls = useCallback((): string[] => {
+    const urls: string[] = [];
+    const missing: number[] = [];
+
+    for (const id of selectedIds) {
+      const photo = photoById.get(id);
+      if (!photo?.signedUrl) {
+        missing.push(id);
+        continue;
+      }
+      urls.push(photo.signedUrl);
+    }
+
+    if (missing.length > 0) {
+      console.warn("[PhotoDownload] Missing photos for ids:", missing);
+      return []; // 다운로드 막기
+    }
+
+    return urls;
+  }, [selectedIds, photoById]);
+
+  // 다운로드 버튼 핸들러
+  const handleDownloadAction = useCallback(async () => {
+    if (selectedIds.length === 0) return;
+
+    const urls = getSelectedUrls();
+    if (urls.length === 0) return;
+
+    try {
+      if (urls.length === 1) {
+        await downloadOne(urls[0], 1);
+      } else {
+        await downloadAll(urls);
+      }
+
+      // 메인피드로 이동 후 토스트 띄우기
+      navigate("/photoManage/main", {
+        state: {
+          isDownloaded: true,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [selectedIds.length, getSelectedUrls, downloadOne, downloadAll, navigate]);
 
   const renderGrid = () => {
     return (
@@ -190,9 +248,8 @@ export default function PhotoDownload() {
               text="다운로드"
               size="xlarge"
               disabled={!checked}
-              link="" // TODO: 수정 예정
               color={checked ? "orange" : "black"}
-              onClick={() => {}}
+              onClick={handleDownloadAction}
             />
           </div>
         </section>
