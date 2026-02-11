@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import ProcessStep from "@/components/photoManage/ProcessStep";
-import { MenuIcon, CircleIcon } from "@/assets/icon";
-import { Header } from "@/components/common";
+import { MenuIcon, CircleIcon, CheckCircleIcon } from "@/assets/icon";
+import { Header, ToastItem } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import BottomSheet from "@/components/common/BottomSheet";
 import { getCurrentWork } from "@/apis/photoManage/currentWork.api";
@@ -17,6 +17,25 @@ import { usePrintSkip, useConfirmReceipt } from "@/hooks/photoManage";
 
 export default function PhotoManageMainPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isDownloaded } = location.state ?? {};
+
+  // 토스트 메세지 관련 상태
+  const [toastVisible, setToastVisible] = useState(isDownloaded);
+  const [mounted, setMounted] = useState(isDownloaded);
+
+  useEffect(() => {
+    if (!isDownloaded) return;
+
+    const fadeTimer = setTimeout(() => setToastVisible(false), 1600);
+    const removeTimer = setTimeout(() => setMounted(false), 3000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [isDownloaded]);
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogStep, setDialogStep] = useState(1);
 
@@ -112,6 +131,22 @@ export default function PhotoManageMainPage() {
           </div>
         </div>
       </div>
+
+      {/** toast 메세지 */}
+      {isDownloaded && mounted && (
+        <div className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5">
+          <div
+            className={`transition-opacity duration-300 ease-out ${
+              toastVisible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <ToastItem
+              message="사진이 다운로드 되었습니다"
+              icon={<CheckCircleIcon className="h-5 w-5" />}
+            />
+          </div>
+        </div>
+      )}
 
       <main className="flex flex-col gap-3.5 py-4">
         {isDialogOpen && (
