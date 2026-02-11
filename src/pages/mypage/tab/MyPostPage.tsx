@@ -5,15 +5,19 @@ import type { Post } from "@/types/mypage/post";
 import { useMyPostsInfinite } from "@/hooks/my";
 import { EmptyOrderState, PostCardSkeleton } from "@/components/mypage";
 import { formatYmdDot } from "@/utils/dateFormat";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { ToastItem } from "@/components/common";
 import { CheckCircleIcon } from "@/assets/icon";
 
 const SKELETON_COUNT = 6;
 
+type LocationState = { isDeleted?: boolean } | null;
+
 export function MyPostPage() {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { isDeleted } = location.state ?? {};
+  const state = (location.state as LocationState) ?? null;
+  const isDeleted = Boolean(state?.isDeleted);
 
   // 토스트 메세지 관련 상태
   const [toastVisible, setToastVisible] = useState(isDeleted);
@@ -22,14 +26,26 @@ export function MyPostPage() {
   useEffect(() => {
     if (!isDeleted) return;
 
-    const fadeTimer = setTimeout(() => setToastVisible(false), 1600);
-    const removeTimer = setTimeout(() => setMounted(false), 3000);
+    const showId = window.setTimeout(() => {
+      setToastVisible(true);
+      setMounted(true);
+    }, 0);
+
+    const fadeTimer = window.setTimeout(() => setToastVisible(false), 1600);
+    const removeTimer = window.setTimeout(() => setMounted(false), 3000);
+
+    // ✅ 뒤로가기/재진입 때 계속 뜨는 문제 방지: state 제거
+    const clearStateTimer = window.setTimeout(() => {
+      navigate(location.pathname, { replace: true, state: null });
+    }, 0);
 
     return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
+      window.clearTimeout(showId);
+      window.clearTimeout(fadeTimer);
+      window.clearTimeout(removeTimer);
+      window.clearTimeout(clearStateTimer);
     };
-  }, [isDeleted]);
+  }, [isDeleted, navigate, location.pathname]);
 
   const {
     data,
@@ -75,7 +91,6 @@ export function MyPostPage() {
     threshold: 0,
   });
 
-  // sentinel 렌더 조건 설정 (data가 없을 때는 렌더링 되지 않게)
   const shouldShowSentinel =
     !isLoading && !isError && hasNextPage && posts.length > 0;
 
@@ -95,35 +110,42 @@ export function MyPostPage() {
   }
 
   return (
-    <div className="py-4">
-      <main>
-        <div className="grid grid-cols-2 gap-4">
-          {isLoading
-            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
-                return <PostCardSkeleton key={`post-skeleton-${i}`} />;
-              })
-            : posts.map((post) => <PostCard key={post.id} post={post} />)}
-        </div>
-
-        {isFetchingNextPage && (
-          <div className="mt-3 text-center text-sm text-neutral-300">
-            더 불러오는 중...
+    <div className="flex min-h-0 flex-1 flex-col py-4">
+      <main className="flex min-h-0 flex-1 flex-col px-4">
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-4">
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+              <PostCardSkeleton key={`post-skeleton-${i}`} />
+            ))}
           </div>
+        ) : posts.length === 0 && !isFetchingNextPage ? (
+          <div className="flex flex-1 items-center justify-center">
+            <EmptyOrderState description="아직 기록된 나만의 사진이 없어요" />
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              {posts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+
+            {isFetchingNextPage && (
+              <div className="mt-3 text-center text-sm text-neutral-300">
+                더 불러오는 중...
+              </div>
+            )}
+
+            {!hasNextPage && posts.length > 0 && (
+              <div className="mt-3 text-center text-sm text-neutral-500" />
+            )}
+
+            {shouldShowSentinel ? <div ref={bottomRef} /> : null}
+          </>
         )}
 
-        {!hasNextPage && posts.length > 0 && (
-          <div className="mt-3 text-center text-sm text-neutral-500"></div>
-        )}
-
-        {posts.length === 0 && !isFetchingNextPage && (
-          <EmptyOrderState description="아직 기록된 나만의 사진이 없어요" />
-        )}
-
-        {/* 선택적 sentinel */}
-        {shouldShowSentinel ? <div ref={bottomRef} /> : null}
-
-        {isDeleted && mounted && (
-          <div className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5">
+        {mounted && (
+          <div className="fixed right-0 bottom-0 left-0 z-[100] flex justify-center px-5 py-5">
             <div
               className={`transition-opacity duration-300 ease-out ${
                 toastVisible ? "opacity-100" : "opacity-0"

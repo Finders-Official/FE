@@ -27,10 +27,7 @@ export function LikedPhotoLabPage() {
     [data],
   );
 
-  /*
-   * 페이지 안에서만 유지되는 즐겨찾기 상태 덮어쓰기 맵
-   * 페이지를 나갔다 들어오면(컴포넌트 언마운트) 초기화됨 ->
-   */
+  // 페이지 내에서만 유지되는 즐겨찾기 오버라이드
   const [favoriteOverrideById, setFavoriteOverrideById] = useState<
     Record<number, boolean>
   >({});
@@ -74,28 +71,23 @@ export function LikedPhotoLabPage() {
     threshold: 0,
   });
 
-  // sentinel 렌더 조건 설정 (data가 없을 때는 렌더링 되지 않게)
   const shouldShowSentinel =
     !isLoading && !isError && hasNextPage && labs.length > 0;
-  /*
-   * 클릭 당시 화면에 보이는 "현재 상태(prevIsFavorite)"를 기준으로 서버 호출
-   * UI는 override로 즉시 토글
-   * 실패 시 override 롤백
-   */
+
   const handleFavoriteToggle = useCallback(
     (photoLabId: number, prevIsFavoriteFromCard: boolean) => {
-      // 1) UI 즉시 반영(로컬 토글)
+      // 1) UI 즉시 반영
       setFavoriteOverrideById((prev) => ({
         ...prev,
         [photoLabId]: !prevIsFavoriteFromCard,
       }));
 
-      // 2) 서버 호출은 "토글 전 현재값" 그대로 보냄
+      // 2) 서버 호출 (토글 전 값)
       toggleFavorite(
         { photoLabId, isFavorite: prevIsFavoriteFromCard },
         {
           onError: () => {
-            // 3) 실패하면 롤백
+            // 3) 실패 시 롤백
             setFavoriteOverrideById((prev) => ({
               ...prev,
               [photoLabId]: prevIsFavoriteFromCard,
@@ -123,13 +115,19 @@ export function LikedPhotoLabPage() {
   }
 
   return (
-    <div>
-      <main className="px-4">
-        {isLoading
-          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <PhotoLabCardSkeleton key={`post-skeleton-${i}`} />
-            ))
-          : labs.map((photolab) => (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <main className="flex min-h-0 flex-1 flex-col px-4">
+        {isLoading ? (
+          Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+            <PhotoLabCardSkeleton key={`post-skeleton-${i}`} />
+          ))
+        ) : labs.length === 0 && !isFetchingNextPage ? (
+          <div className="flex flex-1 items-center justify-center">
+            <EmptyOrderState description="아직 마음에 담아둔 현상소가 없어요" />
+          </div>
+        ) : (
+          <>
+            {labs.map((photolab) => (
               <PhotoLabCard
                 key={photolab.id}
                 photoLab={photolab}
@@ -137,22 +135,19 @@ export function LikedPhotoLabPage() {
               />
             ))}
 
-        {isFetchingNextPage && (
-          <div className="py-2 text-center text-sm text-neutral-300">
-            더 불러오는 중...
-          </div>
-        )}
+            {isFetchingNextPage && (
+              <div className="py-2 text-center text-sm text-neutral-300">
+                더 불러오는 중...
+              </div>
+            )}
 
-        {!hasNextPage && labs.length > 0 && (
-          <div className="py-2 text-center text-sm text-neutral-500"></div>
-        )}
+            {!hasNextPage && labs.length > 0 && (
+              <div className="py-2 text-center text-sm text-neutral-500" />
+            )}
 
-        {labs.length === 0 && !isFetchingNextPage && (
-          <EmptyOrderState description="아직 마음에 담아둔 현상소가 없어요" />
+            {shouldShowSentinel ? <div ref={bottomRef} /> : null}
+          </>
         )}
-
-        {/* 선택적 sentinel */}
-        {shouldShowSentinel ? <div ref={bottomRef} /> : null}
       </main>
     </div>
   );
