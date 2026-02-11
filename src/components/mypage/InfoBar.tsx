@@ -23,9 +23,10 @@ export const InfoBar = ({ name, nickname, profile }: InfoBarProps) => {
           draggable={false}
           className="h-full w-full object-cover"
           onError={(e) => {
-            const fallback = resolveProfileSrc({ raw: FALLBACK_PROFILE_SRC });
-            if (e.currentTarget.src !== fallback)
-              e.currentTarget.src = fallback;
+            const img = e.currentTarget;
+            if (img.src !== FALLBACK_PROFILE_SRC) {
+              img.src = FALLBACK_PROFILE_SRC;
+            }
           }}
         />
       </div>
