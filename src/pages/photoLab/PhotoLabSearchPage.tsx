@@ -10,7 +10,6 @@ import {
   PopularLabSection,
   PopularLabSkeleton,
   RecentSearchSection,
-  KeywordSuggestionSection,
   LabPreviewSection,
 } from "@/components/photoLab/search";
 import { useRecentSearches } from "@/hooks/common/useRecentSearches";
@@ -20,7 +19,6 @@ import {
   usePhotoLabList,
   useFavoriteToggle,
   useGeolocation,
-  useAutocomplete,
   useSearchPreview,
 } from "@/hooks/photoLab";
 import { displayTimesToApiTimes } from "@/utils/time";
@@ -70,10 +68,6 @@ export default function PhotoLabSearchPage() {
   const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
     usePhotoLabFilter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  // 키워드 자동완성
-  const { data: filteredKeywords = [], isPlaceholderData: isKeywordStale } =
-    useAutocomplete(query);
 
   // 검색 미리보기 (경량 API)
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
@@ -157,13 +151,6 @@ export default function PhotoLabSearchPage() {
     });
   };
 
-  const handleKeywordClick = (keyword: string) => {
-    addSearch(keyword);
-    navigate(`/photolab/search?q=${encodeURIComponent(keyword)}`, {
-      replace: true,
-    });
-  };
-
   const handleSearchBarClick = () => {
     if (isResultsState) {
       setQuery(searchQuery);
@@ -221,15 +208,10 @@ export default function PhotoLabSearchPage() {
       {/* PL-011-2: 검색어 입력 중 */}
       {!isResultsState && query.trim() && (
         <div
-          className={`flex flex-col gap-[1.875rem] pt-5 transition-opacity duration-200 ${
-            isKeywordStale || isPreviewStale ? "opacity-40" : "opacity-100"
+          className={`pt-5 transition-opacity duration-200 ${
+            isPreviewStale ? "opacity-40" : "opacity-100"
           }`}
         >
-          <KeywordSuggestionSection
-            keywords={filteredKeywords}
-            query={query}
-            onKeywordClick={handleKeywordClick}
-          />
           <LabPreviewSection
             labs={filteredLabPreviews}
             onLabClick={handleLabClick}
