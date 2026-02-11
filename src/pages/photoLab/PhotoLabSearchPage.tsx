@@ -11,6 +11,7 @@ import {
   PopularLabSkeleton,
   RecentSearchSection,
   LabPreviewSection,
+  LabPreviewSkeleton,
 } from "@/components/photoLab/search";
 import { useRecentSearches } from "@/hooks/common/useRecentSearches";
 import { useDebouncedValue } from "@/hooks/common";
@@ -71,15 +72,18 @@ export default function PhotoLabSearchPage() {
 
   // 검색 미리보기 (경량 API)
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
-  const { data: filteredLabPreviews = [], isPlaceholderData: isPreviewStale } =
-    useSearchPreview(
-      {
-        q: debouncedQuery,
-        lat: latitude ?? undefined,
-        lng: longitude ?? undefined,
-      },
-      !isResultsState,
-    );
+  const {
+    data: filteredLabPreviews = [],
+    isPending: isPreviewPending,
+    isPlaceholderData: isPreviewStale,
+  } = useSearchPreview(
+    {
+      q: debouncedQuery,
+      lat: latitude ?? undefined,
+      lng: longitude ?? undefined,
+    },
+    !isResultsState,
+  );
 
   // 검색 결과 API 연동
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -212,10 +216,14 @@ export default function PhotoLabSearchPage() {
             isPreviewStale ? "opacity-40" : "opacity-100"
           }`}
         >
-          <LabPreviewSection
-            labs={filteredLabPreviews}
-            onLabClick={handleLabClick}
-          />
+          {isPreviewPending && !isPreviewStale ? (
+            <LabPreviewSkeleton />
+          ) : (
+            <LabPreviewSection
+              labs={filteredLabPreviews}
+              onLabClick={handleLabClick}
+            />
+          )}
         </div>
       )}
 
