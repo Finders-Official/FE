@@ -87,7 +87,7 @@ export const useRestoration = () => {
   };
 
   const pollStatus = (id: number) => {
-    const MAX_RETRIES = 60;
+    const MAX_RETRIES = 90;
     let count = 0;
 
     clearPolling();
