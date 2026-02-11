@@ -29,7 +29,7 @@ export function formatKoreanDateTime(
     hour = Number(match[4]);
   } else {
     // Fallback
-    const date = new Date(dateStr);
+    const date = new Date(dateStr.replace(/-/g, "/"));
     year = date.getFullYear();
     month = date.getMonth() + 1;
     day = date.getDate();
