@@ -82,13 +82,13 @@ const DevelopmentHistoryPage = () => {
     <div className="mx-auto min-h-screen w-full max-w-md bg-neutral-900 text-neutral-100">
       {!hasData && !isLoading ? (
         isMenu ? (
-          <EmptyView content={"아직 맡기신 현상 작업이 없어요"} />
-        ) : (
           <EmptyView
             content={`현재 진행 중인 현상 작업이 완료되면,
 이 곳에서 현상 의뢰 기록들을 
 한눈에 확인할 수 있어요!`}
           />
+        ) : (
+          <EmptyView content={"아직 맡기신 현상 작업이 없어요"} />
         )
       ) : (
         <div className="pt-6 pb-24">
