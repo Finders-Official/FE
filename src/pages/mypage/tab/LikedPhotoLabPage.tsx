@@ -74,6 +74,9 @@ export function LikedPhotoLabPage() {
     threshold: 0,
   });
 
+  // sentinel 렌더 조건 설정 (data가 없을 때는 렌더링 되지 않게)
+  const shouldShowSentinel =
+    !isLoading && !isError && hasNextPage && labs.length > 0;
   /*
    * 클릭 당시 화면에 보이는 "현재 상태(prevIsFavorite)"를 기준으로 서버 호출
    * UI는 override로 즉시 토글
@@ -148,8 +151,8 @@ export function LikedPhotoLabPage() {
           <EmptyOrderState description="아직 마음에 담아둔 현상소가 없어요" />
         )}
 
-        {/* sentinel */}
-        <div ref={bottomRef} />
+        {/* 선택적 sentinel */}
+        {shouldShowSentinel ? <div ref={bottomRef} /> : null}
       </main>
     </div>
   );

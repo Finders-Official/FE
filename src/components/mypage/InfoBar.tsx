@@ -1,6 +1,6 @@
 import { ChevronLeftIcon } from "@/assets/icon";
-import { GCS_PUBLIC_BASE } from "@/constants/gcsUrl";
 import { NavLink } from "react-router";
+import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
 
 interface InfoBarProps {
   name: string | undefined;
@@ -9,12 +9,13 @@ interface InfoBarProps {
 }
 
 export const InfoBar = ({ name, nickname, profile }: InfoBarProps) => {
+  const src = resolveProfileSrc({ raw: profile });
   return (
     <div className="mb-[1rem] flex items-center gap-3">
       {/* 프로필 이미지 */}
-      <div className="h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border border-2 border-orange-400 bg-orange-600">
+      <div className="h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full">
         <img
-          src={`${GCS_PUBLIC_BASE}/${profile}`}
+          src={src}
           alt="프로필 이미지"
           draggable={false}
           className="h-full w-full object-cover"
