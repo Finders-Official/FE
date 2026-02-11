@@ -1,5 +1,9 @@
 import { useState, useRef } from "react";
-import { PromotionBannerAiIcon } from "@/assets/icon";
+import {
+  PromotionBannerIcon1,
+  PromotionBannerIcon2,
+  PromotionBannerIcon3,
+} from "@/assets/icon";
 
 interface MainBannerProps {
   id: number;
@@ -12,17 +16,17 @@ const BANNERS: MainBannerProps[] = [
   {
     id: 1,
     alt: "AI 사진 복원 프로모션 배너",
-    Icon: PromotionBannerAiIcon,
+    Icon: PromotionBannerIcon1,
   },
   {
     id: 2,
     alt: "첫 현상 50% 할인 프로모션 배너",
-    Icon: PromotionBannerAiIcon,
+    Icon: PromotionBannerIcon2,
   },
   {
     id: 3,
     alt: "친구 초대 혜택 프로모션 배너",
-    Icon: PromotionBannerAiIcon,
+    Icon: PromotionBannerIcon3,
   },
 ];
 
