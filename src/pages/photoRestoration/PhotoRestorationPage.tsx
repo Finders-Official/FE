@@ -250,7 +250,7 @@ export default function PhotoRestorationPage() {
 
               {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
               {restoredImageUrl && !isGenerating && (
-                <div className="mt-4 flex w-85.75 justify-end">
+                <div className="mt-4 flex w-full justify-end">
                   <div
                     onMouseDown={startCompare}
                     onMouseUp={endCompare}
