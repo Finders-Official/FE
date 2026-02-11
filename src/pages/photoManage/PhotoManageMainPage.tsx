@@ -150,33 +150,44 @@ export default function PhotoManageMainPage() {
 
       <main className="flex flex-col gap-3.5 py-4">
         {isDialogOpen && (
-          <DialogBox
-            isOpen={isDialogOpen}
-            title={
-              dialogStep === 1
-                ? "인화하실건가요?"
-                : "소중한 추억, 화면 속에만 두실 건가요?"
-            }
-            description={
-              dialogStep === 1
-                ? "인화를 하면 실물로 사진을 받아볼 수 있어요!"
-                : "지금 실물로 간직해 보세요. 나중에 인화도 언제든 가능해요!"
-            }
-            confirmText={dialogStep === 1 ? "네" : "지금 인화 할게요"}
-            onConfirm={() => {
-              setIsDialogOpen(false);
-              navigate("/photoManage/print-request");
-            }}
-            cancelText={dialogStep === 1 ? "아니오" : "다음에 할게요"}
-            onCancel={() => {
-              if (dialogStep === 1) {
-                setDialogStep(2);
-              } else {
-                setIsDialogOpen(false);
-                printSkip(workData.developmentOrderId);
-              }
-            }}
-          />
+          <>
+            {/* 배경 오버레이 (전체 화면 + 최상단 클릭 영역) */}
+            <div
+              className="fixed inset-0 z-50 bg-black/40"
+              onClick={() => setIsDialogOpen(false)}
+            />
+            {/* 모달 본체 (오버레이 위) */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div onClick={(e) => e.stopPropagation()}>
+                <DialogBox
+                  isOpen={isDialogOpen}
+                  title={
+                    dialogStep === 1
+                      ? "인화하실건가요?"
+                      : "소중한 추억, 화면 속에만 두실 건가요?"
+                  }
+                  description={
+                    dialogStep === 1
+                      ? "인화를 하면 실물로 사진을 받아볼 수 있어요!"
+                      : "지금 실물로 간직해 보세요. 나중에 인화도 언제든 가능해요!"
+                  }
+                  confirmText={dialogStep === 1 ? "네" : "지금 인화 할게요"}
+                  onConfirm={() => {
+                    setIsDialogOpen(false);
+                    navigate("/photoManage/print-request");
+                  }}
+                  cancelText={dialogStep === 1 ? "아니오" : "다음에 할게요"}
+                  onCancel={() => {
+                    if (dialogStep === 1) setDialogStep(2);
+                    else {
+                      setIsDialogOpen(false);
+                      printSkip(workData.developmentOrderId);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </>
         )}
 
         <BottomSheet
