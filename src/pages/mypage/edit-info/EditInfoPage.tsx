@@ -36,6 +36,9 @@ export function EditInfoPage() {
   const [error, setError] = useState<string | null>(null);
   const [isUploadingProfile, setIsUploadingProfile] = useState(false);
 
+  // img fallback 고정용 state
+  const [imgFailed, setImgFailed] = useState(false);
+
   // 서버가 내려주는 값(키 또는 URL)
   const serverProfileUrlOrKey = useMemo(() => {
     const v = me?.roleData?.user?.profileImage;
@@ -55,6 +58,17 @@ export function EditInfoPage() {
     () => resolveProfileSrc({ raw: basePreviewSrc }),
     [basePreviewSrc],
   );
+
+  //src가 바뀌면(다른 이미지로 시도) 실패 플래그 리셋
+  useEffect(() => {
+    setImgFailed(false);
+  }, [imgSrc]);
+
+  //최종 렌더 src (에러 났으면 fallback 고정)
+  const finalImgSrc = useMemo(() => {
+    if (!imgFailed) return imgSrc;
+    return resolveProfileSrc({ raw: FALLBACK_PROFILE_SRC });
+  }, [imgFailed, imgSrc]);
 
   // 토스트
   const navigate = useNavigate();
@@ -117,7 +131,6 @@ export function EditInfoPage() {
 
   const { mutateAsync: issuePresignedUrl } = useIssuePresignedUrl();
   const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
-
   const { mutateAsync: editMe } = useEditMe();
 
   const uploadProfileImage = async (picked: File) => {
@@ -149,7 +162,7 @@ export function EditInfoPage() {
         putUrl,
       );
 
-      //  여기서 서버에  url 저장
+      // 여기서 서버에 url 저장
       await editMe({ profileImageUrl: publicUrlOrKey });
       setError(null);
     } finally {
@@ -175,7 +188,7 @@ export function EditInfoPage() {
       objectUrlRef.current = null;
     }
 
-    // 미리보기 세팅 (즉시 보여야 함)
+    // 미리보기 세팅(즉시 보여야 함)
     const url = URL.createObjectURL(picked);
     objectUrlRef.current = url;
     setObjectUrl(url);
@@ -211,19 +224,16 @@ export function EditInfoPage() {
       <header className="border-neutral-875 flex flex-col items-center justify-center gap-3 border-b-[0.4rem] pt-8 pb-6">
         <div className="border-radius-100 h-[5rem] w-[5rem] overflow-hidden rounded-full border border-orange-400">
           <img
-            src={imgSrc}
+            src={finalImgSrc}
             alt="프로필 이미지"
             draggable={false}
             className="h-full w-full object-cover"
             onError={(e) => {
-              const resolvedFallback = resolveProfileSrc({
-                raw: FALLBACK_PROFILE_SRC,
-              });
-              if (
-                (e.currentTarget as HTMLImageElement).src !== resolvedFallback
-              ) {
-                (e.currentTarget as HTMLImageElement).src = resolvedFallback;
-              }
+              const fallback = resolveProfileSrc({ raw: FALLBACK_PROFILE_SRC });
+              // fallback인데도 에러면 무한루프 방지
+              if (e.currentTarget.src === fallback) return;
+
+              setImgFailed(true);
             }}
           />
         </div>
