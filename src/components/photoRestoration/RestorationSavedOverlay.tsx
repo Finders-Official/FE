@@ -12,17 +12,14 @@ export default function RestorationSavedOverlay({
   imageUrl,
   onClose,
 }: RestorationSavedOverlayProps) {
-  useEffect(() => {
-    console.log(`[Overlay] Mounted with imageUrl:`, imageUrl);
-  }, [imageUrl]);
-
   const [previewUrl, setPreviewUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
-  // GCS URL을 직접 <img>에 넣으면 iOS Safari에서 CORS/캐시 이슈가 잦으므로
-  // 직접 fetch해서 Blob URL로 변환하여 사용
+  // 이미지 비율을 동적으로 적용
+  const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+
   useEffect(() => {
     let isMounted = true;
     let objectUrl = "";
@@ -31,6 +28,7 @@ export default function RestorationSavedOverlay({
       if (!imageUrl) return;
       setIsLoading(true);
       setHasError(false);
+      setAspectRatio(null);
 
       try {
         const response = await fetch(imageUrl, { mode: "cors" });
@@ -42,12 +40,9 @@ export default function RestorationSavedOverlay({
         objectUrl = URL.createObjectURL(blob);
         setPreviewUrl(objectUrl);
         setIsLoading(false);
-        console.log(`[Overlay] Successfully created preview blob URL`);
-      } catch (e) {
-        console.error(`[Overlay] Failed to fetch preview image:`, e);
+      } catch {
         if (isMounted) {
           if (retryCount < 2) {
-            console.log(`[Overlay] Retrying fetch... (${retryCount + 1})`);
             setTimeout(() => {
               if (isMounted) setRetryCount((prev) => prev + 1);
             }, 500);
@@ -63,25 +58,16 @@ export default function RestorationSavedOverlay({
 
     return () => {
       isMounted = false;
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-        console.log(`[Overlay] Revoked preview blob URL`);
-      }
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [imageUrl, retryCount]);
 
   const handleShare = async () => {
     try {
-      await shareImageFromUrl(imageUrl, {
-        title: "복원한 사진",
-      });
+      await shareImageFromUrl(imageUrl, { title: "복원한 사진" });
     } catch (e) {
-      console.error("공유 실패", e);
-      if (e instanceof Error) {
-        alert(e.message);
-      } else {
-        alert("공유하기를 사용할 수 없습니다.");
-      }
+      if (e instanceof Error) alert(e.message);
+      else alert("공유하기를 사용할 수 없습니다.");
     }
   };
 
@@ -107,7 +93,7 @@ export default function RestorationSavedOverlay({
             className="flex w-full max-w-140 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-neutral-900"
             style={{
               maxHeight: "calc(100dvh - 160px)",
-              aspectRatio: "1024/672", // 예시 비율, 이미지가 로드되면 object-contain에 의해 조절됨
+              aspectRatio: aspectRatio ?? undefined,
             }}
           >
             {isLoading ? (
@@ -133,6 +119,12 @@ export default function RestorationSavedOverlay({
                 src={previewUrl}
                 alt="restored"
                 className="block h-full w-full object-contain"
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  if (img.naturalWidth && img.naturalHeight) {
+                    setAspectRatio(img.naturalWidth / img.naturalHeight);
+                  }
+                }}
               />
             )}
           </div>
