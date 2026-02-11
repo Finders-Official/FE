@@ -14,17 +14,29 @@ export function formatKoreanDateTime(
   dateStr: string,
   timeStr?: string,
 ): string {
-  const dateTimeStr = timeStr
-    ? `${dateStr.replace(/-/g, "/")} ${timeStr}`
-    : dateStr.replace(/-/g, "/").replace("T", " ");
+  const combined = timeStr ? `${dateStr}T${timeStr}` : dateStr;
 
-  const date = new Date(dateTimeStr);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const weekday = WEEKDAYS[date.getDay()];
+  const match = combined.match(
+    /(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?/,
+  );
 
-  const hour = timeStr ? parseInt(timeStr.split(":")[0], 10) : date.getHours();
+  let year: number, month: number, day: number, hour: number;
+
+  if (match) {
+    year = Number(match[1]);
+    month = Number(match[2]);
+    day = Number(match[3]);
+    hour = Number(match[4]);
+  } else {
+    // Fallback
+    const date = new Date(dateStr);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    day = date.getDate();
+    hour = timeStr ? parseInt(timeStr.split(":")[0], 10) : date.getHours();
+  }
+
+  const weekday = WEEKDAYS[new Date(year, month - 1, day).getDay()];
   const { period, displayHour } = to12Hour(hour);
 
   return `${year}. ${month}. ${day}(${weekday}) ${period} ${displayHour}:00`;
