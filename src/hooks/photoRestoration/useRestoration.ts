@@ -17,8 +17,8 @@ export const useRestoration = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  // 이번 복원에서 서버가 확정한 사용 토큰 수
-  const [lastTokenUsed, setLastTokenUsed] = useState<number>(0);
+  // 이번 복원에서 서버가 확정한 사용 크레딧 수
+  const [lastCreditUsed, setLastCreditUsed] = useState<number>(0);
 
   // 폴링 인터벌 제어용 Ref
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -30,9 +30,9 @@ export const useRestoration = () => {
     }
   };
 
-  // 최종 상태에서 tokenUsed 저장 + 크레딧 잔액 갱신 트리거
-  const finalizeTokenAndCredit = (tokenUsed: number | undefined) => {
-    setLastTokenUsed(typeof tokenUsed === "number" ? tokenUsed : 0);
+  // 최종 상태에서 creditUsed 저장 + 크레딧 잔액 갱신 트리거
+  const finalizeCredit = (creditUsed: number | undefined) => {
+    setLastCreditUsed(typeof creditUsed === "number" ? creditUsed : 0);
     queryClient.invalidateQueries({ queryKey: ["credit-balance"] });
   };
 
@@ -43,7 +43,7 @@ export const useRestoration = () => {
     setIsGenerating(true);
     setError(null);
     setRestoredImageUrl(null);
-    setLastTokenUsed(0); // 매 실행마다 초기화
+    setLastCreditUsed(0); // 매 실행마다 초기화
     setProgress(10);
 
     try {
@@ -87,7 +87,7 @@ export const useRestoration = () => {
   };
 
   const pollStatus = (id: number) => {
-    const MAX_RETRIES = 60;
+    const MAX_RETRIES = 90;
     let count = 0;
 
     clearPolling();
@@ -98,13 +98,12 @@ export const useRestoration = () => {
       try {
         const res = await getRestorationStatus(id);
         const data = res.data;
-        // console.log("poll:", data.status, "tokenUsed:", data.tokenUsed);
 
         if (data.status === "COMPLETED") {
           clearPolling();
 
-          // 서버 확정 tokenUsed 반영 + 크레딧 잔액 갱신
-          finalizeTokenAndCredit(data.tokenUsed);
+          // 서버 확정 creditUsed 반영 + 크레딧 잔액 갱신
+          finalizeCredit(data.creditUsed ?? data.tokenUsed);
 
           setIsGenerating(false);
           setStatusMessage("");
@@ -116,8 +115,8 @@ export const useRestoration = () => {
         if (data.status === "FAILED") {
           clearPolling();
 
-          // 실패여도 tokenUsed가 내려올 수 있으니 반영(서버 정책 따라 0일 수 있음)
-          finalizeTokenAndCredit(data.tokenUsed);
+          // 실패여도 creditUsed가 내려올 수 있으니 반영(서버 정책 따라 0일 수 있음)
+          finalizeCredit(data.creditUsed ?? data.tokenUsed);
 
           throw new Error(data.errorMessage || "복원 실패");
         }
@@ -146,7 +145,7 @@ export const useRestoration = () => {
     setIsGenerating(false);
     setProgress(0);
     setError(null);
-    setLastTokenUsed(0);
+    setLastCreditUsed(0);
     clearPolling();
   };
 
@@ -165,6 +164,6 @@ export const useRestoration = () => {
     setError,
     startRestoration,
     resetRestoration,
-    lastTokenUsed,
+    lastCreditUsed,
   };
 };

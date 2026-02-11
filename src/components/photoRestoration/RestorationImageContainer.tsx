@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import type { RefObject } from "react";
 
 interface RestorationImageContainerProps {
@@ -42,24 +42,11 @@ export const RestorationImageContainer: React.FC<
 }) => {
   const showOriginal = !restoredImageUrl || isComparing;
   const currentImageSrc = showOriginal ? imageUrl : restoredImageUrl;
-  const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
-
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const { naturalWidth, naturalHeight } = e.currentTarget;
-    if (naturalWidth && naturalHeight) {
-      setAspectRatio(naturalWidth / naturalHeight);
-    }
-    setIsImageLoaded(true);
-  };
 
   return (
     <div
       ref={containerRef}
-      className="relative mx-auto flex w-full max-w-md items-center justify-center overflow-hidden rounded-[0.625rem] bg-neutral-800"
-      style={{
-        aspectRatio: aspectRatio,
-        maxHeight: "calc(100dvh - 260px)",
-      }}
+      className="relative flex max-h-full max-w-full items-center justify-center overflow-hidden rounded-[0.625rem] bg-neutral-800"
       onMouseDown={startCompare}
       onMouseUp={endCompare}
       onMouseLeave={endCompare}
@@ -69,8 +56,9 @@ export const RestorationImageContainer: React.FC<
       <img
         src={currentImageSrc}
         alt="Target"
-        className="pointer-events-none absolute inset-0 block h-full w-full object-contain select-none"
-        onLoad={handleImageLoad}
+        className="block max-h-full max-w-full touch-none object-contain select-none"
+        style={{ maxHeight: "100%" }}
+        onLoad={() => setIsImageLoaded(true)}
       />
 
       {isGenerating && (

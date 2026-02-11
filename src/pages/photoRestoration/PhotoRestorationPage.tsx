@@ -53,9 +53,17 @@ export default function PhotoRestorationPage() {
     enabled: !!localStorage.getItem("accessToken"),
   });
 
-  const creditBalance = creditRes?.data.creditBalance ?? 0;
-  const totalFree = 3;
-  const usedFree = Math.max(0, totalFree - creditBalance);
+  const FREE_CREDIT_CAP = 5;
+
+  const creditBalanceRaw = creditRes?.data.creditBalance ?? 0;
+  // 데모 정책(최대 보유 5)에 맞춰 UI/차감 로직 모두 동일 기준 사용
+  const creditBalance = Math.min(
+    Math.max(creditBalanceRaw, 0),
+    FREE_CREDIT_CAP,
+  );
+
+  const totalFree = FREE_CREDIT_CAP;
+  const usedFree = totalFree - creditBalance;
 
   const {
     isGenerating,
@@ -68,7 +76,13 @@ export default function PhotoRestorationPage() {
     resetRestoration,
   } = useRestoration();
 
-  // Derived state: Error dialog takes priority
+  // 디버깅
+  useEffect(() => {
+    if (viewMode === "SAVED") {
+      console.log("[SAVED] restoredImageUrl:", restoredImageUrl);
+    }
+  }, [viewMode, restoredImageUrl]);
+
   const visibleDialog = error ? "SERVER_ERROR" : activeDialog;
 
   const {
@@ -190,82 +204,90 @@ export default function PhotoRestorationPage() {
 
   return (
     <div className="relative flex min-h-dvh w-full flex-col bg-neutral-900">
-      <Header
-        title="탄 사진 복원하기"
-        showBack
-        onBack={handleBack}
-        rightAction={
-          restoredImageUrl && !isGenerating && viewMode === "MAIN"
-            ? {
-                type: "text",
-                text: "저장",
-                onClick: handleSaveClick,
-                loading: isSaving,
-                disabled: isSaving,
-              }
-            : undefined
-        }
-      />
+      {viewMode === "MAIN" && (
+        <>
+          <Header
+            title="탄 사진 복원하기"
+            showBack
+            onBack={handleBack}
+            rightAction={
+              restoredImageUrl && !isGenerating
+                ? {
+                    type: "text",
+                    text: "저장",
+                    onClick: handleSaveClick,
+                    loading: isSaving,
+                    disabled: isSaving,
+                  }
+                : undefined
+            }
+          />
 
-      <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden">
-        <RestorationLoadingOverlay
-          isGenerating={isGenerating}
-          statusMessage={statusMessage}
-          progress={progress}
-        />
+          {/* Main Content Area: Flex column to manage available space */}
+          <div className="relative flex w-full flex-1 flex-col overflow-hidden">
+            {/* 1. Image Stage Area: Takes all available space, shrinking image if needed */}
+            <div className="relative flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-22.5">
+              <RestorationLoadingOverlay
+                isGenerating={isGenerating}
+                statusMessage={statusMessage}
+                progress={progress}
+              />
 
-        <RestorationImageContainer
-          imageUrl={imageUrl}
-          restoredImageUrl={restoredImageUrl}
-          isComparing={isComparing}
-          isGenerating={isGenerating}
-          canvasRef={canvasRef}
-          containerRef={containerRef}
-          startDrawing={startDrawing}
-          draw={draw}
-          stopDrawing={stopDrawing}
-          startCompare={startCompare}
-          endCompare={endCompare}
-          setIsImageLoaded={setIsImageLoaded}
-        />
+              <RestorationImageContainer
+                imageUrl={imageUrl}
+                restoredImageUrl={restoredImageUrl}
+                isComparing={isComparing}
+                isGenerating={isGenerating}
+                canvasRef={canvasRef}
+                containerRef={containerRef}
+                startDrawing={startDrawing}
+                draw={draw}
+                stopDrawing={stopDrawing}
+                startCompare={startCompare}
+                endCompare={endCompare}
+                setIsImageLoaded={setIsImageLoaded}
+              />
 
-        {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
-        {restoredImageUrl && !isGenerating && (
-          <div className="mt-3 flex w-85.75 justify-end">
-            <div
-              onMouseDown={startCompare}
-              onMouseUp={endCompare}
-              onMouseLeave={endCompare}
-              onTouchStart={startCompare}
-              onTouchEnd={endCompare}
-              className="pointer-events-auto cursor-pointer rounded-full p-2"
-            >
-              <RestorationCompareIcon className="h-10 w-10" />
+              {/* 비교하기: 이미지 바로 아래 (결과 있을 때만) */}
+              {restoredImageUrl && !isGenerating && (
+                <div className="mt-4 flex w-full justify-end">
+                  <div
+                    onMouseDown={startCompare}
+                    onMouseUp={endCompare}
+                    onMouseLeave={endCompare}
+                    onTouchStart={startCompare}
+                    onTouchEnd={endCompare}
+                    className="pointer-events-auto cursor-pointer rounded-full p-2"
+                  >
+                    <RestorationCompareIcon className="h-10 w-10" />
+                  </div>
+                </div>
+              )}
+
+              {/* 편집 모드일 때: Undo/Redo 컨트롤러 */}
+              {!restoredImageUrl && !isGenerating && (
+                <div className="mt-4">
+                  <RestorationControls
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
+                    canUndo={historyStep >= 0}
+                    canRedo={historyStep < paths.length - 1}
+                  />
+                </div>
+              )}
             </div>
           </div>
-        )}
 
-        {/* 편집 모드일 때: Undo/Redo 컨트롤러 */}
-        {!restoredImageUrl && !isGenerating && (
-          <div className="mt-4">
-            <RestorationControls
-              onUndo={handleUndo}
-              onRedo={handleRedo}
-              canUndo={historyStep >= 0}
-              canRedo={historyStep < paths.length - 1}
-            />
-          </div>
-        )}
-      </div>
-
-      <RestorationDialogs
-        activeDialog={visibleDialog}
-        setActiveDialog={setActiveDialog}
-        handleDialogConfirm={handleDialogConfirm}
-        handleDialogCancel={handleDialogCancel}
-        setError={setError}
-        resetRestoration={resetRestoration}
-      />
+          <RestorationDialogs
+            activeDialog={visibleDialog}
+            setActiveDialog={setActiveDialog}
+            handleDialogConfirm={handleDialogConfirm}
+            handleDialogCancel={handleDialogCancel}
+            setError={setError}
+            resetRestoration={resetRestoration}
+          />
+        </>
+      )}
 
       {viewMode === "SAVED" && restoredImageUrl && (
         <RestorationSavedOverlay

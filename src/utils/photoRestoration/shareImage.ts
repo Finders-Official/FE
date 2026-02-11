@@ -14,10 +14,18 @@ export async function shareImageFromUrl(
     filename = "finders-restored.png",
   } = options;
 
+  // Web Share 및 Clipboard API는 보안 컨텍스트(HTTPS)에서만 작동함
+  if (!window.isSecureContext) {
+    throw new Error("공유 기능은 보안 연결(HTTPS) 환경에서만 사용 가능합니다.");
+  }
+
   // Web Share 미지원이면 fallback: 링크 복사
   if (!navigator.share) {
-    await navigator.clipboard.writeText(url);
-    return { method: "clipboard" as const };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(url);
+      return { method: "clipboard" as const };
+    }
+    throw new Error("공유하기를 지원하지 않는 환경입니다.");
   }
 
   // 가능한 경우 파일로 공유 시도
