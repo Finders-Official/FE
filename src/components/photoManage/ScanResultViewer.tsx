@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { CloseIcon } from "@/assets/icon";
 import { EllipsisVerticalIcon } from "@/assets/icon";
 import { DownloadIcon } from "@/assets/icon";
+import { useImageDownload } from "@/hooks/common/useImageDownload";
 
 interface ScanResultViewerProps {
   isOpen: boolean;
@@ -26,6 +27,13 @@ const ScanResultViewer = ({
 
   // 메뉴 외부 클릭 감지를 위한 Ref
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const { downloadOne, downloadAll } = useImageDownload({
+    prefixSingle: "scan",
+    prefixAll: "scan_all",
+    delayMs: 300,
+    extension: "jpg",
+  });
 
   // 메뉴 외부 클릭 시 닫기
   useEffect(() => {
@@ -78,43 +86,15 @@ const ScanResultViewer = ({
   };
 
   const handleDownload = () => {
-    console.log(`이미지 다운로드: ${currentImage}`);
-    const fileName = `scan_${currentIndex + 1}.jpg`;
-    downloadImage(currentImage, fileName);
+    downloadOne(currentImage, currentIndex).catch(console.error);
   };
 
   const handleDownloadAll = async () => {
     setIsMenuOpen(false);
-
-    // 순차적으로 다운로드 (너무 많으면 브라우저 차단이 걸릴 수 있음)
-    for (let i = 0; i < images.length; i++) {
-      const fileName = `scan_all_${i + 1}.jpg`;
-      await downloadImage(images[i], fileName);
-
-      // 브라우저가 한 번에 너무 많은 다운로드를 시도하는 것을 방지하기 위한 미세한 지연
-      await new Promise((resolve) => setTimeout(resolve, 300));
-    }
-  };
-
-  const downloadImage = async (imageUrl: string, fileName?: string) => {
     try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      // 파일명 지정 (지정하지 않으면 브라우저가 판단)
-      link.download = fileName || imageUrl.split("/").pop() || "download-image";
-
-      document.body.appendChild(link);
-      link.click();
-
-      // 메모리 누수 방지
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("다운로드 중 오류 발생:", error);
+      await downloadAll(images);
+    } catch (e) {
+      console.error(e);
     }
   };
 
