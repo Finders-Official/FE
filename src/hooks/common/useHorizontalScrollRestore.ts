@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 type ScrollAnchorData = {
   anchorId: string;
@@ -16,7 +16,10 @@ export function useHorizontalScrollRestore(
   scrollRef: React.RefObject<HTMLElement | null>,
   sectionId: string,
 ) {
-  const STORAGE_KEY = `horizontal_scroll_anchor_${sectionId}`;
+  const STORAGE_KEY = useMemo(
+    () => `horizontal_scroll_anchor_${sectionId}`,
+    [sectionId],
+  );
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -82,7 +85,7 @@ export function useHorizontalScrollRestore(
       container.removeEventListener("touchstart", onUserInteraction);
       container.removeEventListener("wheel", onUserInteraction);
     };
-  }, [scrollRef, sectionId]);
+  }, [scrollRef, STORAGE_KEY]);
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -138,7 +141,7 @@ export function useHorizontalScrollRestore(
       container.removeEventListener("scroll", onScroll);
       clearTimeout(debounceTimer);
     };
-  }, [scrollRef, sectionId]);
+  }, [scrollRef, STORAGE_KEY]);
 
   const hasRestoredPosition = () => {
     return !!sessionStorage.getItem(STORAGE_KEY);
