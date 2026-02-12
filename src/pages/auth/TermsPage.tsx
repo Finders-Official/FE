@@ -25,7 +25,6 @@ function scrollToSection(id: Section["id"]) {
   el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// sections는 상수이므로 파생값도 모듈 레벨에서 한 번만 계산
 const ids = sections.map((s) => s.id);
 const idToIndex = new Map<Section["id"], number>(
   ids.map((id, idx) => [id, idx]),
@@ -41,10 +40,25 @@ export function TermsPage() {
   const currentIndex = currentId ? (idToIndex.get(currentId) ?? 0) : 0;
   const isLast = currentIndex >= ids.length - 1;
 
-  //해시 클릭/다음 버튼 등으로 hash가 바뀔 때만 스크롤
-  //스크롤로 인해 hash가 바뀌는 경우(아래 observer)는 다시 스크롤시키지 않게 가드
+  //스크롤로 hash 바꾼 경우, 해시 변경 effect에서 다시 scrollIntoView 막기
   const lastScrolledHashRef = useRef<string | null>(null);
 
+  //최신 hash/pathname을 ref로 유지 (IO 콜백에서 사용)
+  const hashRef = useRef(location.hash);
+  const pathnameRef = useRef(location.pathname);
+
+  useEffect(() => {
+    hashRef.current = location.hash;
+    pathnameRef.current = location.pathname;
+  }, [location.hash, location.pathname]);
+
+  //navigate도 ref로 고정(콜백 deps 줄이기)
+  const navigateRef = useRef(navigate);
+  useEffect(() => {
+    navigateRef.current = navigate;
+  }, [navigate]);
+
+  // hash 클릭/다음 버튼 등 “명시적 hash 변경”일 때만 scrollIntoView
   useEffect(() => {
     if (!currentId) return;
 
@@ -58,7 +72,7 @@ export function TermsPage() {
     return () => window.clearTimeout(id);
   }, [currentId]);
 
-  //스크롤 내리면 가장 많이 보이는 섹션으로 해시 자동 변경
+  // IntersectionObserver는 한 번만 생성
   useEffect(() => {
     const map = new Map<Section["id"], number>();
 
@@ -70,7 +84,6 @@ export function TermsPage() {
           map.set(id, e.isIntersecting ? e.intersectionRatio : 0);
         }
 
-        // 현재 가장 많이 보이는 섹션 선택
         let bestId: Section["id"] | null = null;
         let bestRatio = 0;
 
@@ -84,21 +97,19 @@ export function TermsPage() {
         if (!bestId) return;
 
         const nextHash = `#${bestId}`;
-        if (location.hash === nextHash) return;
+        if (hashRef.current === nextHash) return;
 
-        // observer로 바꾼 hash는 스크롤 트리거 안 걸리게 표시
+        // observer로 바꾼 hash는 scrollIntoView 트리거 안 걸리게 표시
         lastScrolledHashRef.current = nextHash;
 
-        navigate(
-          { pathname: location.pathname, hash: nextHash },
+        navigateRef.current(
+          { pathname: pathnameRef.current, hash: nextHash },
           { replace: true },
         );
       },
       {
         root: null,
-        // 헤더 고정 고려해서 상단은 좀 깎고, CTA 영역도 하단을 조금 깎음
         rootMargin: "-96px 0px -120px 0px",
-        // ratio 추적을 촘촘하게 -> 판단 정확도 높임
         threshold: Array.from({ length: 21 }, (_, i) => i / 20),
       },
     );
@@ -109,7 +120,7 @@ export function TermsPage() {
     }
 
     return () => io.disconnect();
-  }, [navigate, location.pathname, location.hash]);
+  }, []);
 
   const handleNextOrConfirm = () => {
     if (isLast) {
