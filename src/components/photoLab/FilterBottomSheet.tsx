@@ -15,6 +15,14 @@ const CONTENT_BASE_HEIGHT_REM = 46; // 캘린더 6줄 기준
 const MAX_CALENDAR_ROWS = 6;
 const ROW_HEIGHT_REM = 3.125; // 3rem (DateChip) + 0.125rem (gap)
 
+// "오전 9:00" → 9, "오후 2:00" → 14 변환
+function parseHour(slot: string): number {
+  const [period, hm] = slot.split(" ");
+  const h = parseInt(hm, 10);
+  if (period === "오전") return h;
+  return h === 12 ? 12 : h + 12;
+}
+
 interface FilterBottomSheetProps {
   open: boolean;
   onClose: () => void;
@@ -84,14 +92,6 @@ export default function FilterBottomSheet({
   const [displayedRegion, setDisplayedRegion] = useState<string>(
     initialFilter?.regionSelections?.[0]?.parentName ?? defaultDisplayRegion,
   );
-
-  // "오전 9:00" → 9, "오후 2:00" → 14 변환
-  const parseHour = (slot: string): number => {
-    const [period, hm] = slot.split(" ");
-    const h = parseInt(hm);
-    if (period === "오전") return h;
-    return h === 12 ? 12 : h + 12;
-  };
 
   // 오늘인데 모든 시간 슬롯이 지났으면 선택 불가
   const isDateDisabled = useCallback((date: Date) => {
