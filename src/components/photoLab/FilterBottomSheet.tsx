@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import Calendar from "@/components/photoLab/Calendar";
@@ -92,6 +92,16 @@ export default function FilterBottomSheet({
     if (period === "오전") return h;
     return h === 12 ? 12 : h + 12;
   };
+
+  // 오늘인데 모든 시간 슬롯이 지났으면 선택 불가
+  const isDateDisabled = useCallback((date: Date) => {
+    const now = new Date();
+    const isToday =
+      date.getFullYear() === now.getFullYear() &&
+      date.getMonth() === now.getMonth() &&
+      date.getDate() === now.getDate();
+    return isToday && now.getHours() >= 20;
+  }, []);
 
   // 오늘이면 지난 시간 숨김 (선택 상태는 유지, 적용 시 정리)
   const filteredSlots = useMemo(() => {
@@ -261,6 +271,7 @@ export default function FilterBottomSheet({
                 onDateSelect={setSelectedDate}
                 viewDate={viewDate}
                 onViewDateChange={setViewDate}
+                isDateDisabled={isDateDisabled}
               />
               <TimeSlotList
                 slots={filteredSlots}
