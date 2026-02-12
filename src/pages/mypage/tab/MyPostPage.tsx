@@ -17,35 +17,30 @@ export function MyPostPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state as LocationState) ?? null;
-  const isDeleted = Boolean(state?.isDeleted);
 
-  // 토스트 메세지 관련 상태
-  const [toastVisible, setToastVisible] = useState(isDeleted);
-  const [mounted, setMounted] = useState(isDeleted);
+  //최초 1회만 삭제 트리거 캡처
+  const [toastTrigger] = useState(() => Boolean(state?.isDeleted));
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isDeleted) return;
+    if (!toastTrigger) return;
 
-    const showId = window.setTimeout(() => {
-      setToastVisible(true);
-      setMounted(true);
-    }, 0);
+    //state는 바로 제거
+    navigate(location.pathname, { replace: true, state: null });
+
+    setMounted(true);
+    setToastVisible(true);
 
     const fadeTimer = window.setTimeout(() => setToastVisible(false), 1600);
     const removeTimer = window.setTimeout(() => setMounted(false), 3000);
 
-    // ✅ 뒤로가기/재진입 때 계속 뜨는 문제 방지: state 제거
-    const clearStateTimer = window.setTimeout(() => {
-      navigate(location.pathname, { replace: true, state: null });
-    }, 0);
-
     return () => {
-      window.clearTimeout(showId);
       window.clearTimeout(fadeTimer);
       window.clearTimeout(removeTimer);
-      window.clearTimeout(clearStateTimer);
     };
-  }, [isDeleted, navigate, location.pathname]);
+  }, [toastTrigger, navigate, location.pathname]);
 
   const {
     data,
