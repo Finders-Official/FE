@@ -8,6 +8,7 @@ import RegionSelector from "@/components/photoLab/RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
+import { isSameDay } from "@/utils/dateFormat";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
 // 전체 시트 높이 (Handle + Tabs + ContentPad + Calendar + TimeSlot + Buttons + Gaps)
@@ -96,22 +97,14 @@ export default function FilterBottomSheet({
   // 오늘인데 모든 시간 슬롯이 지났으면 선택 불가
   const isDateDisabled = useCallback((date: Date) => {
     const now = new Date();
-    const isToday =
-      date.getFullYear() === now.getFullYear() &&
-      date.getMonth() === now.getMonth() &&
-      date.getDate() === now.getDate();
-    return isToday && now.getHours() >= 20;
+    return isSameDay(date, now) && now.getHours() >= 20;
   }, []);
 
   // 오늘이면 지난 시간 숨김 (선택 상태는 유지, 적용 시 정리)
   const filteredSlots = useMemo(() => {
     if (!selectedDate) return TIME_SLOTS;
     const now = new Date();
-    const isToday =
-      selectedDate.getFullYear() === now.getFullYear() &&
-      selectedDate.getMonth() === now.getMonth() &&
-      selectedDate.getDate() === now.getDate();
-    if (!isToday) return TIME_SLOTS;
+    if (!isSameDay(selectedDate, now)) return TIME_SLOTS;
     const currentHour = now.getHours();
     return TIME_SLOTS.filter((slot) => parseHour(slot) > currentHour);
   }, [selectedDate]);

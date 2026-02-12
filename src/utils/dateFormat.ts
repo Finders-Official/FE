@@ -1,5 +1,10 @@
 import { WEEKDAYS } from "@/constants/date";
 
+export const isSameDay = (d1: Date, d2: Date) =>
+  d1.getFullYear() === d2.getFullYear() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getDate() === d2.getDate();
+
 // 시간을 12시간제로
 export function to12Hour(hour: number): {
   period: string;
