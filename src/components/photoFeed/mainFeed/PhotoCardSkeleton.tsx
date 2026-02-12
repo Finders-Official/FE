@@ -12,7 +12,7 @@ export default function PhotoCardSkeleton({ className = "" }: Props) {
         />
 
         {/* 텍스트 영역 */}
-        <div className="mt-1 mb-2 w-full">
+        <div className="mt-1 w-full">
           <div className="h-4 w-full rounded-2xl bg-neutral-800" />
         </div>
       </div>
