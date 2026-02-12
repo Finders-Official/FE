@@ -42,17 +42,11 @@ export default function MainPage() {
   useAnchorScroll(scrollRef);
 
   return (
-    <div className="mx-auto h-dvh w-full max-w-sm bg-neutral-900 text-white">
-      {" "}
+    <div className="mx-auto flex h-dvh w-full max-w-sm flex-col bg-neutral-900 text-white">
       <Header />
       <div
         ref={scrollRef}
-        style={{
-          WebkitOverflowScrolling: "auto",
-          touchAction: "pan-y",
-          overflowAnchor: "none",
-        }}
-        className="scrollbar-hide mx-auto h-dvh w-full max-w-sm overflow-y-auto overscroll-y-none bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] text-white"
+        className="scrollbar-hide flex-1 overflow-y-auto overscroll-y-none pb-[env(safe-area-inset-bottom)]"
       >
         <SectionWrapper id="promotion">
           <PromotionBanner />
