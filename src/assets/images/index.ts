@@ -1,0 +1,7 @@
+export { default as developPic } from "./develop.webp";
+export { default as scanPic } from "./scan-pic.webp";
+export { default as printPic } from "./print.webp";
+export { default as deliveryPic } from "./delivery.webp";
+export { default as promotionBanner1 } from "./promotion-banner-1.webp";
+export { default as promotionBanner2 } from "./promotion-banner-2.webp";
+export { default as promotionBanner3 } from "./promotion-banner-3.webp";
