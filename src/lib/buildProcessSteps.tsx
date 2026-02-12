@@ -47,7 +47,7 @@ export function buildProcessSteps({
     return [address, addressDetail].filter(Boolean).join(" ");
   };
 
-  const earlyHours = workData.print
+  const earlyTimes = workData.print
     ? getEarlyFinishedTime(
         workData.print.estimatedAt,
         workData.print.completedAt,
@@ -133,8 +133,8 @@ export function buildProcessSteps({
         <ProcessStepSubContent
           content={content}
           subcontent={
-            earlyHours !== -1
-              ? `예상 작업 시간보다 ${earlyHours} 빨리 완료되었어요!`
+            earlyTimes !== -1 && earlyTimes !== "" && earlyTimes !== "-1"
+              ? `예상 작업 시간보다 ${earlyTimes} 빨리 완료되었어요!`
               : undefined
           }
           icon={<ClockIcon className="h-3 w-3" />}
