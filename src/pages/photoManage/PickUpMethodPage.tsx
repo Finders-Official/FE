@@ -1,6 +1,7 @@
 import { ShoeIcon, TruckIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { BigButton } from "@/components/photoManage/BigButton";
+import { useAddressIdStore } from "@/store/useAddressId.store";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import type { ReceiptMethod } from "@/types/photomanage/process";
 import { useEffect, useMemo, useState } from "react";
@@ -22,9 +23,12 @@ const fromReceiptMethod = (
 export function PickUpMethodPage() {
   const navigate = useNavigate();
 
+  const setSelectedAddressId = useAddressIdStore((s) => s.setSelectedAddressId);
+
   const receiptMethod = usePrintOrderStore((s) => s.receiptMethod);
   const setReceiptMethod = usePrintOrderStore((s) => s.setReceiptMethod);
   const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
+  const setSelectedOptions = usePrintOrderStore((s) => s.setSelectedOptions);
 
   const [selectedMethod, setSelectedMethod] = useState<PickUpMethod | null>(
     fromReceiptMethod(receiptMethod),
@@ -50,8 +54,10 @@ export function PickUpMethodPage() {
 
     // 다음을 누르면 항상 주소 초기화(새로 입력 유도)
     setDeliveryAddress(null);
+    setSelectedAddressId(null);
 
     if (selectedMethod === "pickup") {
+      setSelectedOptions({});
       navigate("/photoManage/print-option");
       return;
     }

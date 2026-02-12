@@ -2,52 +2,51 @@ import { PlusIcon } from "@/assets/icon";
 import { CTA_Button } from "@/components/common";
 import { AddressCard } from "@/components/photoManage/AddressCard";
 import { DaumAddressSearch } from "@/components/photoManage/DaumAddressSearch";
-import { useAddressList, useCreateAddress } from "@/hooks/member";
+import { useAddressList } from "@/hooks/member";
+import { useAddressIdStore } from "@/store/useAddressId.store";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+
+type LocationState = { selectedAddressId?: number } | null;
 
 export function SelectAddressPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = (location.state as LocationState) ?? null;
   const setDeliveryAddress = usePrintOrderStore((s) => s.setDeliveryAddress);
 
   const { data: addresses = [] } = useAddressList();
-  const { mutate: addAddress } = useCreateAddress();
 
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const selectedId = useAddressIdStore((s) => s.selectedAddressId);
+  const setSelectedId = useAddressIdStore((s) => s.setSelectedAddressId);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const isNextEnabled = useMemo(() => selectedId !== null, [selectedId]);
 
   const handleAddressFound = (data: { zipcode: string; address: string }) => {
-    addAddress(
-      {
-        addressName: "새 주소",
-        zipcode: data.zipcode,
-        address: data.address,
-        isDefault: addresses.length === 0,
-      },
-      {
-        onSuccess: (res) => {
-          //1) 선택 처리
-          setSelectedId(res.data.addressId);
+    //1) store에 바로 넣고 (상세는 detail에서 입력)
+    setDeliveryAddress({
+      recipientName: "",
+      phone: "",
+      zipcode: data.zipcode,
+      address: data.address,
+      addressDetail: "",
+    });
 
-          //2) store에 바로 넣고 (상세는 detail에서 입력)
-          setDeliveryAddress({
-            recipientName: "",
-            phone: "",
-            zipcode: data.zipcode,
-            address: data.address,
-            addressDetail: "",
-          });
-
-          //3) 상세 입력 페이지로 바로 이동
-          navigate("../address-detail");
-          //prettier-ignore
-        },
-      },
-    );
+    //2) 상세 입력 페이지로 바로 이동
+    navigate("../address-detail");
+    //prettier-ignore
   };
+
+  useEffect(() => {
+    if (state?.selectedAddressId == null) return;
+
+    setSelectedId(state.selectedAddressId);
+
+    // 뒤로가기/재진입 때 계속 남는 것 방지: state 제거
+    navigate(location.pathname, { replace: true, state: null });
+  }, [state?.selectedAddressId, navigate, location.pathname]);
 
   const handleComplete = () => {
     const selected = addresses.find((a) => a.addressId === selectedId);
