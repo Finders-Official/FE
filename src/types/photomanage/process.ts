@@ -39,7 +39,7 @@ export interface DeliveryProgressResponse {
   recipient: string | null;
   recipientNumber: string | null;
   recipientAddress: string | null;
-  AddressDetail: string | null;
+  recipientAddressDetail: string | null;
   sender: string | null;
   carrier: string | null;
   trackingNumber: string | null;

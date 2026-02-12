@@ -1,9 +1,4 @@
-import {
-  DeliveryPicIcon,
-  DevelopPicIcon,
-  PrintPicIcon,
-  ScanPicIcon,
-} from "@/assets/icon";
+import { deliveryPic, developPic, printPic, scanPic } from "@/assets/images";
 import type {
   DeliveryStatus,
   PrintOrderStatus,
@@ -55,17 +50,17 @@ export function getBannerContent(params: {
 
   const bannerMap = {
     DEVELOP: {
-      icon: <DevelopPicIcon />,
+      icon: <img src={developPic} alt="현상" />,
       title: "필름 현상중이에요",
       content: "현상이 완료되면 이곳에서 사진을 볼 수 있어요!",
     },
     SCAN: {
-      icon: <ScanPicIcon />,
+      icon: <img src={scanPic} alt="스캔" />,
       title: "현상된 필름이 스캔 완료되었어요",
       content: "인화 신청과 사진 다운로드를 해주세요!",
     },
     PRINT: {
-      icon: <PrintPicIcon />,
+      icon: <img src={printPic} alt="인화" />,
       title:
         printStatus === "PENDING"
           ? "현상소에서 인화신청을 확인 중이에요"
@@ -76,7 +71,7 @@ export function getBannerContent(params: {
           : "배송이 시작되면 알려드릴게요!",
     },
     DELIVERY: {
-      icon: <DeliveryPicIcon />,
+      icon: <img src={deliveryPic} alt="배송" />,
       title: deliveryTitle(),
       content: deliveryContent(),
     },

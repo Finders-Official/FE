@@ -3,7 +3,7 @@ import { ToastItem } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { OptionLink } from "@/components/mypage/OptionLink";
-import { GCS_PUBLIC_BASE } from "@/constants/gcsUrl";
+import { FALLBACK_PROFILE_SRC } from "@/constants/gcsUrl";
 import { useLogout } from "@/hooks/auth/login";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useMe, useEditMe } from "@/hooks/member";
@@ -15,28 +15,9 @@ import {
 } from "@/utils/pickPresignedUrl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
 
 type LocationState = { toast?: string } | null;
-
-// fallback 이미지
-const FALLBACK_PROFILE_SRC = "/MainLogo.svg";
-
-function resolveProfileSrc(raw: string) {
-  if (!raw) return FALLBACK_PROFILE_SRC;
-
-  // 업로드 직후 objectUrl
-  if (raw.startsWith("blob:")) return raw;
-
-  // 이미 완전한 URL
-  if (/^https?:\/\//i.test(raw)) return raw;
-
-  // 로컬 public 경로
-  if (raw.startsWith("/")) return raw;
-
-  // 스토리지 key로 보고 base 붙이기 + 인코딩(한글/공백 대응)
-  const key = raw.replace(/^\/+/, "");
-  return `${GCS_PUBLIC_BASE}/${encodeURI(key)}`;
-}
 
 export function EditInfoPage() {
   const { data: me, isLoading } = useMe({ refetchOnMount: "always" });
@@ -55,25 +36,42 @@ export function EditInfoPage() {
   const [error, setError] = useState<string | null>(null);
   const [isUploadingProfile, setIsUploadingProfile] = useState(false);
 
-  // 서버가 내려주는 값(키 또는 URL)
+  // img fallback 고정용 state
+  const [imgFailed, setImgFailed] = useState(false);
+
+  //fallback은 "그대로" 쓸 고정 src (resolve 태우지 않음)
+  const fallbackSrc = FALLBACK_PROFILE_SRC;
+
+  //서버가 내려주는 값(키 또는 URL) - 공백 방지 trim
   const serverProfileUrlOrKey = useMemo(() => {
     const v = me?.roleData?.user?.profileImage;
-    return typeof v === "string" ? v : "";
+    return typeof v === "string" ? v.trim() : "";
   }, [me?.roleData?.user?.profileImage]);
 
   // 우선순위: objectUrl(즉시 미리보기) > server > fallback
   const basePreviewSrc = useMemo(() => {
     if (objectUrl) return objectUrl;
-    if (serverProfileUrlOrKey && serverProfileUrlOrKey.length > 0)
-      return serverProfileUrlOrKey;
-    return FALLBACK_PROFILE_SRC;
-  }, [objectUrl, serverProfileUrlOrKey]);
+    if (serverProfileUrlOrKey.length > 0) return serverProfileUrlOrKey;
+    return fallbackSrc;
+  }, [objectUrl, serverProfileUrlOrKey, fallbackSrc]);
 
-  // 실제 img src (resolve 적용)
-  const imgSrc = useMemo(
-    () => resolveProfileSrc(basePreviewSrc),
-    [basePreviewSrc],
-  );
+  //resolve는 "server/key/objectUrl"에만 의미가 있음
+  // fallback일 땐 resolve를 굳이 태우지 않게 분기
+  const imgSrc = useMemo(() => {
+    if (basePreviewSrc === fallbackSrc) return fallbackSrc;
+    return resolveProfileSrc({ raw: basePreviewSrc });
+  }, [basePreviewSrc, fallbackSrc]);
+
+  // src가 바뀌면(다른 이미지로 시도) 실패 플래그 리셋
+  useEffect(() => {
+    setImgFailed(false);
+  }, [imgSrc]);
+
+  // 최종 렌더 src (에러 났으면 fallback 고정)
+  const finalImgSrc = useMemo(() => {
+    if (!imgFailed) return imgSrc;
+    return fallbackSrc;
+  }, [imgFailed, imgSrc, fallbackSrc]);
 
   // 토스트
   const navigate = useNavigate();
@@ -136,7 +134,6 @@ export function EditInfoPage() {
 
   const { mutateAsync: issuePresignedUrl } = useIssuePresignedUrl();
   const { mutateAsync: uploadToPresignedUrl } = useUploadToPresignedUrl();
-
   const { mutateAsync: editMe } = useEditMe();
 
   const uploadProfileImage = async (picked: File) => {
@@ -168,7 +165,6 @@ export function EditInfoPage() {
         putUrl,
       );
 
-      //  여기서 서버에  url 저장
       await editMe({ profileImageUrl: publicUrlOrKey });
       setError(null);
     } finally {
@@ -194,7 +190,7 @@ export function EditInfoPage() {
       objectUrlRef.current = null;
     }
 
-    // 미리보기 세팅 (즉시 보여야 함)
+    // 미리보기 세팅(즉시 보여야 함)
     const url = URL.createObjectURL(picked);
     objectUrlRef.current = url;
     setObjectUrl(url);
@@ -210,7 +206,6 @@ export function EditInfoPage() {
     if (!objectUrlRef.current) return;
     if (!serverProfileUrlOrKey) return;
 
-    // 서버 값이 들어왔으니 blob 미리보기 정리
     URL.revokeObjectURL(objectUrlRef.current);
     objectUrlRef.current = null;
     setObjectUrl(null);
@@ -230,17 +225,15 @@ export function EditInfoPage() {
       <header className="border-neutral-875 flex flex-col items-center justify-center gap-3 border-b-[0.4rem] pt-8 pb-6">
         <div className="border-radius-100 h-[5rem] w-[5rem] overflow-hidden rounded-full border border-orange-400">
           <img
-            src={imgSrc}
+            src={finalImgSrc}
             alt="프로필 이미지"
             draggable={false}
             className="h-full w-full object-cover"
             onError={(e) => {
-              const resolvedFallback = resolveProfileSrc(FALLBACK_PROFILE_SRC);
-              if (
-                (e.currentTarget as HTMLImageElement).src !== resolvedFallback
-              ) {
-                (e.currentTarget as HTMLImageElement).src = resolvedFallback;
-              }
+              // fallback에서도 error면 무한루프 방지
+              if (e.currentTarget.src === fallbackSrc) return;
+              setImgFailed(true);
+              //prettier-ignore
             }}
           />
         </div>
@@ -315,7 +308,10 @@ export function EditInfoPage() {
 
       {showToast ? (
         <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-          <ToastItem message={message} icon={<CheckCircleIcon />} />
+          <ToastItem
+            message={message}
+            icon={<CheckCircleIcon className="h-5 w-5" />}
+          />
         </div>
       ) : null}
     </div>

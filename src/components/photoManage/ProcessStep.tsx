@@ -56,7 +56,7 @@ export default function Process({
   const cardClass = [
     "flex flex-col justify-start rounded-xl border px-4",
     isCurrent
-      ? "border-orange-500/30 w-[17.3125rem] py-5"
+      ? "border-orange-500/30 w-[17.3125rem] py-4"
       : "border-neutral-600 w-[15.375rem] py-[0.625rem]",
   ].join(" ");
 
@@ -100,10 +100,10 @@ export default function Process({
       {/* 카드 */}
       <div className="mb-5 flex flex-col gap-[0.625rem]">
         <div className={cardClass}>
-          <h3 className={titleClass}>{title}</h3>
-
-          {isCurrent && <div>{subComment}</div>}
-
+          <div className="gap-[2px]">
+            <h3 className={titleClass}>{title}</h3>
+            {isCurrent && <div>{subComment}</div>}
+          </div>
           <div className={contentClass}>{content}</div>
         </div>
 

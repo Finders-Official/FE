@@ -2,7 +2,7 @@ import { InputForm } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { useOnBoardingForm } from "@/hooks/auth/onBoarding";
 import { useEditMe, useMe } from "@/hooks/member";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router";
 
 export function NickNameEditPage() {
@@ -12,20 +12,18 @@ export function NickNameEditPage() {
   const currentNickname = meData?.roleData.user?.nickname ?? "";
 
   const f = useOnBoardingForm();
+
   const didInit = useRef(false);
+  const touchedRef = useRef(false);
 
-  const [touched, setTouched] = useState(false);
-
+  //최초 1회: 현재 닉네임으로 폼 초기화
   useEffect(() => {
     if (didInit.current) return;
     if (!currentNickname) return;
 
     f.setNickname(currentNickname);
+    touchedRef.current = false;
     didInit.current = true;
-
-    // effect 본문에서 setState “직접” 호출 금지 룰 대응: 콜백에서 setState
-    const id = window.setTimeout(() => setTouched(false), 0);
-    return () => window.clearTimeout(id);
   }, [currentNickname, f]);
 
   const { mutate: edit, isPending: isEditing } = useEditMe({
@@ -38,10 +36,14 @@ export function NickNameEditPage() {
     onError: (e) => console.error(e.message),
   });
 
+  const nextTrimmed = useMemo(
+    () => (f.nicknameTrimmed ?? "").trim(),
+    [f.nicknameTrimmed],
+  );
+
   const isChanged = useMemo(() => {
-    const next = (f.nicknameTrimmed ?? "").trim();
-    return next.length > 0 && next !== currentNickname;
-  }, [f.nicknameTrimmed, currentNickname]);
+    return nextTrimmed.length > 0 && nextTrimmed !== currentNickname;
+  }, [nextTrimmed, currentNickname]);
 
   const canEdit = useMemo(() => {
     return (
@@ -61,15 +63,29 @@ export function NickNameEditPage() {
 
   const color = canEdit ? "orange" : "black";
 
-  // 첫 진입엔 무조건 안내문, 입력 시작하면 상태문구
-  const invalidText = touched
-    ? f.nicknameStatusText || "변경할 닉네임을 입력해 주세요"
-    : "변경할 닉네임을 입력해 주세요";
+  const ctaText = useMemo(() => {
+    if (isEditing) return "변경 중...";
+    if (touchedRef.current && nextTrimmed.length > 0 && f.isCheckingNickname)
+      return "확인 중...";
+    return "변경 완료";
+  }, [isEditing, nextTrimmed.length, f.isCheckingNickname]);
 
   const handleSubmit = () => {
     if (!canEdit) return;
-    edit({ nickname: f.nicknameTrimmed });
+    edit({ nickname: nextTrimmed });
   };
+
+  //초기 상태(현재 닉네임이 들어있고, 아직 사용자가 안 건드린 상태)
+  const isInitialSame = !touchedRef.current && nextTrimmed === currentNickname;
+
+  const helperText = isInitialSame
+    ? "변경할 닉네임을 입력해 주세요"
+    : f.nicknameStatusText || "닉네임을 입력해 주세요";
+
+  const helperTextClass = isInitialSame
+    ? "text-neutral-200"
+    : f.nicknameTextClass;
+  const helperBorderClass = isInitialSame ? undefined : f.nicknameBorderClass;
 
   return (
     <div className="flex h-full flex-1 flex-col">
@@ -78,21 +94,21 @@ export function NickNameEditPage() {
           name="닉네임"
           placeholder="2~8자, 한글, 영어, 숫자 허용"
           size="large"
-          invalidText={invalidText}
           value={f.nickname}
+          invalidText={helperText}
           onChange={(e) => {
-            if (!touched) setTouched(true);
+            if (!touchedRef.current) touchedRef.current = true;
             f.setNickname(e.target.value);
           }}
-          borderClass={f.nicknameBorderClass}
-          textClass={f.nicknameTextClass}
+          borderClass={helperBorderClass}
+          textClass={helperTextClass}
         />
       </form>
 
-      <footer className="border-neutral-850 mt-auto border-t px-4 py-5">
+      <footer className="border-neutral-850 mt-auto border-t py-5">
         <CTA_Button
           size="xlarge"
-          text={isEditing ? "변경 중..." : "변경 완료"}
+          text={ctaText}
           color={color}
           disabled={!canEdit}
           onClick={handleSubmit}

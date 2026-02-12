@@ -9,7 +9,11 @@ interface PostCardProps {
 export const PostCard = ({ post }: PostCardProps) => {
   return (
     <div>
-      <Link to={`/photoFeed/post/${post.id}`} className="block">
+      <Link
+        to={`/photoFeed/post/${post.id}`}
+        state={"mypost"}
+        className="block"
+      >
         <div className="h-[14.25rem] w-full overflow-hidden rounded-md">
           <img
             src={post.src}

@@ -1,28 +1,31 @@
 import { useState, useRef } from "react";
-import { PromotionBannerAiIcon } from "@/assets/icon";
+import {
+  promotionBanner1,
+  promotionBanner2,
+  promotionBanner3,
+} from "@/assets/images";
 
 interface MainBannerProps {
   id: number;
   alt: string;
-  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  src: string;
 }
 
-// TODO: 배너 이미지 교체 필요
 const BANNERS: MainBannerProps[] = [
   {
     id: 1,
     alt: "AI 사진 복원 프로모션 배너",
-    Icon: PromotionBannerAiIcon,
+    src: promotionBanner1,
   },
   {
     id: 2,
     alt: "첫 현상 50% 할인 프로모션 배너",
-    Icon: PromotionBannerAiIcon,
+    src: promotionBanner2,
   },
   {
     id: 3,
     alt: "친구 초대 혜택 프로모션 배너",
-    Icon: PromotionBannerAiIcon,
+    src: promotionBanner3,
   },
 ];
 
@@ -45,25 +48,20 @@ export default function PromotionBanner() {
         onScroll={handleScroll}
         className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5"
       >
-        {BANNERS.map((banner) => {
-          const BannerIcon = banner.Icon;
-
-          return (
-            <div
-              key={banner.id}
-              className="min-w-[calc(100%-3px)] shrink-0 snap-center"
-            >
-              <div className="relative aspect-335/250 w-full overflow-hidden rounded-2xl">
-                <BannerIcon
-                  role="img"
-                  aria-label={banner.alt}
-                  className="absolute inset-0 h-full w-full"
-                  preserveAspectRatio="xMidYMid slice"
-                />
-              </div>
+        {BANNERS.map((banner) => (
+          <div
+            key={banner.id}
+            className="min-w-[calc(100%-3px)] shrink-0 snap-center"
+          >
+            <div className="relative aspect-335/250 w-full overflow-hidden rounded-2xl">
+              <img
+                src={banner.src}
+                alt={banner.alt}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       {/* 패이지네이션 도트 */}

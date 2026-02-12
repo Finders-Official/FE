@@ -81,9 +81,9 @@ export function OnBoardingPage() {
                 disabled={
                   !f.verifiedNumber ||
                   f.verifiedNumber.length !== 6 ||
-                  f.remainSec <= 0 ||
                   f.isConfirmingCode ||
-                  f.isCompleting
+                  f.isCompleting ||
+                  f.lockPhoneForm
                 }
                 className={
                   f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""

@@ -34,7 +34,7 @@ export default function NoticeSectionCard({ notice }: NoticeSectionCardProps) {
         </h3>
       </div>
 
-      <div className="flex flex-col gap-1.5 pt-3">
+      <div className="flex flex-col gap-0.5 pt-3">
         <div className="flex items-center gap-1.5">
           <NoticeLocationIcon className="h-3 w-3" />
           <span className="text-[0.75rem] leading-[126%] font-semibold tracking-[-0.02em] text-neutral-100">

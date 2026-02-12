@@ -18,7 +18,7 @@ const SKELETON_HEIGHTS = [
 ];
 
 const breakpointColumnsObj = {
-  default: 2, // 디자인이 2열이라 고정
+  default: 2,
   768: 2,
   1024: 2,
 };
@@ -37,18 +37,15 @@ export function LikedPostPage() {
   const { mutate: unlikePost } = useUnlikePost();
   const { mutate: likePost } = useLikePost();
 
-  // 페이지 안에서만 유지되는 좋아요 상태 덮어쓰기
   const [likedOverrideById, setLikedOverrideById] = useState<
     Record<number, boolean>
   >({});
 
-  // 서버 pages -> flat list
   const items = useMemo(
     () => data?.pages.flatMap((p) => p.data.previewList) ?? [],
     [data],
   );
 
-  // 화면에 뿌릴 때 override를 적용한 items
   const viewItems = useMemo(() => {
     return items.map((p) => {
       const override = likedOverrideById[p.postId];
@@ -57,7 +54,6 @@ export function LikedPostPage() {
     });
   }, [items, likedOverrideById]);
 
-  // 바닥 감지용 sentinel
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const handleIntersect = useCallback(() => {
@@ -75,11 +71,11 @@ export function LikedPostPage() {
     threshold: 0,
   });
 
-  /*
-   * - prevIsLiked(토글 전 상태) 기준으로 서버 호출
-   * - UI는 즉시 override로 토글
-   * - 실패하면 rollback
-   */
+  const shouldShowSentinel =
+    !isLoading && !isError && hasNextPage && viewItems.length > 0;
+
+  const isEmpty = !isLoading && !isFetchingNextPage && viewItems.length === 0;
+
   const handleToggleLike = useCallback(
     (postId: number, prevIsLiked: boolean) => {
       // 1) UI 즉시 반영
@@ -129,26 +125,41 @@ export function LikedPostPage() {
   }
 
   return (
-    <div>
-      <main>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="my-masonry-grid"
-          columnClassName="my-masonry-grid_column"
-        >
-          {isLoading
-            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => {
-                const heightClass =
-                  SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
-
-                return (
-                  <PhotoCardSkeleton
-                    key={`skeleton-${i}`}
-                    className={heightClass}
-                  />
-                );
-              })
-            : viewItems.map((photo) => (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <main
+        className={[
+          "flex min-h-0 flex-1 flex-col",
+          isEmpty ? "overflow-hidden" : "scrollbar-hide overflow-y-auto",
+        ].join(" ")}
+      >
+        {isLoading ? (
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="my-masonry-grid"
+            columnClassName="my-masonry-grid_column"
+          >
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => {
+              const heightClass = SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
+              return (
+                <PhotoCardSkeleton
+                  key={`skeleton-${i}`}
+                  className={heightClass}
+                />
+              );
+            })}
+          </Masonry>
+        ) : viewItems.length === 0 && !isFetchingNextPage ? (
+          <div className="flex flex-1 items-center justify-center px-4">
+            <EmptyOrderState description="아직 마음에 드는 글을 담지 않았어요" />
+          </div>
+        ) : (
+          <>
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className="my-masonry-grid"
+              columnClassName="my-masonry-grid_column"
+            >
+              {viewItems.map((photo) => (
                 <PhotoCard
                   key={photo.postId}
                   photo={photo}
@@ -159,24 +170,21 @@ export function LikedPostPage() {
                   }
                 />
               ))}
-        </Masonry>
+            </Masonry>
 
-        {isFetchingNextPage && (
-          <div className="mt-3 text-center text-sm text-neutral-300">
-            더 불러오는 중...
-          </div>
+            {isFetchingNextPage && (
+              <div className="mt-3 text-center text-sm text-neutral-300">
+                더 불러오는 중...
+              </div>
+            )}
+
+            {!hasNextPage && viewItems.length > 0 && (
+              <div className="mt-3 text-center text-sm text-neutral-500" />
+            )}
+
+            {shouldShowSentinel ? <div ref={bottomRef} /> : null}
+          </>
         )}
-
-        {!hasNextPage && viewItems.length > 0 && (
-          <div className="mt-3 text-center text-sm text-neutral-500" />
-        )}
-
-        {viewItems.length === 0 && !isFetchingNextPage && (
-          <EmptyOrderState description="아직 마음에 드는 글을 담지 않았어요." />
-        )}
-
-        {/* sentinel */}
-        <div ref={bottomRef} />
       </main>
     </div>
   );

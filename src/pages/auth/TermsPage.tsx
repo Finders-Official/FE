@@ -3,7 +3,7 @@ import { Header } from "@/components/common";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { sections } from "@/constants/terms";
 import type { Section } from "@/types/auth";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 function getHashIdFrom(hash: string): Section["id"] | null {
@@ -25,7 +25,6 @@ function scrollToSection(id: Section["id"]) {
   el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// sections는 상수이므로 파생값도 모듈 레벨에서 한 번만 계산
 const ids = sections.map((s) => s.id);
 const idToIndex = new Map<Section["id"], number>(
   ids.map((id, idx) => [id, idx]),
@@ -36,20 +35,96 @@ export function TermsPage() {
   const location = useLocation();
 
   const currentId = getHashIdFrom(location.hash);
-  const showCta = Boolean(currentId); // 해시 있을 때만 CTA
+  const showCta = Boolean(currentId);
 
   const currentIndex = currentId ? (idToIndex.get(currentId) ?? 0) : 0;
   const isLast = currentIndex >= ids.length - 1;
 
-  // 해시가 바뀔 때마다 해당 섹션으로 스크롤
+  //스크롤로 hash 바꾼 경우, 해시 변경 effect에서 다시 scrollIntoView 막기
+  const lastScrolledHashRef = useRef<string | null>(null);
+
+  //최신 hash/pathname을 ref로 유지 (IO 콜백에서 사용)
+  const hashRef = useRef(location.hash);
+  const pathnameRef = useRef(location.pathname);
+
+  useEffect(() => {
+    hashRef.current = location.hash;
+    pathnameRef.current = location.pathname;
+  }, [location.hash, location.pathname]);
+
+  //navigate도 ref로 고정(콜백 deps 줄이기)
+  const navigateRef = useRef(navigate);
+  useEffect(() => {
+    navigateRef.current = navigate;
+  }, [navigate]);
+
+  // hash 클릭/다음 버튼 등 “명시적 hash 변경”일 때만 scrollIntoView
   useEffect(() => {
     if (!currentId) return;
-    window.setTimeout(() => scrollToSection(currentId), 0);
+
+    const nextHash = `#${currentId}`;
+    if (lastScrolledHashRef.current === nextHash) {
+      lastScrolledHashRef.current = null;
+      return;
+    }
+
+    const id = window.setTimeout(() => scrollToSection(currentId), 0);
+    return () => window.clearTimeout(id);
   }, [currentId]);
+
+  // IntersectionObserver는 한 번만 생성
+  useEffect(() => {
+    const map = new Map<Section["id"], number>();
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const id = e.target.getAttribute("id") as Section["id"] | null;
+          if (!id) continue;
+          map.set(id, e.isIntersecting ? e.intersectionRatio : 0);
+        }
+
+        let bestId: Section["id"] | null = null;
+        let bestRatio = 0;
+
+        for (const [id, ratio] of map.entries()) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        }
+
+        if (!bestId) return;
+
+        const nextHash = `#${bestId}`;
+        if (hashRef.current === nextHash) return;
+
+        // observer로 바꾼 hash는 scrollIntoView 트리거 안 걸리게 표시
+        lastScrolledHashRef.current = nextHash;
+
+        navigateRef.current(
+          { pathname: pathnameRef.current, hash: nextHash },
+          { replace: true },
+        );
+      },
+      {
+        root: null,
+        rootMargin: "-96px 0px -120px 0px",
+        threshold: Array.from({ length: 21 }, (_, i) => i / 20),
+      },
+    );
+
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
+    }
+
+    return () => io.disconnect();
+  }, []);
 
   const handleNextOrConfirm = () => {
     if (isLast) {
-      window.history.back(); // 카카오 약관 화면으로 이동
+      window.history.back();
       return;
     }
 
@@ -59,7 +134,7 @@ export function TermsPage() {
     navigate(
       { pathname: location.pathname, hash: `#${nextId}` },
       { replace: true },
-    ); // 해시 쌓임 방지
+    );
   };
 
   return (
@@ -83,7 +158,7 @@ export function TermsPage() {
         <main className="mx-auto w-full px-2">
           {sections.map((s) => (
             <section key={s.id} id={s.id} className="scroll-mt-28">
-              <div className="border-neutral-850 mt-6 border-b pb-6">
+              <div className="border-neutral-850 mt-6 border-b pb-50">
                 <div className="flex items-center gap-2">
                   <h2 className="text-[1.1875rem] font-semibold text-neutral-100">
                     {s.title}{" "}

@@ -1,31 +1,41 @@
 import { ChevronLeftIcon } from "@/assets/icon";
-import { GCS_PUBLIC_BASE } from "@/constants/gcsUrl";
 import { NavLink } from "react-router";
+import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
+import { FALLBACK_PROFILE_SRC } from "@/constants/gcsUrl";
 
 interface InfoBarProps {
   name: string | undefined;
   nickname: string | undefined;
-  profile: string | undefined;
+  profile: string | undefined; // 서버가 주는 url 또는 key
 }
 
 export const InfoBar = ({ name, nickname, profile }: InfoBarProps) => {
+  const raw =
+    profile && profile.trim().length > 0 ? profile : FALLBACK_PROFILE_SRC;
+  const src = resolveProfileSrc({ raw });
+
   return (
     <div className="mb-[1rem] flex items-center gap-3">
-      {/* 프로필 이미지 */}
-      <div className="h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border border-2 border-orange-400 bg-orange-600">
+      <div className="h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full">
         <img
-          src={`${GCS_PUBLIC_BASE}/${profile}`}
+          src={src}
           alt="프로필 이미지"
           draggable={false}
           className="h-full w-full object-cover"
+          onError={(e) => {
+            const img = e.currentTarget;
+            if (img.src !== FALLBACK_PROFILE_SRC) {
+              img.src = FALLBACK_PROFILE_SRC;
+            }
+          }}
         />
       </div>
-      {/* 이름 / 닉네임 */}
+
       <div className="flex flex-1 flex-col text-neutral-100">
         <p className="font-light">{name}</p>
         <p className="font-normal">{nickname}</p>
       </div>
-      {/*이동 아이콘*/}
+
       <NavLink to="./edit-info">
         <ChevronLeftIcon className="h-[2rem] w-[1.5rem] rotate-180" />
       </NavLink>

@@ -2,12 +2,18 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import CommunityGallerySectionCard from "./CommunityGallerySectionCard";
 import { useCommunityPostsQuery } from "@/hooks/mainPage/useMainPageQueries";
+import { useHorizontalScrollRestore } from "@/hooks/common";
 
 export default function CommunityGallerySection() {
   const { data: posts, isLoading, isError } = useCommunityPostsQuery();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const { hasRestoredPosition } = useHorizontalScrollRestore(
+    scrollerRef,
+    "community_gallery",
+  );
 
   // 중앙에 가장 가까운 카드를 계산하여 activeIndex 업데이트
   const updateActiveIndex = useCallback(() => {
@@ -37,7 +43,8 @@ export default function CommunityGallerySection() {
     if (!scroller) return;
 
     // 초기 마운트 시 2번째 카드 중앙 정렬 (데이터가 2개 이상일 때)
-    if (posts.length >= 2) {
+    // 단, 이전에 보던 위치가 있다면 해당 로직을 건너뜀 (자동 복원 허용)
+    if (!hasRestoredPosition() && posts.length >= 2) {
       requestAnimationFrame(() => {
         const secondItem = itemRefs.current[1];
         if (secondItem) {
@@ -67,7 +74,7 @@ export default function CommunityGallerySection() {
       cancelAnimationFrame(rafId);
       scroller.removeEventListener("scroll", onScroll);
     };
-  }, [posts, updateActiveIndex]);
+  }, [posts, updateActiveIndex, hasRestoredPosition]);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (isError || !posts || posts.length === 0) return null;
@@ -81,12 +88,13 @@ export default function CommunityGallerySection() {
 
       <div
         ref={scrollerRef}
-        className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-4"
+        className="scrollbar-hide relative flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-4"
         style={{ scrollPadding: "0 20px" }}
       >
         {posts.map((post, idx) => (
           <div
             key={post.postId}
+            data-anchor-id={post.postId}
             ref={(el) => {
               itemRefs.current[idx] = el;
             }}

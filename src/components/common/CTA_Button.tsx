@@ -54,7 +54,7 @@ export const CTA_Button = ({
   };
 
   const disabledClass =
-    "bg-neutral-800 border-neutral-700 text-neutral-500 cursor-not-allowed";
+    "bg-neutral-900 border-neutral-700 text-neutral-200 cursor-not-allowed";
 
   const handleClick = () => {
     if (disabled) return;
