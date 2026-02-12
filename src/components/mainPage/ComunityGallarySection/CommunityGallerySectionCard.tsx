@@ -1,4 +1,5 @@
-import { useState } from "react";
+import type React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   likePost,
   unlikePost,
@@ -10,48 +11,84 @@ interface CommunityGallerySectionCardProps {
   post: CommunityPost;
 }
 
+const COMMUNITY_PREVIEW_QK = ["community", "posts", "preview"] as const;
+
+// 리스트 캐시 안에서 특정 postId만 업데이트
+function patchCommunityPreviewPost(
+  prev: CommunityPost[] | undefined,
+  postId: number,
+  patch: (p: CommunityPost) => CommunityPost,
+) {
+  if (!prev) return prev;
+  return prev.map((p) => (p.postId === postId ? patch(p) : p));
+}
+
 export default function CommunityGallerySectionCard({
   post,
 }: CommunityGallerySectionCardProps) {
   const { requireAuth, requireAuthNavigate } = useRequireAuth();
-
-  const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likeCount, setLikeCount] = useState(post.likeCount);
+  const queryClient = useQueryClient();
 
   const imageUrl = post.image.imageUrl;
-
-  // 대체 이미지
   const fallbackImage =
     "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80";
+
+  const likeMutation = useMutation({
+    mutationFn: async ({
+      postId,
+      nextLiked,
+    }: {
+      postId: number;
+      nextLiked: boolean;
+    }) => {
+      if (nextLiked) return likePost(postId);
+      return unlikePost(postId);
+    },
+
+    onMutate: async ({ postId, nextLiked }) => {
+      await queryClient.cancelQueries({ queryKey: COMMUNITY_PREVIEW_QK });
+
+      const previous =
+        queryClient.getQueryData<CommunityPost[]>(COMMUNITY_PREVIEW_QK);
+
+      queryClient.setQueryData<CommunityPost[]>(COMMUNITY_PREVIEW_QK, (prev) =>
+        patchCommunityPreviewPost(prev, postId, (p) => ({
+          ...p,
+          isLiked: nextLiked,
+          likeCount: Math.max(0, p.likeCount + (nextLiked ? 1 : -1)),
+        })),
+      );
+
+      return { previous };
+    },
+
+    onError: (err, _vars, ctx) => {
+      if (ctx?.previous) {
+        queryClient.setQueryData(COMMUNITY_PREVIEW_QK, ctx.previous);
+      }
+      console.error("좋아요 처리 중 오류 발생:", err);
+    },
+
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: COMMUNITY_PREVIEW_QK });
+    },
+  });
 
   const handleCardClick = () => {
     requireAuthNavigate(`/photoFeed/post/${post.postId}`);
   };
 
-  const handleLikeClick = async (e: React.MouseEvent) => {
+  const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    requireAuth(async () => {
-      const prevIsLiked = isLiked;
-      const prevLikeCount = likeCount;
+    requireAuth(() => {
+      // 연타 방지
+      if (likeMutation.isPending) return;
 
-      setIsLiked(!prevIsLiked);
-      setLikeCount((prev) => (prevIsLiked ? prev - 1 : prev + 1));
-
-      try {
-        if (!prevIsLiked) {
-          await likePost(post.postId);
-        } else {
-          await unlikePost(post.postId);
-        }
-      } catch (error) {
-        console.error("좋아요 처리 중 오류 발생:", error);
-        setIsLiked(prevIsLiked);
-        setLikeCount(prevLikeCount);
-        if (error instanceof Error) {
-          alert(error.message);
-        }
-      }
+      likeMutation.mutate({
+        postId: post.postId,
+        nextLiked: !post.isLiked,
+      });
     });
   };
 
@@ -85,7 +122,9 @@ export default function CommunityGallerySectionCard({
           {/* 좋아요 */}
           <button
             onClick={handleLikeClick}
-            className="flex items-center justify-center transition-transform active:scale-90"
+            disabled={likeMutation.isPending}
+            className="flex items-center justify-center transition-transform active:scale-90 disabled:opacity-60"
+            aria-pressed={post.isLiked}
           >
             <svg
               width="24"
@@ -97,7 +136,7 @@ export default function CommunityGallerySectionCard({
               <path
                 d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.68998C2 5.59998 4.49 3.09998 7.56 3.09998C9.38 3.09998 10.99 3.97998 12 5.33998C13.01 3.97998 14.63 3.09998 16.44 3.09998C19.51 3.09998 22 5.59998 22 8.68998C22 15.69 15.52 19.82 12.62 20.81Z"
                 className={`transition-colors duration-200 ${
-                  isLiked
+                  post.isLiked
                     ? "fill-orange-500 stroke-orange-500"
                     : "fill-none stroke-neutral-200"
                 }`}
@@ -106,7 +145,9 @@ export default function CommunityGallerySectionCard({
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="ml-1 text-xs text-neutral-400">{likeCount}</span>
+            <span className="ml-1 text-xs text-neutral-400">
+              {post.likeCount}
+            </span>
           </button>
 
           {/* 댓글 */}
