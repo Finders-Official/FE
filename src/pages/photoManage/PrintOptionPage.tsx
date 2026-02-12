@@ -11,17 +11,13 @@ import type {
   DropDownSelection,
   PrintOptionItem,
 } from "@/types/photomanage/category";
-import type {
-  PrintQuoteRequest,
-  PrintQuoteResponse,
-} from "@/types/photomanage/printOrder";
+import type { PrintQuoteRequest } from "@/types/photomanage/printOrder";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
 const formatWon = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 const formatPlusWon = (n: number) => `+ ${n.toLocaleString("ko-KR")}원`;
 
-// PrintOptionItem → DropDownOption 변환
 function toOption(item: PrintOptionItem, type: CategoryKey): DropDownOption {
   let priceText = "+0원";
 
@@ -45,6 +41,17 @@ function toOption(item: PrintOptionItem, type: CategoryKey): DropDownOption {
   };
 }
 
+function findOption(
+  categories: DropDownCategory[],
+  key: CategoryKey,
+  value?: string,
+): DropDownOption | null {
+  if (!value) return null;
+  const cat = categories.find((c) => c.key === key);
+  if (!cat) return null;
+  return cat.options.find((o) => o.value === value) ?? null;
+}
+
 export function PrintOptionPage() {
   const navigate = useNavigate();
 
@@ -53,18 +60,22 @@ export function PrintOptionPage() {
   const developmentOrderId = usePrintOrderStore((s) => s.developmentOrderId);
   const selectedPhotos = usePrintOrderStore((s) => s.selectedPhotos);
   const deliveryAddress = usePrintOrderStore((s) => s.deliveryAddress);
+
+  const selectedOptions = usePrintOrderStore((s) => s.selectedOptions);
   const setSelectedOptions = usePrintOrderStore((s) => s.setSelectedOptions);
-  const setPrintOrderId = usePrintOrderStore((s) => s.setPrintOrderId);
+
+  const totalPrice = usePrintOrderStore((s) => s.totalPrice);
   const setTotalPrice = usePrintOrderStore((s) => s.setTotalPrice);
+
+  const setPrintOrderId = usePrintOrderStore((s) => s.setPrintOrderId);
 
   const { data: printOptions } = usePrintOptions();
   const { mutate: submitOrder, isPending: isSubmitting } =
     useCreatePrintOrder();
 
-  const [quote, setQuote] = useState<PrintQuoteResponse | null>(null);
   const quoteRequestId = useRef(0);
+  const [isQuoting, setIsQuoting] = useState(false);
 
-  // API 데이터 → DropDownCategory[] 변환
   const categories = useMemo<DropDownCategory[]>(() => {
     if (!printOptions) return [];
     return [
@@ -104,6 +115,7 @@ export function PrintOptionPage() {
   }, [printOptions]);
 
   const [openKey, setOpenKey] = useState<CategoryKey | null>(null);
+
   const [selection, setSelection] = useState<DropDownSelection>({
     FILM: null,
     PRINT_METHOD: null,
@@ -112,6 +124,31 @@ export function PrintOptionPage() {
     PRINT_TYPE: null,
   });
 
+  //뒤로가기/새로고침 복원: store.selectedOptions(코드) -> DropDownOption
+  useEffect(() => {
+    if (!categories.length) return;
+
+    const id = window.setTimeout(() => {
+      setSelection({
+        FILM: findOption(categories, "FILM", selectedOptions.filmType),
+        PRINT_METHOD: findOption(
+          categories,
+          "PRINT_METHOD",
+          selectedOptions.printMethod,
+        ),
+        PAPER: findOption(categories, "PAPER", selectedOptions.paperType),
+        SIZE: findOption(categories, "SIZE", selectedOptions.size),
+        PRINT_TYPE: findOption(
+          categories,
+          "PRINT_TYPE",
+          selectedOptions.frameType,
+        ),
+      });
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, [categories, selectedOptions]);
+
   const handleToggle = (key: CategoryKey) => {
     setOpenKey((prev) => (prev === key ? null : key));
   };
@@ -119,18 +156,32 @@ export function PrintOptionPage() {
   const handleSelect = (key: CategoryKey, option: DropDownOption) => {
     setSelection((prev) => ({ ...prev, [key]: option }));
     setOpenKey(null);
-    setQuote(null);
+
+    //선택 즉시 persist 저장
+    const next = {
+      ...selectedOptions,
+      ...(key === "FILM" ? { filmType: option.value } : null),
+      ...(key === "PRINT_METHOD" ? { printMethod: option.value } : null),
+      ...(key === "PAPER" ? { paperType: option.value } : null),
+      ...(key === "SIZE" ? { size: option.value } : null),
+      ...(key === "PRINT_TYPE" ? { frameType: option.value } : null),
+    };
+    setSelectedOptions(next);
+
+    //재조회 중 표시에 맞춰 일단 0으로
+    setTotalPrice(0);
   };
 
-  // 견적 요청 빌드
+  // 서버 견적 요청 빌드
   const buildQuoteRequest = useCallback((): PrintQuoteRequest | null => {
     if (
       !developmentOrderId ||
       !receiptMethod ||
       !selection.SIZE ||
       !selection.PRINT_TYPE
-    )
+    ) {
       return null;
+    }
 
     return {
       developmentOrderId,
@@ -154,45 +205,58 @@ export function PrintOptionPage() {
     deliveryAddress,
   ]);
 
-  // 옵션 변경 시 견적 API 호출 (stale 응답 무시)
+  // 옵션 변경/복원 시 서버 가격조회 계속 수행
   useEffect(() => {
     const request = buildQuoteRequest();
     if (!request) return;
 
     const id = ++quoteRequestId.current;
 
+    const t = window.setTimeout(() => {
+      setIsQuoting(true);
+    }, 0);
+
     quotePrintPrice(request)
       .then((res) => {
-        if (quoteRequestId.current === id) setQuote(res.data);
+        if (quoteRequestId.current !== id) return;
+
+        //store에 바로 반영
+        setTotalPrice(res.data.totalAmount ?? 0);
       })
       .catch((err) => {
         console.error("견적 조회 실패:", err);
+        if (quoteRequestId.current !== id) return;
+        setTotalPrice(0);
+      })
+      .finally(() => {
+        if (quoteRequestId.current !== id) return;
+        window.setTimeout(() => setIsQuoting(false), 0);
       });
-  }, [buildQuoteRequest]);
 
-  // 사이즈·인화유형 미선택 시 견적 표시하지 않음
-  const displayedQuote = selection.SIZE && selection.PRINT_TYPE ? quote : null;
+    return () => window.clearTimeout(t);
+  }, [buildQuoteRequest, setTotalPrice]);
+
   const isDelivery = receiptMethod === "DELIVERY";
   const shippingLabel = isDelivery ? "배송" : "직접수령";
-  const shippingFee =
-    displayedQuote?.deliveryFee ?? (isDelivery ? DELIVERY_FEE_WON : 0);
+  const shippingFee = isDelivery ? DELIVERY_FEE_WON : 0;
+
+  const hasRequired = Boolean(selection.SIZE && selection.PRINT_TYPE);
+
+  //총 금액은 서버 조회 결과(store.totalPrice)
+  const displayedTotal = hasRequired ? totalPrice : 0;
+
+  //송금 가능 조건: 필수옵션 선택 + 견적조회 완료 + 금액>0 + 제출중X
+  const canPay =
+    hasRequired && !isQuoting && displayedTotal > 0 && !isSubmitting;
 
   const handleSubmit = () => {
     const request = buildQuoteRequest();
     if (!request) return;
-
-    setSelectedOptions({
-      filmType: selection.FILM?.value,
-      printMethod: selection.PRINT_METHOD?.value,
-      paperType: selection.PAPER?.value,
-      size: selection.SIZE?.value,
-      frameType: selection.PRINT_TYPE?.value,
-    });
+    if (!canPay) return;
 
     submitOrder(request, {
       onSuccess: (res) => {
         setPrintOrderId(res.data);
-        setTotalPrice(displayedQuote?.totalAmount ?? 0);
         navigate("/photoManage/transaction");
       },
     });
@@ -239,21 +303,21 @@ export function PrintOptionPage() {
           <div className="mt-4 mb-4 flex justify-between text-[1.1875rem]">
             <p>총 금액</p>
             <p className="text-orange-500">
-              {displayedQuote
-                ? formatWon(displayedQuote.totalAmount)
-                : formatWon(0)}
+              {isQuoting && hasRequired
+                ? "계산 중..."
+                : formatWon(displayedTotal)}
             </p>
           </div>
         </section>
       </main>
 
-      <footer className="border-neutral-850 sticky bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900">
-        <div className="flex h-full items-center">
+      <footer className="border-neutral-850 fixed inset-x-0 bottom-0 z-50 h-[var(--tabbar-height)] w-full max-w-6xl border-t bg-neutral-900">
+        <div className="flex h-full items-center px-4 py-5">
           <CTA_Button
-            text="송금하기"
+            text={isQuoting ? "금액 계산 중..." : "송금하기"}
             size="xlarge"
-            color={displayedQuote ? "orange" : "black"}
-            disabled={!displayedQuote || isSubmitting}
+            color={canPay ? "orange" : "black"}
+            disabled={!canPay}
             onClick={handleSubmit}
           />
         </div>
