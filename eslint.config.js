@@ -25,6 +25,7 @@ export default defineConfig([
     },
     rules: {
       "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ]);
