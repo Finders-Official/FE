@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { HomeIcon, ExclamationCircleIcon } from "@/assets/icon";
 import { TextArea } from "@/components/common/TextArea";
@@ -8,12 +8,16 @@ import { Header } from "@/components/common";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useAuthStore } from "@/store/useAuth.store";
 import { useCreatePostWithUpload } from "@/hooks/photoFeed";
+import { scrollToCenter } from "@/utils/scrollToCenter";
 
 const MIN = 20;
 const MAX = 300;
 
 export default function ReviewPhotoLabPage() {
   const navigate = useNavigate();
+
+  const [reviewTextError, setReviewTextError] = useState(false);
+  const reviewTextRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -54,6 +58,22 @@ export default function ReviewPhotoLabPage() {
     onError: (err) => console.error("게시글 생성 실패", err),
   });
 
+  const handleTextArea = () => {
+    if (!canSave) {
+      setReviewTextError(true);
+
+      // 스크롤 + 포커스
+      const el = reviewTextRef.current;
+      if (el) {
+        scrollToCenter(el);
+        el.focus();
+      }
+      return;
+    }
+    setReviewTextError(false);
+    setIsDialogOpen(true);
+  };
+
   // 게시글 업로드 핸들러
   const handleSubmit = async () => {
     try {
@@ -86,15 +106,31 @@ export default function ReviewPhotoLabPage() {
           </div>
         </div>
 
-        <TextArea
-          value={reviewText}
-          onChange={setReviewText}
-          placeholder={
-            "ex) 따뜻하고 포근한 느낌이에요.\nex) 후지필름의 청량함이 잘 느껴져요."
-          }
-          maxLength={MAX}
-          minLength={MIN}
-        />
+        <div className="flex flex-col gap-2">
+          <TextArea
+            ref={reviewTextRef}
+            value={reviewText}
+            onChange={(v) => {
+              setReviewText(v);
+              if (reviewTextError && canSave) {
+                setReviewTextError(false);
+              }
+            }}
+            placeholder={
+              "ex) 따뜻하고 포근한 느낌이에요.\nex) 후지필름의 청량함이 잘 느껴져요."
+            }
+            maxLength={MAX}
+            minLength={MIN}
+            isError={reviewTextError}
+          />
+          {reviewTextError && (
+            <p
+              className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
+            >
+              최소 20글자 이상 입력해주세요.
+            </p>
+          )}
+        </div>
 
         <div className="bg-neutral-875 flex justify-center gap-2 rounded-2xl p-[1.25rem] text-neutral-500">
           <ExclamationCircleIcon className="h-[1.25rem] w-[1.25rem]" />
@@ -108,9 +144,9 @@ export default function ReviewPhotoLabPage() {
           <CTA_Button
             text="작성 완료"
             size="xlarge"
-            disabled={!canSave || isPending}
+            disabled={isPending}
             color={canSave ? "orange" : "black"}
-            onClick={() => setIsDialogOpen(true)}
+            onClick={handleTextArea}
           />
         </div>
 

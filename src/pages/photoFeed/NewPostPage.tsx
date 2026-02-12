@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { TextArea } from "@/components/common/TextArea";
 import { isValidText } from "@/utils/isValidText";
 import { CTA_Button, Header } from "@/components/common";
+import { scrollToCenter } from "@/utils/scrollToCenter";
 
 const LIMITS = {
   titleMin: 2,
@@ -15,6 +16,11 @@ const LIMITS = {
 
 export default function NewPostPage() {
   const navigate = useNavigate();
+  const [titleError, setTitleError] = useState(false);
+  const [contentError, setContentError] = useState(false);
+  const titleRef = useRef<HTMLTextAreaElement | null>(null);
+  const contentRef = useRef<HTMLTextAreaElement | null>(null);
+
   const files = useNewPostState((s) => s.files);
   const setPostInfo = useNewPostState((s) => s.setPostInfo);
   const reset = useNewPostState((s) => s.reset);
@@ -47,10 +53,32 @@ export default function NewPostPage() {
     [contentText],
   );
 
-  const canGoNext = isTitleValid && isContentValid;
-
   const handleNext = () => {
-    if (!canGoNext) return;
+    if (!isContentValid) {
+      setContentError(true);
+
+      if (!isTitleValid) {
+        setTitleError(true);
+
+        // 스크롤 + 포커스
+        const el = titleRef.current;
+        if (el) {
+          scrollToCenter(el);
+          el.focus();
+        }
+        return;
+      }
+
+      // 스크롤 + 포커스
+      const el = contentRef.current;
+      if (el) {
+        scrollToCenter(el);
+        el.focus();
+      }
+      return;
+    }
+    setTitleError(false);
+    setContentError(false);
     setPostInfo(titleText, contentText);
     navigate("/photoFeed/lab/find");
   };
@@ -90,25 +118,53 @@ export default function NewPostPage() {
         <section className="flex flex-col gap-[0.5rem]">
           <p className="text-[0.875rem] text-white">제목</p>
           <TextArea
+            ref={titleRef}
             type="title"
             value={titleText}
-            onChange={setTitleText}
+            onChange={(v) => {
+              setTitleText(v);
+              if (titleError && isTitleValid) {
+                setTitleError(false);
+              }
+            }}
             placeholder="제목을 입력해주세요."
             minLength={LIMITS.titleMin}
             maxLength={LIMITS.titleMax}
+            isError={titleError}
           />
+          {titleError && (
+            <p
+              className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
+            >
+              최소 2글자 이상 입력해주세요.
+            </p>
+          )}
         </section>
 
         <section className="flex flex-col gap-[0.5rem]">
           <p className="text-[0.875rem] text-white">설명</p>
           <TextArea
+            ref={contentRef}
             type="content"
             value={contentText}
-            onChange={setContentText}
+            onChange={(v) => {
+              setContentText(v);
+              if (contentError && isContentValid) {
+                setContentError(false);
+              }
+            }}
             placeholder="나만의 필름 사진 이야기를 공유해주세요."
             minLength={LIMITS.contentMin}
             maxLength={LIMITS.contentMax}
+            isError={contentError}
           />
+          {contentError && (
+            <p
+              className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
+            >
+              최소 20글자 이상 입력해주세요.
+            </p>
+          )}
         </section>
 
         <hr className="border-neutral-800" />
@@ -157,7 +213,7 @@ export default function NewPostPage() {
         <CTA_Button
           text="다음"
           size="xlarge"
-          color={canGoNext ? "orange" : "black"}
+          color={isTitleValid && isContentValid ? "orange" : "black"}
           onClick={handleNext}
         />
       </div>
