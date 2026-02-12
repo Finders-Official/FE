@@ -15,7 +15,7 @@ export { default as ClockIcon } from "./clock.svg?react";
 export { default as CloseIcon } from "./close.svg?react";
 export { default as CopyIcon } from "./copy.svg?react";
 export { default as CopyFillIcon } from "./copy-filled.svg?react";
-export { default as DefaultProfileIcon } from "./defaultProfile.svg?react";
+export { default as DefaultProfileIcon } from "./default-profile.svg?react";
 export { default as DownloadIcon } from "./download.svg?react";
 export { default as EmptyBoxIcon } from "./empty-box.svg?react";
 export { default as EmptyCheckCircleIcon } from "./empty-check-circle.svg?react";
@@ -52,11 +52,11 @@ export { default as RestoraionSparkleIcon } from "./restoration-sparkle.svg?reac
 export { default as TooltipXIcon } from "./tooltip-x.svg?react";
 
 // 소셜 / 브랜드
-export { default as KakaoIcon } from "./Kakao.svg?react";
+export { default as KakaoIcon } from "./kakao.svg?react";
 
 // 배너 사진
 export { default as DevelopPicIcon } from "./develop.svg?react";
-export { default as ScanPicIcon } from "./scanPic.svg?react";
+export { default as ScanPicIcon } from "./scan-pic.svg?react";
 export { default as PrintPicIcon } from "./print.svg?react";
 export { default as DeliveryPicIcon } from "./delivery.svg?react";
 export { default as PromotionBannerIcon1 } from "./promotion-banner-1.svg?react";
@@ -72,7 +72,7 @@ export { default as CheckBoxIcon } from "./check-box-fill.svg?react";
 export { default as CircleIcon } from "./circle.svg?react";
 export { default as CircleFillIcon } from "./circle-fill.svg?react";
 export { default as CircleGlareFillIcon } from "./circle-glare-fill.svg?react";
-export { default as BigLogoIcon } from "./bigLogo.svg?react";
+export { default as BigLogoIcon } from "./big-logo.svg?react";
 export { default as DeleteIcon } from "./delete.svg?react";
 export { default as EllipsisVerticalIcon } from "./ellipsis-vertical.svg?react";
 export { default as FlimIcon } from "./flim.svg?react";

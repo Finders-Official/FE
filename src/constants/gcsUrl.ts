@@ -1,4 +1,4 @@
-import defaultProfile from "@/assets/icon/defaultProfile.svg";
+import defaultProfile from "@/assets/icon/default-profile.svg";
 
 export const GCS_PUBLIC_BASE = "https://storage.googleapis.com/finders-public";
 

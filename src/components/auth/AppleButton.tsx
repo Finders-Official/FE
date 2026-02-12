@@ -1,4 +1,4 @@
-import AppleLogo from "../../assets/icon/Apple.svg";
+import AppleLogo from "../../assets/icon/apple.svg";
 
 interface AppleButtonProps {
   onClick?: () => void;
