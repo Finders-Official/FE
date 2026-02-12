@@ -108,19 +108,22 @@ export default function PostPage() {
         <Header title="" showBack onBack={handleGoBack} />
         <section className="flex flex-col gap-[0.625rem] pb-10">
           {/** 상단 */}
-          <div className="flex flex-col gap-[0.625rem]">
-            <Profile
-              type="post"
-              userName={postDetail.nickname}
-              avatarUrl={postDetail.profileImageUrl}
-              date={postDetail.createdAt}
-              isOwner={postDetail.isMine}
-              objectId={postDetail.postId}
-            />
-            <PhotoCarousel
-              images={postDetail.images}
-              altPrefix={postDetail.title}
-            />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-[0.625rem]">
+              <Profile
+                type="post"
+                userName={postDetail.nickname}
+                avatarUrl={postDetail.profileImageUrl}
+                date={postDetail.createdAt}
+                isOwner={postDetail.isMine}
+                objectId={postDetail.postId}
+              />
+              <PhotoCarousel
+                images={postDetail.images}
+                altPrefix={postDetail.title}
+              />
+            </div>
+
             <div className="flex h-5 w-full justify-start gap-3 pl-1">
               <div className="flex items-center gap-1">
                 <button
@@ -161,7 +164,7 @@ export default function PostPage() {
           {/** 하단 */}
           <div className="flex flex-col gap-4">
             {/** 게시글 제목 및 내용 */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <p className="text-semi-bold text-[1.0625rem] text-neutral-100">
                 {postDetail.title}
               </p>
@@ -187,10 +190,10 @@ export default function PostPage() {
                 }
                 className="bg-neutral-875 border-neutral-850 flex flex-col gap-1 rounded-2xl border px-5 py-4 text-left text-neutral-500"
               >
-                <div className="gap-2">
+                <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-2">
                     <HomeIcon className="h-4 w-4 font-semibold" />
-                    <p className="text-[1rem] font-semibold text-neutral-200">
+                    <p className="font-Medium text-[1rem] text-neutral-200">
                       {postDetail.labReview?.labName} 이용
                     </p>
                   </div>
@@ -207,7 +210,7 @@ export default function PostPage() {
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pt-[1rem]">
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem]">
       {renderPostDetail()}
 
       {/** 게시글 업로드 toast 메세지 */}
