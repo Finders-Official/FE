@@ -9,6 +9,7 @@ import {
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useSocialSignup } from "./useSignUp";
 import { useAuthStore } from "@/store/useAuth.store";
+import { useDebouncedTrue } from "@/hooks/common/useDebounceValue";
 
 type PhonePurpose = "SIGNUP" | "MY_PAGE";
 
@@ -50,6 +51,8 @@ export function useOnBoardingForm(options?: Options) {
     () => isValidNickname(nicknameTrimmed),
     [nicknameTrimmed],
   );
+  const rawTrimmed = nickname.trim();
+  const isTyping = rawTrimmed !== nicknameTrimmed;
 
   const {
     data: nicknameRes,
@@ -64,13 +67,18 @@ export function useOnBoardingForm(options?: Options) {
       ? ""
       : !nicknameValid
         ? "2~8자, 한글/영문/숫자만 가능해요."
-        : isCheckingNickname
+        : isCheckingNickname || isTyping
           ? "닉네임 확인 중..."
           : nicknameError
             ? "닉네임 확인에 실패했어요."
             : nicknameAvailable
               ? "사용 가능한 닉네임이에요."
               : "이미 사용 중인 닉네임이에요.";
+
+  const isNicknameErrorText =
+    nicknameStatusText === "2~8자, 한글/영문/숫자만 가능해요." ||
+    nicknameStatusText === "닉네임 확인에 실패했어요." ||
+    nicknameStatusText === "이미 사용 중인 닉네임이에요.";
 
   const hasNicknameInput = nicknameTrimmed.length > 0;
 
@@ -87,15 +95,17 @@ export function useOnBoardingForm(options?: Options) {
   const isNicknameError = isInvalidNickname || isDuplicateNickname;
 
   // 닉네임 에러 깜빡임 방지
-  const debouncedNicknameError = useDebouncedValue(isNicknameError, 100);
+  const debouncedNicknameError = useDebouncedTrue(isNicknameError, 100);
 
-  const nicknameBorderClass = debouncedNicknameError
-    ? "transition-colors duration-100 border-orange-500"
-    : undefined;
+  const nicknameBorderClass =
+    debouncedNicknameError && isNicknameErrorText
+      ? "transition-colors duration-100 border-orange-500"
+      : undefined;
 
-  const nicknameTextClass = debouncedNicknameError
-    ? "transition-colors duration-100 text-orange-500"
-    : undefined;
+  const nicknameTextClass =
+    debouncedNicknameError && isNicknameErrorText
+      ? "transition-colors duration-100 text-orange-500"
+      : undefined;
 
   // 폰 인증
   const setUser = useAuthStore((s) => s.setUser);

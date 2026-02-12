@@ -10,3 +10,21 @@ export function useDebouncedValue<T>(value: T, delayMs: number) {
 
   return debounced;
 }
+
+export function useDebouncedTrue(value: boolean, delayMs: number) {
+  const [v, setV] = useState(value);
+
+  useEffect(() => {
+    if (!value) {
+      // OFF는 즉시
+      setV(false);
+      return;
+    }
+
+    // ON만 지연
+    const id = window.setTimeout(() => setV(true), delayMs);
+    return () => window.clearTimeout(id);
+  }, [value, delayMs]);
+
+  return v;
+}
