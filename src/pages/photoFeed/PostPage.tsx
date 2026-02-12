@@ -64,7 +64,10 @@ export default function PostPage() {
     if (!isNewPost) return;
 
     const fadeTimer = setTimeout(() => setToastVisible(false), 1600);
-    const removeTimer = setTimeout(() => setMounted(false), 3000);
+    const removeTimer = setTimeout(() => {
+      setIsNewPost(false);
+      setMounted(false);
+    }, 3000);
 
     return () => {
       clearTimeout(fadeTimer);

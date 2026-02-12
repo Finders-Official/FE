@@ -42,7 +42,10 @@ export default function PhotoFeedPage() {
     if (!isDeleted) return;
 
     const fadeTimer = setTimeout(() => setToastVisible(false), 1600);
-    const removeTimer = setTimeout(() => setMounted(false), 3000);
+    const removeTimer = setTimeout(() => {
+      setMounted(false);
+      navigate(location.pathname, { replace: true }); // 타이머 없앨 때 state도 같이 삭제
+    }, 3000);
 
     return () => {
       clearTimeout(fadeTimer);
