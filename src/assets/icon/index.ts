@@ -54,15 +54,6 @@ export { default as TooltipXIcon } from "./tooltip-x.svg?react";
 // 소셜 / 브랜드
 export { default as KakaoIcon } from "./kakao.svg?react";
 
-// 배너 사진
-export { default as DevelopPicIcon } from "./develop.svg?react";
-export { default as ScanPicIcon } from "./scan-pic.svg?react";
-export { default as PrintPicIcon } from "./print.svg?react";
-export { default as DeliveryPicIcon } from "./delivery.svg?react";
-export { default as PromotionBannerIcon1 } from "./promotion-banner-1.svg?react";
-export { default as PromotionBannerIcon2 } from "./promotion-banner-2.svg?react";
-export { default as PromotionBannerIcon3 } from "./promotion-banner-3.svg?react";
-
 // Fill 아이콘
 export { default as BriefcaseFillIcon } from "./briefcase-fill.svg?react";
 export { default as CalendarFillIcon } from "./calendar-fill.svg?react";
