@@ -112,8 +112,11 @@ export default function ReviewPhotoLabPage() {
             value={reviewText}
             onChange={(v) => {
               setReviewText(v);
-              if (reviewTextError && canSave) {
-                setReviewTextError(false);
+              if (reviewTextError) {
+                const isValid = v.length >= MIN && v.length <= MAX;
+                if (isValid) {
+                  setReviewTextError(false);
+                }
               }
             }}
             placeholder={

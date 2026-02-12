@@ -88,7 +88,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           "flex flex-col gap-[0.625rem] rounded-2xl border bg-neutral-900 p-[1.25rem]",
           isError ? "border-red-500" : "border-neutral-750",
           className,
-        ].join(" ")}
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
         <textarea
           ref={setRefs}

@@ -54,22 +54,24 @@ export default function NewPostPage() {
   );
 
   const handleNext = () => {
+    // 1) 제목 먼저 체크
+    if (!isTitleValid) {
+      setTitleError(true);
+      setContentError(false); // 첫 에러만 강조
+
+      const el = titleRef.current;
+      if (el) {
+        scrollToCenter(el);
+        el.focus();
+      }
+      return;
+    }
+
+    // 2) 그 다음 내용 체크
     if (!isContentValid) {
       setContentError(true);
+      setTitleError(false);
 
-      if (!isTitleValid) {
-        setTitleError(true);
-
-        // 스크롤 + 포커스
-        const el = titleRef.current;
-        if (el) {
-          scrollToCenter(el);
-          el.focus();
-        }
-        return;
-      }
-
-      // 스크롤 + 포커스
       const el = contentRef.current;
       if (el) {
         scrollToCenter(el);
@@ -77,6 +79,8 @@ export default function NewPostPage() {
       }
       return;
     }
+
+    // 3) 둘 다 valid이면 다음
     setTitleError(false);
     setContentError(false);
     setPostInfo(titleText, contentText);
@@ -123,7 +127,10 @@ export default function NewPostPage() {
             value={titleText}
             onChange={(v) => {
               setTitleText(v);
-              if (titleError && isTitleValid) {
+              if (
+                titleError &&
+                isValidText(v, LIMITS.titleMin, LIMITS.titleMax)
+              ) {
                 setTitleError(false);
               }
             }}
@@ -149,7 +156,10 @@ export default function NewPostPage() {
             value={contentText}
             onChange={(v) => {
               setContentText(v);
-              if (contentError && isContentValid) {
+              if (
+                contentError &&
+                isValidText(v, LIMITS.contentMin, LIMITS.contentMax)
+              ) {
                 setContentError(false);
               }
             }}
