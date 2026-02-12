@@ -52,6 +52,7 @@ export { default as RestoraionSparkleIcon } from "./restoration-sparkle.svg?reac
 export { default as TooltipXIcon } from "./tooltip-x.svg?react";
 
 // 소셜 / 브랜드
+export { default as AppleIcon } from "./apple.svg?react";
 export { default as KakaoIcon } from "./kakao.svg?react";
 
 // Fill 아이콘
