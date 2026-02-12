@@ -36,7 +36,7 @@ export const CTA_Button = ({
 }: CTA_ButtonProps) => {
   const router = useNavigate();
   const baseClass =
-    "inline-flex items-center justify-center rounded-2xl border shadow-sm active:scale-[0.99]";
+    "inline-flex items-center justify-center rounded-2xl border shadow-sm active:scale-[0.99] gap-2";
   const sizeClass: Record<CTA_ButtonSize, string> = {
     xsmall: "h-[2.875rem] w-[7.5625rem] text-[0.875rem]",
     small: "h-[3.5rem] w-[7.5625rem]",

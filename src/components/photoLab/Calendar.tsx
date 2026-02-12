@@ -3,6 +3,7 @@ import { ChevronLeftIcon } from "@/assets/icon";
 import DateChip from "@/components/common/chips/DateChip";
 import { WEEKDAYS } from "@/constants/date";
 import { buildCalendarGrid, getVisibleDays } from "@/utils/calendar";
+import { isSameDay } from "@/utils/dateFormat";
 
 interface CalendarProps {
   selectedDate?: Date;
@@ -44,11 +45,6 @@ export default function Calendar({
     const grid = buildCalendarGrid(year, month);
     return getVisibleDays(grid, effectiveMinDate, isDateDisabled);
   }, [year, month, effectiveMinDate, isDateDisabled]);
-
-  const isSameDay = (d1: Date, d2: Date) =>
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
 
   return (
     <div className="flex flex-col gap-3">

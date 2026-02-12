@@ -20,14 +20,8 @@ export function DropBox({
   onToggle,
   onSelect,
 }: DropBoxProps) {
-  //선택되면: 왼쪽(흰색)은 옵션 label
-  //미선택이면: 왼쪽(흰색)은 카테고리 title
   const leftText = value ? value.label : category.title;
-
   const leftTextClass = value ? "text-neutral-100" : "text-neutral-600";
-
-  // 선택되면: 오른쪽(회색)은 가격/배수(priceText)
-  // 미선택이면: placeholder
   const rightText = value ? value.priceText : category.placeholder;
 
   return (
@@ -37,10 +31,9 @@ export function DropBox({
       aria-expanded={isOpen}
       className="w-full"
     >
-      {/* 상단 박스(첫번째 스크린샷) */}
       <div className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3">
         <div className="flex flex-1 justify-between">
-          <p className={`${leftTextClass}`}>{leftText}</p>
+          <p className={leftTextClass}>{leftText}</p>
           <p className="text-neutral-400">{rightText}</p>
         </div>
 
@@ -53,7 +46,6 @@ export function DropBox({
         </div>
       </div>
 
-      {/* 펼쳐졌을 때 옵션 리스트 */}
       {isOpen && (
         <div className="border-neutral-850 mt-2 overflow-hidden rounded-[0.625rem] border">
           <ul>
@@ -64,7 +56,11 @@ export function DropBox({
                 <li key={opt.value}>
                   <button
                     type="button"
-                    onClick={() => onSelect(category.key, opt)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation(); //핵심: 바깥 토글 버튼 클릭 막기
+                      onSelect(category.key, opt); //부모에서 setOpenKey(null)로 닫힘
+                    }}
                     className={`flex w-full items-center justify-between px-4 py-3 text-left ${
                       selected ? "bg-neutral-850" : "bg-neutral-900"
                     }`}

@@ -18,6 +18,7 @@ type BottomSheetProps = {
   isBackDrop?: boolean;
   /** true면 TabBar 위에 표시 (z-60/70), false면 TabBar 아래 (z-40) */
   overlay?: boolean;
+  fixedMin?: boolean; // true면 처음 높이가 최소 높이(더 내려가지 않음)
 };
 
 // clamp 유틸
@@ -37,6 +38,7 @@ export default function BottomSheet({
   sheetClassName,
   isBackDrop = true,
   overlay = false,
+  fixedMin = false,
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,10 +55,11 @@ export default function BottomSheet({
     return { expandedH: exp, collapsedH: col };
   }, [vh, collapsedRatio, expandedVh]);
 
-  // 현재 시트 높이(px) (드래그로 변함)
-  const [sheetH, setSheetH] = useState(() =>
-    initialSnap === "expanded" ? expandedH : collapsedH,
-  );
+  const initialH = useMemo(() => {
+    return initialSnap === "expanded" ? expandedH : collapsedH;
+  }, [initialSnap, expandedH, collapsedH]);
+
+  const [sheetH, setSheetH] = useState(() => initialH);
 
   // open이 false → true로 전환될 때 높이를 초기값으로 리셋
   const [prevOpen, setPrevOpen] = useState(open);
@@ -64,7 +67,7 @@ export default function BottomSheet({
     setPrevOpen(open);
     if (open) {
       setSnap(initialSnap);
-      setSheetH(initialSnap === "expanded" ? expandedH : collapsedH);
+      setSheetH(initialH);
     }
   }
 
@@ -73,7 +76,8 @@ export default function BottomSheet({
   const [prevSnapTargetH, setPrevSnapTargetH] = useState(snapTargetH);
   if (open && !dragging && snapTargetH !== prevSnapTargetH) {
     setPrevSnapTargetH(snapTargetH);
-    setSheetH(snapTargetH);
+    const minH = fixedMin ? initialH : 0;
+    setSheetH(clamp(snapTargetH, minH, expandedH));
   }
 
   // open 상태에서 뷰포트/키보드 등으로 높이가 바뀌면 현재 snap 기준으로 높이 보정
@@ -86,7 +90,14 @@ export default function BottomSheet({
 
       const nextExpandedH = (nextVh * expandedVh) / 100;
       const nextCollapsedH = nextVh * collapsedRatio;
-      setSheetH(snap === "expanded" ? nextExpandedH : nextCollapsedH);
+      const nextInitialH =
+        initialSnap === "expanded" ? nextExpandedH : nextCollapsedH;
+
+      const target = snap === "expanded" ? nextExpandedH : nextCollapsedH;
+
+      // fixedMin이면 최소 높이를 nextInitialH로 유지
+      const minH = fixedMin ? nextInitialH : 0;
+      setSheetH(clamp(target, minH, nextExpandedH));
 
       const isTyping =
         document.activeElement instanceof HTMLInputElement ||
@@ -107,7 +118,7 @@ export default function BottomSheet({
       window.visualViewport?.removeEventListener("resize", handleResize);
       window.removeEventListener("resize", handleResize);
     };
-  }, [open, snap, collapsedRatio, expandedVh]);
+  }, [open, snap, collapsedRatio, expandedVh, initialSnap, fixedMin]);
 
   // body 스크롤 잠금(인스타 느낌)
   useEffect(() => {
@@ -139,7 +150,8 @@ export default function BottomSheet({
     const { startClientY, startH } = pointerState.current;
     const delta = e.clientY - startClientY; // 아래로 +, 위로 -
     // 아래로 끌면 높이 줄고, 위로 끌면 높이 늘어남
-    const nextH = clamp(startH - delta, 0, expandedH);
+    const minH = fixedMin ? initialH : 0;
+    const nextH = clamp(startH - delta, minH, expandedH);
     setSheetH(nextH);
   };
 
@@ -150,6 +162,14 @@ export default function BottomSheet({
     setDragging(false);
 
     // 스냅 판정
+    // 0) fixedMin이면 닫기 판정 자체를 하지 않음(내려갈 수 없으니까)
+    if (!fixedMin) {
+      if (sheetH <= vh * CLOSE_THRESHOLD_RATIO) {
+        onClose();
+        return;
+      }
+    }
+
     // 1) 너무 아래로 끌면 닫기
     if (sheetH <= vh * CLOSE_THRESHOLD_RATIO) {
       onClose();
@@ -157,10 +177,12 @@ export default function BottomSheet({
     }
 
     // 2) expanded/collapsed 중 가까운 쪽으로
-    const midH = (expandedH + collapsedH) / 2;
+    const baseCollapsedH = fixedMin ? initialH : collapsedH;
+
+    const midH = (expandedH + baseCollapsedH) / 2;
     const nextSnap: Snap = sheetH >= midH ? "expanded" : "collapsed";
     setSnap(nextSnap);
-    setSheetH(nextSnap === "expanded" ? expandedH : collapsedH);
+    setSheetH(nextSnap === "expanded" ? expandedH : baseCollapsedH);
   };
 
   if (!open) return null;

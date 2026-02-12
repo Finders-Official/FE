@@ -15,7 +15,7 @@ import {
 import { ActionButton } from "@/components/photoManage/ActionButton";
 import { RecipientInfoCard } from "@/components/photoManage/RecipientInfoCard";
 import { formatEstimatedTime, formatShippedDate } from "@/utils/dateFormat";
-import { getEarlyFinishedHours } from "@/utils/getEarlyFinishedHours";
+import { getEarlyFinishedTime } from "@/utils/getEarlyFinishedTime";
 import ProcessStepSubContent from "@/components/photoManage/ProcessStepSubContent";
 
 type BuildStepsArgs = {
@@ -48,7 +48,7 @@ export function buildProcessSteps({
   };
 
   const earlyHours = workData.print
-    ? getEarlyFinishedHours(
+    ? getEarlyFinishedTime(
         workData.print.estimatedAt,
         workData.print.completedAt,
       )
@@ -129,11 +129,14 @@ export function buildProcessSteps({
       workData.print?.status === "COMPLETED"
     ) {
       const content = `작업 완료 시간: ${formatEstimatedTime(workData.print.completedAt)}`;
-      const subcontent = `예상 작업 시간보다 ${earlyHours}시간 빨리 완료되었어요!`;
       return (
         <ProcessStepSubContent
           content={content}
-          subcontent={subcontent}
+          subcontent={
+            earlyHours !== -1
+              ? `예상 작업 시간보다 ${earlyHours} 빨리 완료되었어요!`
+              : undefined
+          }
           icon={<ClockIcon className="h-3 w-3" />}
         />
       );

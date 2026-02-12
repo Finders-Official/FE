@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import Calendar from "@/components/photoLab/Calendar";
@@ -8,12 +8,21 @@ import RegionSelector from "@/components/photoLab/RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
+import { isSameDay } from "@/utils/dateFormat";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
 
 // 전체 시트 높이 (Handle + Tabs + ContentPad + Calendar + TimeSlot + Buttons + Gaps)
 const CONTENT_BASE_HEIGHT_REM = 46; // 캘린더 6줄 기준
 const MAX_CALENDAR_ROWS = 6;
 const ROW_HEIGHT_REM = 3.125; // 3rem (DateChip) + 0.125rem (gap)
+
+// "오전 9:00" → 9, "오후 2:00" → 14 변환
+function parseHour(slot: string): number {
+  const [period, hm] = slot.split(" ");
+  const h = parseInt(hm, 10);
+  if (period === "오전") return h;
+  return h === 12 ? 12 : h + 12;
+}
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -85,6 +94,21 @@ export default function FilterBottomSheet({
     initialFilter?.regionSelections?.[0]?.parentName ?? defaultDisplayRegion,
   );
 
+  // 오늘인데 모든 시간 슬롯이 지났으면 선택 불가
+  const isDateDisabled = useCallback((date: Date) => {
+    const now = new Date();
+    return isSameDay(date, now) && now.getHours() >= 20;
+  }, []);
+
+  // 오늘이면 지난 시간 숨김 (선택 상태는 유지, 적용 시 정리)
+  const filteredSlots = useMemo(() => {
+    if (!selectedDate) return TIME_SLOTS;
+    const now = new Date();
+    if (!isSameDay(selectedDate, now)) return TIME_SLOTS;
+    const currentHour = now.getHours();
+    return TIME_SLOTS.filter((slot) => parseHour(slot) > currentHour);
+  }, [selectedDate]);
+
   // 시간 토글 (복수 선택)
   const handleTimeToggle = (time: string) => {
     setSelectedTimes((prev) =>
@@ -155,8 +179,10 @@ export default function FilterBottomSheet({
       const d = String(selectedDate.getDate()).padStart(2, "0");
       filter.date = `${y}-${m}-${d}`;
     }
-    if (selectedTimes.length > 0) {
-      filter.time = selectedTimes;
+    // 현재 보이는 슬롯에 포함된 시간만 적용
+    const validTimes = selectedTimes.filter((t) => filteredSlots.includes(t));
+    if (validTimes.length > 0) {
+      filter.time = validTimes;
     }
     if (selectedRegions.length > 0) {
       filter.regionSelections = selectedRegions;
@@ -238,9 +264,10 @@ export default function FilterBottomSheet({
                 onDateSelect={setSelectedDate}
                 viewDate={viewDate}
                 onViewDateChange={setViewDate}
+                isDateDisabled={isDateDisabled}
               />
               <TimeSlotList
-                slots={TIME_SLOTS}
+                slots={filteredSlots}
                 selectedTimes={selectedTimes}
                 onTimeToggle={handleTimeToggle}
               />
