@@ -20,7 +20,7 @@ export default function NoticeSection() {
       {/* 가로 스크롤 리스트 */}
       <div
         ref={containerRef}
-        className="scrollbar-hide relative flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-34"
+        className="scrollbar-hide relative flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-18"
       >
         {notices.map((notice, index) => {
           const anchorId = `notice-${notice.photoLabId}-${index}`;
