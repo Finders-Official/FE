@@ -13,7 +13,9 @@ interface CommunityGallerySectionCardProps {
 
 const COMMUNITY_PREVIEW_QK = ["community", "posts", "preview"] as const;
 
-// 리스트 캐시 안에서 특정 postId만 업데이트
+type LikeVars = { postId: number; nextLiked: boolean };
+type LikeCtx = { previous?: CommunityPost[] };
+
 function patchCommunityPreviewPost(
   prev: CommunityPost[] | undefined,
   postId: number,
@@ -33,17 +35,9 @@ export default function CommunityGallerySectionCard({
   const fallbackImage =
     "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80";
 
-  const likeMutation = useMutation({
-    mutationFn: async ({
-      postId,
-      nextLiked,
-    }: {
-      postId: number;
-      nextLiked: boolean;
-    }) => {
-      if (nextLiked) return likePost(postId);
-      return unlikePost(postId);
-    },
+  const likeMutation = useMutation<void, unknown, LikeVars, LikeCtx>({
+    mutationFn: ({ postId, nextLiked }) =>
+      nextLiked ? likePost(postId) : unlikePost(postId),
 
     onMutate: async ({ postId, nextLiked }) => {
       await queryClient.cancelQueries({ queryKey: COMMUNITY_PREVIEW_QK });
@@ -66,11 +60,16 @@ export default function CommunityGallerySectionCard({
       if (ctx?.previous) {
         queryClient.setQueryData(COMMUNITY_PREVIEW_QK, ctx.previous);
       }
-      console.error("좋아요 처리 중 오류 발생:", err);
+
+      const message =
+        err instanceof Error
+          ? err.message
+          : "좋아요 처리에 실패했어요. 잠시 후 다시 시도해주세요.";
+      alert(message);
     },
 
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: COMMUNITY_PREVIEW_QK });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: COMMUNITY_PREVIEW_QK });
     },
   });
 
@@ -82,7 +81,6 @@ export default function CommunityGallerySectionCard({
     e.stopPropagation();
 
     requireAuth(() => {
-      // 연타 방지
       if (likeMutation.isPending) return;
 
       likeMutation.mutate({
