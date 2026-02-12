@@ -258,14 +258,14 @@ export default function PhotoFeedSearchPage() {
   const renderResult = () => {
     if (isSearchPending) {
       return (
-        <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
+        <section className="columns-2 md:columns-3 xl:columns-4">
           {Array.from({ length: SKELETON_COUNT }).map((_, i) => {
             const heightClass = SKELETON_HEIGHTS[i % SKELETON_HEIGHTS.length];
 
             return (
               <PhotoCardSkeleton
                 key={`skeleton-${i}`}
-                className={heightClass}
+                className={`mb-2 ${heightClass}`}
               />
             );
           })}
@@ -275,11 +275,7 @@ export default function PhotoFeedSearchPage() {
 
     if (isSearchError) return errorResponse();
 
-    if (previewList.length === 0) {
-      return <EmptyView />;
-    }
-
-    if (previewList.length > 0) {
+    if (previewList.length >= 0) {
       return (
         <div className="mt-4 flex flex-col gap-4">
           <div className="flex items-center justify-between">
@@ -302,11 +298,14 @@ export default function PhotoFeedSearchPage() {
               <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
             </button>
           </div>
-          <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
-            {previewList.map((photo) => (
-              <PhotoCard key={photo.postId} photo={photo} />
-            ))}
-          </section>
+          {previewList.length === 0 && <EmptyView />}
+          {previewList.length > 0 && (
+            <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
+              {previewList.map((photo) => (
+                <PhotoCard key={photo.postId} photo={photo} />
+              ))}
+            </section>
+          )}
         </div>
       );
     }
