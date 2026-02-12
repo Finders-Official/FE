@@ -27,6 +27,8 @@ export default defineConfig([
       "react-hooks/set-state-in-effect": "off",
 
       "react-hooks/refs": "off",
+
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ]);
