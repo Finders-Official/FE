@@ -15,6 +15,7 @@ import EmptyView from "@/components/common/EmptyView";
 import CommentSheet from "@/components/photoFeed/postDetail/CommentSheet";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import ProfileSkeleton from "@/components/photoFeed/postDetail/ProfileSkeleton";
+import { TOAST_FADE_START_DELAY } from "./PhotoFeedPage";
 
 export default function PostPage() {
   const [commentVisible, setCommentVisible] = useState(false);
@@ -67,7 +68,7 @@ export default function PostPage() {
     const removeTimer = setTimeout(() => {
       setIsNewPost(false);
       setMounted(false);
-    }, 3000);
+    }, TOAST_FADE_START_DELAY);
 
     return () => {
       clearTimeout(fadeTimer);

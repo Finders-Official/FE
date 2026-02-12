@@ -25,6 +25,8 @@ const breakpointColumnsObj = {
   1024: 2,
 };
 
+export const TOAST_FADE_START_DELAY = 3000;
+
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -45,13 +47,13 @@ export default function PhotoFeedPage() {
     const removeTimer = setTimeout(() => {
       setMounted(false);
       navigate(location.pathname, { replace: true }); // 타이머 없앨 때 state도 같이 삭제
-    }, 3000);
+    }, TOAST_FADE_START_DELAY);
 
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(removeTimer);
     };
-  }, [isDeleted]);
+  }, [isDeleted, navigate, location.pathname]);
 
   const {
     data,
