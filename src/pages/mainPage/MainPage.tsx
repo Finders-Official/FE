@@ -42,36 +42,37 @@ export default function MainPage() {
   useAnchorScroll(scrollRef);
 
   return (
-    <div
-      ref={scrollRef}
-      style={{
-        WebkitOverflowScrolling: "auto",
-        touchAction: "pan-y",
-        overflowAnchor: "none",
-      }}
-      className="scrollbar-hide mx-auto h-dvh w-full max-w-sm overflow-y-auto overscroll-y-none bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] text-white"
-    >
-      <SectionWrapper id="header">
-        <Header />
-      </SectionWrapper>
-      <SectionWrapper id="promotion">
-        <PromotionBanner />
-      </SectionWrapper>
-      <SectionWrapper id="quick-menu">
-        <QuickMenuButton />
-      </SectionWrapper>
-      <SectionWrapper id="popular-labs">
-        <PopularLabsSection />
-      </SectionWrapper>
-      <SectionWrapper id="film-news">
-        <FilmNewsSection />
-      </SectionWrapper>
-      <SectionWrapper id="community">
-        <CommunityGallerySection />
-      </SectionWrapper>
-      <SectionWrapper id="notice">
-        <NoticeSection />
-      </SectionWrapper>
+    <div className="mx-auto h-dvh w-full max-w-sm bg-neutral-900 text-white">
+      {" "}
+      <Header />
+      <div
+        ref={scrollRef}
+        style={{
+          WebkitOverflowScrolling: "auto",
+          touchAction: "pan-y",
+          overflowAnchor: "none",
+        }}
+        className="scrollbar-hide mx-auto h-dvh w-full max-w-sm overflow-y-auto overscroll-y-none bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] text-white"
+      >
+        <SectionWrapper id="promotion">
+          <PromotionBanner />
+        </SectionWrapper>
+        <SectionWrapper id="quick-menu">
+          <QuickMenuButton />
+        </SectionWrapper>
+        <SectionWrapper id="popular-labs">
+          <PopularLabsSection />
+        </SectionWrapper>
+        <SectionWrapper id="film-news">
+          <FilmNewsSection />
+        </SectionWrapper>
+        <SectionWrapper id="community">
+          <CommunityGallerySection />
+        </SectionWrapper>
+        <SectionWrapper id="notice">
+          <NoticeSection />
+        </SectionWrapper>
+      </div>
     </div>
   );
 }
