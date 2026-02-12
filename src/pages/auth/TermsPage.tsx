@@ -3,7 +3,7 @@ import { Header } from "@/components/common";
 import { CTA_Button } from "@/components/common/CTA_Button";
 import { sections } from "@/constants/terms";
 import type { Section } from "@/types/auth";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 function getHashIdFrom(hash: string): Section["id"] | null {
@@ -36,20 +36,84 @@ export function TermsPage() {
   const location = useLocation();
 
   const currentId = getHashIdFrom(location.hash);
-  const showCta = Boolean(currentId); // 해시 있을 때만 CTA
+  const showCta = Boolean(currentId);
 
   const currentIndex = currentId ? (idToIndex.get(currentId) ?? 0) : 0;
   const isLast = currentIndex >= ids.length - 1;
 
-  // 해시가 바뀔 때마다 해당 섹션으로 스크롤
+  //해시 클릭/다음 버튼 등으로 hash가 바뀔 때만 스크롤
+  //스크롤로 인해 hash가 바뀌는 경우(아래 observer)는 다시 스크롤시키지 않게 가드
+  const lastScrolledHashRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!currentId) return;
-    window.setTimeout(() => scrollToSection(currentId), 0);
+
+    const nextHash = `#${currentId}`;
+    if (lastScrolledHashRef.current === nextHash) {
+      lastScrolledHashRef.current = null;
+      return;
+    }
+
+    const id = window.setTimeout(() => scrollToSection(currentId), 0);
+    return () => window.clearTimeout(id);
   }, [currentId]);
+
+  //스크롤 내리면 가장 많이 보이는 섹션으로 해시 자동 변경
+  useEffect(() => {
+    const map = new Map<Section["id"], number>();
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const id = e.target.getAttribute("id") as Section["id"] | null;
+          if (!id) continue;
+          map.set(id, e.isIntersecting ? e.intersectionRatio : 0);
+        }
+
+        // 현재 가장 많이 보이는 섹션 선택
+        let bestId: Section["id"] | null = null;
+        let bestRatio = 0;
+
+        for (const [id, ratio] of map.entries()) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        }
+
+        if (!bestId) return;
+
+        const nextHash = `#${bestId}`;
+        if (location.hash === nextHash) return;
+
+        // observer로 바꾼 hash는 스크롤 트리거 안 걸리게 표시
+        lastScrolledHashRef.current = nextHash;
+
+        navigate(
+          { pathname: location.pathname, hash: nextHash },
+          { replace: true },
+        );
+      },
+      {
+        root: null,
+        // 헤더 고정 고려해서 상단은 좀 깎고, CTA 영역도 하단을 조금 깎음
+        rootMargin: "-96px 0px -120px 0px",
+        // ratio 추적을 촘촘하게 -> 판단 정확도 높임
+        threshold: Array.from({ length: 21 }, (_, i) => i / 20),
+      },
+    );
+
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
+    }
+
+    return () => io.disconnect();
+  }, [navigate, location.pathname, location.hash]);
 
   const handleNextOrConfirm = () => {
     if (isLast) {
-      window.history.back(); // 카카오 약관 화면으로 이동
+      window.history.back();
       return;
     }
 
@@ -59,7 +123,7 @@ export function TermsPage() {
     navigate(
       { pathname: location.pathname, hash: `#${nextId}` },
       { replace: true },
-    ); // 해시 쌓임 방지
+    );
   };
 
   return (
@@ -83,7 +147,7 @@ export function TermsPage() {
         <main className="mx-auto w-full px-2">
           {sections.map((s) => (
             <section key={s.id} id={s.id} className="scroll-mt-28">
-              <div className="border-neutral-850 mt-6 border-b pb-6">
+              <div className="border-neutral-850 mt-6 border-b pb-50">
                 <div className="flex items-center gap-2">
                   <h2 className="text-[1.1875rem] font-semibold text-neutral-100">
                     {s.title}{" "}
