@@ -26,8 +26,6 @@ export function LikedPhotoLabPage() {
     () => data?.pages.flatMap((p) => p.data.photoLabs) ?? [],
     [data],
   );
-
-  // 페이지 내에서만 유지되는 즐겨찾기 오버라이드
   const [favoriteOverrideById, setFavoriteOverrideById] = useState<
     Record<number, boolean>
   >({});
@@ -74,20 +72,19 @@ export function LikedPhotoLabPage() {
   const shouldShowSentinel =
     !isLoading && !isError && hasNextPage && labs.length > 0;
 
+  const isEmpty = !isLoading && !isFetchingNextPage && labs.length === 0;
+
   const handleFavoriteToggle = useCallback(
     (photoLabId: number, prevIsFavoriteFromCard: boolean) => {
-      // 1) UI 즉시 반영
       setFavoriteOverrideById((prev) => ({
         ...prev,
         [photoLabId]: !prevIsFavoriteFromCard,
       }));
 
-      // 2) 서버 호출 (토글 전 값)
       toggleFavorite(
         { photoLabId, isFavorite: prevIsFavoriteFromCard },
         {
           onError: () => {
-            // 3) 실패 시 롤백
             setFavoriteOverrideById((prev) => ({
               ...prev,
               [photoLabId]: prevIsFavoriteFromCard,
@@ -115,13 +112,21 @@ export function LikedPhotoLabPage() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <main className="flex min-h-0 flex-1 flex-col px-4">
+    //이 페이지 자체가 스크롤을 만들지 않게 루트에서 차단
+    <div className="flex min-h-0 flex-col overflow-hidden">
+      <main
+        className={[
+          "flex min-h-0 flex-1 flex-col px-4",
+          isEmpty ? "overflow-hidden" : "scrollbar-hide overflow-y-auto",
+        ].join(" ")}
+      >
         {isLoading ? (
-          Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-            <PhotoLabCardSkeleton key={`post-skeleton-${i}`} />
-          ))
-        ) : labs.length === 0 && !isFetchingNextPage ? (
+          <div className="flex flex-col">
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+              <PhotoLabCardSkeleton key={`post-skeleton-${i}`} />
+            ))}
+          </div>
+        ) : isEmpty ? (
           <div className="flex flex-1 items-center justify-center">
             <EmptyOrderState description="아직 마음에 담아둔 현상소가 없어요" />
           </div>

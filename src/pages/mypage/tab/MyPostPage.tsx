@@ -89,6 +89,8 @@ export function MyPostPage() {
   const shouldShowSentinel =
     !isLoading && !isError && hasNextPage && posts.length > 0;
 
+  const isEmpty = !isLoading && !isFetchingNextPage && posts.length === 0;
+
   if (isError) {
     return (
       <div className="p-6 text-neutral-100">
@@ -106,7 +108,12 @@ export function MyPostPage() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col py-4">
-      <main className="flex min-h-0 flex-1 flex-col px-4">
+      <main
+        className={[
+          "flex min-h-0 flex-1 flex-col px-4",
+          isEmpty ? "overflow-hidden" : "scrollbar-hide overflow-y-auto",
+        ].join(" ")}
+      >
         {isLoading ? (
           <div className="grid grid-cols-2 gap-4">
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (

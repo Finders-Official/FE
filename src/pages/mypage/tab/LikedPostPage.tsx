@@ -74,6 +74,8 @@ export function LikedPostPage() {
   const shouldShowSentinel =
     !isLoading && !isError && hasNextPage && viewItems.length > 0;
 
+  const isEmpty = !isLoading && !isFetchingNextPage && viewItems.length === 0;
+
   const handleToggleLike = useCallback(
     (postId: number, prevIsLiked: boolean) => {
       // 1) UI 즉시 반영
@@ -124,7 +126,12 @@ export function LikedPostPage() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <main className="flex min-h-0 flex-1 flex-col">
+      <main
+        className={[
+          "flex min-h-0 flex-1 flex-col",
+          isEmpty ? "overflow-hidden" : "scrollbar-hide overflow-y-auto",
+        ].join("")}
+      >
         {isLoading ? (
           <Masonry
             breakpointCols={breakpointColumnsObj}
