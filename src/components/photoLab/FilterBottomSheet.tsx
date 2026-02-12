@@ -85,6 +85,27 @@ export default function FilterBottomSheet({
     initialFilter?.regionSelections?.[0]?.parentName ?? defaultDisplayRegion,
   );
 
+  // "오전 9:00" → 9, "오후 2:00" → 14 변환
+  const parseHour = (slot: string): number => {
+    const [period, hm] = slot.split(" ");
+    const h = parseInt(hm);
+    if (period === "오전") return h;
+    return h === 12 ? 12 : h + 12;
+  };
+
+  // 오늘이면 지난 시간 숨김 (선택 상태는 유지, 적용 시 정리)
+  const filteredSlots = useMemo(() => {
+    if (!selectedDate) return TIME_SLOTS;
+    const now = new Date();
+    const isToday =
+      selectedDate.getFullYear() === now.getFullYear() &&
+      selectedDate.getMonth() === now.getMonth() &&
+      selectedDate.getDate() === now.getDate();
+    if (!isToday) return TIME_SLOTS;
+    const currentHour = now.getHours();
+    return TIME_SLOTS.filter((slot) => parseHour(slot) > currentHour);
+  }, [selectedDate]);
+
   // 시간 토글 (복수 선택)
   const handleTimeToggle = (time: string) => {
     setSelectedTimes((prev) =>
@@ -155,8 +176,10 @@ export default function FilterBottomSheet({
       const d = String(selectedDate.getDate()).padStart(2, "0");
       filter.date = `${y}-${m}-${d}`;
     }
-    if (selectedTimes.length > 0) {
-      filter.time = selectedTimes;
+    // 현재 보이는 슬롯에 포함된 시간만 적용
+    const validTimes = selectedTimes.filter((t) => filteredSlots.includes(t));
+    if (validTimes.length > 0) {
+      filter.time = validTimes;
     }
     if (selectedRegions.length > 0) {
       filter.regionSelections = selectedRegions;
@@ -240,7 +263,7 @@ export default function FilterBottomSheet({
                 onViewDateChange={setViewDate}
               />
               <TimeSlotList
-                slots={TIME_SLOTS}
+                slots={filteredSlots}
                 selectedTimes={selectedTimes}
                 onTimeToggle={handleTimeToggle}
               />
