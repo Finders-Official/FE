@@ -8,7 +8,7 @@ interface ToastItemProps {
 
 export const ToastItem = ({ message, icon }: ToastItemProps) => {
   return (
-    <div className="animate-toast-in relative min-h-[3.75rem] w-[20.3125rem]">
+    <div className="animate-toast-in relative w-[20.3125rem]">
       {/* blur 배경 레이어 - opacity 항상 1 */}
       <div className="bg-neutral-875/70 absolute inset-0 rounded-[1.125rem] border border-neutral-800 shadow-lg backdrop-blur-3xl" />
 
