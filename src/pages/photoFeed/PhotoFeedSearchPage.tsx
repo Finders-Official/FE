@@ -281,27 +281,7 @@ export default function PhotoFeedSearchPage() {
 
     if (previewList.length > 0) {
       return (
-        <div className="mt-4 flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
-                검색 결과
-              </h2>
-              <p className="text-[1rem] font-light text-neutral-100">
-                {totalCount}개
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setBottomSheetOpen(true);
-              }}
-              className="flex items-center gap-[6px] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
-            >
-              <span>{FILTER_LABEL[filter]}</span>
-              <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
-            </button>
-          </div>
+        <div className="mt-32 mb-25 flex flex-col gap-4">
           <section className="columns-2 gap-4 md:columns-3 xl:columns-4">
             {previewList.map((photo) => (
               <PhotoCard key={photo.postId} photo={photo} />
@@ -329,9 +309,37 @@ export default function PhotoFeedSearchPage() {
 
   return (
     <div className="relative min-h-dvh w-full flex-col">
-      {/* SearchBar */}
-      <div className="mt-3 mb-5">
-        <SearchBar {...searchBarProps} />
+      <div className="fixed top-0 right-0 left-0 z-40 mx-4 bg-neutral-900">
+        {/* SearchBar */}
+        <div className="mt-3 mb-5">
+          <SearchBar {...searchBarProps} />
+        </div>
+
+        {/* 검색 결과 n개 + 필터링 (result 모드일 때만 고정) */}
+        {mode === "result" && (
+          <div className="mb-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+                  검색 결과
+                </h2>
+                <p className="text-[1rem] font-light text-neutral-100">
+                  {totalCount}개
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setBottomSheetOpen(true);
+                }}
+                className="flex items-center gap-[6px] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
+              >
+                <span>{FILTER_LABEL[filter]}</span>
+                <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* mode에 따른 분기 */}
