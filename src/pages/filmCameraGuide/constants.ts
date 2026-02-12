@@ -1,7 +1,9 @@
 import type { FilmCameraGuide } from "../../types/filmCameraGuide";
-import thumb1 from "@/assets/filmNews/film-news-section-1.png";
-import thumb2 from "@/assets/filmNews/film-news-section-2.png";
-import thumb3 from "@/assets/filmNews/film-news-section-3.png";
+import {
+  filmNewsThumb1 as thumb1,
+  filmNewsThumb2 as thumb2,
+  filmNewsThumb3 as thumb3,
+} from "@/assets/images";
 
 export const FILM_CAMERA_GUIDE_DATA: FilmCameraGuide[] = [
   {
