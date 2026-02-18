@@ -60,6 +60,7 @@ import {
   WithDrawPage,
 } from "@/pages/mypage";
 import { AddressDetailPage } from "@/pages/photoManage/AddressDetailPage";
+import { RequireAuthRoute } from "@/components/common/RequireAuthRoute";
 
 type RouteHandle =
   | {
@@ -112,7 +113,6 @@ const photoManageStandaloneRoutes = [
 
 // FooterLayout이 필요한 페이지들
 const footerRoutes = [
-  { path: "mainpage", Component: MainPage },
   { path: "photoFeed", Component: PhotoFeedPage },
   { path: "photolab", Component: PhotoLabPage },
   { path: "photoManage/main", Component: PhotoManageMainPage },
@@ -220,30 +220,40 @@ const router = createBrowserRouter([
       // auth prefix를 한 번만
       { path: "auth", children: authRoutes },
 
-      // 단독 라우트들
-      ...guideRoutes,
-      ...photoFeedStandaloneRoutes,
-      ...photoLabStandaloneRoutes,
-      ...photoManageStandaloneRoutes,
-
       // FooterLayout 그룹
       {
         Component: FooterLayout,
-        children: footerRoutes,
+        children: [
+          { path: "mainpage", Component: MainPage },
+          {
+            element: <RequireAuthRoute />,
+            children: footerRoutes,
+          },
+        ],
       },
 
-      // photoManage prefix 올려서 중복 제거
       {
-        path: "photoManage",
-        Component: PhotoManageLayout,
-        children: photoManageRoutes,
-      },
+        element: <RequireAuthRoute />,
+        children: [
+          // 단독 라우트들
+          ...guideRoutes,
+          ...photoFeedStandaloneRoutes,
+          ...photoLabStandaloneRoutes,
+          ...photoManageStandaloneRoutes,
+          // photoManage prefix 올려서 중복 제거
+          {
+            path: "photoManage",
+            Component: PhotoManageLayout,
+            children: photoManageRoutes,
+          },
 
-      // mypage prefix 올려서 중복 제거
-      {
-        path: "mypage",
-        element: <MyPageLayout />,
-        children: mypageRoutes,
+          // mypage prefix 올려서 중복 제거
+          {
+            path: "mypage",
+            element: <MyPageLayout />,
+            children: mypageRoutes,
+          },
+        ],
       },
     ],
   },
