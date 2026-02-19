@@ -59,6 +59,7 @@ import {
   SocialPage,
   WithDrawPage,
 } from "@/pages/mypage";
+import { AddressDetailPage } from "@/pages/photoManage/AddressDetailPage";
 
 type RouteHandle =
   | {
@@ -150,6 +151,11 @@ const photoManageRoutes = [
     path: "transaction",
     Component: TransactionPage,
     handle: h({ title: "송금하기" }),
+  },
+  {
+    path: "address-detail",
+    Component: AddressDetailPage,
+    handle: h({ title: "상세 정보 입력하기" }),
   },
 ];
 
