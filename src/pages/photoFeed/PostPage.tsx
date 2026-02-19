@@ -200,7 +200,7 @@ export default function PostPage() {
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-2">
                     <HomeIcon className="h-4 w-4 font-semibold" />
-                    <p className="font-Medium text-[1rem] text-neutral-200">
+                    <p className="text-[1rem] font-medium text-neutral-200">
                       {postDetail.labReview?.labName} 이용
                     </p>
                   </div>
