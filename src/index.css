@@ -146,6 +146,76 @@
   animation: toast-out 0.1s ease-in forwards;
 }
 
+/* DEMO-DAY 애니메이션 (제거 시 이 블록 전체 삭제) */
+@keyframes demoday-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes demoday-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes demoday-reveal {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes demoday-tint {
+  0% {
+    opacity: 0.75;
+  }
+  60% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-demoday-fade-in {
+  animation: demoday-fade-in 0.6s ease-out both;
+}
+
+.animate-demoday-slide-up {
+  animation: demoday-slide-up 0.5s ease-out both;
+}
+
+.animate-demoday-reveal {
+  animation: demoday-reveal 1.8s ease-out both;
+  will-change: opacity;
+}
+
+.animate-demoday-tint {
+  animation: demoday-tint 2.4s ease-out both;
+  will-change: opacity;
+}
+
+.film-strip {
+  background: linear-gradient(180deg, #1c1810 0%, #1a1712 50%, #1c1810 100%);
+  border-left: 1px solid rgba(80, 70, 50, 0.3);
+  border-right: 1px solid rgba(80, 70, 50, 0.3);
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.5),
+    0 2px 12px rgba(0, 0, 0, 0.4);
+}
+/* DEMO-DAY 애니메이션 끝 */
+
 .bg-splash-gradient {
   background:
     radial-gradient(
