@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useKakaoOauth } from "@/hooks/auth/login";
+import { consumeRedirectAfterLogin } from "@/pages/demoDay/redirectAfterLogin"; // DEMO-DAY
 
 export function KakaoCallbackPage() {
   const navigate = useNavigate();
@@ -32,7 +33,11 @@ export function KakaoCallbackPage() {
   //2. 신규 회원: 온보딩 화면으로 리다이렉
   //3. 실패시 login 페이지로 리다이렉
   const { isPending } = useKakaoOauth({
-    onExistingMember: () => navigate("/mainpage", { replace: true }),
+    onExistingMember: () => {
+      // DEMO-DAY: 원래는 navigate("/mainpage", { replace: true })
+      const redirect = consumeRedirectAfterLogin();
+      navigate(redirect ?? "/mainpage", { replace: true });
+    },
     onNewMember: () => navigate("/auth/onboarding", { replace: true }),
     onFail: () => navigate("/auth/login", { replace: true }),
   });
