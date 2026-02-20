@@ -143,7 +143,7 @@ export default function ReviewPhotoLabPage() {
           </p>
         </div>
 
-        <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5">
+        <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,2.125rem))]">
           <CTA_Button
             text="작성 완료"
             size="xlarge"

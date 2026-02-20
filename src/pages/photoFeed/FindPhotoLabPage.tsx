@@ -228,7 +228,7 @@ export default function FindPhotoLabPage() {
           </p>
         </div>
         {/* 하단 버튼 영역 */}
-        <div className="fixed right-0 bottom-0 left-0 flex justify-center gap-3 px-5 py-5">
+        <div className="fixed right-0 bottom-0 left-0 flex justify-center gap-3 px-5 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,2.125rem))]">
           <CTA_Button
             text="아니요 달라요"
             size="medium"

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
@@ -57,6 +57,8 @@ export default function PhotoFeedSearchPage() {
   const [filter, setFilter] = useState<Filter>(
     initialLabName ? "LAB_NAME" : "TITLE",
   );
+  const [tempFilter, setTempFilter] = useState(filter);
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
@@ -66,6 +68,12 @@ export default function PhotoFeedSearchPage() {
 
   const inputTrimmed = inputText.trim();
   const searchTrimmed = searchText.trim();
+
+  useEffect(() => {
+    if (bottomSheetOpen) {
+      setTempFilter(filter);
+    }
+  }, [bottomSheetOpen, filter]);
 
   // 최근 검색어 조회 API
   const {
@@ -386,7 +394,7 @@ export default function PhotoFeedSearchPage() {
         >
           <div className="flex w-full flex-col items-center">
             <div className="flex w-full">
-              <SelectFilter value={filter} onChange={setFilter} />
+              <SelectFilter value={tempFilter} onChange={setTempFilter} />
             </div>
             <div className="fixed right-0 bottom-0 left-0 flex justify-center gap-3 px-5 py-5">
               <CTA_Button
@@ -402,6 +410,7 @@ export default function PhotoFeedSearchPage() {
                 size="medium"
                 color="orange"
                 onClick={() => {
+                  setFilter(tempFilter);
                   setBottomSheetOpen(false);
                 }}
               />
