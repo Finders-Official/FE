@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router"; // [demo-day] 데모데이 끝나면 제거
 import {
   promotionBanner1,
   promotionBanner2,
@@ -9,6 +10,7 @@ interface MainBannerProps {
   id: number;
   alt: string;
   src: string;
+  link?: string; // [demo-day] 데모데이 끝나면 제거
 }
 
 const BANNERS: MainBannerProps[] = [
@@ -16,6 +18,7 @@ const BANNERS: MainBannerProps[] = [
     id: 1,
     alt: "AI 사진 복원 프로모션 배너",
     src: promotionBanner1,
+    link: "/demo-day", // [demo-day] 데모데이 끝나면 제거
   },
   {
     id: 2,
@@ -30,6 +33,7 @@ const BANNERS: MainBannerProps[] = [
 ];
 
 export default function PromotionBanner() {
+  const navigate = useNavigate(); // [demo-day] 데모데이 끝나면 제거
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +56,10 @@ export default function PromotionBanner() {
           <div
             key={banner.id}
             className="min-w-[calc(100%-3px)] shrink-0 snap-center"
+            // [demo-day] 아래 3줄 데모데이 끝나면 제거
+            onClick={banner.link ? () => navigate(banner.link!) : undefined}
+            role={banner.link ? "link" : undefined}
+            style={banner.link ? { cursor: "pointer" } : undefined}
           >
             <div className="relative aspect-335/250 w-full overflow-hidden rounded-2xl">
               <img

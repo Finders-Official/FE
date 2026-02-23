@@ -13,7 +13,7 @@ import { getActiveStatus } from "@/utils/getActiveStatus";
 import { STATUS_INDEX_MAP } from "@/constants/photomanage/status.constant";
 import { getBannerContent } from "@/lib/getBannerContent";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
-import { usePrintSkip, useConfirmReceipt } from "@/hooks/photoManage";
+// import { usePrintSkip, useConfirmReceipt } from "@/hooks/photoManage";
 
 export default function PhotoManageMainPage() {
   const navigate = useNavigate();
@@ -50,11 +50,11 @@ export default function PhotoManageMainPage() {
     queryFn: getCurrentWork,
   });
 
-  // 인화 안 함 확정
-  const { mutate: printSkip } = usePrintSkip();
+  // 인화 안 함 확정 - 데모데이용에서는 제거
+  // const { mutate: printSkip } = usePrintSkip();
 
-  // 수령 확정
-  const { mutate: confirmReceiptMutate } = useConfirmReceipt();
+  // 수령 확정 - 데모데이용에서는 제거
+  // const { mutate: confirmReceiptMutate } = useConfirmReceipt();
 
   const workData = currentWorkResponse?.data;
   const setDevelopmentOrderId = usePrintOrderStore(
@@ -90,8 +90,7 @@ export default function PhotoManageMainPage() {
           }),
         onGoFeed: () => navigate("/photoFeed"),
         onGoTrackDelivery: () => {},
-        onConfirmReceived: () =>
-          confirmReceiptMutate(workData.developmentOrderId),
+        onConfirmReceived: () => {},
       })
     : [];
 
@@ -181,7 +180,7 @@ export default function PhotoManageMainPage() {
                     if (dialogStep === 1) setDialogStep(2);
                     else {
                       setIsDialogOpen(false);
-                      printSkip(workData.developmentOrderId);
+                      //printSkip(workData.developmentOrderId);
                     }
                   }}
                 />

@@ -20,6 +20,7 @@ import DevelopmentHistoryPage from "@/pages/developmentHistory/DevelopmentHistor
 import FilmCameraGuideDetailPage from "@/pages/filmCameraGuide/FilmCameraGuideDetailPage";
 import FilmCameraGuidePage from "@/pages/filmCameraGuide/FilmCameraGuidePage";
 import PhotoRestorationPage from "@/pages/photoRestoration/PhotoRestorationPage";
+import DemoDayPage from "@/pages/demoDay/DemoDayPage"; // DEMO-DAY
 
 // 현상관리 페이지
 import { DetailInfoPage } from "@/pages/photoManage/DetailInfoPage";
@@ -87,6 +88,7 @@ const guideRoutes = [
   { path: "film-camera-guide", Component: FilmCameraGuidePage },
   { path: "film-camera-guide/:id", Component: FilmCameraGuideDetailPage },
   { path: "restore/editor", Component: PhotoRestorationPage },
+  { path: "demo-day", Component: DemoDayPage }, // DEMO-DAY
 ];
 
 const photoFeedStandaloneRoutes = [
