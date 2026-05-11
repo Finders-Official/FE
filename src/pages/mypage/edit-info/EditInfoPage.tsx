@@ -14,7 +14,7 @@ import {
   pickUploadedFilePublicUrlOrKey,
 } from "@/utils/pickPresignedUrl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
 
 type LocationState = { toast?: string } | null;
@@ -262,18 +262,14 @@ export function EditInfoPage() {
         />
       </header>
 
-      <main className="py-1">
+      <main className="flex flex-col gap-2 py-4">
         <OptionLink
           to="./nickname"
           text="닉네임"
           info={me?.roleData?.user?.nickname ?? ""}
           infoColor="gray"
         />
-
-        <div className="flex justify-between p-4">
-          <p>이름</p>
-          <p className="mr-8 text-neutral-500">{me?.member?.name ?? ""}</p>
-        </div>
+        <OptionLink text="이름" infoColor="gray" info={me?.member.name ?? ""} />
 
         <OptionLink to="./phone" text="연락처" info={phone} infoColor="gray" />
 
@@ -284,14 +280,8 @@ export function EditInfoPage() {
           infoColor="gray"
         />
 
-        <section className="flex flex-col">
-          <button onClick={handleLogout} className="p-4 text-left">
-            로그아웃
-          </button>
-          <Link to="./withdraw" className="p-4 text-left">
-            탈퇴하기
-          </Link>
-        </section>
+        <OptionLink onClick={handleLogout} text="로그아웃" />
+        <OptionLink to="./withdraw" text="탈퇴하기" />
 
         <DialogBox
           isOpen={isLogoutModalOpen}
