@@ -16,14 +16,16 @@ export const OptionLink = ({
     <Link
       to={to}
       onClick={onClick}
-      className="flex h-[4rem] w-full items-center gap-3 px-[1rem]"
+      className="flex w-full items-center gap-2 py-2.5"
     >
       {Icon && <Icon className="h-[1.125rem] w-[1.125rem]" />}
       <div className="flex flex-1 justify-between">
         <p>{text}</p>
-        {info ? <p className={`${infoColorClass}`}>{info}</p> : null}
+        {info ? (
+          <p className={`${infoColorClass} font-semibold`}>{info}</p>
+        ) : null}
       </div>
-      <ChevronLeftIcon className="h-[1.25rem] w-[1.25rem] rotate-180" />
+      <ChevronLeftIcon className="h-[1.25rem] w-[1.25rem] rotate-180 font-bold text-neutral-600" />
     </Link>
   );
 };
