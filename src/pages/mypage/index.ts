@@ -11,3 +11,9 @@ export { WithDrawPage } from "./edit-info/WithDrawPage";
 export { LikedPhotoLabPage } from "./tab/LikedPhotoLabPage";
 export { LikedPostPage } from "./tab/LikedPostPage";
 export { MyPostPage } from "./tab/MyPostPage";
+
+//notice 폴더
+export { NoticePage } from "./notice/NoticePage";
+export { EventNoticePage } from "./notice/EventNoticePage";
+export { PolicyNoticePage } from "./notice/PolicyNoticePage";
+export { SimpleNoticePage } from "./notice/SimpleNoticePage";

@@ -56,6 +56,7 @@ import {
   MyPage,
   MyPostPage,
   NickNameEditPage,
+  NoticePage,
   PhoneEditPage,
   SocialPage,
   WithDrawPage,
@@ -207,6 +208,11 @@ const mypageRoutes = [
     path: "edit-info/withdraw",
     Component: WithDrawPage,
     handle: h({ title: "회원 탈퇴" }),
+  },
+  {
+    path: "notice",
+    Component: NoticePage,
+    handle: h({ title: "공지사항" }),
   },
 ];
 
