@@ -26,7 +26,7 @@ export function MyPage() {
       </header>
 
       <main>
-        <section className="border-0.25 border-b border-neutral-600 py-4">
+        <section className="border-0.25 border-neutral-850 border-b py-4">
           {managelist.map((item) => {
             const isTicket = item.text === "크레딧 개수";
 
