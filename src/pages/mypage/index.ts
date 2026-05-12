@@ -17,3 +17,6 @@ export { NoticePage } from "./notice/NoticePage";
 export { EventNoticePage } from "./notice/EventNoticePage";
 export { PolicyNoticePage } from "./notice/PolicyNoticePage";
 export { SimpleNoticePage } from "./notice/SimpleNoticePage";
+
+//inquiry 폴더
+export { InquiryPage } from "./inquiry/InquiryPage";

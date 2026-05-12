@@ -8,5 +8,5 @@ export const managelist: OptionLinkItem[] = [
 export const servicelist: OptionLinkItem[] = [
   { to: "/mypage/notice", text: "공지사항" },
   { to: "/mypage", text: "이용 약관" },
-  { to: "/mypage", text: "1:1 문의 게시판" },
+  { to: "/mypage/inquiry", text: "1:1 문의 게시판" },
 ];

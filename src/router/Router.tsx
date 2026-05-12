@@ -51,6 +51,7 @@ import ReservationPage from "@/pages/photoLab/ReservationPage";
 // 마이페이지
 import {
   EditInfoPage,
+  InquiryPage,
   LikedPhotoLabPage,
   LikedPostPage,
   MyPage,
@@ -213,6 +214,11 @@ const mypageRoutes = [
     path: "notice",
     Component: NoticePage,
     handle: h({ title: "공지사항" }),
+  },
+  {
+    path: "inquiry",
+    Component: InquiryPage,
+    handle: h({ title: "1:1 문의게시판" }),
   },
 ];
 
