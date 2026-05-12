@@ -36,4 +36,5 @@ export type PhotoLab = {
   isFavorite: boolean;
   totalWorkCount: number;
   estimatedMinutes: number; // avgWorkTime
+  // 총 좋아요 개수 추가 필요
 };

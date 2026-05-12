@@ -4,7 +4,10 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { InfoBar } from "@/components/mypage/InfoBar";
 import { MyPageTabs } from "@/components/mypage/MyPageTab";
 import { OptionLink } from "@/components/mypage/OptionLink";
-import { managelist } from "@/constants/mypage/servicelist.constant";
+import {
+  managelist,
+  servicelist,
+} from "@/constants/mypage/servicelist.constant";
 import { useMe } from "@/hooks/member";
 
 export function MyPage() {
@@ -13,7 +16,7 @@ export function MyPage() {
 
   return (
     <div className="relative">
-      <header className="rounded-tl-lg rounded-tr-lg bg-orange-500 p-[1rem]">
+      <header className="rounded-tl-lg rounded-tr-lg border-b-neutral-600 bg-orange-500 p-[1rem]">
         <InfoBar
           name={me?.member.name}
           nickname={me?.roleData.user?.nickname}
@@ -23,7 +26,7 @@ export function MyPage() {
       </header>
 
       <main>
-        <section className="py-4">
+        <section className="border-0.25 border-neutral-850 border-b py-4">
           {managelist.map((item) => {
             const isTicket = item.text === "크레딧 개수";
 
@@ -40,6 +43,13 @@ export function MyPage() {
                   isTicket ? () => setIsTicketDialogOpen(true) : item.onClick
                 }
               />
+            );
+          })}
+        </section>
+        <section className="py-4">
+          {servicelist.map((item) => {
+            return (
+              <OptionLink key={item.text} {...item} onClick={item.onClick} />
             );
           })}
         </section>
