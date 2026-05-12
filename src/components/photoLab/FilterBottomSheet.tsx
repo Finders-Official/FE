@@ -1,9 +1,5 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
-import UnderlineTabs from "@/components/common/UnderlineTabs";
-import Calendar from "@/components/photoLab/Calendar";
-import { calcVisibleRows } from "@/utils/calendar";
-import TimeSlotList from "@/components/photoLab/TimeSlotList";
 import RegionSelector from "@/components/photoLab/RegionSelector";
 import { TIME_SLOTS } from "@/constants/photoLab/timeSlots";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
@@ -31,7 +27,7 @@ interface FilterBottomSheetProps {
   onApply: (filter: FilterState) => void;
 }
 
-const TABS = [{ label: "날짜" }, { label: "지역별" }];
+//const TABS = [{ label: "날짜" }, { label: "지역별" }];
 
 export default function FilterBottomSheet({
   open,
@@ -39,7 +35,7 @@ export default function FilterBottomSheet({
   initialFilter,
   onApply,
 }: FilterBottomSheetProps) {
-  const [activeTab, setActiveTab] = useState(0);
+  //const [activeTab, setActiveTab] = useState(0);
 
   // 지역 데이터 API 조회
   const { data: regionData } = useRegionFilters();
@@ -95,10 +91,10 @@ export default function FilterBottomSheet({
   );
 
   // 오늘인데 모든 시간 슬롯이 지났으면 선택 불가
-  const isDateDisabled = useCallback((date: Date) => {
+  /* const isDateDisabled = useCallback((date: Date) => {
     const now = new Date();
     return isSameDay(date, now) && now.getHours() >= 20;
-  }, []);
+  }, []); */
 
   // 오늘이면 지난 시간 숨김 (선택 상태는 유지, 적용 시 정리)
   const filteredSlots = useMemo(() => {
@@ -110,11 +106,11 @@ export default function FilterBottomSheet({
   }, [selectedDate]);
 
   // 시간 토글 (복수 선택)
-  const handleTimeToggle = (time: string) => {
+  /* const handleTimeToggle = (time: string) => {
     setSelectedTimes((prev) =>
       prev.includes(time) ? prev.filter((t) => t !== time) : [...prev, time],
     );
-  };
+  }; */
 
   // 지역 서브 리전 토글
   const handleSubRegionToggle = (parentName: string, subRegion: string) => {
@@ -194,7 +190,7 @@ export default function FilterBottomSheet({
   };
 
   // 캘린더 viewDate (controlled)
-  const [viewDate, setViewDate] = useState(() => {
+  /* const [viewDate, setViewDate] = useState(() => {
     if (initialFilter?.date) return new Date(initialFilter.date);
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -206,7 +202,7 @@ export default function FilterBottomSheet({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return calcVisibleRows(viewDate, today);
-  }, [viewDate]);
+  }, [viewDate]); */
 
   // 화면 높이 상태
   const [vh, setVh] = useState(() => window.innerHeight);
@@ -222,12 +218,12 @@ export default function FilterBottomSheet({
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
-    const rowDiff = MAX_CALENDAR_ROWS - calendarRows;
+    const rowDiff = MAX_CALENDAR_ROWS;
     const contentHeightRem = CONTENT_BASE_HEIGHT_REM - rowDiff * ROW_HEIGHT_REM;
     const contentHeightPx = contentHeightRem * rootFontSize;
     const calculated = Math.min(92, (contentHeightPx / vh) * 100);
     return Math.max(70, calculated);
-  }, [vh, calendarRows]);
+  }, [vh]);
 
   return (
     <BottomSheet
@@ -240,49 +236,22 @@ export default function FilterBottomSheet({
     >
       <div className="flex h-full flex-col">
         {/* 탭 */}
-        <UnderlineTabs
+        {/* <UnderlineTabs
           tabs={TABS}
           activeIndex={activeTab}
           onChange={setActiveTab}
-        />
+        /> */}
 
         {/* 컨텐츠 영역 */}
-        <div
-          className={`min-h-0 flex-1 px-4 py-5 ${
-            activeTab === 0 ? "overflow-y-auto" : "overflow-hidden"
-          }`}
-        >
-          {activeTab === 0 ? (
-            // 날짜 탭
-            <div className="flex flex-col gap-5">
-              {/* 날짜 선택 제목 */}
-              <h3 className="text-neutral-0 text-[1.0625rem] leading-[155%] font-semibold tracking-[-0.02em]">
-                날짜를 선택해주세요.
-              </h3>
-              <Calendar
-                selectedDate={selectedDate}
-                onDateSelect={setSelectedDate}
-                viewDate={viewDate}
-                onViewDateChange={setViewDate}
-                isDateDisabled={isDateDisabled}
-              />
-              <TimeSlotList
-                slots={filteredSlots}
-                selectedTimes={selectedTimes}
-                onTimeToggle={handleTimeToggle}
-              />
-            </div>
-          ) : (
-            // 지역별 탭
-            <RegionSelector
-              regions={regions}
-              selectedRegions={selectedRegions}
-              displayedRegion={displayedRegion}
-              onRegionDisplay={setDisplayedRegion}
-              onSubRegionToggle={handleSubRegionToggle}
-              onRemoveSelection={handleRemoveSelection}
-            />
-          )}
+        <div className={"min-h-0 flex-1 overflow-hidden px-4 py-5"}>
+          <RegionSelector
+            regions={regions}
+            selectedRegions={selectedRegions}
+            displayedRegion={displayedRegion}
+            onRegionDisplay={setDisplayedRegion}
+            onSubRegionToggle={handleSubRegionToggle}
+            onRemoveSelection={handleRemoveSelection}
+          />
         </div>
 
         {/* 하단 버튼 영역 */}

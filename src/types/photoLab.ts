@@ -11,6 +11,17 @@ export interface PhotoLabItem {
   isFavorite: boolean;
 }
 
+// 현상소 아이템 -v2용 (GET /photo-labs 응답)
+export interface SimplePhotoLabItem {
+  photoLabId: number;
+  name: string;
+  address: string;
+  distanceKm: number | null;
+  imageUrls: string[];
+  isFavorite: boolean;
+  favoriteNum: number;
+}
+
 // 즐겨찾기 응답
 export interface PhotoLabFavoriteStatus {
   isFavorite: boolean;

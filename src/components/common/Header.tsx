@@ -1,6 +1,16 @@
 import type { ReactNode } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 
+type LeftAction =
+  | { type: "icon"; icon: ReactNode; onClick: () => void }
+  | {
+      type: "text";
+      text: string;
+      onClick: () => void;
+      disabled?: boolean;
+      loading?: boolean;
+    };
+
 type RightAction =
   | { type: "icon"; icon: ReactNode; onClick: () => void }
   | {
@@ -16,6 +26,7 @@ interface HeaderProps {
   className?: string;
   showBack?: boolean;
   onBack?: () => void;
+  leftAction?: LeftAction;
   rightAction?: RightAction;
 }
 
@@ -24,10 +35,38 @@ export default function Header({
   className = "",
   showBack = false,
   onBack,
+  leftAction,
   rightAction,
 }: HeaderProps) {
   const renderLeft = () => {
     if (!showBack) {
+      if (leftAction) {
+        if (leftAction.type === "icon") {
+          return (
+            <button
+              type="button"
+              onClick={leftAction.onClick}
+              className="flex h-6 w-6 items-center justify-center"
+            >
+              {leftAction.icon}
+            </button>
+          );
+        }
+
+        const isDisabled = leftAction.disabled || leftAction.loading;
+        return (
+          <button
+            type="button"
+            onClick={leftAction.onClick}
+            disabled={isDisabled}
+            className={`text-[0.9375rem] font-normal ${
+              isDisabled ? "text-neutral-600" : "text-orange-500"
+            }`}
+          >
+            {leftAction.loading ? "..." : leftAction.text}
+          </button>
+        );
+      }
       return <div className="h-6 w-6" />;
     }
     return (
