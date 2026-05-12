@@ -11,3 +11,6 @@ export { EmptyOrderState } from "./EmptyOrderState";
 //notice 폴더
 export { NoticeListItem } from "./notice/NoticeListItem";
 export { TabNavigation } from "./notice/TabNavigaton";
+
+//inquiry 폴더
+export { InquiryNoticeCard } from "./inquiry/InquiryNoticeCard";
