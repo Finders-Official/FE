@@ -4,12 +4,10 @@ import {
   TabHomeIcon,
   PhotoLabIcon,
   ChatIcon,
-  ManageIcon,
   MyPageIcon,
   TabHomeFillIcon,
   PhotoLabFillIcon,
   ChatFillIcon,
-  ManageFillIcon,
   MyPageFillIcon,
 } from "@/assets/icon";
 import type { TabItem } from "@/types/tab";
@@ -35,13 +33,6 @@ const tabs: (TabItem & { id?: string })[] = [
     label: "사진수다",
     icon: ChatIcon,
     activeIcon: ChatFillIcon,
-  },
-  {
-    id: "manage",
-    to: "/photoManage/main",
-    label: "현상 관리",
-    icon: ManageIcon,
-    activeIcon: ManageFillIcon,
   },
   {
     to: "/mypage",
@@ -105,8 +96,8 @@ export const TabBar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-6 py-5">
-      <nav className="grid h-full grid-cols-5 gap-1">
+    <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 py-6">
+      <nav className="grid h-full grid-cols-4">
         {tabs.map((tab) => {
           if (tab.id === "manage") {
             const Icon = isManageTabActive ? tab.activeIcon : tab.icon;
@@ -118,13 +109,13 @@ export const TabBar = () => {
                 onClick={onClickManage}
                 disabled={isChecking}
                 className={[
-                  "flex flex-col items-center justify-center active:scale-[0.99]",
+                  "flex flex-col items-center justify-center gap-1.5 active:scale-[0.99]",
                   isManageTabActive ? "text-orange-500" : "text-neutral-300",
                 ].join(" ")}
                 aria-label={tab.label}
               >
                 <Icon className="h-[1.5rem] w-[1.5rem]" />
-                <span className="mt-auto text-center text-xs">{tab.label}</span>
+                <span className="text-center text-xs">{tab.label}</span>
               </button>
             );
           }
@@ -138,13 +129,13 @@ export const TabBar = () => {
               type="button"
               onClick={() => onClickTab(tab.to)}
               className={[
-                "flex flex-col items-center justify-center active:scale-[0.99]",
+                "flex flex-col items-center justify-center gap-1.5 active:scale-[0.99]",
                 isActive ? "text-orange-500" : "text-neutral-300",
               ].join(" ")}
               aria-label={tab.label}
             >
               <Icon className="h-[1.5rem] w-[1.5rem]" />
-              <span className="mt-auto text-center text-xs">{tab.label}</span>
+              <span className="text-center text-xs">{tab.label}</span>
             </button>
           );
         })}
