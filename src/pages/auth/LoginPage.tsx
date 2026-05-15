@@ -1,4 +1,4 @@
-import { KakaoButton } from "@/components/auth";
+import { AppleButton, KakaoButton } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { Link, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
@@ -140,7 +140,9 @@ export function LoginPage() {
             key={ui.footerKey}
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
+              {/* TODO: 애플 로그인 및 회원가입 API 구현 */}
+              <AppleButton />
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
 
