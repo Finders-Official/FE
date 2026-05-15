@@ -1,15 +1,127 @@
-import { CTA_Button, TextArea } from "@/components/common";
-import { InquiryNoticeCard } from "@/components/mypage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CTA_Button, TextArea, ToastItem } from "@/components/common";
+import {
+  EmptyOrderState,
+  InquiryDropBox,
+  InquiryNoticeCard,
+} from "@/components/mypage";
+import type { InquiryOption } from "@/components/mypage/inquiry/InquiryDropBox";
+
+// 스텝 타입 정의
+type Step = "LIST" | "CREATE";
 
 export function InquiryPage() {
-  const [content, setContent] = useState("");
+  const [step, setStep] = useState<Step>("LIST");
+
   return (
     <div className="flex h-full flex-1 flex-col">
-      <main className="border-neutral-875 flex flex-col gap-4 border-b py-4">
+      {step === "LIST" ? (
+        <InquiryListView onGoToCreate={() => setStep("CREATE")} />
+      ) : (
+        <InquiryCreateView
+          onSubmit={() => {
+            // TODO: API 전송 로직
+            // 전송 성공 후 다시 리스트로 돌아가기
+            setStep("LIST");
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ==========================================
+// 1. 문의 내역 리스트 화면
+// ==========================================
+function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
+  // TODO: API에서 받아온 문의 내역 데이터
+  const hasInquiries = true;
+
+  return (
+    <>
+      <main className="flex flex-1 flex-col overflow-y-auto py-4">
+        {!hasInquiries ? (
+          <div className="flex flex-col gap-2">
+            {/* 이미지에 있는 문의내역 아코디언 아이템들이 들어갈 자리 */}
+            <div className="p-4 text-center text-neutral-400">
+              {/* TODO: 문의 리스트 컴포넌트 */}
+            </div>
+          </div>
+        ) : (
+          <EmptyOrderState description="아직 등록된 공지가 없어요" />
+        )}
+      </main>
+
+      <footer className="border-neutral-850 mt-auto border-t py-5">
+        <CTA_Button
+          size="xlarge"
+          text="문의하기"
+          color="orange"
+          onClick={onGoToCreate} // 클릭 시 CREATE 뷰로 전환
+        />
+      </footer>
+    </>
+  );
+}
+
+// ==========================================
+// 2. 문의 작성 화면
+// ==========================================
+export function InquiryCreateView({ onSubmit }: { onSubmit: () => void }) {
+  const [content, setContent] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedInquiry, setSelectedInquiry] = useState<InquiryOption | null>(
+    null,
+  );
+
+  // 토스트 메시지 상태
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const isContentValid = content.length >= 20;
+
+  // 토스트 타이머 관리: 메시지가 생기면 3초 뒤에 삭제
+  useEffect(() => {
+    if (!toastMessage) return;
+
+    const timer = setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
+
+  const handleSubmitClick = () => {
+    // 1. 문의 유형 선택 안 했을 때
+    if (!selectedInquiry) {
+      setToastMessage("문의 유형을 선택해 주세요.");
+      return;
+    }
+
+    // 2. 내용이 20자 미만일 때
+    if (!isContentValid) {
+      setToastMessage("문의 내용을 20자 이상 입력해 주세요.");
+      return;
+    }
+
+    // 통과 시 실제 제출 로직 실행
+    onSubmit();
+  };
+
+  return (
+    <>
+      <main className="border-neutral-875 relative flex flex-1 flex-col gap-4 overflow-y-auto border-b py-4">
         {/* 문의 유형 */}
-        <section className="gap2 flex flex-col">
+        <section className="flex flex-col gap-2">
           <label className="text-[0.9rem] text-neutral-200">문의 유형</label>
+          <InquiryDropBox
+            value={selectedInquiry}
+            isOpen={isOpen}
+            onToggle={() => setIsOpen((prev) => !prev)}
+            onSelect={(option) => {
+              setSelectedInquiry(option);
+              setIsOpen(false);
+            }}
+          />
         </section>
 
         {/* 문의 내용 */}
@@ -24,13 +136,27 @@ export function InquiryPage() {
             emptyHint="min"
           />
         </section>
+
+        <section className="py-2">
+          <InquiryNoticeCard />
+        </section>
+
+        {/* 토스트 렌더링 영역 */}
+        {toastMessage && (
+          <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
+            <ToastItem message={toastMessage} />
+          </div>
+        )}
       </main>
-      <section className="px-4 py-6">
-        <InquiryNoticeCard />
-      </section>
+
       <footer className="border-neutral-850 mt-auto border-t py-5">
-        <CTA_Button size="xlarge" text="문의하기" color="black" />
+        <CTA_Button
+          size="xlarge"
+          text="문의하기"
+          color={isContentValid && selectedInquiry ? "orange" : "black"}
+          onClick={handleSubmitClick}
+        />
       </footer>
-    </div>
+    </>
   );
 }
