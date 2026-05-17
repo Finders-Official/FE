@@ -9,7 +9,6 @@ import {
   usePhotoLabList,
   useFavoriteToggle,
 } from "@/hooks/photoLab";
-import { displayTimesToApiTimes } from "@/utils/time";
 import type { FilterState } from "@/types/photoLab";
 
 export default function PhotoLabPage() {
@@ -37,17 +36,16 @@ export default function PhotoLabPage() {
   }); */
 
   // 현상소 목록 조회
-  // TODO: 백엔드에 api 변경 요청 (좋아요 수 추가, 정렬 기준: 저장 개수 많은 순 -> 사용자 위치 기반 거리 가까운 순 )
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePhotoLabList(
       {
-        tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+        //tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
         regionIds: filter.regionIds,
-        date: filter.date,
+        /* date: filter.date,
         time:
           filter.time && filter.time.length > 0
             ? displayTimesToApiTimes(filter.time)
-            : undefined,
+            : undefined, */
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },
@@ -124,7 +122,7 @@ export default function PhotoLabPage() {
         }}
         rightAction={{
           type: "icon",
-          icon: <FilterIcon className="h-5 w-5 text-neutral-200" />, //TODO: Filter 아이콘 변경
+          icon: <FilterIcon className="h-5 w-5 text-neutral-200" />,
           onClick: () => setIsFilterOpen(true),
         }}
       />

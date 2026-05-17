@@ -44,7 +44,7 @@ export default function SimpleLabCard({
     >
       <div className="flex gap-3.5 border-b border-neutral-800 pb-5">
         {/* 썸네일 */}
-        {lab.imageUrls.length > 0 ? (
+        {lab.imageUrls != null ? (
           <img
             src={lab.imageUrls[0]}
             alt={`${lab.name} 이미지`}
@@ -79,7 +79,7 @@ export default function SimpleLabCard({
           </div>
 
           {/* 즐겨찾기 */}
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center justify-center gap-1">
             <button
               type="button"
               onClick={handleFavoriteClick}
@@ -93,7 +93,7 @@ export default function SimpleLabCard({
               )}
             </button>
             <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
-              {lab.favoriteNum}
+              {lab.favoriteCount}
             </p>
           </div>
         </div>

@@ -15,11 +15,11 @@ export interface PhotoLabItem {
 export interface SimplePhotoLabItem {
   photoLabId: number;
   name: string;
+  imageUrls: string[];
   address: string;
   distanceKm: number | null;
-  imageUrls: string[];
   isFavorite: boolean;
-  favoriteNum: number;
+  favoriteCount: number;
 }
 
 // 즐겨찾기 응답
