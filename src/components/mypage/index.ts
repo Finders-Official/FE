@@ -14,3 +14,5 @@ export { TabNavigation } from "./notice/TabNavigaton";
 
 //inquiry 폴더
 export { InquiryNoticeCard } from "./inquiry/InquiryNoticeCard";
+export { InquiryDropBox } from "./inquiry/InquiryDropBox";
+export { InquiryListItem } from "./inquiry/InquiryListItem";
