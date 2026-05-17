@@ -22,6 +22,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
   const starColorClass = isFavorite
     ? "fill-orange-500 text-orange-500"
     : "fill-none text-white";
+  console.log(photoLab.favoriteCount);
 
   return (
     <div className="mt-2 border-b border-neutral-800 py-4">
@@ -42,8 +43,10 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
             onToggleLike?.(photoLab.id, photoLab.isFavorite);
           }}
         >
-          <StarIcon className={`h-6 w-6 ${starColorClass}`} />
-          {/* <p className="text-[0.725rem] text-neutral-400">{photoLab.totalFavorites}</p> */}
+          <StarIcon className={`h-5 w-5 ${starColorClass}`} />
+          <p className="text-[0.725rem] text-neutral-400">
+            {photoLab?.favoriteCount}
+          </p>
         </button>
 
         <Link
@@ -67,7 +70,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
               {/* 주소 + 거리 */}
               <section className="mt-1 flex items-center gap-1 text-[0.85rem] font-light text-neutral-200">
                 <span>{photoLab.address}</span>
-                <span>({photoLab.distanceText}km)</span>
+                <span>({photoLab.distanceKm}km)</span>
               </section>
             </section>
           </div>

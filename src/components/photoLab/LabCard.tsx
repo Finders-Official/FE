@@ -72,9 +72,9 @@ export default function LabCard({
           {/* 상세 정보 */}
           <div className="flex flex-col gap-1.5">
             {/* 태그 */}
-            {lab.tags.length > 0 && (
+            {lab.tags?.length > 0 && (
               <div className="flex items-center gap-1 px-1">
-                {lab.tags.map((tag) => (
+                {lab.tags?.map((tag) => (
                   <TagBadge key={tag} label={tag} />
                 ))}
               </div>

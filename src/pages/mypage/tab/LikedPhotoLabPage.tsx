@@ -42,12 +42,10 @@ export function LikedPhotoLabPage() {
         id: l.photoLabId,
         name: l.name,
         imageUrls: l.imageUrls,
-        tags: l.tags,
         address: l.address,
-        distanceText: l.distance,
+        distanceKm: l.distanceKm,
         isFavorite,
-        totalWorkCount: l.totalWorkCount,
-        estimatedMinutes: l.avgWorkTime,
+        favoriteCount: l.favoriteCount,
       };
     });
   }, [labsDto, favoriteOverrideById]);
