@@ -3,9 +3,51 @@ import { CTA_Button, TextArea, ToastItem } from "@/components/common";
 import {
   EmptyOrderState,
   InquiryDropBox,
+  InquiryListItem,
   InquiryNoticeCard,
 } from "@/components/mypage";
 import type { InquiryOption } from "@/components/mypage/inquiry/InquiryDropBox";
+import type { InquiryItem } from "@/types/mypage/inquiry";
+
+const MOCK_INQUIRIES: InquiryItem[] = [
+  {
+    id: 1,
+    type: "SERVICE_ERROR",
+    content: "문의 내용은 다음과 같습니다.\n좋은하루 되세요. 감사합니다.",
+    status: "PENDING",
+    createdAt: "2025-01-01T10:00:00Z",
+    hasReply: false,
+  },
+  {
+    id: 2,
+    type: "ACCOUNT_INFO",
+    content: "회원정보 변경을 요청합니다.\n확인 후 처리 부탁드립니다.",
+    status: "COMPLETED",
+    createdAt: "2025-01-02T11:00:00Z",
+    hasReply: true,
+    replyContent: "답변 내용은 다음과 같습니다.\n좋은하루 되세요. 감사합니다.",
+    replyCreatedAt: "2025-01-03T09:00:00Z",
+  },
+  {
+    id: 3,
+    type: "PROMOTION",
+    content: "친구 초대 크레딧이 아직 안 들어왔어요.\n언제 지급되나요?",
+    status: "PENDING",
+    createdAt: "2025-01-04T15:30:00Z",
+    hasReply: false,
+  },
+  {
+    id: 4,
+    type: "PAYMENT",
+    content: "어제 결제한 건이 중복 결제된 것 같습니다.\n환불 부탁드립니다.",
+    status: "COMPLETED",
+    createdAt: "2025-01-05T08:20:00Z",
+    hasReply: true,
+    replyContent:
+      "중복 결제 내역 확인되어 환불 처리 완료했습니다.\n이용에 불편을 드려 죄송합니다.",
+    replyCreatedAt: "2025-01-05T14:10:00Z",
+  },
+];
 
 // 스텝 타입 정의
 type Step = "LIST" | "CREATE";
@@ -35,24 +77,29 @@ export function InquiryPage() {
 // ==========================================
 function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
   // TODO: API에서 받아온 문의 내역 데이터
-  const hasInquiries = true;
+  const hasInquiries = MOCK_INQUIRIES.length > 0;
 
   return (
     <>
-      <main className="flex flex-1 flex-col overflow-y-auto py-4">
-        {!hasInquiries ? (
+      <main className="flex flex-1 flex-col overflow-y-auto">
+        {hasInquiries ? (
           <div className="flex flex-col gap-2">
             {/* 이미지에 있는 문의내역 아코디언 아이템들이 들어갈 자리 */}
-            <div className="p-4 text-center text-neutral-400">
-              {/* TODO: 문의 리스트 컴포넌트 */}
+            <div className="text-center text-neutral-400">
+              {/*  목 데이터를 순회하며 아이템 컴포넌트 렌더링 */}
+              {MOCK_INQUIRIES.map((inquiry) => (
+                <InquiryListItem key={inquiry.id} item={inquiry} />
+              ))}
             </div>
           </div>
         ) : (
-          <EmptyOrderState description="아직 등록된 공지가 없어요" />
+          <div className="flex flex-1 items-center justify-center">
+            <EmptyOrderState description="파인더스 서비스에 대한\n 문의를 남겨보세요." />
+          </div>
         )}
       </main>
 
-      <footer className="border-neutral-850 mt-auto border-t py-5">
+      <footer className="border-neutral-850 sticky bottom-0 z-10 shrink-0 border-t bg-neutral-900 py-5">
         <CTA_Button
           size="xlarge"
           text="문의하기"
