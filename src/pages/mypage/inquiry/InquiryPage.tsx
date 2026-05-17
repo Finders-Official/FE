@@ -6,8 +6,8 @@ import {
   InquiryListItem,
   InquiryNoticeCard,
 } from "@/components/mypage";
-import type { InquiryOption } from "@/components/mypage/inquiry/InquiryDropBox";
-import type { InquiryItem } from "@/types/mypage/inquiry";
+
+import type { InquiryItem, InquiryOption } from "@/types/mypage/inquiry";
 
 const MOCK_INQUIRIES: InquiryItem[] = [
   {
