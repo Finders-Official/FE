@@ -113,7 +113,7 @@ export function LikedPhotoLabPage() {
 
   return (
     //이 페이지 자체가 스크롤을 만들지 않게 루트에서 차단
-    <div className="flex min-h-0 flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       <main
         className={[
           "flex min-h-0 flex-1 flex-col gap-1",
