@@ -1,12 +1,6 @@
 import { useState } from "react";
 import type { PhotoLabDetail } from "@/types/photoLab";
-import {
-  StarIcon,
-  StarFillIcon,
-  BriefcaseIcon,
-  ClockIcon,
-} from "@/assets/icon";
-import TagBadge from "../TagBadge";
+import { StarIcon, StarFillIcon } from "@/assets/icon";
 
 interface LabBasicInfoProps {
   lab: PhotoLabDetail;
@@ -58,13 +52,13 @@ export default function LabBasicInfo({
         {/* 상세 정보 */}
         <div className="flex flex-col gap-1.5">
           {/* 태그 */}
-          {lab.tags.length > 0 && (
+          {/* {lab.tags.length > 0 && (
             <div className="flex items-center gap-1 px-1">
               {lab.tags.map((tag) => (
                 <TagBadge key={tag} label={tag} />
               ))}
             </div>
-          )}
+          )} */}
 
           {/* 주소 및 통계 */}
           <div className="flex flex-col gap-1">
@@ -81,9 +75,9 @@ export default function LabBasicInfo({
             </div>
 
             {/* 작업 건수 + 소요시간 */}
-            <div className="flex items-center gap-2">
-              {/* 작업 건수 */}
-              <div className="flex items-center gap-1">
+            {/* <div className="flex items-center gap-2"> */}
+            {/* 작업 건수 */}
+            {/* <div className="flex items-center gap-1">
                 <div className="flex items-center">
                   <div className="flex h-6 w-6 items-center justify-center">
                     <BriefcaseIcon className="h-3 w-3 text-neutral-300" />
@@ -95,10 +89,10 @@ export default function LabBasicInfo({
                 <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
                   {lab.workCount}건
                 </span>
-              </div>
+              </div> */}
 
-              {/* 소요시간 */}
-              {lab.avgWorkTime !== null && (
+            {/* 소요시간 */}
+            {/* {lab.avgWorkTime !== null && (
                 <div className="flex items-center gap-1">
                   <div className="flex items-center">
                     <div className="flex h-6 w-6 items-center justify-center">
@@ -113,7 +107,7 @@ export default function LabBasicInfo({
                   </span>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

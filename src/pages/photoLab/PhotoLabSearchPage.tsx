@@ -1,11 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { SearchBar, FilterContainer } from "@/components/common";
-import {
-  FilterTagList,
-  LabList,
-  FilterBottomSheet,
-} from "@/components/photoLab";
+import { SearchBar } from "@/components/common";
+import { LabList } from "@/components/photoLab";
 import {
   PopularLabSection,
   PopularLabSkeleton,
@@ -22,10 +18,7 @@ import {
   useGeolocation,
   useSearchPreview,
 } from "@/hooks/photoLab";
-import { displayTimesToApiTimes } from "@/utils/time";
-import { formatFilterValue } from "@/utils/filterFormat";
 import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
-import { usePhotoLabFilter } from "@/store/usePhotoLabFilter.store";
 
 export default function PhotoLabSearchPage() {
   const navigate = useNavigate();
@@ -66,9 +59,9 @@ export default function PhotoLabSearchPage() {
   const [isRecentExpanded, setIsRecentExpanded] = useState(false);
 
   // 필터 상태 (목록 페이지와 공유)
-  const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
+  /* const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
     usePhotoLabFilter();
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); */
 
   // 검색 미리보기 (경량 API)
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
@@ -90,13 +83,13 @@ export default function PhotoLabSearchPage() {
     usePhotoLabList(
       {
         q: searchQuery || undefined,
-        tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+        /* tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
         regionIds: filter.regionIds,
         date: filter.date,
         time:
           filter.time && filter.time.length > 0
             ? displayTimesToApiTimes(filter.time)
-            : undefined,
+            : undefined, */
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },
@@ -125,7 +118,7 @@ export default function PhotoLabSearchPage() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const filterValue = formatFilterValue(filter);
+  /* const filterValue = formatFilterValue(filter); */
 
   // 뒤로가기: 검색 결과 → 검색 입력, 검색 입력 → 현상소 목록
   const handleBack = () => {
@@ -166,13 +159,13 @@ export default function PhotoLabSearchPage() {
     navigate(`/photolab/${photoLabId}`);
   };
 
-  const handleTagToggle = (tagId: number) => {
+  /* const handleTagToggle = (tagId: number) => {
     setSelectedTagIds((prev) =>
       prev.includes(tagId)
         ? prev.filter((id) => id !== tagId)
         : [...prev, tagId],
     );
-  };
+  }; */
 
   return (
     <div className="flex w-full flex-col">
@@ -231,7 +224,7 @@ export default function PhotoLabSearchPage() {
       {isResultsState && (
         <>
           {/* 필터 섹션 */}
-          <div className="sticky top-0 z-10 bg-neutral-900">
+          {/* <div className="sticky top-0 z-10 bg-neutral-900">
             <div className="flex flex-col gap-4 pb-6">
               <FilterContainer
                 label="날짜 / 지역"
@@ -244,7 +237,7 @@ export default function PhotoLabSearchPage() {
               />
             </div>
             <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
-          </div>
+          </div> */}
 
           {/* 검색 결과 목록 */}
           <LabList
@@ -262,12 +255,12 @@ export default function PhotoLabSearchPage() {
       )}
 
       {/* 필터 바텀시트 (vh 초기값 유지) */}
-      <FilterBottomSheet
+      {/* <FilterBottomSheet
         open={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
         initialFilter={filter}
         onApply={setFilter}
-      />
+      /> */}
     </div>
   );
 }
