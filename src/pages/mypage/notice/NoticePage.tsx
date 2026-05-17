@@ -8,23 +8,23 @@ import { useCallback, useEffect, useState } from "react";
 const MOCK_DATA: Record<NoticeType, NoticeItem[]> = {
   GENERAL: Array.from({ length: 5 }, (_, i) => ({
     id: i + 1,
-    noticeTitle: `[공지] 파인더스 새로워진 검색 서비스 안내 (${i + 1})`,
-    noticeType: "GENERAL",
-    startDate: "2026.05.12",
+    title: `[공지] 파인더스 새로워진 검색 서비스 안내 (${i + 1})`,
+    type: "GENERAL",
+    createdAt: "2026.05.12",
     isNew: i < 2,
   })),
   EVENT: Array.from({ length: 5 }, (_, i) => ({
     id: i + 10,
-    noticeTitle: `[이벤트] 5월 한정 포토랩 할인 쿠폰 증정 (${i + 1})`,
-    noticeType: "EVENT",
-    startDate: "2026.05.10",
+    title: `[이벤트] 5월 한정 포토랩 할인 쿠폰 증정 (${i + 1})`,
+    type: "EVENT",
+    createdAt: "2026.05.10",
     isNew: true,
   })),
   POLICY: Array.from({ length: 5 }, (_, i) => ({
     id: i + 20,
-    noticeTitle: `[안내] 개인정보 처리방침 개정 알림 (${i + 1})`,
-    noticeType: "POLICY",
-    startDate: "2026.05.01",
+    title: `[안내] 개인정보 처리방침 개정 알림 (${i + 1})`,
+    type: "POLICY",
+    createdAt: "2026.05.01",
     isNew: false,
   })),
 };
@@ -76,7 +76,7 @@ export function NoticePage() {
         ) : noticeList.length > 0 ? (
           // 리스트 렌더링
           noticeList.map((notice) => (
-            <NoticeListItem key={notice?.photoLabId} data={notice} />
+            <NoticeListItem key={notice?.id} data={notice} />
           ))
         ) : (
           // 데이터가 없을 떄
