@@ -47,6 +47,9 @@ export default function LabBasicInfo({
               <StarIcon className="h-[1.125rem] w-[1.125rem] text-neutral-300" />
             )}
           </button>
+          <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
+            {lab.favoriteCount}
+          </p>
         </div>
 
         {/* 상세 정보 */}

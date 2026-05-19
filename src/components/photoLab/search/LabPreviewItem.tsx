@@ -1,16 +1,45 @@
+import { StarFillIcon, StarIcon } from "@/assets/icon";
 import type { LabPreview } from "@/types/photoLabSearch";
+import { useState } from "react";
 
 interface LabPreviewItemProps {
   lab: LabPreview;
   onClick?: () => void;
+  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
 }
 
-export default function LabPreviewItem({ lab, onClick }: LabPreviewItemProps) {
+export default function LabPreviewItem({
+  lab,
+  onClick,
+  onFavoriteToggle,
+}: LabPreviewItemProps) {
+  // Optimistic
+  const [prevFavorite, setPrevFavorite] = useState(lab.isFavorite);
+  const [isFavorite, setIsFavorite] = useState(lab.isFavorite);
+
+  if (lab.isFavorite !== prevFavorite) {
+    setPrevFavorite(lab.isFavorite);
+    setIsFavorite(lab.isFavorite);
+  }
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsFavorite((prev) => !prev);
+    onFavoriteToggle?.(lab.photoLabId, lab.isFavorite);
+  };
+
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className="flex w-full items-center gap-3.5 py-[1rem] first:pt-0"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      className="flex w-full cursor-pointer items-center gap-3.5 py-[1rem] first:pt-0"
     >
       {/* 이미지 */}
       {lab.imageUrl ? (
@@ -32,6 +61,25 @@ export default function LabPreviewItem({ lab, onClick }: LabPreviewItemProps) {
           {lab.address}
         </span>
       </div>
-    </button>
+
+      {/* 즐겨찾기 */}
+      <div className="flex flex-col items-center justify-center gap-1">
+        <button
+          type="button"
+          onClick={handleFavoriteClick}
+          className="flex h-6 w-6 shrink-0 items-center justify-center"
+          aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+        >
+          {isFavorite ? (
+            <StarFillIcon className="h-6 w-6" />
+          ) : (
+            <StarIcon className="h-[1.125rem] w-[1.125rem] text-neutral-300" />
+          )}
+        </button>
+        <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
+          {lab.favoriteCount}
+        </p>
+      </div>
+    </div>
   );
 }

@@ -21,4 +21,6 @@ export interface LabPreview {
   name: string;
   address: string;
   imageUrl: string | null;
+  isFavorite: boolean;
+  favoriteCount: number;
 }

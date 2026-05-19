@@ -6,6 +6,7 @@ import {
   PopularLabSection,
   PopularLabSkeleton,
   RecentSearchSection,
+  KeywordSuggestionSection,
   LabPreviewSection,
   LabPreviewSkeleton,
 } from "@/components/photoLab/search";
@@ -17,6 +18,7 @@ import {
   useFavoriteToggle,
   useGeolocation,
   useSearchPreview,
+  useAutocomplete,
 } from "@/hooks/photoLab";
 import { SEARCH_DEBOUNCE_MS } from "@/constants/photoLab";
 
@@ -77,6 +79,19 @@ export default function PhotoLabSearchPage() {
     },
     !isResultsState,
   );
+
+  // 연관 검색어 API 연동 (useAutocomplete 내부에서 디바운스 처리하므로 원본 query 전달)
+  const { data: keywordSuggestions = [] } = useAutocomplete(
+    isResultsState ? "" : query,
+  );
+
+  // 연관 검색어 선택시 검색어로 이동
+  const handleSuggestionClick = (keyword: string) => {
+    addSearch(keyword);
+    navigate(`/photolab/search?q=${encodeURIComponent(keyword)}`, {
+      replace: true,
+    });
+  };
 
   // 검색 결과 API 연동
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -212,10 +227,17 @@ export default function PhotoLabSearchPage() {
           {isPreviewPending && !isPreviewStale ? (
             <LabPreviewSkeleton />
           ) : (
-            <LabPreviewSection
-              labs={filteredLabPreviews}
-              onLabClick={handleLabClick}
-            />
+            <div className="flex flex-col gap-0">
+              <KeywordSuggestionSection
+                keywords={keywordSuggestions}
+                query={query}
+                onKeywordClick={handleSuggestionClick}
+              />
+              <LabPreviewSection
+                labs={filteredLabPreviews}
+                onLabClick={handleLabClick}
+              />
+            </div>
           )}
         </div>
       )}
