@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import Header from "@/components/mainPage/Header";
 import PromotionBanner from "@/components/mainPage/PromotionBanner";
-import QuickMenuButton from "@/components/mainPage/QuickMenuButton";
 import PopularLabsSection from "@/components/mainPage/PopularLabsSection/PopularLabsSection";
 import FilmNewsSection from "@/components/mainPage/FilmNewsSection/FilmNewsSection";
 import CommunityGallerySection from "@/components/mainPage/ComunityGallarySection/CommunityGallerySection";
@@ -50,9 +49,6 @@ export default function MainPage() {
       >
         <SectionWrapper id="promotion">
           <PromotionBanner />
-        </SectionWrapper>
-        <SectionWrapper id="quick-menu">
-          <QuickMenuButton />
         </SectionWrapper>
         <SectionWrapper id="popular-labs">
           <PopularLabsSection />
