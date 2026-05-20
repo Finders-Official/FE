@@ -44,7 +44,7 @@ export default function MainPage() {
       <Header />
       <div
         ref={scrollRef}
-        className="scrollbar-hide flex-1 overflow-y-auto overscroll-y-none pb-[env(safe-area-inset-bottom)]"
+        className="scrollbar-hide flex-1 overflow-y-auto overscroll-y-none pb-(--tabbar-height)"
       >
         <SectionWrapper id="promotion">
           <PromotionBanner />
