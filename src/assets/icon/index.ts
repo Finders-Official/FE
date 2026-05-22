@@ -57,6 +57,7 @@ export { default as KakaoIcon } from "./kakao.svg?react";
 
 // Fill 아이콘
 export { default as BriefcaseFillIcon } from "./briefcase-fill.svg?react";
+export { default as CameraIcon } from "./camera.svg?react";
 export { default as CalendarFillIcon } from "./calendar-fill.svg?react";
 export { default as ChatFillIcon } from "./tab-chat-bubble-fill.svg?react";
 export { default as CheckCircleIcon } from "./check-circle.svg?react";
@@ -72,6 +73,7 @@ export { default as FloatingIcon } from "./floating.svg?react";
 export { default as HeartFillIcon } from "./heart-fill.svg?react";
 export { default as KakaoFillIcon } from "./kakao-fill.svg?react";
 export { default as ManageFillIcon } from "./tab-camera-fill.svg?react";
+export { default as MyPageFilmIcon } from "./mypage-film.svg?react";
 export { default as MyPageFillIcon } from "./mypage-fill.svg?react";
 export { default as PackageIcon } from "./package.svg?react";
 export { default as PaperAirplaneFillIcon } from "./paper-airplane-fill.svg?react";
