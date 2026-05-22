@@ -50,6 +50,7 @@ import ReservationPage from "@/pages/photoLab/ReservationPage";
 
 // 마이페이지
 import {
+  DeviceRegisterPage,
   EditInfoPage,
   EventNoticePage,
   InquiryPage,
@@ -237,6 +238,11 @@ const mypageRoutes = [
     path: "inquiry",
     Component: InquiryPage,
     handle: h({ title: "1:1 문의게시판" }),
+  },
+  {
+    path: "device",
+    Component: DeviceRegisterPage,
+    handle: h({ title: "내 장비 등록하기" }),
   },
 ];
 
