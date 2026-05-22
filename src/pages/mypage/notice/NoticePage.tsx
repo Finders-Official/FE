@@ -67,9 +67,9 @@ export function NoticePage() {
   }, [activeTab, fetchNotices]);
 
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className="mt-2">
+      <main className="mt-2 flex flex-1 flex-col">
         {isLoading ? (
           // 로딩 상태
           <LoadingSpinner open={isLoading} />
@@ -80,7 +80,9 @@ export function NoticePage() {
           ))
         ) : (
           // 데이터가 없을 떄
-          <EmptyOrderState description="아직 등록된 공지가 없어요" />
+          <div className="flex flex-1">
+            <EmptyOrderState description="아직 등록된 공지가 없어요" />
+          </div>
         )}
       </main>
     </div>
