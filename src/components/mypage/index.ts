@@ -16,3 +16,7 @@ export { TabNavigation } from "./notice/TabNavigaton";
 export { InquiryNoticeCard } from "./inquiry/InquiryNoticeCard";
 export { InquiryDropBox } from "./inquiry/InquiryDropBox";
 export { InquiryListItem } from "./inquiry/InquiryListItem";
+
+//device 폴더
+export { DeviceItem } from "./device/DeviceItem";
+export { SpecButton } from "./device/SpecButton";
