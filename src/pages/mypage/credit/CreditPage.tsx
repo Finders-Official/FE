@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import {
   CreditBalanceCard,
   CreditHistoryList,
+  CreditInfoDialog,
   CreditProductList,
 } from "@/components/credit";
 import {
@@ -23,6 +25,7 @@ export function CreditPage() {
   const [params, setParams] = useSearchParams();
   const tab = parseTab(params.get("tab"));
   const activeIndex = tab === "buy" ? 0 : 1;
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   const handleTabChange = (index: number) => {
     setParams(
@@ -37,7 +40,14 @@ export function CreditPage() {
 
   return (
     <div className="flex flex-col pb-6">
-      <CreditBalanceCard balance={MOCK_CURRENT_CREDIT} onInfoClick={() => {}} />
+      <CreditBalanceCard
+        balance={MOCK_CURRENT_CREDIT}
+        onInfoClick={() => setIsInfoOpen(true)}
+      />
+      <CreditInfoDialog
+        isOpen={isInfoOpen}
+        onClose={() => setIsInfoOpen(false)}
+      />
       <div className="-mx-4">
         <UnderlineTabs
           tabs={TABS}
