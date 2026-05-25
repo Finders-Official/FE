@@ -4,6 +4,7 @@ import { CTA_Button } from "@/components/common";
 import {
   CardSelectBottomSheet,
   CardSelectButton,
+  EasyPayRadioList,
   PaymentMethodTabs,
   PaymentOrdererSection,
   PaymentProductSection,
@@ -13,7 +14,7 @@ import {
 import { CREDIT_CARD_OPTIONS } from "@/constants/payment/payment.constant";
 import { MOCK_ORDERER } from "@/constants/payment/payment.mock";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
-import type { PaymentMethod } from "@/types/payment";
+import type { EasyPayProvider, PaymentMethod } from "@/types/payment";
 
 export function PaymentPage() {
   const [product] = useState(() => usePaymentOrderStore.getState().product);
@@ -21,6 +22,7 @@ export function PaymentPage() {
 
   const [method, setMethod] = useState<PaymentMethod>("CARD");
   const [cardId, setCardId] = useState<string | null>(null);
+  const [easyPayId, setEasyPayId] = useState<EasyPayProvider | null>(null);
   const [isCardSheetOpen, setIsCardSheetOpen] = useState(false);
 
   useEffect(() => {
@@ -43,13 +45,18 @@ export function PaymentPage() {
         <PaymentProductSection product={product} />
 
         <PaymentSection title="결제 수단">
-          <div className="flex flex-col gap-2">
+          <div
+            className={`flex flex-col ${method === "EASY_PAY" ? "gap-4" : "gap-2"}`}
+          >
             <PaymentMethodTabs value={method} onChange={setMethod} />
             {method === "CARD" && (
               <CardSelectButton
                 selectedName={selectedCardName}
                 onClick={() => setIsCardSheetOpen(true)}
               />
+            )}
+            {method === "EASY_PAY" && (
+              <EasyPayRadioList value={easyPayId} onChange={setEasyPayId} />
             )}
           </div>
         </PaymentSection>
