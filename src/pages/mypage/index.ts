@@ -20,3 +20,6 @@ export { SimpleNoticePage } from "./notice/SimpleNoticePage";
 
 //inquiry 폴더
 export { InquiryPage } from "./inquiry/InquiryPage";
+
+// device
+export { DeviceRegisterPage } from "./DeviceRegisterPage";
