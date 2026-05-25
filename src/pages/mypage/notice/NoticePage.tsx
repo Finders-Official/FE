@@ -2,39 +2,13 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { EmptyOrderState } from "@/components/mypage";
 import { NoticeListItem } from "@/components/mypage/notice/NoticeListItem";
 import { TabNavigation } from "@/components/mypage/notice/TabNavigaton";
-import type { NoticeItem, NoticeType, TabName } from "@/types/mypage/notice";
-import { useCallback, useEffect, useState } from "react";
-
-const MOCK_DATA: Record<NoticeType, NoticeItem[]> = {
-  GENERAL: Array.from({ length: 5 }, (_, i) => ({
-    id: i + 1,
-    title: `[공지] 파인더스 새로워진 검색 서비스 안내 (${i + 1})`,
-    type: "GENERAL",
-    createdAt: "2026.05.12",
-    isNew: i < 2,
-  })),
-  EVENT: Array.from({ length: 5 }, (_, i) => ({
-    id: i + 10,
-    title: `[이벤트] 5월 한정 포토랩 할인 쿠폰 증정 (${i + 1})`,
-    type: "EVENT",
-    createdAt: "2026.05.10",
-    isNew: true,
-  })),
-  POLICY: Array.from({ length: 5 }, (_, i) => ({
-    id: i + 20,
-    title: `[안내] 개인정보 처리방침 개정 알림 (${i + 1})`,
-    type: "POLICY",
-    createdAt: "2026.05.01",
-    isNew: false,
-  })),
-};
+import { useGetNoticeList } from "@/hooks/my";
+import type { NoticeType, TabName } from "@/types/mypage/notice";
+import { useState } from "react";
 
 export function NoticePage() {
   // useState에 제네릭으로 타입을 지정
   const [activeTab, setActiveTab] = useState<TabName>("일반공지");
-  const [noticeList, setNoticeList] = useState<NoticeItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
   // 파라미터에 tabName 지정으로 any 타입 방지
   const getNoticeType = (tabName: TabName): NoticeType => {
     switch (tabName) {
@@ -49,22 +23,14 @@ export function NoticePage() {
     }
   };
 
-  // API 호출 로직 (Mock 데이터 용)
-  const fetchNotices = useCallback(async (tabName: TabName) => {
-    setIsLoading(true);
+  const currentType = getNoticeType(activeTab);
 
-    // API 호출 시뮬레이션 (네트워크 지연 0.3초)
-    await new Promise((resolve) => setTimeout(resolve, 300));
+  // 💡 API 호출 (React Query가 로딩, 에러, 캐싱을 모두 자동 관리)
+  // 탭이 바뀔 때마다 currentType이 변경되어 자동으로 새 데이터를 불러옵니다.
+  const { data: response, isLoading } = useGetNoticeList(currentType, 0, 10); // TODO: isError 처리 넣기
 
-    const type = getNoticeType(tabName);
-    setNoticeList(MOCK_DATA[type]);
-    setIsLoading(false);
-  }, []);
-
-  // 탭 변경 시마다 데이터 호출
-  useEffect(() => {
-    fetchNotices(activeTab);
-  }, [activeTab, fetchNotices]);
+  // 응답에서 data 배열 추출 (데이터가 없거나 로딩 중이면 빈 배열)
+  const noticeList = response?.data ?? [];
 
   return (
     <div className="flex h-full flex-col">
