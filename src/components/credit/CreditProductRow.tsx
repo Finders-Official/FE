@@ -13,15 +13,15 @@ export function CreditProductRow({
   onPurchase,
 }: CreditProductRowProps) {
   return (
-    <div className="flex items-center justify-between py-2.5">
-      <div className="flex items-center gap-3">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-[0.4375rem]">
         <img
           src={coinImage}
           alt=""
           draggable={false}
-          className="h-[1.75rem] w-[1.75rem] shrink-0 object-contain"
+          className="h-4 w-4 shrink-0 object-contain"
         />
-        <span className="text-[1rem] font-medium text-neutral-100">
+        <span className="text-neutral-0 text-[1rem] leading-[1.55] font-semibold tracking-[-0.02em]">
           {product.name}
         </span>
       </div>

@@ -31,20 +31,22 @@ export function CreditPage() {
   };
 
   return (
-    <div className="flex flex-col px-4 pt-2 pb-6">
+    <div className="flex flex-col pb-6">
       <CreditBalanceCard balance={MOCK_CURRENT_CREDIT} onInfoClick={() => {}} />
-      <UnderlineTabs
-        tabs={TABS}
-        activeIndex={activeIndex}
-        onChange={handleTabChange}
-        className="mt-4"
-      />
-      {tab === "buy" && (
-        <CreditProductList
-          products={MOCK_CREDIT_PRODUCTS}
-          onPurchase={() => {}}
+      <div className="-mx-4">
+        <UnderlineTabs
+          tabs={TABS}
+          activeIndex={activeIndex}
+          onChange={handleTabChange}
+          className="mt-2"
         />
-      )}
+        {tab === "buy" && (
+          <CreditProductList
+            products={MOCK_CREDIT_PRODUCTS}
+            onPurchase={() => {}}
+          />
+        )}
+      </div>
     </div>
   );
 }

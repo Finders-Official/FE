@@ -26,7 +26,7 @@ export function CreditProductList({
   onPurchase,
 }: CreditProductListProps) {
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col gap-4 p-4">
       {products.map((product, index) => (
         <li key={product.productId}>
           <CreditProductRow
