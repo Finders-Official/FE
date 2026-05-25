@@ -50,6 +50,7 @@ import ReservationPage from "@/pages/photoLab/ReservationPage";
 
 // 마이페이지
 import {
+  CreditPage,
   EditInfoPage,
   LikedPhotoLabPage,
   LikedPostPage,
@@ -207,6 +208,11 @@ const mypageRoutes = [
     path: "edit-info/withdraw",
     Component: WithDrawPage,
     handle: h({ title: "회원 탈퇴" }),
+  },
+  {
+    path: "credit",
+    Component: CreditPage,
+    handle: h({ title: "크레딧 충전" }),
   },
 ];
 

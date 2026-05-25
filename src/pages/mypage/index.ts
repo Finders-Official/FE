@@ -11,3 +11,4 @@ export { WithDrawPage } from "./edit-info/WithDrawPage";
 export { LikedPhotoLabPage } from "./tab/LikedPhotoLabPage";
 export { LikedPostPage } from "./tab/LikedPostPage";
 export { MyPostPage } from "./tab/MyPostPage";
+export { CreditPage } from "./credit/CreditPage";
