@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import {
   CreditBalanceCard,
@@ -12,6 +12,8 @@ import {
   MOCK_CREDIT_PRODUCTS,
   MOCK_CURRENT_CREDIT,
 } from "@/constants/credit/credit.mock";
+import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
+import type { CreditProduct } from "@/types/credit";
 
 const TABS = [{ label: "크레딧 구매" }, { label: "내역" }];
 
@@ -26,6 +28,8 @@ export function CreditPage() {
   const tab = parseTab(params.get("tab"));
   const activeIndex = tab === "buy" ? 0 : 1;
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const navigate = useNavigate();
+  const setProduct = usePaymentOrderStore((s) => s.setProduct);
 
   const handleTabChange = (index: number) => {
     setParams(
@@ -36,6 +40,11 @@ export function CreditPage() {
       },
       { replace: true },
     );
+  };
+
+  const handlePurchase = (product: CreditProduct) => {
+    setProduct(product);
+    navigate("/mypage/credit/payment");
   };
 
   return (
@@ -58,7 +67,7 @@ export function CreditPage() {
         {tab === "buy" && (
           <CreditProductList
             products={MOCK_CREDIT_PRODUCTS}
-            onPurchase={() => {}}
+            onPurchase={handlePurchase}
           />
         )}
         {tab === "history" && (

@@ -57,6 +57,7 @@ import {
   MyPage,
   MyPostPage,
   NickNameEditPage,
+  PaymentPage,
   PhoneEditPage,
   SocialPage,
   WithDrawPage,
@@ -212,6 +213,11 @@ const mypageRoutes = [
   {
     path: "credit",
     Component: CreditPage,
+    handle: h({ title: "크레딧 충전" }),
+  },
+  {
+    path: "credit/payment",
+    Component: PaymentPage,
     handle: h({ title: "크레딧 충전" }),
   },
 ];
