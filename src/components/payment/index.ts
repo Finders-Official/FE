@@ -6,3 +6,5 @@ export { PaymentMethodTabs } from "./PaymentMethodTabs";
 export { CardSelectButton } from "./CardSelectButton";
 export { CardSelectBottomSheet } from "./CardSelectBottomSheet";
 export { EasyPayRadioList } from "./EasyPayRadioList";
+export { PaymentRefundNotice } from "./PaymentRefundNotice";
+export { PaymentTermsAgreement } from "./PaymentTermsAgreement";

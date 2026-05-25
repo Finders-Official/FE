@@ -8,8 +8,10 @@ import {
   PaymentMethodTabs,
   PaymentOrdererSection,
   PaymentProductSection,
+  PaymentRefundNotice,
   PaymentSection,
   PaymentSummary,
+  PaymentTermsAgreement,
 } from "@/components/payment";
 import { CREDIT_CARD_OPTIONS } from "@/constants/payment/payment.constant";
 import { MOCK_ORDERER } from "@/constants/payment/payment.mock";
@@ -24,6 +26,7 @@ export function PaymentPage() {
   const [cardId, setCardId] = useState<string | null>(null);
   const [easyPayId, setEasyPayId] = useState<EasyPayProvider | null>(null);
   const [isCardSheetOpen, setIsCardSheetOpen] = useState(false);
+  const [agreed, setAgreed] = useState(false);
 
   useEffect(() => {
     if (product) clear();
@@ -33,6 +36,14 @@ export function PaymentPage() {
     () => CREDIT_CARD_OPTIONS.find((c) => c.id === cardId)?.name ?? null,
     [cardId],
   );
+
+  const isMethodReady =
+    method === "CARD"
+      ? cardId !== null
+      : method === "EASY_PAY"
+        ? easyPayId !== null
+        : true;
+  const isPayable = agreed && isMethodReady;
 
   if (!product) {
     return <Navigate to="/mypage/credit" replace />;
@@ -65,6 +76,15 @@ export function PaymentPage() {
           productPrice={product.price}
           totalPrice={product.price}
         />
+
+        <section className="flex flex-col gap-3.5 px-4 py-5">
+          <PaymentRefundNotice />
+          <PaymentTermsAgreement
+            agreed={agreed}
+            onAgreedChange={setAgreed}
+            onViewTerm={() => {}}
+          />
+        </section>
       </div>
 
       <CardSelectBottomSheet
@@ -75,7 +95,12 @@ export function PaymentPage() {
       />
 
       <footer className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-120 border-t border-neutral-700 bg-neutral-900 px-4 py-5">
-        <CTA_Button text="결제하기" size="xlarge" color="black" disabled />
+        <CTA_Button
+          text="결제하기"
+          size="xlarge"
+          color={isPayable ? "orange" : "black"}
+          disabled={!isPayable}
+        />
       </footer>
     </div>
   );
