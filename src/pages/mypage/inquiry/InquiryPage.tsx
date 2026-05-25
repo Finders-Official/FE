@@ -7,47 +7,8 @@ import {
   InquiryNoticeCard,
 } from "@/components/mypage";
 
-import type { InquiryItem, InquiryOption } from "@/types/mypage/inquiry";
-
-const MOCK_INQUIRIES: InquiryItem[] = [
-  {
-    id: 1,
-    type: "SERVICE_ERROR",
-    content: "문의 내용은 다음과 같습니다.\n좋은하루 되세요. 감사합니다.",
-    status: "PENDING",
-    createdAt: "2025-01-01T10:00:00Z",
-    hasReply: false,
-  },
-  {
-    id: 2,
-    type: "ACCOUNT_INFO",
-    content: "회원정보 변경을 요청합니다.\n확인 후 처리 부탁드립니다.",
-    status: "COMPLETED",
-    createdAt: "2025-01-02T11:00:00Z",
-    hasReply: true,
-    replyContent: "답변 내용은 다음과 같습니다.\n좋은하루 되세요. 감사합니다.",
-    replyCreatedAt: "2025-01-03T09:00:00Z",
-  },
-  {
-    id: 3,
-    type: "PROMOTION",
-    content: "친구 초대 크레딧이 아직 안 들어왔어요.\n언제 지급되나요?",
-    status: "PENDING",
-    createdAt: "2025-01-04T15:30:00Z",
-    hasReply: false,
-  },
-  {
-    id: 4,
-    type: "PAYMENT",
-    content: "어제 결제한 건이 중복 결제된 것 같습니다.\n환불 부탁드립니다.",
-    status: "COMPLETED",
-    createdAt: "2025-01-05T08:20:00Z",
-    hasReply: true,
-    replyContent:
-      "중복 결제 내역 확인되어 환불 처리 완료했습니다.\n이용에 불편을 드려 죄송합니다.",
-    replyCreatedAt: "2025-01-05T14:10:00Z",
-  },
-];
+import type { InquiryOption } from "@/types/mypage/inquiry";
+import { useInquiries } from "@/hooks/my/inquiries/useGetInquiries";
 
 // 스텝 타입 정의
 type Step = "LIST" | "CREATE";
@@ -76,8 +37,12 @@ export function InquiryPage() {
 // 1. 문의 내역 리스트 화면
 // ==========================================
 function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
-  // TODO: API에서 받아온 문의 내역 데이터
-  const hasInquiries = MOCK_INQUIRIES.length > 0;
+  // API 훅 호출 (기본 page: 0, size: 10)
+  const { data: response } = useInquiries(0, 10); // TODO: isLoaing, isError 처리
+
+  // 응답 데이터에서 inquiries 배열 추출
+  const inquiryList = response?.data.inquiries ?? [];
+  const hasInquiries = inquiryList.length > 0;
 
   return (
     <>
@@ -87,7 +52,7 @@ function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
             {/* 이미지에 있는 문의내역 아코디언 아이템들이 들어갈 자리 */}
             <div className="text-center text-neutral-400">
               {/*  목 데이터를 순회하며 아이템 컴포넌트 렌더링 */}
-              {MOCK_INQUIRIES.map((inquiry) => (
+              {inquiryList.map((inquiry) => (
                 <InquiryListItem key={inquiry.id} item={inquiry} />
               ))}
             </div>
