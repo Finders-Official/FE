@@ -7,4 +7,7 @@ export type {
   PaymentRequest,
   PaymentInitResponse,
   PaymentInitApiResponse,
+  PaymentResult,
+  PaymentResultSuccess,
+  PaymentResultFail,
 } from "./payment";

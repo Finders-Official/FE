@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { CTA_Button } from "@/components/common";
 import {
   CardSelectBottomSheet,
@@ -13,12 +13,20 @@ import {
   PaymentSummary,
   PaymentTermsAgreement,
 } from "@/components/payment";
-import { CREDIT_CARD_OPTIONS } from "@/constants/payment/payment.constant";
+import {
+  CREDIT_CARD_OPTIONS,
+  EASY_PAY_OPTIONS,
+} from "@/constants/payment/payment.constant";
 import { MOCK_ORDERER } from "@/constants/payment/payment.mock";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
-import type { EasyPayProvider, PaymentMethod } from "@/types/payment";
+import type {
+  EasyPayProvider,
+  PaymentMethod,
+  PaymentResultSuccess,
+} from "@/types/payment";
 
 export function PaymentPage() {
+  const navigate = useNavigate();
   const [product] = useState(() => usePaymentOrderStore.getState().product);
   const clear = usePaymentOrderStore((s) => s.clear);
 
@@ -48,6 +56,26 @@ export function PaymentPage() {
   if (!product) {
     return <Navigate to="/mypage/credit" replace />;
   }
+
+  const handleSubmit = () => {
+    if (!isPayable) return;
+
+    let methodLabel = "휴대폰 결제";
+    if (method === "CARD" && selectedCardName) {
+      methodLabel = `카드 결제(${selectedCardName}카드)`;
+    } else if (method === "EASY_PAY" && easyPayId) {
+      const easyPayName =
+        EASY_PAY_OPTIONS.find((o) => o.id === easyPayId)?.name ?? "";
+      methodLabel = `간편결제(${easyPayName})`;
+    }
+
+    const state: PaymentResultSuccess = {
+      status: "success",
+      product,
+      methodLabel,
+    };
+    navigate("/mypage/credit/payment/result", { state });
+  };
 
   return (
     <div className="flex flex-col pb-[6.5rem]">
@@ -100,6 +128,7 @@ export function PaymentPage() {
           size="xlarge"
           color={isPayable ? "orange" : "black"}
           disabled={!isPayable}
+          onClick={handleSubmit}
         />
       </footer>
     </div>

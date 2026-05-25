@@ -1,8 +1,22 @@
 import type { ApiResponse } from "@/types/common/apiResponse";
+import type { CreditProduct } from "@/types/credit";
 
 export type PaymentMethod = "CARD" | "EASY_PAY" | "PHONE";
 
 export type EasyPayProvider = "KAKAO_PAY" | "TOSS" | "PAYCO" | "NAVER_PAY";
+
+export interface PaymentResultSuccess {
+  status: "success";
+  product: CreditProduct;
+  methodLabel: string;
+}
+
+export interface PaymentResultFail {
+  status: "fail";
+  errorCode?: string;
+}
+
+export type PaymentResult = PaymentResultSuccess | PaymentResultFail;
 
 export interface CardOption {
   id: string;

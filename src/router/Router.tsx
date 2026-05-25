@@ -58,6 +58,7 @@ import {
   MyPostPage,
   NickNameEditPage,
   PaymentPage,
+  PaymentResultPage,
   PhoneEditPage,
   SocialPage,
   WithDrawPage,
@@ -69,6 +70,7 @@ type RouteHandle =
       title?: string;
       isTab?: boolean;
       showBack?: boolean;
+      hideHeader?: boolean;
     }
   | undefined;
 
@@ -219,6 +221,11 @@ const mypageRoutes = [
     path: "credit/payment",
     Component: PaymentPage,
     handle: h({ title: "크레딧 충전" }),
+  },
+  {
+    path: "credit/payment/result",
+    Component: PaymentResultPage,
+    handle: h({ hideHeader: true }),
   },
 ];
 
