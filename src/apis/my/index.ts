@@ -5,3 +5,6 @@ export { favoritePhotoLab } from "./likedPhotoLab";
 //notices
 export { getNoticeList } from "./notices/getNoticeList";
 export { getNoticeDetail } from "./notices/getNoticeList";
+
+//inquiries
+export { getInquiries } from "./inquiries/inquiries";
