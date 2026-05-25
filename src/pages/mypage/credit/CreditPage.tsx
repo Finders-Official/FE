@@ -1,7 +1,12 @@
 import { useSearchParams } from "react-router";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
-import { CreditBalanceCard, CreditProductList } from "@/components/credit";
 import {
+  CreditBalanceCard,
+  CreditHistoryList,
+  CreditProductList,
+} from "@/components/credit";
+import {
+  MOCK_CREDIT_HISTORIES,
   MOCK_CREDIT_PRODUCTS,
   MOCK_CURRENT_CREDIT,
 } from "@/constants/credit/credit.mock";
@@ -45,6 +50,9 @@ export function CreditPage() {
             products={MOCK_CREDIT_PRODUCTS}
             onPurchase={() => {}}
           />
+        )}
+        {tab === "history" && (
+          <CreditHistoryList items={MOCK_CREDIT_HISTORIES} />
         )}
       </div>
     </div>
