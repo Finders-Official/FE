@@ -5,3 +5,6 @@ export { useLikedPhotoLabsInfinite } from "./useLikedPhotoLabsInfinite";
 //notices
 export { useNoticeListInfinite } from "./notices/useNoticeListInfinite";
 export { useNoticeDetail } from "./notices/useGetNoticeDetail";
+
+// inquiries
+export { useInquiriesInfinite } from "./inquiries/useInquiriesIntinite";
