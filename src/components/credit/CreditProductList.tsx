@@ -1,20 +1,6 @@
-import {
-  creditCoin1,
-  creditCoin2,
-  creditCoin3,
-  creditCoin4,
-  creditCoin5,
-} from "@/assets/images";
 import type { CreditProduct } from "@/types/credit";
+import { getCreditCoinImage } from "@/utils/getCreditCoinImage";
 import { CreditProductRow } from "./CreditProductRow";
-
-const CREDIT_COIN_IMAGES = [
-  creditCoin1,
-  creditCoin2,
-  creditCoin3,
-  creditCoin4,
-  creditCoin5,
-];
 
 interface CreditProductListProps {
   products: CreditProduct[];
@@ -27,11 +13,11 @@ export function CreditProductList({
 }: CreditProductListProps) {
   return (
     <ul className="flex flex-col gap-4 p-4">
-      {products.map((product, index) => (
+      {products.map((product) => (
         <li key={product.productId}>
           <CreditProductRow
             product={product}
-            coinImage={CREDIT_COIN_IMAGES[index] ?? CREDIT_COIN_IMAGES[0]}
+            coinImage={getCreditCoinImage(product.creditAmount)}
             onPurchase={() => onPurchase(product)}
           />
         </li>

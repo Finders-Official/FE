@@ -60,13 +60,15 @@ export function PaymentPage() {
   const handleSubmit = () => {
     if (!isPayable) return;
 
-    let methodLabel = "휴대폰 결제";
-    if (method === "CARD" && selectedCardName) {
-      methodLabel = `카드 결제(${selectedCardName}카드)`;
-    } else if (method === "EASY_PAY" && easyPayId) {
+    let methodLabel: string;
+    if (method === "CARD") {
+      methodLabel = `카드 결제(${selectedCardName ?? ""}카드)`;
+    } else if (method === "EASY_PAY") {
       const easyPayName =
         EASY_PAY_OPTIONS.find((o) => o.id === easyPayId)?.name ?? "";
       methodLabel = `간편결제(${easyPayName})`;
+    } else {
+      methodLabel = "휴대폰 결제";
     }
 
     const state: PaymentResultSuccess = {

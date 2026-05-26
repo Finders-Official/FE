@@ -1,23 +1,9 @@
 import type { ReactNode } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router";
-import {
-  creditCoin1,
-  creditCoin2,
-  creditCoin3,
-  creditCoin4,
-  creditCoin5,
-} from "@/assets/images";
 import { ConfirmationIcon } from "@/components/common";
 import Header from "@/components/common/Header";
 import type { PaymentResult } from "@/types/payment";
-
-function pickCoinImage(amount: number): string {
-  if (amount >= 58) return creditCoin5;
-  if (amount >= 46) return creditCoin4;
-  if (amount >= 34) return creditCoin3;
-  if (amount >= 22) return creditCoin2;
-  return creditCoin1;
-}
+import { getCreditCoinImage } from "@/utils/getCreditCoinImage";
 
 const formatKrw = (price: number) => `₩ ${price.toLocaleString("ko-KR")}`;
 
@@ -55,7 +41,7 @@ export function PaymentResultPage() {
             <SummaryRow label="상품 정보">
               <div className="flex items-center gap-[0.4375rem]">
                 <img
-                  src={pickCoinImage(result.product.creditAmount)}
+                  src={getCreditCoinImage(result.product.creditAmount)}
                   alt=""
                   className="h-5 w-5 object-cover"
                 />
