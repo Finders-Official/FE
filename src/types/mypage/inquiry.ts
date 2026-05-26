@@ -48,3 +48,10 @@ export const INQUIRY_OPTIONS: InquiryOption[] = [
   { label: "프로모션/크레딧", value: "PROMOTION" },
   { label: "결제", value: "PAYMENT" },
 ];
+
+export interface CreateInquiryRequest {
+  photoLabId?: string | null; // 특정 포토랩에 대한 문의가 아닐 경우 처리
+  type: InquiryType;
+  content: string;
+  objectPaths?: string[]; // 첨부파일 경로 (현재 UI에 없으므로 옵셔널)
+}
