@@ -40,10 +40,7 @@ export function TermsPage() {
   const currentIndex = currentId ? (idToIndex.get(currentId) ?? 0) : 0;
   const isLast = currentIndex >= ids.length - 1;
 
-  //스크롤로 hash 바꾼 경우, 해시 변경 effect에서 다시 scrollIntoView 막기
   const lastScrolledHashRef = useRef<string | null>(null);
-
-  //최신 hash/pathname을 ref로 유지 (IO 콜백에서 사용)
   const hashRef = useRef(location.hash);
   const pathnameRef = useRef(location.pathname);
 
@@ -52,27 +49,22 @@ export function TermsPage() {
     pathnameRef.current = location.pathname;
   }, [location.hash, location.pathname]);
 
-  //navigate도 ref로 고정(콜백 deps 줄이기)
   const navigateRef = useRef(navigate);
   useEffect(() => {
     navigateRef.current = navigate;
   }, [navigate]);
 
-  // hash 클릭/다음 버튼 등 “명시적 hash 변경”일 때만 scrollIntoView
   useEffect(() => {
     if (!currentId) return;
-
     const nextHash = `#${currentId}`;
     if (lastScrolledHashRef.current === nextHash) {
       lastScrolledHashRef.current = null;
       return;
     }
-
     const id = window.setTimeout(() => scrollToSection(currentId), 0);
     return () => window.clearTimeout(id);
   }, [currentId]);
 
-  // IntersectionObserver는 한 번만 생성
   useEffect(() => {
     const map = new Map<Section["id"], number>();
 
@@ -99,18 +91,18 @@ export function TermsPage() {
         const nextHash = `#${bestId}`;
         if (hashRef.current === nextHash) return;
 
-        // observer로 바꾼 hash는 scrollIntoView 트리거 안 걸리게 표시
         lastScrolledHashRef.current = nextHash;
 
         navigateRef.current(
           { pathname: pathnameRef.current, hash: nextHash },
-          { replace: true },
+          { replace: true }, // 모바일 웹뷰 버그 방지를 위해 히스토리를 강제 고정함
         );
       },
       {
         root: null,
-        rootMargin: "-96px 0px -120px 0px",
-        threshold: Array.from({ length: 21 }, (_, i) => i / 20),
+        // 고정 픽셀 배제하고 모바일 세로 화면 비율에 안전하도록 조정
+        rootMargin: "-20% 0px -30% 0px",
+        threshold: Array.from({ length: 11 }, (_, i) => i / 10), // 연산 최적화를 위해 11단계로 경량화
       },
     );
 
@@ -122,9 +114,21 @@ export function TermsPage() {
     return () => io.disconnect();
   }, []);
 
+  // 안전한 이탈/확인 핸들러 함수
+  const handleExitTerms = () => {
+    // 앱 내 인앱 브라우저나 새 창으로 열렸을 경우,
+    // 브라우저의 window.close()가 새 창을 닫고 카카오로 보내줌
+    if (window.opener || window.history.length === 1) {
+      window.close();
+    } else {
+      // 일반 웹 브라우저 뒤로가기 대응
+      window.history.back();
+    }
+  };
+
   const handleNextOrConfirm = () => {
     if (isLast) {
-      window.history.back();
+      handleExitTerms();
       return;
     }
 
@@ -138,7 +142,7 @@ export function TermsPage() {
   };
 
   return (
-    <div className="min-h-dvh text-neutral-100">
+    <div className="min-h-dvh bg-neutral-950 text-neutral-100">
       <div
         className={
           showCta
@@ -151,24 +155,24 @@ export function TermsPage() {
           rightAction={{
             type: "icon",
             icon: <XMarkIcon />,
-            onClick: () => window.history.back(),
+            onClick: handleExitTerms, // X 버튼도 안전한 종료 로직 연동
           }}
         />
 
-        <main className="mx-auto w-full px-2">
+        <main className="mx-auto w-full px-4">
           {sections.map((s) => (
             <section key={s.id} id={s.id} className="scroll-mt-28">
-              <div className="border-neutral-850 mt-6 border-b pb-50">
+              <div className="border-neutral-850 mt-6 border-b pb-12">
                 <div className="flex items-center gap-2">
                   <h2 className="text-[1.1875rem] font-semibold text-neutral-100">
                     {s.title}{" "}
-                    <span className="text-neutral-100">
+                    <span className="text-sm font-normal text-neutral-400">
                       {s.badge === "필수" ? "(필수)" : "(선택)"}
                     </span>
                   </h2>
                 </div>
 
-                <p className="mt-5 text-[0.875rem] leading-[155%] tracking-[-0.0175rem] break-words whitespace-pre-wrap text-neutral-200">
+                <p className="mt-4 text-[0.875rem] leading-[160%] tracking-[-0.0175rem] break-words whitespace-pre-wrap text-neutral-300">
                   {s.body}
                 </p>
               </div>
@@ -178,7 +182,7 @@ export function TermsPage() {
       </div>
 
       {showCta && (
-        <div className="border-neutral-850 fixed inset-x-0 bottom-0 z-20 border-t backdrop-blur">
+        <div className="border-neutral-850 fixed inset-x-0 bottom-0 z-20 border-t bg-neutral-950/80 backdrop-blur-md">
           <div className="mx-auto w-full px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
             <CTA_Button
               text={isLast ? "확인" : "다음"}
