@@ -107,6 +107,7 @@ export function PaymentPage() {
 
         <section className="flex flex-col gap-3.5 px-4 py-5">
           <PaymentRefundNotice />
+          {/* TODO: 약관 보기 연결 필요 */}
           <PaymentTermsAgreement
             agreed={agreed}
             onAgreedChange={setAgreed}
