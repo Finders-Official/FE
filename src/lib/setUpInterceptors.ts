@@ -10,7 +10,6 @@ import axios from "axios";
 
 type RefreshResponse = {
   accessToken: string;
-  refreshToken?: string;
   accessTokenExpiresIn?: number;
 };
 
@@ -44,13 +43,14 @@ type AuthMetaConfig = InternalAxiosRequestConfig & {
 };
 
 async function requestRefreshToken(baseURL: string) {
-  const refreshToken = tokenStorage.getRefreshToken();
-  if (!refreshToken) throw new Error("No refresh token");
-
   const res = await axios.post<ApiResponse<RefreshResponse>>(
     `${baseURL}/auth/reissue`,
-    { refreshToken },
-    { headers: { "Content-Type": "application/json" }, timeout: 15000 },
+    {},
+    {
+      withCredentials: true,
+      headers: { "Content-Type": "application/json" },
+      timeout: 15000,
+    },
   );
 
   const body = res.data;
@@ -67,7 +67,6 @@ async function requestRefreshToken(baseURL: string) {
 
   return {
     accessToken: data.accessToken,
-    refreshToken: data.refreshToken,
   };
 }
 
@@ -165,7 +164,6 @@ export function setupInterceptors(instance: AxiosInstance) {
         // 토큰 저장 (signupToken은 그대로 유지)
         tokenStorage.setTokens({
           accessToken: data.accessToken,
-          refreshToken: data.refreshToken ?? tokenStorage.getRefreshToken(),
           signupToken: tokenStorage.getSignupToken(),
         });
 
