@@ -85,8 +85,4 @@ export { default as SplashIcon } from "./splash.svg?react";
 export { default as StarFillIcon } from "./star-fill.svg?react";
 export { default as TabHomeFillIcon } from "./tab-home-fill.svg?react";
 export { default as TruckIcon } from "./truck.svg?react";
-export { default as MainCamera } from "./main-camera.svg?react";
-export { default as MainFilm } from "./main-film.svg?react";
 export { default as PaintBrushIcon } from "./paint-brush.svg?react";
-export { default as NoticeLocationIcon } from "./notice-location.svg?react";
-export { default as NoticeTimeIcon } from "./notice-time.svg?react";
