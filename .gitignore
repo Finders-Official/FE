@@ -32,6 +32,10 @@ coverage
 .env.*.local
 !.env.example
 
+# Capacitor iOS
+ios/App/App/public/
+ios/App/Pods/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
