@@ -84,9 +84,7 @@ function RegisterView({ onSubmit }: { onSubmit: () => void }) {
   };
   const [click, setClick] = useState(false);
   const handleClick = () => {
-    if (click === true) {
-      setClick(false);
-    } else setClick(true);
+    setClick((prev) => !prev);
   };
   return (
     <>

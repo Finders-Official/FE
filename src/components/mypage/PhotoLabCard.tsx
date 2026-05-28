@@ -22,7 +22,6 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
   const starColorClass = isFavorite
     ? "fill-orange-500 text-orange-500"
     : "fill-none text-white";
-  console.log(photoLab.favoriteCount);
 
   return (
     <div className="mt-2 border-b border-neutral-800 py-4">
