@@ -4,6 +4,7 @@ import PromotionBanner from "@/components/mainPage/PromotionBanner";
 import PopularLabsSection from "@/components/mainPage/PopularLabsSection/PopularLabsSection";
 import FilmNewsSection from "@/components/mainPage/FilmNewsSection/FilmNewsSection";
 import CommunityGallerySection from "@/components/mainPage/ComunityGallarySection/CommunityGallerySection";
+import Footer from "@/components/mainPage/Footer";
 import { useAnchorScroll } from "@/hooks/common";
 
 const SectionWrapper = ({
@@ -58,6 +59,7 @@ export default function MainPage() {
         <SectionWrapper id="community">
           <CommunityGallerySection />
         </SectionWrapper>
+        <Footer />
       </div>
     </div>
   );
