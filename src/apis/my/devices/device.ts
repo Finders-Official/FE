@@ -6,7 +6,7 @@ import { isAxiosError } from "axios";
 export const getDeviceList = async (cursor?: string, size = 10) => {
   try {
     const { data } = await axiosInstance.get<EquipmentListResponse>(
-      "/devices",
+      "/equipment/combinations",
       {
         params: {
           cursor,
@@ -16,12 +16,12 @@ export const getDeviceList = async (cursor?: string, size = 10) => {
     );
     return data;
   } catch (error) {
-    // 💡 에러가 발생했을 때, 해당 에러가 "장비가 없음" 에러인지 확인합니다.
+    // 에러가 발생했을 때, 해당 에러가 "장비가 없음" 에러인지 확인
     if (
       isAxiosError(error) &&
       error.response?.data?.code === "EQUIPMENT_404_EMPTY"
     ) {
-      // 장비가 없는 건 진짜 에러가 아니므로, 프론트엔드에서 빈 리스트 응답으로 둔갑시켜 반환합니다.
+      // 장비가 없는 건 진짜 에러가 아니므로, 프론트엔드에서 빈 리스트 응답으로 둔갑시켜 반환
       return {
         success: true,
         code: "SUCCESS",
@@ -36,4 +36,11 @@ export const getDeviceList = async (cursor?: string, size = 10) => {
     }
     throw error;
   }
+};
+
+export const deleteDevice = async (combinationId: string) => {
+  const { data } = await axiosInstance.delete(
+    `/equipment/combinations/${combinationId}`,
+  );
+  return data;
 };
