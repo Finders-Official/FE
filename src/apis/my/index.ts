@@ -8,3 +8,6 @@ export { getNoticeDetail } from "./notices/getNoticeList";
 
 //inquiries
 export { getInquiries, postInquiry } from "./inquiries/inquiries";
+
+//devices
+export { getDeviceList } from "./devices/device";

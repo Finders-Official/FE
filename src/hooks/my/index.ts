@@ -8,3 +8,6 @@ export { useNoticeDetail } from "./notices/useGetNoticeDetail";
 
 // inquiries
 export { useInquiriesInfinite } from "./inquiries/useInquiriesIntinite";
+
+//devices
+export { useDeviceListInfinite } from "./devices/useDeviceListInfinite";
