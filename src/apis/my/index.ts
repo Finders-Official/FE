@@ -10,4 +10,9 @@ export { getNoticeDetail } from "./notices/getNoticeList";
 export { getInquiries, postInquiry } from "./inquiries/inquiries";
 
 //devices
-export { getDeviceList, deleteDevice } from "./devices/device";
+export {
+  getDeviceList,
+  deleteDevice,
+  getCameraCatalog,
+  getFilmCatalog,
+} from "./devices/device";

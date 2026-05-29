@@ -1,5 +1,8 @@
 import { axiosInstance } from "@/lib/axiosInstance";
-import type { EquipmentListResponse } from "@/types/mypage/device";
+import type {
+  CatalogResponse,
+  EquipmentListResponse,
+} from "@/types/mypage/device";
 import { isAxiosError } from "axios";
 
 // 장비 조회 api
@@ -21,7 +24,7 @@ export const getDeviceList = async (cursor?: string, size = 10) => {
       isAxiosError(error) &&
       error.response?.data?.code === "EQUIPMENT_404_EMPTY"
     ) {
-      // 장비가 없는 건 진짜 에러가 아니므로, 프론트엔드에서 빈 리스트 응답으로 둔갑시켜 반환
+      // 장비가 없는 경우 빈 리스트 응답으로 둔갑시켜 반환
       return {
         success: true,
         code: "SUCCESS",
@@ -38,9 +41,40 @@ export const getDeviceList = async (cursor?: string, size = 10) => {
   }
 };
 
+// 장비 제거 api
 export const deleteDevice = async (combinationId: string) => {
   const { data } = await axiosInstance.delete(
     `/equipment/combinations/${combinationId}`,
+  );
+  return data;
+};
+
+// 카메라 기종 조회 api
+export const getCameraCatalog = async (
+  keyword: string,
+  cursor?: string,
+  size = 10,
+) => {
+  const { data } = await axiosInstance.get<CatalogResponse>(
+    "/equipment/catalog/cameras",
+    {
+      params: { keyword, cursor, size },
+    },
+  );
+  return data;
+};
+
+// 필름 기종 조회 api
+export const getFilmCatalog = async (
+  keyword: string,
+  cursor?: string,
+  size = 10,
+) => {
+  const { data } = await axiosInstance.get<CatalogResponse>(
+    "/equipment/catalog/films",
+    {
+      params: { keyword, cursor, size },
+    },
   );
   return data;
 };

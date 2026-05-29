@@ -11,3 +11,8 @@ export { useInquiriesInfinite } from "./inquiries/useInquiriesIntinite";
 
 //devices
 export { useDeviceListInfinite } from "./devices/useDeviceListInfinite";
+export { useDeleteDevice } from "./devices/useDeleteDevice";
+export {
+  useCamerasInfinite,
+  useFilmsInfinite,
+} from "./devices/useCatalogInfinite";
