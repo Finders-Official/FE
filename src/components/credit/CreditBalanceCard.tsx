@@ -2,11 +2,13 @@ import { QuestionCircleIcon } from "@/assets/icon";
 
 interface CreditBalanceCardProps {
   balance: number;
+  expiringCount: number;
   onInfoClick: () => void;
 }
 
 export function CreditBalanceCard({
   balance,
+  expiringCount,
   onInfoClick,
 }: CreditBalanceCardProps) {
   return (
@@ -27,9 +29,14 @@ export function CreditBalanceCard({
           <QuestionCircleIcon className="h-[1.125rem] w-[1.125rem] text-neutral-700" />
         </button>
       </div>
-      <p className="text-neutral-0 text-[1.5rem] leading-[1.28] font-semibold tracking-[-0.02em]">
-        {balance}개
-      </p>
+      <div className="flex items-end justify-between">
+        <p className="text-neutral-0 text-[1.5rem] leading-[1.28] font-semibold tracking-[-0.02em]">
+          {balance}개
+        </p>
+        <p className="text-[0.75rem] leading-[1.26] font-normal tracking-[-0.02em] text-neutral-700">
+          이번 달 소멸 예정({expiringCount}개)
+        </p>
+      </div>
     </section>
   );
 }

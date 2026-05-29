@@ -11,6 +11,7 @@ import {
   MOCK_CREDIT_HISTORIES,
   MOCK_CREDIT_PRODUCTS,
   MOCK_CURRENT_CREDIT,
+  MOCK_EXPIRING_CREDIT,
 } from "@/constants/credit/credit.mock";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
 import type { CreditProduct } from "@/types/credit";
@@ -51,6 +52,7 @@ export function CreditPage() {
     <div className="flex flex-col pb-6">
       <CreditBalanceCard
         balance={MOCK_CURRENT_CREDIT}
+        expiringCount={MOCK_EXPIRING_CREDIT}
         onInfoClick={() => setIsInfoOpen(true)}
       />
       <CreditInfoDialog

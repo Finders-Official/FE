@@ -3,6 +3,8 @@ import type { CreditHistoryItem, CreditProduct } from "@/types/credit";
 // UI 작업 임시 데이터 — Phase 6 이후 실제 API 연결 시 삭제 예정.
 export const MOCK_CURRENT_CREDIT = 2;
 
+export const MOCK_EXPIRING_CREDIT = 2;
+
 export const MOCK_CREDIT_PRODUCTS: CreditProduct[] = [
   { productId: "p-10", name: "크레딧 10개", creditAmount: 10, price: 2900 },
   { productId: "p-22", name: "크레딧 22개", creditAmount: 22, price: 5800 },
@@ -12,6 +14,7 @@ export const MOCK_CREDIT_PRODUCTS: CreditProduct[] = [
 ];
 
 export const MOCK_CREDIT_HISTORIES: CreditHistoryItem[] = [
+  { title: "보유기한 만료", date: "2026.05.20", amount: -2, balanceAfter: 10 },
   { title: "AI 사진복원", date: "2026.05.14", amount: -1, balanceAfter: 12 },
   {
     title: "크레딧 10개 충전",
