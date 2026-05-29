@@ -11,3 +11,5 @@ export type {
   PaymentResultSuccess,
   PaymentResultFail,
 } from "./payment";
+
+export type { PaymentTermsGroup, PaymentTermsSection } from "./paymentTerms";

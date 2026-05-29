@@ -12,6 +12,7 @@ import {
   PaymentSection,
   PaymentSummary,
   PaymentTermsAgreement,
+  PaymentTermsOverlay,
 } from "@/components/payment";
 import {
   CREDIT_CARD_OPTIONS,
@@ -23,6 +24,7 @@ import type {
   EasyPayProvider,
   PaymentMethod,
   PaymentResultSuccess,
+  PaymentTermsSection,
 } from "@/types/payment";
 
 export function PaymentPage() {
@@ -35,6 +37,9 @@ export function PaymentPage() {
   const [easyPayId, setEasyPayId] = useState<EasyPayProvider | null>(null);
   const [isCardSheetOpen, setIsCardSheetOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [viewingTermId, setViewingTermId] = useState<
+    PaymentTermsSection["id"] | null
+  >(null);
 
   useEffect(() => {
     if (product) clear();
@@ -109,11 +114,12 @@ export function PaymentPage() {
 
         <section className="flex flex-col gap-3.5 px-4 py-5">
           <PaymentRefundNotice />
-          {/* TODO: 약관 보기 연결 필요 */}
           <PaymentTermsAgreement
             agreed={agreed}
             onAgreedChange={setAgreed}
-            onViewTerm={() => {}}
+            onViewTerm={(termId) =>
+              setViewingTermId(termId === "EPAYMENT" ? "epayment" : "privacy")
+            }
           />
         </section>
       </div>
@@ -123,6 +129,12 @@ export function PaymentPage() {
         onClose={() => setIsCardSheetOpen(false)}
         selectedCardId={cardId}
         onSelect={setCardId}
+      />
+
+      <PaymentTermsOverlay
+        open={viewingTermId !== null}
+        initialSectionId={viewingTermId}
+        onClose={() => setViewingTermId(null)}
       />
 
       <footer className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-120 border-t border-neutral-700 bg-neutral-900 px-4 py-5">
