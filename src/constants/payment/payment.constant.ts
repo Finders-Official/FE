@@ -38,4 +38,5 @@ export const PAYMENT_TERMS = [
 export const PAYMENT_REFUND_NOTICES = [
   "결제 완료 후, 크레딧 환불이 불가능합니다.",
   "크레딧의 부분 환불은 불가능합니다.",
+  "구매한 크레딧은 결제일로부터 12개월 이내 사용해야 하며, 기간 초과 시 자동 소멸됩니다.",
 ];
