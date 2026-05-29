@@ -90,6 +90,7 @@ export function PaymentPage() {
         <PaymentOrdererSection orderer={MOCK_ORDERER} />
         <PaymentProductSection product={product} />
 
+        {/* TODO: 결제수단 플랫폼 분기 필요 — iOS는 Apple IAP, Android·웹은 카드/간편결제/휴대폰(현재 탭). 약관(paymentTerms.constant) 기준. */}
         <PaymentSection title="결제 수단">
           <div
             className={`flex flex-col ${method === "EASY_PAY" ? "gap-4" : "gap-2"}`}
