@@ -2,8 +2,13 @@
 import { Outlet, useMatches, useNavigate } from "react-router";
 import Header from "@/components/common/Header";
 import { TabBar } from "@/components/common/TabBar";
+import { useState } from "react";
 
 type Handle = { title?: string; isTab?: boolean; showBack?: boolean };
+
+export type MyPageOutletContext = {
+  setCustomOnBack: (fn: (() => void) | null) => void;
+};
 
 export default function MyPageLayout() {
   const matches = useMatches();
@@ -16,11 +21,18 @@ export default function MyPageLayout() {
   const isTab = handle.isTab ?? false;
   const showBack = handle.showBack ?? true;
 
+  // 커스텀 뒤로가기 상태
+  const [customOnBack, setCustomOnBack] = useState<(() => void) | null>(null);
+
   return (
     <div className="flex min-h-0 w-full flex-col">
-      <Header title={title} showBack={showBack} onBack={() => navigate(-1)} />
+      <Header
+        title={title}
+        showBack={showBack}
+        onBack={customOnBack ? customOnBack : () => navigate(-1)}
+      />
       <main className="flex-1">
-        <Outlet />
+        <Outlet context={{ setCustomOnBack } satisfies MyPageOutletContext} />
       </main>
       {isTab && <TabBar />}
     </div>
