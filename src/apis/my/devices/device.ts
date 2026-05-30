@@ -1,6 +1,8 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import type {
   CatalogResponse,
+  CreateDeviceRequest,
+  CreateDeviceResponse,
   EquipmentListResponse,
 } from "@/types/mypage/device";
 import { isAxiosError } from "axios";
@@ -75,6 +77,30 @@ export const getFilmCatalog = async (
     {
       params: { keyword, cursor, size },
     },
+  );
+  return data;
+};
+
+// 내 장비 등록 api
+export const postCreateDevice = async (body: CreateDeviceRequest) => {
+  const { data } = await axiosInstance.post<CreateDeviceResponse>(
+    "/equipment/combinations",
+    body,
+  );
+  return data;
+};
+
+// 내 장비 수정 api
+export const patchUpdateDevice = async ({
+  combinationId,
+  body,
+}: {
+  combinationId: string;
+  body: CreateDeviceRequest;
+}) => {
+  const { data } = await axiosInstance.patch<CreateDeviceResponse>(
+    `/equipment/combinations/${combinationId}`,
+    body,
   );
   return data;
 };

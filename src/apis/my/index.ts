@@ -15,4 +15,6 @@ export {
   deleteDevice,
   getCameraCatalog,
   getFilmCatalog,
+  postCreateDevice,
+  patchUpdateDevice,
 } from "./devices/device";
