@@ -83,14 +83,25 @@ export const getFilmCatalog = async (
 
 // 내 장비 등록 api
 export const postCreateDevice = async (body: CreateDeviceRequest) => {
-  const { data } = await axiosInstance.post<CreateDeviceResponse>(
-    "/equipment/combinations",
-    body,
-  );
-  return data;
+  try {
+    const { data } = await axiosInstance.post<CreateDeviceResponse>(
+      "/equipment/combinations",
+      body,
+    );
+    return data;
+  } catch (error) {
+    // 여기서 백엔드 에러 코드를 확인하고 프론트엔드 전용 에러로 변환해서 던짐
+    if (
+      isAxiosError(error) &&
+      error.response?.data?.code === "EQUIPMENT_409_DUPLICATED"
+    ) {
+      throw new Error("DUPLICATED");
+    }
+    throw error;
+  }
 };
 
-// 내 장비 수정 api
+// 내 장비 수정 API
 export const patchUpdateDevice = async ({
   combinationId,
   body,
@@ -98,9 +109,20 @@ export const patchUpdateDevice = async ({
   combinationId: string;
   body: CreateDeviceRequest;
 }) => {
-  const { data } = await axiosInstance.patch<CreateDeviceResponse>(
-    `/equipment/combinations/${combinationId}`,
-    body,
-  );
-  return data;
+  try {
+    const { data } = await axiosInstance.patch<CreateDeviceResponse>(
+      `/equipment/combinations/${combinationId}`,
+      body,
+    );
+    return data;
+  } catch (error) {
+    // 수정 API에서도 동일하게 처리
+    if (
+      isAxiosError(error) &&
+      error.response?.data?.code === "EQUIPMENT_409_DUPLICATED"
+    ) {
+      throw new Error("DUPLICATED");
+    }
+    throw error;
+  }
 };
