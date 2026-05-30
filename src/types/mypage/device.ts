@@ -52,3 +52,35 @@ export interface CatalogResponse {
     hasNext: boolean;
   };
 }
+
+export interface CreateDeviceRequest {
+  nickname: string;
+  isDefault: boolean;
+  cameraId: string;
+  filmId: string;
+}
+
+export interface CreateDeviceResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  timestamp: string;
+  data: {
+    combinationId: string;
+    nickname: string;
+    isDefault: boolean;
+    camera: {
+      cameraId: string;
+      company: string;
+      model: string;
+      name: string;
+    };
+    film: {
+      filmId: string;
+      company: string;
+      model: string;
+      name: string;
+    };
+    createdAt: string;
+  };
+}
