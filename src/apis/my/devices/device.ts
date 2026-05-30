@@ -90,7 +90,7 @@ export const postCreateDevice = async (body: CreateDeviceRequest) => {
     );
     return data;
   } catch (error) {
-    // 여기서 백엔드 에러 코드를 확인하고 프론트엔드 전용 에러로 변환해서 던짐
+    // 백엔드 장비 중복 에러 코드 확인
     if (
       isAxiosError(error) &&
       error.response?.data?.code === "EQUIPMENT_409_DUPLICATED"
@@ -116,7 +116,7 @@ export const patchUpdateDevice = async ({
     );
     return data;
   } catch (error) {
-    // 수정 API에서도 동일하게 처리
+    // 백엔드 장비 중복 에러 코드 확인
     if (
       isAxiosError(error) &&
       error.response?.data?.code === "EQUIPMENT_409_DUPLICATED"

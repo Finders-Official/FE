@@ -16,3 +16,4 @@ export {
   useCamerasInfinite,
   useFilmsInfinite,
 } from "./devices/useCatalogInfinite";
+export { useCreateDevice, useUpdateDevice } from "./devices/useCreateDevice";
