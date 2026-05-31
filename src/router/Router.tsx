@@ -51,6 +51,7 @@ import ReservationPage from "@/pages/photoLab/ReservationPage";
 // 마이페이지
 import {
   DeviceRegisterPage,
+  CreditPage,
   EditInfoPage,
   EventNoticePage,
   InquiryPage,
@@ -60,6 +61,8 @@ import {
   MyPostPage,
   NickNameEditPage,
   NoticePage,
+  PaymentPage,
+  PaymentResultPage,
   PhoneEditPage,
   PolicyNoticePage,
   SimpleNoticePage,
@@ -73,6 +76,7 @@ type RouteHandle =
       title?: string;
       isTab?: boolean;
       showBack?: boolean;
+      hideHeader?: boolean;
     }
   | undefined;
 
@@ -243,6 +247,21 @@ const mypageRoutes = [
     path: "device",
     Component: DeviceRegisterPage,
     handle: h({ title: "내 장비 등록하기" }),
+  },
+  {
+    path: "credit",
+    Component: CreditPage,
+    handle: h({ title: "크레딧 충전" }),
+  },
+  {
+    path: "credit/payment",
+    Component: PaymentPage,
+    handle: h({ title: "크레딧 충전" }),
+  },
+  {
+    path: "credit/payment/result",
+    Component: PaymentResultPage,
+    handle: h({ hideHeader: true }),
   },
 ];
 

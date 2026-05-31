@@ -21,5 +21,10 @@ export { SimpleNoticePage } from "./notice/SimpleNoticePage";
 //inquiry 폴더
 export { InquiryPage } from "./inquiry/InquiryPage";
 
-// device
+// device 폴더
 export { DeviceRegisterPage } from "./DeviceRegisterPage";
+
+// credit 폴더
+export { CreditPage } from "./credit/CreditPage";
+export { PaymentPage } from "./credit/PaymentPage";
+export { PaymentResultPage } from "./credit/PaymentResultPage";

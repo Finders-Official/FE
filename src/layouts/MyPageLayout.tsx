@@ -3,7 +3,12 @@ import { Outlet, useMatches, useNavigate } from "react-router";
 import Header from "@/components/common/Header";
 import { TabBar } from "@/components/common/TabBar";
 
-type Handle = { title?: string; isTab?: boolean; showBack?: boolean };
+type Handle = {
+  title?: string;
+  isTab?: boolean;
+  showBack?: boolean;
+  hideHeader?: boolean;
+};
 
 export default function MyPageLayout() {
   const matches = useMatches();
@@ -15,11 +20,14 @@ export default function MyPageLayout() {
 
   const isTab = handle.isTab ?? false;
   const showBack = handle.showBack ?? true;
+  const hideHeader = handle.hideHeader ?? false;
 
   return (
     <div className="flex min-h-0 w-full flex-col">
-      <Header title={title} showBack={showBack} onBack={() => navigate(-1)} />
-      <main className="flex-1">
+      {!hideHeader && (
+        <Header title={title} showBack={showBack} onBack={() => navigate(-1)} />
+      )}
+      <main className="flex flex-1 flex-col">
         <Outlet />
       </main>
       {isTab && <TabBar />}

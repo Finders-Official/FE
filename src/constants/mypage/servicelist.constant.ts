@@ -1,7 +1,7 @@
 import type { OptionLinkItem } from "@/types/mypage/optionlink";
 
 export const managelist: OptionLinkItem[] = [
-  { to: "/mypage", text: "크레딧 개수" },
+  { to: "/mypage/credit", text: "크레딧 개수" },
   { to: "/mypage/device", text: "내 장비 등록하기" },
 ];
 
