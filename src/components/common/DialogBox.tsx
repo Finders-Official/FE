@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 type TextAlign = "center" | "left";
@@ -5,8 +6,9 @@ type ConfirmStyle = "filled" | "text";
 
 interface DialogBoxProps {
   isOpen: boolean;
-  title: string;
+  title?: string;
   description?: string;
+  children?: ReactNode;
   confirmText: string;
   onConfirm: () => void;
   cancelText?: string;
@@ -19,6 +21,7 @@ export const DialogBox = ({
   isOpen,
   title,
   description,
+  children,
   confirmText,
   onConfirm,
   cancelText,
@@ -42,18 +45,24 @@ export const DialogBox = ({
         onClick={(e) => e.stopPropagation()}
         className="bg-neutral-875/70 relative w-[20rem] rounded-[1.25rem] border border-neutral-800 px-6 py-8"
       >
-        <div
-          className={`mb-8 flex flex-col gap-2 ${align === "center" ? "text-center" : "text-left"}`}
-        >
-          <h2 className="text-[1.0625rem] leading-[155%] font-semibold tracking-[-0.02em] whitespace-pre-line text-neutral-100">
-            {title}
-          </h2>
-          {description && (
-            <p className="font-regular text-[0.875rem] leading-[155%] tracking-[-0.02em] whitespace-pre-line text-neutral-200">
-              {description.replaceAll("\\n", "\n")}
-            </p>
-          )}
-        </div>
+        {children ? (
+          <div className="mb-6 max-h-[60vh] overflow-y-auto">{children}</div>
+        ) : (
+          <div
+            className={`mb-8 flex flex-col gap-2 ${align === "center" ? "text-center" : "text-left"}`}
+          >
+            {title && (
+              <h2 className="text-[1.0625rem] leading-[155%] font-semibold tracking-[-0.02em] whitespace-pre-line text-neutral-100">
+                {title}
+              </h2>
+            )}
+            {description && (
+              <p className="font-regular text-[0.875rem] leading-[155%] tracking-[-0.02em] whitespace-pre-line text-neutral-200">
+                {description.replaceAll("\\n", "\n")}
+              </p>
+            )}
+          </div>
+        )}
 
         <div
           className={`flex items-center gap-3 ${align === "center" ? "justify-center" : "justify-end"}`}

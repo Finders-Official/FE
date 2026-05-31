@@ -32,6 +32,7 @@ export { default as MinusIcon } from "./minus.svg?react";
 export { default as MyPageIcon } from "./mypage.svg?react";
 export { default as PencilLineIcon } from "./pencil-line.svg?react";
 export { default as PhotoLabIcon } from "./photolab.svg?react";
+export { default as QuestionCircleIcon } from "./question-circle.svg?react";
 export { default as PlusIcon } from "./plus.svg?react";
 export { default as PrinterIcon } from "./printer.svg?react";
 export { default as ScanIcon } from "./scan.svg?react";
