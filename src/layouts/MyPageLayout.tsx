@@ -4,7 +4,12 @@ import Header from "@/components/common/Header";
 import { TabBar } from "@/components/common/TabBar";
 import { useState } from "react";
 
-type Handle = { title?: string; isTab?: boolean; showBack?: boolean };
+type Handle = {
+  title?: string;
+  isTab?: boolean;
+  showBack?: boolean;
+  hideHeader?: boolean;
+};
 
 export type MyPageOutletContext = {
   setCustomOnBack: (fn: (() => void) | null) => void;
@@ -20,17 +25,20 @@ export default function MyPageLayout() {
 
   const isTab = handle.isTab ?? false;
   const showBack = handle.showBack ?? true;
+  const hideHeader = handle.hideHeader ?? false;
 
   // 커스텀 뒤로가기 상태
   const [customOnBack, setCustomOnBack] = useState<(() => void) | null>(null);
 
   return (
     <div className="flex min-h-0 w-full flex-col">
-      <Header
-        title={title}
-        showBack={showBack}
-        onBack={customOnBack ? customOnBack : () => navigate(-1)}
-      />
+      {!hideHeader && (
+        <Header
+          title={title}
+          showBack={showBack}
+          onBack={customOnBack ? customOnBack : () => navigate(-1)}
+        />
+      )}
       <main className="flex-1">
         <Outlet context={{ setCustomOnBack } satisfies MyPageOutletContext} />
       </main>

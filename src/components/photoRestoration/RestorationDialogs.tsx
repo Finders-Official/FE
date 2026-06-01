@@ -67,11 +67,11 @@ export const RestorationDialogs: React.FC<RestorationDialogsProps> = ({
       {/* 크레딧 부족 */}
       <DialogBox
         isOpen={activeDialog === "NO_CREDIT"}
-        title="크레딧을 모두 사용하셨어요!"
-        description="오늘 밤 12시가 넘으면 자동 충전되니, \n조금만 기다려주세요 :)"
-        align="left"
-        confirmButtonStyle="text"
-        confirmText="확인"
+        title="크레딧이 부족해요!"
+        description="크레딧을 충전하시겠어요?"
+        cancelText="취소"
+        onCancel={handleDialogCancel}
+        confirmText="충전하기"
         onConfirm={handleDialogConfirm}
       />
 

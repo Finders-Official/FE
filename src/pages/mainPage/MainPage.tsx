@@ -1,11 +1,9 @@
 import { useEffect, useRef } from "react";
 import Header from "@/components/mainPage/Header";
 import PromotionBanner from "@/components/mainPage/PromotionBanner";
-import QuickMenuButton from "@/components/mainPage/QuickMenuButton";
 import PopularLabsSection from "@/components/mainPage/PopularLabsSection/PopularLabsSection";
 import FilmNewsSection from "@/components/mainPage/FilmNewsSection/FilmNewsSection";
 import CommunityGallerySection from "@/components/mainPage/ComunityGallarySection/CommunityGallerySection";
-import NoticeSection from "@/components/mainPage/NoticeSection/NoticeSection";
 import { useAnchorScroll } from "@/hooks/common";
 
 const SectionWrapper = ({
@@ -46,13 +44,10 @@ export default function MainPage() {
       <Header />
       <div
         ref={scrollRef}
-        className="scrollbar-hide flex-1 overflow-y-auto overscroll-y-none pb-[env(safe-area-inset-bottom)]"
+        className="scrollbar-hide flex-1 overflow-y-auto overscroll-y-none pb-(--tabbar-height)"
       >
         <SectionWrapper id="promotion">
           <PromotionBanner />
-        </SectionWrapper>
-        <SectionWrapper id="quick-menu">
-          <QuickMenuButton />
         </SectionWrapper>
         <SectionWrapper id="popular-labs">
           <PopularLabsSection />
@@ -62,9 +57,6 @@ export default function MainPage() {
         </SectionWrapper>
         <SectionWrapper id="community">
           <CommunityGallerySection />
-        </SectionWrapper>
-        <SectionWrapper id="notice">
-          <NoticeSection />
         </SectionWrapper>
       </div>
     </div>
