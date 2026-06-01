@@ -51,17 +51,14 @@ export function useKakaoOauth({
   //이미 존재하는 회원인지 신규 회원인지에 따른 분기 처리
   useEffect(() => {
     if (didRun.current) return;
-    if (error) return;
-    if (!code) return;
+    didRun.current = true;
 
-    // state 검증 실패(콜백 새로고침 등) 시 로그인으로 보냄
-    if (!consumeAndValidateKakaoState(state)) {
-      didRun.current = true;
+    // 실패(취소/거부/비정상 접근/콜백 새로고침 등)는 모두 로그인으로
+    if (error || !code || !consumeAndValidateKakaoState(state)) {
       onFail?.();
       return;
     }
 
-    didRun.current = true;
     mutate({
       provider: "KAKAO",
       credentialType: "AUTHORIZATION_CODE",

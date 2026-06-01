@@ -1,34 +1,13 @@
-import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { useKakaoOauth } from "@/hooks/auth/login";
 import { consumeRedirectAfterLogin } from "@/pages/demoDay/redirectAfterLogin"; // DEMO-DAY
 
 export function KakaoCallbackPage() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  //1 카카오 취소/거부 처리
-  useEffect(() => {
-    const sp = new URLSearchParams(location.search);
-    const error = sp.get("error");
-
-    // 취소/거부/실패 케이스는 여기서 전부 로그인으로 보냄
-    if (error) {
-      navigate("/auth/login", { replace: true });
-      return;
-    }
-
-    // code 자체가 없으면 비정상 접근/실패로 간주
-    const code = sp.get("code");
-    if (!code) {
-      navigate("/auth/login", { replace: true });
-      return;
-    }
-  }, [location.search, navigate]);
-
-  //1. 기존 회원 : 바로 메인페이지로 리다이렉
-  //2. 신규 회원: 온보딩 화면으로 리다이렉
-  //3. 실패시 login 페이지로 리다이렉
+  //1. 기존 회원: 바로 메인페이지로 리다이렉
+  //2. 신규 회원: 약관 동의 화면으로 리다이렉
+  //3. 실패(취소/거부/비정상 접근): 로그인 페이지로 리다이렉
   const { isPending } = useKakaoOauth({
     onExistingMember: () => {
       // DEMO-DAY: 원래는 navigate("/mainpage", { replace: true })
