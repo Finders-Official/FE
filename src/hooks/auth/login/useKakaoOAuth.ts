@@ -54,8 +54,12 @@ export function useKakaoOauth({
     if (error) return;
     if (!code) return;
 
-    // state 검증 통과해야만 진행
-    if (!consumeAndValidateKakaoState(state)) return;
+    // state 검증 실패(콜백 새로고침 등) 시 로그인으로 보냄
+    if (!consumeAndValidateKakaoState(state)) {
+      didRun.current = true;
+      onFail?.();
+      return;
+    }
 
     didRun.current = true;
     mutate({
@@ -63,7 +67,7 @@ export function useKakaoOauth({
       credentialType: "AUTHORIZATION_CODE",
       credential: code,
     });
-  }, [code, error, state, mutate]);
+  }, [code, error, state, mutate, onFail]);
 
   return { isPending };
 }
