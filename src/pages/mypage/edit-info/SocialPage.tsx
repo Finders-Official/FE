@@ -6,7 +6,7 @@ function ProviderBadge({ provider }: { provider?: SocialProvider }) {
   if (provider === "KAKAO") {
     return (
       <>
-        <KakaoFillIcon className="h-6 w-6 fill-orange-500" />
+        <KakaoFillIcon className="h-6 w-6" />
         <p>카카오</p>
       </>
     );

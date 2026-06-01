@@ -12,7 +12,7 @@ export const AppleButton = ({ onClick, disabled }: AppleButtonProps) => {
       className="inline-flex h-[3.125rem] w-full items-center justify-center gap-2 rounded-2xl bg-[#040505] font-semibold text-white shadow-sm active:scale-[0.99] disabled:opacity-60"
       onClick={onClick}
     >
-      <AppleIcon className="h-5.5 w-5.5" aria-label="Apple Logo" />
+      <AppleIcon className="h-5.5 w-5.5" aria-hidden="true" />
       <span className="font-normal">Apple로 계속하기</span>
     </button>
   );

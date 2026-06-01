@@ -22,7 +22,11 @@ export function TermsAgreementItem({
     <div className="border-neutral-850 flex flex-col gap-2 border-b py-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <Checkbox checked={checked} onChange={onToggleCheck} />
+          <Checkbox
+            checked={checked}
+            onChange={onToggleCheck}
+            ariaLabel={term.label}
+          />
           <button
             type="button"
             onClick={onToggleCheck}

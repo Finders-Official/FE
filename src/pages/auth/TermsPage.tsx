@@ -22,7 +22,7 @@ export function TermsPage() {
     <div className="flex w-full flex-col">
       <Header title="약관 동의" showBack onBack={() => navigate(-1)} />
 
-      <div className="flex flex-col px-4 py-3">
+      <div className="flex flex-col py-3">
         {AGREEMENT_TERMS.map((term) => (
           <div
             key={term.id}

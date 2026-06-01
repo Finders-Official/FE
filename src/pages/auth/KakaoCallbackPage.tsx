@@ -11,9 +11,6 @@ export function KakaoCallbackPage() {
   useEffect(() => {
     const sp = new URLSearchParams(location.search);
     const error = sp.get("error");
-    const errorDesc = sp.get("error_description");
-
-    console.log(errorDesc);
 
     // 취소/거부/실패 케이스는 여기서 전부 로그인으로 보냄
     if (error) {

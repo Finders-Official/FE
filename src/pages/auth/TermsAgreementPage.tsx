@@ -31,8 +31,12 @@ export function TermsAgreementPage() {
       />
 
       {/* 전체 동의 */}
-      <div className="border-neutral-875 flex items-center gap-2 border-b-4 px-4 py-3">
-        <Checkbox checked={allChecked} onChange={toggleAll} />
+      <div className="border-neutral-875 flex items-center gap-2 border-b-4 py-3">
+        <Checkbox
+          checked={allChecked}
+          onChange={toggleAll}
+          ariaLabel="전체 동의"
+        />
         <button
           type="button"
           onClick={toggleAll}
@@ -43,7 +47,7 @@ export function TermsAgreementPage() {
       </div>
 
       {/* 약관 목록 */}
-      <div className="flex flex-col px-4 py-3">
+      <div className="flex flex-col py-3">
         {AGREEMENT_TERMS.map((term) => (
           <TermsAgreementItem
             key={term.id}

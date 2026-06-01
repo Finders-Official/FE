@@ -9,7 +9,6 @@ export type {
 } from "./oAuth";
 
 export type {
-  AgreementItem,
   SocialSignupCompleteData,
   SocialSignupCompleteReq,
 } from "./signUp";
