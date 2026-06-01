@@ -48,18 +48,6 @@ export default function PopularLabCard({ lab }: PopularLabCardProps) {
         }}
       />
 
-      {/* 태그 영역: 가로 스크롤 & 줄바꿈 방지 */}
-      <div className="scrollbar-hide absolute right-0 bottom-18.75 left-0 z-20 flex gap-1.5 overflow-x-auto px-2.5">
-        {lab.tags?.map((tag, index) => (
-          <span
-            key={index}
-            className="flex items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900/50 px-2 py-1.5 text-[0.625rem] leading-[126%] font-semibold tracking-[-0.02em] whitespace-nowrap text-neutral-200 backdrop-blur-sm"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
       <div className="absolute right-0 bottom-0 left-0 z-20 flex h-16.25 flex-col justify-start gap-0.5 rounded-b-[0.625rem] bg-neutral-900 px-2.5 py-3.5">
         <h3 className="w-full truncate text-[0.875rem] leading-[140%] font-semibold tracking-[-0.02em] text-neutral-100">
           {lab.name}
