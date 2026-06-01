@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import type { TermsType } from "@/types/auth";
 import { useDebouncedValue } from "@/hooks/common";
 import {
   useConfirmPhoneVerification,
@@ -15,6 +16,7 @@ type PhonePurpose = "SIGNUP" | "MY_PAGE";
 
 type Options = {
   phonePurpose?: PhonePurpose;
+  agreedTermTypes?: TermsType[];
 };
 
 function isValidNickname(n: string) {
@@ -25,6 +27,7 @@ export function useOnBoardingForm(options?: Options) {
   const navigate = useNavigate();
 
   const phonePurpose: PhonePurpose = options?.phonePurpose ?? "SIGNUP";
+  const agreedTermTypes = options?.agreedTermTypes ?? [];
 
   const [isSending, setIsSending] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
@@ -276,6 +279,7 @@ export function useOnBoardingForm(options?: Options) {
       nickname: nicknameTrimmed,
       phone,
       verifiedPhoneToken,
+      agreedTermTypes,
     });
   };
 

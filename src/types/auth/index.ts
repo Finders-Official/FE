@@ -14,4 +14,4 @@ export type {
   SocialSignupCompleteReq,
 } from "./signUp";
 
-export type { Section } from "./terms";
+export type { TermsType, AgreementGroup, AgreementTerm } from "./terms";

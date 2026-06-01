@@ -11,6 +11,7 @@ import {
   KakaoCallbackPage,
   LoginPage,
   OnBoardingPage,
+  TermsAgreementPage,
   TermsPage,
 } from "@/pages/auth";
 
@@ -89,6 +90,7 @@ const h = (handle: RouteHandle) => handle;
 const authRoutes = [
   { path: "login", Component: LoginPage },
   { path: "kakao/callback", Component: KakaoCallbackPage },
+  { path: "agreement", Component: TermsAgreementPage },
   { path: "onboarding", Component: OnBoardingPage },
   { path: "terms", Component: TermsPage },
 ];

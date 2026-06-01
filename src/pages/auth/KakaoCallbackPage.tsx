@@ -38,7 +38,7 @@ export function KakaoCallbackPage() {
       const redirect = consumeRedirectAfterLogin();
       navigate(redirect ?? "/mainpage", { replace: true });
     },
-    onNewMember: () => navigate("/auth/onboarding", { replace: true }),
+    onNewMember: () => navigate("/auth/agreement", { replace: true }),
     onFail: () => navigate("/auth/login", { replace: true }),
   });
 
