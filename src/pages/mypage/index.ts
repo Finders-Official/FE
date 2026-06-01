@@ -11,6 +11,20 @@ export { WithDrawPage } from "./edit-info/WithDrawPage";
 export { LikedPhotoLabPage } from "./tab/LikedPhotoLabPage";
 export { LikedPostPage } from "./tab/LikedPostPage";
 export { MyPostPage } from "./tab/MyPostPage";
+
+//notice 폴더
+export { NoticePage } from "./notice/NoticePage";
+export { EventNoticePage } from "./notice/EventNoticePage";
+export { PolicyNoticePage } from "./notice/PolicyNoticePage";
+export { SimpleNoticePage } from "./notice/SimpleNoticePage";
+
+//inquiry 폴더
+export { InquiryPage } from "./inquiry/InquiryPage";
+
+// device 폴더
+export { DeviceRegisterPage } from "./DeviceRegisterPage";
+
+// credit 폴더
 export { CreditPage } from "./credit/CreditPage";
 export { PaymentPage } from "./credit/PaymentPage";
 export { PaymentResultPage } from "./credit/PaymentResultPage";

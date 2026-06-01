@@ -4,12 +4,10 @@ export interface FavoritePhotoLabDto {
   photoLabId: number;
   name: string;
   imageUrls: string[];
-  tags: string[];
   address: string;
-  distance: string;
+  distanceKm: string;
   isFavorite: boolean;
-  totalWorkCount: number;
-  avgWorkTime: number;
+  favoriteCount: number;
 }
 
 export interface PageInfoDto {
@@ -30,11 +28,8 @@ export type PhotoLab = {
   id: number; // photoLabId
   name: string;
   imageUrls: string[];
-  tags: string[];
   address: string;
-  distanceText: string; // "1.5km"
+  distanceKm: string; // "1.5km"
   isFavorite: boolean;
-  totalWorkCount: number;
-  estimatedMinutes: number; // avgWorkTime
-  // 총 좋아요 개수 추가 필요
+  favoriteCount: number; // 총 좋아요 개수 추가 필요
 };
