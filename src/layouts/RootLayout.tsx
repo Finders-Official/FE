@@ -7,21 +7,27 @@ export default function RootLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 앱이 커스텀 스킴 URL을 통해 켜졌을 때 실행되는 리스너
     const setupAppListener = async () => {
       await CapacitorApp.addListener(
         "appUrlOpen",
         (data: URLOpenListenerEvent) => {
-          const url = new URL(data.url);
+          // 안전장치 1: data나 data.url이 없으면 실행하지 않음
+          if (!data || !data.url) return;
 
-          // 카카오 로그인 콜백 스킴 처리
-          if (url.host === "oauth") {
-            const code = url.searchParams.get("code");
-            const state = url.searchParams.get("state");
+          try {
+            const url = new URL(data.url);
 
-            if (code) {
-              navigate(`/oauth/callback?code=${code}&state=${state}`);
+            if (url.host === "oauth") {
+              const code = url.searchParams.get("code");
+              const state = url.searchParams.get("state");
+
+              if (code) {
+                navigate(`/oauth/callback?code=${code}&state=${state}`);
+              }
             }
+          } catch (error) {
+            // 안전장치 2: URL 형식이 아니어도 앱이 죽지 않고 에러만 로그에 찍히게 함
+            console.error("딥링크 URL 파싱 에러:", error);
           }
         },
       );
@@ -29,7 +35,6 @@ export default function RootLayout() {
 
     setupAppListener();
 
-    // 언마운트 시 리스너 정리
     return () => {
       CapacitorApp.removeAllListeners();
     };
