@@ -25,7 +25,7 @@ export default function LabPreviewItem({
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId, lab.isFavorite);
+    onFavoriteToggle?.(lab.photoLabId, isFavorite);
   };
 
   return (

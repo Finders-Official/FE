@@ -27,7 +27,7 @@ export default function SimpleLabCard({
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId, lab.isFavorite);
+    onFavoriteToggle?.(lab.photoLabId, isFavorite);
   };
 
   const handleCardClick = () => {
@@ -39,12 +39,17 @@ export default function SimpleLabCard({
       role={onCardClick ? "button" : undefined}
       tabIndex={onCardClick ? 0 : undefined}
       onClick={handleCardClick}
-      onKeyDown={(e) => e.key === "Enter" && handleCardClick()}
+      onKeyDown={(e) => {
+        if (onCardClick && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
       className={`flex flex-col py-4 first:pt-0 ${onCardClick ? "cursor-pointer" : ""} ${className}`}
     >
       <div className="flex gap-3.5 border-b border-neutral-800 pb-5">
         {/* 썸네일 */}
-        {lab.imageUrls != null ? (
+        {lab.imageUrls && lab.imageUrls.length > 0 ? (
           <img
             src={lab.imageUrls[0]}
             alt={`${lab.name} 이미지`}
