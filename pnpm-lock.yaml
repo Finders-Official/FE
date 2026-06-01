@@ -30,6 +30,9 @@ importers:
       axios:
         specifier: ^1.13.2
         version: 1.13.2
+      capacitor3-kakao-login:
+        specifier: ^0.8.7
+        version: 0.8.7(@capacitor/core@8.3.4)
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
@@ -1023,6 +1026,12 @@ packages:
 
   caniuse-lite@1.0.30001761:
     resolution: {integrity: sha512-JF9ptu1vP2coz98+5051jZ4PwQgd2ni8A+gYSN7EA7dPKIMf0pDlSUxhdmVOaV3/fYK5uWBkgSXJaRLr4+3A6g==}
+
+  capacitor3-kakao-login@0.8.7:
+    resolution: {integrity: sha512-GSElGfcwB/iVjPXxr28ACBmkGNdDsWZK1AvqT6Q9M3NOlf4QbFF5j/hy8AlahwR3ltrB3Lw2+ktUvA+6PwRs4Q==}
+    engines: {node: 22.14.0}
+    peerDependencies:
+      '@capacitor/core': ^8.0.0
 
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
@@ -3113,6 +3122,10 @@ snapshots:
   camelcase@6.3.0: {}
 
   caniuse-lite@1.0.30001761: {}
+
+  capacitor3-kakao-login@0.8.7(@capacitor/core@8.3.4):
+    dependencies:
+      '@capacitor/core': 8.3.4
 
   chalk@4.1.2:
     dependencies:
