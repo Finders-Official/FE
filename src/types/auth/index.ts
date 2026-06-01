@@ -1,7 +1,11 @@
 export type {
+  SocialProvider,
+  CredentialType,
   SocialProfile,
-  SocialoginCompleteData,
-  SocialoginCompleteReq,
+  SocialLoginReq,
+  SocialLoginData,
+  SocialLoginSuccess,
+  SocialLoginSignupRequired,
 } from "./oAuth";
 
 export type {

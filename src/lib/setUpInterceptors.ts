@@ -10,7 +10,6 @@ import axios from "axios";
 
 type RefreshResponse = {
   accessToken: string;
-  refreshToken?: string;
   accessTokenExpiresIn?: number;
 };
 
@@ -44,13 +43,15 @@ type AuthMetaConfig = InternalAxiosRequestConfig & {
 };
 
 async function requestRefreshToken(baseURL: string) {
-  const refreshToken = tokenStorage.getRefreshToken();
-  if (!refreshToken) throw new Error("No refresh token");
-
+  // refreshToken은 httpOnly 쿠키로 전송, 바디 없이 withCredentials로 요청
   const res = await axios.post<ApiResponse<RefreshResponse>>(
     `${baseURL}/auth/reissue`,
-    { refreshToken },
-    { headers: { "Content-Type": "application/json" }, timeout: 15000 },
+    null,
+    {
+      headers: { "Content-Type": "application/json" },
+      timeout: 15000,
+      withCredentials: true,
+    },
   );
 
   const body = res.data;
@@ -67,7 +68,6 @@ async function requestRefreshToken(baseURL: string) {
 
   return {
     accessToken: data.accessToken,
-    refreshToken: data.refreshToken,
   };
 }
 
@@ -162,10 +162,9 @@ export function setupInterceptors(instance: AxiosInstance) {
       try {
         const data = await requestRefreshToken(baseURL);
 
-        // 토큰 저장 (signupToken은 그대로 유지)
+        // 토큰 저장 (signupToken은 그대로 유지, refreshToken은 쿠키로 관리)
         tokenStorage.setTokens({
           accessToken: data.accessToken,
-          refreshToken: data.refreshToken ?? tokenStorage.getRefreshToken(),
           signupToken: tokenStorage.getSignupToken(),
         });
 

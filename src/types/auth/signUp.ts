@@ -11,7 +11,6 @@ export interface SocialSignupCompleteReq {
 
 export type SocialSignupCompleteData = {
   accessToken: string;
-  refreshToken: string;
   member: {
     memberId: number;
     nickname: string;
