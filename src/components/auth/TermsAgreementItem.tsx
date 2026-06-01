@@ -1,7 +1,6 @@
-import { ChevronLeftIcon } from "@/assets/icon";
 import { Checkbox } from "@/components/common";
 import type { AgreementTerm } from "@/types/auth";
-import { TermsContent } from "./TermsContent";
+import { TermsAccordionRow } from "./TermsAccordionRow";
 
 type Props = {
   term: AgreementTerm;
@@ -19,8 +18,11 @@ export function TermsAgreementItem({
   onToggleExpand,
 }: Props) {
   return (
-    <div className="border-neutral-850 flex flex-col gap-2 border-b py-2">
-      <div className="flex items-center justify-between">
+    <TermsAccordionRow
+      groups={term.groups}
+      expanded={expanded}
+      onToggleExpand={onToggleExpand}
+      leading={
         <div className="flex items-center gap-1.5">
           <Checkbox
             checked={checked}
@@ -35,22 +37,7 @@ export function TermsAgreementItem({
             {term.label}
           </button>
         </div>
-        <button
-          type="button"
-          aria-label={expanded ? "약관 접기" : "약관 펼치기"}
-          aria-expanded={expanded}
-          onClick={onToggleExpand}
-          className="flex h-6 w-6 items-center justify-center"
-        >
-          <ChevronLeftIcon
-            className={`h-6 w-6 text-neutral-400 transition-transform ${
-              expanded ? "rotate-90" : "-rotate-90"
-            }`}
-          />
-        </button>
-      </div>
-
-      {expanded && <TermsContent groups={term.groups} />}
-    </div>
+      }
+    />
   );
 }
