@@ -17,5 +17,3 @@ export const AppleButton = ({ onClick, disabled }: AppleButtonProps) => {
     </button>
   );
 };
-
-export default AppleButton;
