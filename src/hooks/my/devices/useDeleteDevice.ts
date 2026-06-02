@@ -17,7 +17,11 @@ export const useDeleteDevice = () => {
       await queryClient.cancelQueries({ queryKey: ["equipments"] });
 
       // 에러 났을 때 롤백하기 위해 기존 캐시 데이터 백업
-      const previousEquipments = queryClient.getQueryData(["equipments"]);
+      const previousEquipments = queryClient.getQueriesData<
+        InfiniteData<EquipmentListResponse>
+      >({
+        queryKey: ["equipments"],
+      });
 
       // 무한 스크롤 데이터 구조에 맞춰 캐시 데이터(UI) 즉시 삭제
       queryClient.setQueriesData(
@@ -46,7 +50,9 @@ export const useDeleteDevice = () => {
     // onError: API 요청이 실패하면 백업해둔 데이터로 다시 롤백
     onError: (err, deletedId, context) => {
       if (context?.previousEquipments) {
-        queryClient.setQueryData(["equipments"], context.previousEquipments);
+        context.previousEquipments.forEach(([queryKey, oldData]) => {
+          queryClient.setQueryData(queryKey, oldData);
+        });
       }
       console.error("장비 삭제 실패:", err, deletedId);
     },
