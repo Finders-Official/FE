@@ -107,7 +107,7 @@ export function MyPostPage() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col py-4">
+    <div className="flex h-full flex-1 flex-col py-4">
       <main
         className={[
           "flex min-h-0 flex-1 flex-col px-4",
@@ -121,7 +121,7 @@ export function MyPostPage() {
             ))}
           </div>
         ) : posts.length === 0 && !isFetchingNextPage ? (
-          <div className="flex flex-1 items-center justify-center">
+          <div className="flex h-full flex-1 items-center justify-center">
             <EmptyOrderState description="아직 기록된 나만의 사진이 없어요" />
           </div>
         ) : (

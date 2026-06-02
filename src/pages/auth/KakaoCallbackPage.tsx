@@ -30,7 +30,7 @@ export function KakaoCallbackPage() {
   }, [location.search, navigate]);
 
   //1. 기존 회원 : 바로 메인페이지로 리다이렉
-  //2. 신규 회원: 온보딩 화면으로 리다이렉
+  //2. 신규 회원: 온보딩 화면으로 리다이렉 -> 약관 동의 화면 후 온보딩 화면
   //3. 실패시 login 페이지로 리다이렉
   const { isPending } = useKakaoOauth({
     onExistingMember: () => {

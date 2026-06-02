@@ -29,7 +29,6 @@ export function useKakaoOauth({
     onSuccess: async (res) => {
       tokenStorage.setTokens({
         accessToken: res.data.accessToken ?? tokenStorage.getAccessToken(),
-        refreshToken: res.data.refreshToken ?? tokenStorage.getRefreshToken(),
         signupToken: res.data.signupToken ?? tokenStorage.getSignupToken(),
       });
 
