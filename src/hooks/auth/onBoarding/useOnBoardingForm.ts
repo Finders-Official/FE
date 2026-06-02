@@ -199,7 +199,6 @@ export function useOnBoardingForm(options?: Options) {
     onSuccess: (res) => {
       tokenStorage.setTokens({
         accessToken: res.data.accessToken,
-        refreshToken: res.data.refreshToken,
         signupToken: null,
       });
       setUser({
