@@ -1,6 +1,5 @@
-import { useEffect, useRef } from "react";
-import { useSearchParams } from "react-router";
-import { consumeAndValidateKakaoState } from "@/utils/auth/kakaoOauth";
+import { useState } from "react";
+import { loginWithApple } from "@/utils/auth/appleSdk";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -11,20 +10,15 @@ type Props = {
   onFail?: (message?: string) => void;
 };
 
-export function useKakaoOauth({
+export function useAppleLogin({
   onExistingMember,
   onNewMember,
   onFail,
 }: Props) {
-  const [sp] = useSearchParams();
-  const didRun = useRef(false);
   const setUser = useAuthStore((state) => state.setUser);
+  const [isPopupPending, setIsPopupPending] = useState(false);
 
-  const code = sp.get("code");
-  const error = sp.get("error");
-  const state = sp.get("state");
-
-  const { mutate, isPending } = useOauth({
+  const { mutate, isPending: isMutating } = useOauth({
     onSuccess: (res) => {
       const data = res.data;
 
@@ -37,7 +31,7 @@ export function useKakaoOauth({
         setUser({ memberId: data.member.id, nickname: data.member.nickname });
         onExistingMember();
       } else {
-        // 신규 회원: signupToken 저장 후 온보딩으로
+        // 신규 회원: signupToken 저장 후 약관 동의로
         tokenStorage.setTokens({
           accessToken: null,
           signupToken: data.signupToken,
@@ -48,23 +42,23 @@ export function useKakaoOauth({
     onError: () => onFail?.(),
   });
 
-  //이미 존재하는 회원인지 신규 회원인지에 따른 분기 처리
-  useEffect(() => {
-    if (didRun.current) return;
-    didRun.current = true;
-
-    // 실패(취소/거부/비정상 접근/콜백 새로고침 등)는 모두 로그인으로
-    if (error || !code || !consumeAndValidateKakaoState(state)) {
+  const login = async () => {
+    try {
+      setIsPopupPending(true);
+      const code = await loginWithApple();
+      mutate({
+        provider: "APPLE",
+        credentialType: "AUTHORIZATION_CODE",
+        credential: code,
+      });
+    } catch (e) {
+      // 사용자가 팝업을 닫거나 SDK 로드 실패/환경변수 누락 등
+      console.error(e);
       onFail?.();
-      return;
+    } finally {
+      setIsPopupPending(false);
     }
+  };
 
-    mutate({
-      provider: "KAKAO",
-      credentialType: "AUTHORIZATION_CODE",
-      credential: code,
-    });
-  }, [code, error, state, mutate, onFail]);
-
-  return { isPending };
+  return { login, isPending: isPopupPending || isMutating };
 }

@@ -1,16 +1,13 @@
 import { axiosInstance } from "@/lib/axiosInstance";
-import type {
-  SocialoginCompleteData,
-  SocialoginCompleteReq,
-} from "@/types/auth";
+import type { SocialLoginData, SocialLoginReq } from "@/types/auth";
 import type { ApiResponse } from "@/types/common/apiResponse";
 
-//소셜 로그인 (웹 브라우저용)
+// 통합 소셜 로그인 (KAKAO / APPLE)
 export async function oauth(
-  payload: SocialoginCompleteReq,
-): Promise<ApiResponse<SocialoginCompleteData>> {
-  const res = await axiosInstance.post<ApiResponse<SocialoginCompleteData>>(
-    "/auth/social/login/code",
+  payload: SocialLoginReq,
+): Promise<ApiResponse<SocialLoginData>> {
+  const res = await axiosInstance.post<ApiResponse<SocialLoginData>>(
+    "/auth/social/login",
     payload,
   );
   const body = res.data;

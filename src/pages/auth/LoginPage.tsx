@@ -1,10 +1,11 @@
 import { AppleButton, KakaoButton } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
-import { Link, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
-import { useLoginIntroUi } from "@/hooks/auth/login";
+import { useAppleLogin, useLoginIntroUi } from "@/hooks/auth/login";
 import { useAuthStore } from "@/store/useAuth.store";
+import { consumeRedirectAfterLogin } from "@/pages/demoDay/redirectAfterLogin";
 
 const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
 const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
@@ -56,6 +57,15 @@ export function LoginPage() {
   const ui = useLoginIntroUi({
     forceWelcomeOnce,
     splashMs: 2000,
+  });
+
+  const navigate = useNavigate();
+  const apple = useAppleLogin({
+    onExistingMember: () => {
+      const redirect = consumeRedirectAfterLogin();
+      navigate(redirect ?? "/mainpage", { replace: true });
+    },
+    onNewMember: () => navigate("/auth/agreement", { replace: true }),
   });
 
   const handleKakaoLogin = () => {
@@ -141,8 +151,7 @@ export function LoginPage() {
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
             <div className="flex flex-col gap-4">
-              {/* TODO: 애플 로그인 및 회원가입 API 구현 */}
-              <AppleButton />
+              <AppleButton onClick={apple.login} disabled={apple.isPending} />
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
 
