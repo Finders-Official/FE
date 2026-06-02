@@ -20,13 +20,13 @@ export function SpecButton({
     <button
       onClick={onClick}
       type="button"
-      className="bg-neutral-875 flex aspect-square h-[8.75rem] w-full flex-col items-center justify-center gap-4 rounded-2xl border border-neutral-800"
+      className="bg-neutral-875 flex aspect-square h-[8.75rem] w-full min-w-0 flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl border border-neutral-800"
     >
       {isSelected ? (
         /* 기종 선택 후 상태 */
         <>
-          <Icon className="h-7 w-7 shrink-0 text-orange-500" />
-          <span className="w-full truncate px-2 text-center text-sm font-medium tracking-tight text-orange-500">
+          <Icon className="h-7 w-7 shrink-0 fill-orange-500 text-orange-500" />
+          <span className="block w-full truncate px-2 text-center text-sm font-medium tracking-tight text-orange-500">
             {selectedName}
           </span>
         </>

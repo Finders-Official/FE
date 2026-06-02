@@ -17,5 +17,3 @@ export const KakaoButton = ({ onClick }: KakaoButtonProps) => {
     </button>
   );
 };
-
-//router 설정 추가

@@ -5,6 +5,7 @@ type CheckboxProps = {
   onChange: (checked: boolean) => void;
   iconClassName?: string;
   onClick?: (checked: boolean) => void;
+  ariaLabel?: string;
 };
 
 export function Checkbox({
@@ -12,6 +13,7 @@ export function Checkbox({
   onChange,
   iconClassName = "h-4 w-4",
   onClick,
+  ariaLabel,
 }: CheckboxProps) {
   const handleClick = () => {
     const nextChecked = !checked;
@@ -23,6 +25,7 @@ export function Checkbox({
     <button
       type="button"
       aria-pressed={checked}
+      aria-label={ariaLabel}
       onClick={handleClick}
       className="inline-flex items-center justify-center"
     >

@@ -1,12 +1,15 @@
-import { KakaoButton } from "@/components/auth";
+import { AppleButton, KakaoButton } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
-import { useLoginIntroUi } from "@/hooks/auth/login";
+import { useAppleLogin, useLoginIntroUi } from "@/hooks/auth/login";
 import { useAuthStore } from "@/store/useAuth.store";
 import { Capacitor3KakaoLogin } from "capacitor3-kakao-login";
 import { isNativeApp } from "@/utils/auth/envUtils";
+import { oauth } from "@/apis/auth";
+import { tokenStorage } from "@/utils/tokenStorage";
+import { consumeRedirectAfterLogin } from "../demoDay/redirectAfterLogin";
 
 const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
 const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
@@ -62,6 +65,14 @@ export function LoginPage() {
 
   const navigate = useNavigate();
 
+  const apple = useAppleLogin({
+    onExistingMember: () => {
+      const redirect = consumeRedirectAfterLogin();
+      navigate(redirect ?? "/mainpage", { replace: true });
+    },
+    onNewMember: () => navigate("/auth/agreement", { replace: true }),
+  });
+
   useEffect(() => {
     if (isNativeApp()) {
       const nativeAppKey = import.meta.env.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY;
@@ -75,31 +86,56 @@ export function LoginPage() {
       }
     }
   }, []);
-  //TODO: 백엔드 -> 액세스 토큰 요청 + 리다이렉 설정
+
+  const setUser = useAuthStore((state) => state.setUser);
+
   const handleKakaoLogin = async () => {
     if (isNativeApp()) {
-      // 📱 [모바일 앱 환경]
       try {
-        // const result = await Capacitor3KakaoLogin.kakaoLogin();
-        // const accessToken = result.value;
-        // 1. 백엔드로 토큰을 보내서 우리 서비스의 세션/로그인 처리를 합니다.
-        // const response = await loginWithKakaoAppToken(accessToken);
-        // // 2. 콜백 페이지(useKakaoOauth 훅)에서 했던 것과 동일한 라우팅 분기 처리
-        // if (response.isNewMember) {
-        //   navigate("/auth/onboarding", { replace: true });
-        // } else {
-        //   // const redirect = consumeRedirectAfterLogin();
-        //   // navigate(redirect ?? "/mainpage", { replace: true });
-        // }
+        const result = await Capacitor3KakaoLogin.kakaoLogin();
+        const accessToken = result.value;
+
+        const response = await oauth({
+          provider: "KAKAO",
+          credentialType: "ACCESS_TOKEN",
+          credential: accessToken,
+        });
+
+        const data = response.data;
+
+        // 1. 신규 회원 분기
+        if ("isNewMember" in data && data.isNewMember === true) {
+          // ✅ 훅에 있던 로직 가져옴 (signupToken 저장)
+          tokenStorage.setTokens({
+            accessToken: null,
+            signupToken: data.signupToken,
+          });
+          navigate("/auth/onboarding", { replace: true });
+        }
+        // 2. 기존 회원 분기
+        else if ("member" in data) {
+          // 훅에 있던 로직 가져옴 (accessToken 저장 및 전역 상태 세팅)
+          tokenStorage.setTokens({
+            accessToken: data.accessToken,
+            signupToken: null,
+          });
+          setUser({ memberId: data.member.id, nickname: data.member.nickname });
+
+          // const redirect = consumeRedirectAfterLogin();
+          // navigate(redirect ?? "/mainpage", { replace: true });
+          navigate("/mainpage", { replace: true });
+        } else {
+          console.error("알 수 없는 로그인 응답 타입입니다:", data);
+          navigate("/auth/login", { replace: true });
+        }
       } catch (error) {
         console.error("앱 카카오 로그인/API 실패:", error);
         navigate("/auth/login", { replace: true });
       }
     } else {
-      // 💻 [일반 웹 환경] 기존 로직 그대로!
+      // 일반 웹은 기존처럼 URL 이동 (이후 콜백 페이지에서 올려주신 훅이 알아서 처리함)
       const url = buildKakaoAuthorizeUrl();
       window.location.assign(url);
-      // (이후 과정은 기존 KakaoCallbackPage가 알아서 처리함)
     }
   };
 
@@ -181,6 +217,7 @@ export function LoginPage() {
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
             <div className="flex flex-col gap-2">
+              <AppleButton onClick={apple.login} disabled={apple.isPending} />
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
 

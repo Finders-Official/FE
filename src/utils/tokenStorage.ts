@@ -6,6 +6,7 @@ export type AuthTokens = {
 const ACCESS_KEY = "accessToken";
 const SIGNUP_KEY = "signupToken";
 
+// refreshToken은 서버가 httpOnly 쿠키로 관리하므로 클라이언트에 저장 X
 export const tokenStorage = {
   getAccessToken(): string | null {
     return localStorage.getItem(ACCESS_KEY);
