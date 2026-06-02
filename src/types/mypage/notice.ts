@@ -11,7 +11,30 @@ export interface NoticeItem {
   isNew: boolean;
 }
 
-export interface NoticeResponse {
-  contents: NoticeItem[];
+export interface Pagination {
+  page: number;
+  size: number;
   totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+export interface NoticeListResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  timestamp: string;
+  data: NoticeItem[];
+  pagination: Pagination;
+}
+
+export interface NoticeDetailResponse {
+  success: boolean;
+  code: string;
+  message: string;
+  timestamp: string;
+  data: NoticeItem;
 }
