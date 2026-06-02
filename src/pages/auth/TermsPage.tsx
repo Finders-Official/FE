@@ -40,3 +40,6 @@ export function TermsPage() {
     </div>
   );
 }
+
+// 카카오 회원가입에서 여기로 왔을 때는 체크박스 표시 -> 회원가입 완료 api 에서 agreeementID로 넘겨야 함
+// 이용약관 페이지에서 오면 체크박스 제거
