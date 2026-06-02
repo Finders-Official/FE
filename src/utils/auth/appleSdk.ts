@@ -56,6 +56,14 @@ function loadAppleSdk(): Promise<void> {
 let initialized = false;
 
 async function ensureAppleAuth(): Promise<AppleAuth> {
+  const clientId = import.meta.env.VITE_PUBLIC_APPLE_CLIENT_ID;
+  const redirectURI = import.meta.env.VITE_PUBLIC_APPLE_REDIRECT_URI;
+  if (!clientId || !redirectURI) {
+    throw new Error(
+      "Apple 로그인 환경 변수(VITE_PUBLIC_APPLE_CLIENT_ID / VITE_PUBLIC_APPLE_REDIRECT_URI)가 설정되지 않았습니다.",
+    );
+  }
+
   await loadAppleSdk();
 
   const appleId = window.AppleID;
@@ -63,9 +71,9 @@ async function ensureAppleAuth(): Promise<AppleAuth> {
 
   if (!initialized) {
     appleId.auth.init({
-      clientId: import.meta.env.VITE_PUBLIC_APPLE_CLIENT_ID as string,
+      clientId,
       scope: "name email",
-      redirectURI: import.meta.env.VITE_PUBLIC_APPLE_REDIRECT_URI as string,
+      redirectURI,
       usePopup: true,
     });
     initialized = true;

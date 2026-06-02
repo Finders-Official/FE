@@ -51,8 +51,9 @@ export function useAppleLogin({
         credentialType: "AUTHORIZATION_CODE",
         credential: code,
       });
-    } catch {
-      // 사용자가 팝업을 닫거나 SDK 로드 실패 등
+    } catch (e) {
+      // 사용자가 팝업을 닫거나 SDK 로드 실패/환경변수 누락 등
+      console.error(e);
       onFail?.();
     } finally {
       setIsPopupPending(false);
