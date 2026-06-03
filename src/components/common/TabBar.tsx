@@ -51,13 +51,7 @@ export const TabBar = () => {
   const user = useAuthStore((s) => s.user);
   const isAuthed = Boolean(user && user.memberId > 0);
 
-  const navTokenRef = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const bumpToken = () => {
-    navTokenRef.current += 1;
-    return navTokenRef.current;
-  };
 
   const isTabActive = (tab: TabItem) => {
     if (tab.end) return pathname === tab.to;
@@ -65,12 +59,10 @@ export const TabBar = () => {
   };
 
   const onClickTab = (to: string) => {
-    bumpToken();
     requireAuthNavigate(to);
   };
 
   const handleRestoreClick = () => {
-    bumpToken();
     if (!isAuthed) {
       requireAuth(() => fileInputRef.current?.click());
       return;
