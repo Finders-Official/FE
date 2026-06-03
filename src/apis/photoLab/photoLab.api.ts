@@ -1,7 +1,7 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import type {
-  PhotoLabItem,
+  SimplePhotoLabItem,
   PhotoLabListParams,
   PhotoLabFavoriteStatus,
   PhotoLabDetail,
@@ -24,8 +24,8 @@ function serializeListParams(params: PhotoLabListParams) {
 // 현상소 목록 조회
 export async function getPhotoLabList(
   params: PhotoLabListParams,
-): Promise<PagedApiResponse<PhotoLabItem[]>> {
-  const res = await axiosInstance.get<PagedApiResponse<PhotoLabItem[]>>(
+): Promise<PagedApiResponse<SimplePhotoLabItem[]>> {
+  const res = await axiosInstance.get<PagedApiResponse<SimplePhotoLabItem[]>>(
     "/photo-labs",
     { params: serializeListParams(params) },
   );

@@ -1,34 +1,25 @@
 import { useState, useMemo, useCallback } from "react";
 import { usePhotoLabFilter } from "@/store/usePhotoLabFilter.store";
-import { useNavigate, useLocation } from "react-router";
-import { Header, FilterContainer } from "@/components/common";
-import {
-  LabNewsBanner,
-  FilterTagList,
-  LabList,
-  FilterBottomSheet,
-} from "@/components/photoLab";
-import { SearchIcon } from "@/assets/icon";
+import { useNavigate } from "react-router";
+import { Header } from "@/components/common";
+import { LabList, FilterBottomSheet } from "@/components/photoLab";
+import { SearchIcon, FilterIcon } from "@/assets/icon";
 import {
   useGeolocation,
   usePhotoLabList,
   useFavoriteToggle,
-  usePhotoLabNotices,
 } from "@/hooks/photoLab";
-import { displayTimesToApiTimes } from "@/utils/time";
-import { formatFilterValue } from "@/utils/filterFormat";
 import type { FilterState } from "@/types/photoLab";
 
 export default function PhotoLabPage() {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
 
   // 메인 페이지 "현상 맡기기" 버튼을 통한 진입여부
-  const isFromMain = location.state?.from === "main";
+  // const isFromMain = location.state?.from === "main";
 
   // 필터 상태 (검색 페이지와 공유)
-  const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
-    usePhotoLabFilter();
+  const { filter, setFilter, selectedTagIds } = usePhotoLabFilter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // 위치 정보
@@ -39,22 +30,22 @@ export default function PhotoLabPage() {
   } = useGeolocation();
 
   // 현상소 공지
-  const { data: notices } = usePhotoLabNotices({
+  /* const { data: notices } = usePhotoLabNotices({
     lat: latitude ?? undefined,
     lng: longitude ?? undefined,
-  });
+  }); */
 
   // 현상소 목록 조회
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePhotoLabList(
       {
-        tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+        //tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
         regionIds: filter.regionIds,
-        date: filter.date,
+        /* date: filter.date,
         time:
           filter.time && filter.time.length > 0
             ? displayTimesToApiTimes(filter.time)
-            : undefined,
+            : undefined, */
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },
@@ -67,10 +58,10 @@ export default function PhotoLabPage() {
     [data],
   );
 
-  const filterValue = formatFilterValue(filter);
+  //const filterValue = formatFilterValue(filter);
 
   // 태그 토글
-  const handleTagToggle = useCallback(
+  /* const handleTagToggle = useCallback(
     (tagId: number) => {
       setSelectedTagIds((prev) =>
         prev.includes(tagId)
@@ -79,7 +70,7 @@ export default function PhotoLabPage() {
       );
     },
     [setSelectedTagIds],
-  );
+  ); */
 
   // 즐겨찾기 토글
   const { mutate: toggleFavorite } = useFavoriteToggle();
@@ -102,9 +93,9 @@ export default function PhotoLabPage() {
   };
 
   // 날짜/지역 필터 클릭
-  const handleFilterClick = () => {
+  /* const handleFilterClick = () => {
     setIsFilterOpen(true);
-  };
+  }; */
 
   // 필터 적용
   const handleFilterApply = (newFilter: FilterState) => {
@@ -122,26 +113,30 @@ export default function PhotoLabPage() {
     <div className="flex w-full flex-col">
       {/* 헤더 */}
       <Header
-        title={isFromMain ? "현상 맡기기" : "현상소 보기"}
-        showBack={isFromMain}
-        onBack={() => navigate(-1)}
-        rightAction={{
+        title={"현상소 보기"}
+        showBack={false}
+        leftAction={{
           type: "icon",
           icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
           onClick: handleSearchClick,
         }}
+        rightAction={{
+          type: "icon",
+          icon: <FilterIcon className="h-5 w-5 text-neutral-200" />,
+          onClick: () => setIsFilterOpen(true),
+        }}
       />
 
       {/* 현상소 소식 배너 */}
-      <div className="pb-4">
+      {/* <div className="pb-4">
         <LabNewsBanner
           newsList={notices ?? []}
           onNewsClick={(news) => navigate(`/photolab/${news.photoLabId}`)}
         />
-      </div>
+      </div> */}
 
       {/* 필터 섹션 - 스크롤 시 상단 고정 */}
-      <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
+      {/* <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
         <div className="flex flex-col gap-4 pb-6">
           <FilterContainer
             label="날짜 / 지역"
@@ -152,10 +147,10 @@ export default function PhotoLabPage() {
             selectedTagIds={selectedTagIds}
             onTagToggle={handleTagToggle}
           />
-        </div>
-        {/* 구분선 */}
-        <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
-      </div>
+        </div> */}
+      {/* 구분선 */}
+      {/* <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
+      </div> */}
 
       {/* 현상소 목록 */}
       <LabList

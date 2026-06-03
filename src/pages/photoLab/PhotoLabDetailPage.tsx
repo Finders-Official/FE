@@ -3,10 +3,8 @@ import { useNavigate, useParams } from "react-router";
 import { Header } from "@/components/common";
 import {
   LabBasicInfo,
-  LabBottomBar,
   LabImageCarousel,
   LabLocationSection,
-  LabNoticeSection,
   LabWorkResultsSection,
 } from "@/components/photoLab/detail";
 import {
@@ -42,12 +40,12 @@ export default function PhotoLabDetailPage() {
     toggleFavorite({ photoLabId, isFavorite });
   };
 
-  const handleReservation = () => {
+  /* const handleReservation = () => {
     if (!lab) return;
     navigate(`/photolab/${lab.photoLabId}/reservation`, {
       state: { labName: lab.name, distanceKm: lab.distanceKm },
     });
-  };
+  }; */
 
   // TODO: Skeleton UI로 교체
   if (isLoading) {
@@ -88,7 +86,7 @@ export default function PhotoLabDetailPage() {
         <LabBasicInfo lab={lab} onFavoriteToggle={handleFavoriteToggle} />
 
         {/* 주요 공지 */}
-        <LabNoticeSection notice={lab.mainNotice} />
+        {/* <LabNoticeSection notice={lab.mainNotice} /> */}
 
         {/* 작업 결과물 */}
         <LabWorkResultsSection
@@ -111,7 +109,7 @@ export default function PhotoLabDetailPage() {
         />
       </main>
 
-      <LabBottomBar onReservationClick={handleReservation} />
+      {/* <LabBottomBar onReservationClick={handleReservation} /> */}
     </div>
   );
 }
