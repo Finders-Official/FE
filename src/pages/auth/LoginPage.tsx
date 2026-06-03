@@ -105,7 +105,7 @@ export function LoginPage() {
 
         // 1. 신규 회원 분기
         if ("isNewMember" in data && data.isNewMember === true) {
-          // ✅ 훅에 있던 로직 가져옴 (signupToken 저장)
+          // 훅에 있던 로직 가져옴 (signupToken 저장)
           tokenStorage.setTokens({
             accessToken: null,
             signupToken: data.signupToken,
