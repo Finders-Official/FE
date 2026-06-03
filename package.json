@@ -12,8 +12,11 @@
     "format:check": "prettier . --check",
     "preview": "vite preview",
     "prepare": "husky",
-    "cap:sync": "pnpm build && npx cap sync ios",
-    "cap:open": "npx cap open ios"
+    "cap:sync": "pnpm build && npx cap sync",
+    "cap:sync:ios": "pnpm build && npx cap sync ios",
+    "cap:sync:android": "pnpm build && npx cap sync android",
+    "cap:open:ios": "npx cap open ios",
+    "cap:open:android": "npx cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.4",
