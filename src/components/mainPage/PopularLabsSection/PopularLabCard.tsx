@@ -47,19 +47,10 @@ export default function PopularLabCard({ lab }: PopularLabCardProps) {
         }}
       />
 
-      <div className="absolute right-0 bottom-0 left-0 z-20 flex h-16.25 flex-col justify-start gap-0.5 rounded-b-[0.625rem] bg-neutral-900 px-2.5 py-3.5">
+      <div className="absolute right-0 bottom-0 left-0 z-20 flex h-16.25 items-center rounded-b-[0.625rem] bg-neutral-900 px-2.5">
         <h3 className="w-full truncate text-[0.875rem] leading-[140%] font-semibold tracking-[-0.02em] text-neutral-100">
           {lab.name}
         </h3>
-
-        <div className="flex items-center gap-1">
-          <span className="font-regular text-[0.75rem] leading-[126%] tracking-[-0.02em] text-neutral-200">
-            총 작업 건 수
-          </span>
-          <span className="font-regular text-[0.75rem] leading-[126%] tracking-[-0.02em] text-orange-500">
-            {lab.workCount}건
-          </span>
-        </div>
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
-import { useRef } from "react";
-import { useLocation } from "react-router";
+import { useRef, type ChangeEvent } from "react";
+import { useLocation, useNavigate } from "react-router";
 import {
   TabHomeIcon,
   PhotoLabIcon,
   ChatIcon,
+  AiRestoreIcon,
   MyPageIcon,
   TabHomeFillIcon,
   PhotoLabFillIcon,
@@ -12,6 +13,7 @@ import {
 } from "@/assets/icon";
 import type { TabItem } from "@/types/tab";
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
+import { useAuthStore } from "@/store/useAuth.store";
 
 const tabs: (TabItem & { id?: string })[] = [
   {
@@ -43,36 +45,51 @@ const tabs: (TabItem & { id?: string })[] = [
 
 export const TabBar = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
-  const { requireAuthNavigate } = useRequireAuth();
+  const { requireAuth, requireAuthNavigate } = useRequireAuth();
+  const user = useAuthStore((s) => s.user);
+  const isAuthed = Boolean(user && user.memberId > 0);
 
-  // 가장 최근 탭 클릭을 나타내는 토큰
-  const navTokenRef = useRef(0);
-
-  // 어느 탭이든 누르면 이전 작업은 무효화
-  const bumpToken = () => {
-    navTokenRef.current += 1;
-    return navTokenRef.current;
-  };
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isTabActive = (tab: TabItem) => {
     if (tab.end) return pathname === tab.to;
     return pathname.startsWith(tab.to);
   };
 
-  // 탭 클릭 -> 누르는 순간 이전 비동기 네비게이션 모두 무효화
   const onClickTab = (to: string) => {
-    bumpToken();
     requireAuthNavigate(to);
+  };
+
+  const handleRestoreClick = () => {
+    if (!isAuthed) {
+      requireAuth(() => fileInputRef.current?.click());
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const objectUrl = URL.createObjectURL(e.target.files[0]);
+    navigate("/restore/editor", { state: { imageUrl: objectUrl } });
+    e.target.value = "";
   };
 
   return (
     <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 py-6">
-      <nav className="grid h-full grid-cols-4">
-        {tabs.map((tab) => {
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        className="hidden"
+      />
+      <nav className="grid h-full grid-cols-5">
+        {tabs.slice(0, 3).map((tab) => {
           const isActive = isTabActive(tab);
           const Icon = isActive ? tab.activeIcon : tab.icon;
-
           return (
             <button
               key={tab.to}
@@ -84,7 +101,37 @@ export const TabBar = () => {
               ].join(" ")}
               aria-label={tab.label}
             >
-              <Icon className="h-[1.5rem] w-[1.5rem]" />
+              <Icon className="h-6 w-6" />
+              <span className="text-center text-xs">{tab.label}</span>
+            </button>
+          );
+        })}
+
+        <button
+          type="button"
+          onClick={handleRestoreClick}
+          className="flex flex-col items-center justify-center gap-1.5 text-neutral-300 active:scale-[0.99]"
+          aria-label="AI 사진복원"
+        >
+          <AiRestoreIcon className="h-6 w-6" />
+          <span className="text-center text-xs">AI 사진복원</span>
+        </button>
+
+        {tabs.slice(3).map((tab) => {
+          const isActive = isTabActive(tab);
+          const Icon = isActive ? tab.activeIcon : tab.icon;
+          return (
+            <button
+              key={tab.to}
+              type="button"
+              onClick={() => onClickTab(tab.to)}
+              className={[
+                "flex flex-col items-center justify-center gap-1.5 active:scale-[0.99]",
+                isActive ? "text-orange-500" : "text-neutral-300",
+              ].join(" ")}
+              aria-label={tab.label}
+            >
+              <Icon className="h-6 w-6" />
               <span className="text-center text-xs">{tab.label}</span>
             </button>
           );

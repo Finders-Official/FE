@@ -118,6 +118,14 @@ export default function PhotoRestorationPage() {
     if (!receivedImageUrl) navigate("/", { replace: true });
   }, [receivedImageUrl, navigate]);
 
+  useEffect(() => {
+    return () => {
+      if (receivedImageUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(receivedImageUrl);
+      }
+    };
+  }, [receivedImageUrl]);
+
   const handleGenerateClick = useCallback(async () => {
     if (creditBalance <= 0) {
       setActiveDialog("NO_CREDIT");
