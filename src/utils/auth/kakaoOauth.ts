@@ -17,11 +17,11 @@ export function buildKakaoAuthorizeUrl() {
 
   // 환경에 따라 다른 환경변수 할당
   const clientId = isApp
-    ? (import.meta.env.VITE_KAKAO_NATIVE_APP_KEY as string)
+    ? (import.meta.env.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY as string)
     : (import.meta.env.VITE_PUBLIC_KAKAO_REST_API_KEY as string);
 
   const redirectUri = isApp
-    ? `kakao${import.meta.env.VITE_KAKAO_NATIVE_APP_KEY as string}://oauth`
+    ? `kakao${import.meta.env.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY as string}://oauth`
     : (import.meta.env.VITE_PUBLIC_KAKAO_REDIRECT_URI as string);
   const state = createState();
   sessionStorage.setItem(KAKAO_STATE_KEY, state);
