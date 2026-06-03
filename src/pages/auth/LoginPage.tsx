@@ -5,7 +5,11 @@ import { useEffect, useMemo, useState } from "react";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
 import { useAppleLogin, useLoginIntroUi } from "@/hooks/auth/login";
 import { useAuthStore } from "@/store/useAuth.store";
-import { consumeRedirectAfterLogin } from "@/pages/demoDay/redirectAfterLogin";
+import { Capacitor3KakaoLogin } from "capacitor3-kakao-login";
+import { isNativeApp } from "@/utils/auth/envUtils";
+import { oauth } from "@/apis/auth";
+import { tokenStorage } from "@/utils/tokenStorage";
+import { consumeRedirectAfterLogin } from "../demoDay/redirectAfterLogin";
 
 const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
 const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
@@ -60,6 +64,7 @@ export function LoginPage() {
   });
 
   const navigate = useNavigate();
+
   const apple = useAppleLogin({
     onExistingMember: () => {
       const redirect = consumeRedirectAfterLogin();
@@ -68,9 +73,70 @@ export function LoginPage() {
     onNewMember: () => navigate("/auth/agreement", { replace: true }),
   });
 
-  const handleKakaoLogin = () => {
-    const url = buildKakaoAuthorizeUrl();
-    window.location.assign(url);
+  useEffect(() => {
+    if (isNativeApp()) {
+      const nativeAppKey = import.meta.env.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY;
+      if (nativeAppKey) {
+        Capacitor3KakaoLogin.initializeKakao({
+          app_key: nativeAppKey,
+          web_key: "",
+        })
+          .then(() => console.log("카카오 플러그인 초기화 완료!"))
+          .catch((error) => console.error("카카오 초기화 실패:", error));
+      }
+    }
+  }, []);
+
+  const setUser = useAuthStore((state) => state.setUser);
+
+  const handleKakaoLogin = async () => {
+    if (isNativeApp()) {
+      try {
+        const result = await Capacitor3KakaoLogin.kakaoLogin();
+        const accessToken = result.value;
+
+        const response = await oauth({
+          provider: "KAKAO",
+          credentialType: "ACCESS_TOKEN",
+          credential: accessToken,
+        });
+
+        const data = response.data;
+
+        // 1. 신규 회원 분기
+        if ("isNewMember" in data && data.isNewMember === true) {
+          // 훅에 있던 로직 가져옴 (signupToken 저장)
+          tokenStorage.setTokens({
+            accessToken: null,
+            signupToken: data.signupToken,
+          });
+          navigate("/auth/onboarding", { replace: true });
+        }
+        // 2. 기존 회원 분기
+        else if ("member" in data) {
+          // 훅에 있던 로직 가져옴 (accessToken 저장 및 전역 상태 세팅)
+          tokenStorage.setTokens({
+            accessToken: data.accessToken,
+            signupToken: null,
+          });
+          setUser({ memberId: data.member.id, nickname: data.member.nickname });
+
+          // const redirect = consumeRedirectAfterLogin();
+          // navigate(redirect ?? "/mainpage", { replace: true });
+          navigate("/mainpage", { replace: true });
+        } else {
+          console.error("알 수 없는 로그인 응답 타입입니다:", data);
+          navigate("/auth/login", { replace: true });
+        }
+      } catch (error) {
+        console.error("앱 카카오 로그인/API 실패:", error);
+        navigate("/auth/login", { replace: true });
+      }
+    } else {
+      // 일반 웹은 기존처럼 URL 이동 (이후 콜백 페이지에서 올려주신 훅이 알아서 처리함)
+      const url = buildKakaoAuthorizeUrl();
+      window.location.assign(url);
+    }
   };
 
   //화면 정책
@@ -150,7 +216,7 @@ export function LoginPage() {
             key={ui.footerKey}
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <AppleButton onClick={apple.login} disabled={apple.isPending} />
               <KakaoButton onClick={handleKakaoLogin} />
             </div>

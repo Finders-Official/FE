@@ -13,5 +13,6 @@
     "typescriptreact"
   ],
 
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
