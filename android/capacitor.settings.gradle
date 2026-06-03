@@ -4,3 +4,6 @@ project(':capacitor-android').projectDir = new File('../node_modules/.pnpm/@capa
 
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.3.4/node_modules/@capacitor/app/android')
+
+include ':capacitor3-kakao-login'
+project(':capacitor3-kakao-login').projectDir = new File('../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.3.4/node_modules/capacitor3-kakao-login/android')
