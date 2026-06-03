@@ -58,6 +58,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>KakaoAppKey</key>
+	<string>c443732a811c903016adc898278b20ee</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>

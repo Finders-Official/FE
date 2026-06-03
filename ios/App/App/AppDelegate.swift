@@ -9,7 +9,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        KakaoSDK.initSDK(appKey: "c443732a811c903016adc898278b20ee")
+        if let appKey = Bundle.main.object(forInfoDictionaryKey: "KakaoAppKey") as? String {
+            KakaoSDK.initSDK(appKey: appKey)
+        }
         return true
     }
 
