@@ -5,6 +5,9 @@ const config: CapacitorConfig = {
   appName: "Finders",
   webDir: "dist",
   appendUserAgent: "FindersApp",
+  ios: {
+    packageManager: "cocoapods",
+  },
 };
 
 export default config;

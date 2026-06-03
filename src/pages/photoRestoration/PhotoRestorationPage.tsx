@@ -211,7 +211,7 @@ export default function PhotoRestorationPage() {
     viewMode === "MAIN";
 
   return (
-    <div className="relative flex min-h-dvh w-full flex-col bg-neutral-900">
+    <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-neutral-900">
       {viewMode === "MAIN" && (
         <>
           <Header
