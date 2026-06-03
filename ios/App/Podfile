@@ -1,0 +1,23 @@
+require_relative '../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios/scripts/pods_helpers'
+
+platform :ios, '15.0'
+use_frameworks!
+
+# workaround to avoid Xcode caching of Pods that requires
+# temporary clearing of project.pbxproj
+install! 'cocoapods', :disable_input_output_paths => true
+
+def capacitor_pods
+  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios'
+  pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.3.4/node_modules/@capacitor/app'
+  pod 'Capacitor3KakaoLogin', :path => '../../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.3.4/node_modules/capacitor3-kakao-login'
+end
+
+target 'App' do
+  capacitor_pods
+end
+
+post_install do |installer|
+  assertDeploymentTarget(installer)
+end
