@@ -4,8 +4,8 @@ import { StarIcon, StarFillIcon, LabThumbnailIcon } from "@/assets/icon";
 
 interface LabCardProps {
   lab: SimplePhotoLabItem;
-  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
-  onCardClick?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
+  onCardClick?: (photoLabId: string) => void;
   className?: string;
 }
 
@@ -47,7 +47,7 @@ export default function SimpleLabCard({
       }}
       className={`flex flex-col py-4 first:pt-0 ${onCardClick ? "cursor-pointer" : ""} ${className}`}
     >
-      <div className="flex gap-3.5 border-b border-neutral-800 pb-5">
+      <div className="flex gap-3.5 border-b-[0.5px] border-neutral-800 pb-5">
         {/* 썸네일 */}
         {lab.imageUrls && lab.imageUrls.length > 0 ? (
           <img

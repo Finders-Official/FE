@@ -24,7 +24,7 @@ export default function PhotoLabDetailPage() {
     isLoading,
     error,
   } = usePhotoLabDetail(
-    photoLabId ? parseInt(photoLabId) : undefined,
+    photoLabId,
     latitude && longitude ? { lat: latitude, lng: longitude } : undefined,
   );
 
@@ -36,7 +36,7 @@ export default function PhotoLabDetailPage() {
     navigate(-1);
   };
 
-  const handleFavoriteToggle = (photoLabId: number, isFavorite: boolean) => {
+  const handleFavoriteToggle = (photoLabId: string, isFavorite: boolean) => {
     toggleFavorite({ photoLabId, isFavorite });
   };
 

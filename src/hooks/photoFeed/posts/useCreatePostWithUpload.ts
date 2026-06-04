@@ -12,13 +12,13 @@ type SubmitArgs = {
   imageMetas: ImageMeta[];
   memberId?: number | null;
 
-  labId?: number;
+  labId?: string;
   isSelfDeveloped: boolean;
   reviewContent?: string;
 };
 
 type Options = {
-  onSuccess?: (postId: number) => void;
+  onSuccess?: (postId: string) => void;
   onError?: (e: unknown) => void;
 };
 

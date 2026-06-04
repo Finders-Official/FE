@@ -41,7 +41,7 @@ export async function getPhotoLabList(
 
 // 현상소 즐겨찾기 추가
 export async function addFavorite(
-  photoLabId: number,
+  photoLabId: string,
 ): Promise<ApiResponse<PhotoLabFavoriteStatus>> {
   const res = await axiosInstance.post<ApiResponse<PhotoLabFavoriteStatus>>(
     `/photo-labs/${photoLabId}/favorites`,
@@ -58,7 +58,7 @@ export async function addFavorite(
 
 // 현상소 즐겨찾기 삭제
 export async function removeFavorite(
-  photoLabId: number,
+  photoLabId: string,
 ): Promise<ApiResponse<PhotoLabFavoriteStatus>> {
   const res = await axiosInstance.delete<ApiResponse<PhotoLabFavoriteStatus>>(
     `/photo-labs/${photoLabId}/favorites`,
@@ -168,7 +168,7 @@ export async function getPhotoLabNotices(params?: {
 
 // 현상소 상세 조회
 export async function getPhotoLabDetail(
-  photoLabId: number,
+  photoLabId: string,
   params?: { lat?: number; lng?: number },
 ): Promise<ApiResponse<PhotoLabDetail>> {
   const res = await axiosInstance.get<ApiResponse<PhotoLabDetail>>(

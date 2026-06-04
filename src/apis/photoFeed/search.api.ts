@@ -60,7 +60,7 @@ export async function getRecentSearches(): Promise<SearchHistory[]> {
 /**
  * 사진수다 최근 검색어 개별 삭제
  */
-export async function deleteRecentSearch(searchHistoryId: number) {
+export async function deleteRecentSearch(searchHistoryId: string) {
   const res = await axiosInstance.delete<ApiResponse<void>>(
     `/posts/search/history/${searchHistoryId}`,
   );

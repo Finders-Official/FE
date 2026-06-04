@@ -10,7 +10,7 @@ import { PAGE_SIZE } from "@/types/photoFeed/postPreview";
  * 게시글 댓글 조회
  */
 export async function getComments(
-  postId: number,
+  postId: string,
   pageParam: number = 0,
 ): Promise<ApiResponseWithPagination<PostComment[]>> {
   const res = await axiosInstance.get<ApiResponseWithPagination<PostComment[]>>(
@@ -36,7 +36,7 @@ export async function getComments(
  * 게시글 댓글 작성
  */
 export async function postComment(
-  postId: number,
+  postId: string,
   content: string,
 ): Promise<PostComment> {
   const res = await axiosInstance.post<ApiResponse<PostComment>>(
@@ -56,7 +56,7 @@ export async function postComment(
 /**
  * 게시글 댓글 삭제
  */
-export async function deleteComment(commentId: number): Promise<boolean> {
+export async function deleteComment(commentId: string): Promise<boolean> {
   const res = await axiosInstance.delete<ApiResponse<void>>(
     `/posts/comments/${commentId}`,
   );

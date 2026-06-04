@@ -5,7 +5,7 @@ import type { LikesResponse } from "@/types/photoFeed/postDetail";
 /**
  * 게시글 좋아요
  */
-export async function postLike(postId: number): Promise<LikesResponse> {
+export async function postLike(postId: string): Promise<LikesResponse> {
   const res = await axiosInstance.post<ApiResponse<LikesResponse>>(
     `/posts/${postId}/likes`,
     null,
@@ -23,7 +23,7 @@ export async function postLike(postId: number): Promise<LikesResponse> {
 /**
  * 게시글 좋아요 취소
  */
-export async function deleteLike(postId: number): Promise<LikesResponse> {
+export async function deleteLike(postId: string): Promise<LikesResponse> {
   const res = await axiosInstance.delete<ApiResponse<LikesResponse>>(
     `/posts/${postId}/likes`,
   );

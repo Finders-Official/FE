@@ -3,7 +3,7 @@ import PopularLabItem from "@/components/photoLab/search/PopularLabItem";
 
 interface PopularLabSectionProps {
   labs: PopularLab[];
-  onLabClick?: (photoLabId: number) => void;
+  onLabClick?: (photoLabId: string) => void;
 }
 
 export default function PopularLabSection({

@@ -9,7 +9,7 @@ import type {
 
 // 예약 가능 시간 조회
 export async function getAvailableTimes(
-  photoLabId: number,
+  photoLabId: string,
   date: string,
 ): Promise<ApiResponse<AvailableTimesResponse>> {
   const res = await axiosInstance.get<ApiResponse<AvailableTimesResponse>>(
@@ -28,7 +28,7 @@ export async function getAvailableTimes(
 
 // 예약 생성
 export async function createReservation(
-  photoLabId: number,
+  photoLabId: string,
   data: CreateReservationRequest,
 ): Promise<ApiResponse<CreateReservationResponse>> {
   const res = await axiosInstance.post<ApiResponse<CreateReservationResponse>>(
@@ -47,8 +47,8 @@ export async function createReservation(
 
 // 예약 상세 조회
 export async function getReservationDetail(
-  photoLabId: number,
-  reservationId: number,
+  photoLabId: string,
+  reservationId: string,
 ): Promise<ApiResponse<ReservationDetailResponse>> {
   const res = await axiosInstance.get<ApiResponse<ReservationDetailResponse>>(
     `/photo-labs/${photoLabId}/reservations/${reservationId}`,

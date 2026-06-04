@@ -5,7 +5,7 @@ export function useDeletePost() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (postId: number) => deletePost(postId),
+    mutationFn: (postId: string) => deletePost(postId),
 
     onSuccess: (_data, postId) => {
       // 1) 피드 리스트 최신화

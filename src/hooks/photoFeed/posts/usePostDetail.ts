@@ -5,9 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 /**
  * 사진수다 게시글 상세 조회 (CO-030)
  */
-export function usePostDetail(postId: number) {
+export function usePostDetail(postId: string | undefined) {
   return useQuery<PostDetailResponse>({
     queryKey: ["postDetail", postId],
-    queryFn: () => getPostDetail(postId),
+    queryFn: () => getPostDetail(postId!),
+    enabled: !!postId,
   });
 }

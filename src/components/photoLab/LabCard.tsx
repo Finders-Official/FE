@@ -10,8 +10,8 @@ import TagBadge from "@/components/photoLab/TagBadge";
 
 interface LabCardProps {
   lab: PhotoLabItem;
-  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
-  onCardClick?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
+  onCardClick?: (photoLabId: string) => void;
   className?: string;
 }
 

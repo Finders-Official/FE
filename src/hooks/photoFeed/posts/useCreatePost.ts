@@ -2,7 +2,7 @@ import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 import { createPost } from "@/apis/photoFeed/post.api";
 import type { PostUploadRequest } from "@/types/photoFeed/postDetail";
 
-type CreatePostResult = number;
+type CreatePostResult = string;
 type CreatePostVars = PostUploadRequest;
 type CreatePostError = unknown;
 

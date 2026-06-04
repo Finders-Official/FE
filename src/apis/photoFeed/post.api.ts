@@ -39,7 +39,7 @@ export async function getPosts({
 /**
  * 게시물 작성
  */
-export async function createPost(payload: PostUploadRequest): Promise<number> {
+export async function createPost(payload: PostUploadRequest): Promise<string> {
   const res = await axiosInstance.post<ApiResponse<PostDetailResponse>>(
     "/posts",
     payload,
@@ -58,7 +58,7 @@ export async function createPost(payload: PostUploadRequest): Promise<number> {
  * 게시글 상세 조회
  */
 export async function getPostDetail(
-  postId: number,
+  postId: string,
 ): Promise<PostDetailResponse> {
   const res = await axiosInstance.get<ApiResponse<PostDetailResponse>>(
     `/posts/${postId}`,
@@ -76,7 +76,7 @@ export async function getPostDetail(
 /**
  * 게시글 삭제
  */
-export async function deletePost(postId: number): Promise<boolean> {
+export async function deletePost(postId: string): Promise<boolean> {
   const res = await axiosInstance.delete<ApiResponse<void>>(`/posts/${postId}`);
 
   const body = res.data;

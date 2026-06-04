@@ -37,19 +37,19 @@ export interface CreateReservationRequest {
 
 // 예약 가능 시간 응답
 export interface AvailableTimesResponse {
-  storeId: number;
+  storeId: string;
   reservationDate: string;
   availableTimes: string[]; // HH:mm (24시간)
 }
 
 // 예약 생성 응답
 export interface CreateReservationResponse {
-  reservationId: number;
+  reservationId: string;
 }
 
 // 예약 상세 응답
 export interface ReservationDetailResponse {
-  reservationId: number;
+  reservationId: string;
   storeName: string;
   reservationDate: string;
   reservationTime: string; // HH:mm (24시간)

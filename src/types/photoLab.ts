@@ -1,6 +1,6 @@
 // 현상소 아이템 (GET /photo-labs 응답)
 export interface PhotoLabItem {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   tags: string[];
   address: string;
@@ -13,7 +13,7 @@ export interface PhotoLabItem {
 
 // 현상소 아이템 -v2용 (GET /photo-labs 응답)
 export interface SimplePhotoLabItem {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   imageUrls: string[];
   address: string;
@@ -90,7 +90,7 @@ export type FilterTag =
 export type NoticeType = "GENERAL" | "EVENT" | "POLICY";
 
 export interface PhotoLabNoticeRolling {
-  photoLabId: number;
+  photoLabId: string;
   photoLabName: string;
   noticeTitle: string;
   noticeType: NoticeType;
@@ -140,7 +140,7 @@ export interface Region {
 
 // 기존 타입 (FindPhotoLabPage에서 사용)
 export type PhotoLab = {
-  id: number;
+  id: string;
   name: string;
   addr: string;
   dist: string;
@@ -148,31 +148,31 @@ export type PhotoLab = {
 
 export const results: PhotoLab[] = [
   {
-    id: 1,
+    id: "1",
     name: "파인더스 상도점",
     addr: "서울 동작구 상도 1동",
     dist: "1.5km",
   },
   {
-    id: 2,
+    id: "2",
     name: "파인더스 흑석점",
     addr: "서울 동작구 상도 1동",
     dist: "1.5km",
   },
   {
-    id: 3,
+    id: "3",
     name: "파인더스 홍대점",
     addr: "서울 동작구 상도 1동",
     dist: "1.5km",
   },
   {
-    id: 4,
+    id: "4",
     name: "파인더스 강남점",
     addr: "서울 동작구 상도 1동",
     dist: "1.5km",
   },
   {
-    id: 5,
+    id: "5",
     name: "파인더스 건대점",
     addr: "서울 동작구 상도 1동",
     dist: "1.5km",
@@ -191,7 +191,7 @@ export interface PhotoLabNotice {
 }
 
 export interface PhotoLabDetail {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   imageUrls: string[];
   //tags: string[];

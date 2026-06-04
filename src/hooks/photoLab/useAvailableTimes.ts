@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAvailableTimes } from "@/apis/photoLab";
 
 export function useAvailableTimes(
-  photoLabId: number | undefined,
+  photoLabId: string | undefined,
   date: string | undefined,
 ) {
   return useQuery({

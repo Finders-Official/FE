@@ -120,7 +120,7 @@ export default function PhotoLabSearchPage() {
   const { mutate: toggleFavorite } = useFavoriteToggle();
 
   const handleFavoriteToggle = useCallback(
-    (photoLabId: number, isFavorite: boolean) => {
+    (photoLabId: string, isFavorite: boolean) => {
       toggleFavorite({ photoLabId, isFavorite });
     },
     [toggleFavorite],
@@ -170,7 +170,7 @@ export default function PhotoLabSearchPage() {
     }
   };
 
-  const handleLabClick = (photoLabId: number) => {
+  const handleLabClick = (photoLabId: string) => {
     navigate(`/photolab/${photoLabId}`);
   };
 

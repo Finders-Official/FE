@@ -4,7 +4,7 @@ export const PAGE_SIZE = 20;
  * 사진수다 메인 피드 조회 응답 (CO-010, CO-013)
  */
 export type PostPreview = {
-  postId: number;
+  postId: string;
   image: PostImage;
   title: string;
   likeCount: number;
@@ -29,7 +29,7 @@ export type PhotoFeedResponse = {
 export const photoMock: PhotoFeedResponse = {
   previewList: [
     {
-      postId: 7,
+      postId: "7",
       image: {
         imageUrl:
           "https://storage.googleapis.com/finders-public/temp/test-image-1.jpg",
@@ -43,7 +43,7 @@ export const photoMock: PhotoFeedResponse = {
       createdAt: "",
     },
     {
-      postId: 6,
+      postId: "6",
       image: {
         imageUrl:
           "https://storage.googleapis.com/finders-public/temp/test-image-2.jpg",
@@ -57,7 +57,7 @@ export const photoMock: PhotoFeedResponse = {
       createdAt: "",
     },
     {
-      postId: 5,
+      postId: "5",
       image: {
         imageUrl:
           "https://storage.googleapis.com/finders-public/temp/test-image-3.jpg",
