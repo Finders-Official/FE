@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import UnderlineTabs from "@/components/common/UnderlineTabs";
 import {
   CreditBalanceCard,
@@ -7,12 +8,8 @@ import {
   CreditInfoDialog,
   CreditProductList,
 } from "@/components/credit";
-import {
-  MOCK_CREDIT_HISTORIES,
-  MOCK_CREDIT_PRODUCTS,
-  MOCK_CURRENT_CREDIT,
-  MOCK_EXPIRING_CREDIT,
-} from "@/constants/credit/credit.mock";
+import { useCreditHistories, useCreditPurchasePage } from "@/hooks/credit";
+import { useMe } from "@/hooks/member";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
 import type { CreditProduct } from "@/types/credit";
 
@@ -31,6 +28,15 @@ export function CreditPage() {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const navigate = useNavigate();
   const setProduct = usePaymentOrderStore((s) => s.setProduct);
+
+  const { data: me } = useMe();
+  const balance = me?.roleData.user?.creditBalance ?? 0;
+
+  const { data: purchasePage, isLoading: isProductsLoading } =
+    useCreditPurchasePage({ enabled: tab === "buy" });
+  const { data: histories, isLoading: isHistoriesLoading } = useCreditHistories(
+    { enabled: tab === "history" },
+  );
 
   const handleTabChange = (index: number) => {
     setParams(
@@ -51,8 +57,9 @@ export function CreditPage() {
   return (
     <div className="flex flex-col pb-6">
       <CreditBalanceCard
-        balance={MOCK_CURRENT_CREDIT}
-        expiringCount={MOCK_EXPIRING_CREDIT}
+        balance={balance}
+        // TODO: BE에 '이번 달 소멸 예정' 필드 추가되면 실제 값으로 교체
+        expiringCount={0}
         onInfoClick={() => setIsInfoOpen(true)}
       />
       <CreditInfoDialog
@@ -68,14 +75,13 @@ export function CreditPage() {
         />
         {tab === "buy" && (
           <CreditProductList
-            products={MOCK_CREDIT_PRODUCTS}
+            products={purchasePage?.products ?? []}
             onPurchase={handlePurchase}
           />
         )}
-        {tab === "history" && (
-          <CreditHistoryList items={MOCK_CREDIT_HISTORIES} />
-        )}
+        {tab === "history" && <CreditHistoryList items={histories ?? []} />}
       </div>
+      <LoadingSpinner open={isProductsLoading || isHistoriesLoading} />
     </div>
   );
 }
