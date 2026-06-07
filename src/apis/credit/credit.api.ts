@@ -3,11 +3,15 @@ import type {
   CreditHistoriesResponse,
   CreditPurchasePageResponse,
 } from "@/types/credit";
+import type { PaymentProvider } from "@/types/payment/provider";
 
-// 크레딧 구매 페이지 조회 (보유 크레딧 + 구매 가능 상품 목록)
-export async function getCreditPurchasePage(): Promise<CreditPurchasePageResponse> {
+// 크레딧 구매 페이지 조회 (보유 크레딧 + provider별 구매 가능 상품 목록)
+export async function getCreditPurchasePage(
+  provider: PaymentProvider,
+): Promise<CreditPurchasePageResponse> {
   const res = await axiosInstance.get<CreditPurchasePageResponse>(
     "/credits/purchase-page",
+    { params: { provider } },
   );
 
   const body = res.data;

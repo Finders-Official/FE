@@ -12,6 +12,7 @@ import { useCreditHistories, useCreditPurchasePage } from "@/hooks/credit";
 import { useMe } from "@/hooks/member";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
 import type { CreditProduct } from "@/types/credit";
+import { getPaymentProvider } from "@/utils/platform";
 
 const TABS = [{ label: "크레딧 구매" }, { label: "내역" }];
 
@@ -32,8 +33,9 @@ export function CreditPage() {
   const { data: me } = useMe();
   const balance = me?.roleData.user?.creditBalance ?? 0;
 
+  const provider = getPaymentProvider();
   const { data: purchasePage, isLoading: isProductsLoading } =
-    useCreditPurchasePage({ enabled: tab === "buy" });
+    useCreditPurchasePage({ provider, enabled: tab === "buy" });
   const { data: histories, isLoading: isHistoriesLoading } = useCreditHistories(
     { enabled: tab === "history" },
   );

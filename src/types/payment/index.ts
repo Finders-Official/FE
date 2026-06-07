@@ -18,3 +18,5 @@ export type {
   GooglePaymentVerifyRequest,
   GooglePaymentVerifyResponse,
 } from "./googlePayment";
+
+export type { PaymentProvider } from "./provider";
