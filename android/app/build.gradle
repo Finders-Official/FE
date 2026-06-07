@@ -10,7 +10,8 @@ android {
     namespace = "com.finders.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.finders.app"
+        // 스토어용 applicationId만 분리한다.
+        applicationId "com.finders"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
