@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import { CTA_Button } from "@/components/common";
 import {
+  AndroidCreditPayment,
   CardSelectBottomSheet,
   CardSelectButton,
   EasyPayRadioList,
@@ -20,6 +21,7 @@ import {
 } from "@/constants/payment/payment.constant";
 import { MOCK_ORDERER } from "@/constants/payment/payment.mock";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
+import { isAndroidApp } from "@/utils/platform";
 import type {
   EasyPayProvider,
   PaymentMethod,
@@ -60,6 +62,11 @@ export function PaymentPage() {
 
   if (!product) {
     return <Navigate to="/mypage/credit" replace />;
+  }
+
+  // Android는 Play 인앱결제로 (카드/간편결제/PG 약관 UI는 웹 전용)
+  if (isAndroidApp()) {
+    return <AndroidCreditPayment product={product} />;
   }
 
   const handleSubmit = () => {
