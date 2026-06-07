@@ -13,3 +13,8 @@ export type {
 } from "./payment";
 
 export type { PaymentTermsGroup, PaymentTermsSection } from "./paymentTerms";
+
+export type {
+  GooglePaymentVerifyRequest,
+  GooglePaymentVerifyResponse,
+} from "./googlePayment";

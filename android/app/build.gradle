@@ -61,6 +61,7 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
     implementation "com.kakao.sdk:v2-user:2.23.0"
+    implementation "com.android.billingclient:billing:8.0.0"
 }
 
 apply from: 'capacitor.build.gradle'

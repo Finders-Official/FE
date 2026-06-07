@@ -5,7 +5,6 @@ import type {
 } from "@/types/payment";
 
 // Google Play 인앱결제 검증 + 크레딧 충전
-// 서버가 purchaseToken을 Google Play Developer API로 검증하고, consume·충전까지 멱등 처리한다.
 export async function verifyGooglePayment(
   request: GooglePaymentVerifyRequest,
 ): Promise<GooglePaymentVerifyResponse> {
