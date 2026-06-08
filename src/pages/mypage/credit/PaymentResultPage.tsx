@@ -74,7 +74,7 @@ export function PaymentResultPage() {
       footer={
         <ResultActions
           leftLabel="문의하기"
-          onLeftClick={() => {}}
+          onLeftClick={() => navigate("/mypage/inquiry")}
           rightLabel="재시도"
           onRightClick={() => navigate("/mypage/credit", { replace: true })}
         />
