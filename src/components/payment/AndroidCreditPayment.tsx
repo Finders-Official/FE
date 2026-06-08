@@ -32,6 +32,12 @@ export function AndroidCreditPayment({ product }: AndroidCreditPaymentProps) {
       return;
     }
 
+    // TODO: PENDING(가상계좌 등) 전용 결과 화면 디자인 필요 — 현재는 허브로 복귀, reconciliation이 정산
+    if (outcome.status === "pending") {
+      navigate("/mypage/credit", { replace: true });
+      return;
+    }
+
     const state: PaymentResultFail = {
       status: "fail",
       errorCode: outcome.errorCode,

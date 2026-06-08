@@ -6,6 +6,7 @@ import type { CreditProduct } from "@/types/credit";
 export type PurchaseOutcome =
   | { status: "success" }
   | { status: "canceled" }
+  | { status: "pending" }
   | { status: "fail"; errorCode?: string };
 
 // Google Play 결제 시트 호출/서버 검증까지 묶은 use case.
@@ -16,17 +17,17 @@ export function usePurchaseCredit() {
   const purchaseCredit = async (
     product: CreditProduct,
   ): Promise<PurchaseOutcome> => {
-    if (!product.externalProductId) {
+    const sku = product.externalProductId;
+    if (!sku) {
       return { status: "fail", errorCode: "MISSING_SKU" };
     }
 
     setIsPurchasing(true);
     try {
-      const purchase = await FindersBilling.purchase({
-        productId: product.externalProductId,
-      });
+      const purchase = await FindersBilling.purchase({ productId: sku });
       await verify.mutateAsync({
-        productId: purchase.productId,
+        // 검증엔 이미 검증된 SKU 사용 (브릿지 purchase.productId 의존 제거)
+        productId: sku,
         purchaseToken: purchase.purchaseToken,
         orderId: purchase.orderId ?? undefined,
       });
@@ -35,6 +36,9 @@ export function usePurchaseCredit() {
       const message = error instanceof Error ? error.message : "";
       if (message === "USER_CANCELED") {
         return { status: "canceled" };
+      }
+      if (message === "PENDING") {
+        return { status: "pending" };
       }
       return { status: "fail", errorCode: message || undefined };
     } finally {
