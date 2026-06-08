@@ -32,8 +32,9 @@ public class FindersBillingPlugin extends Plugin implements PurchasesUpdatedList
 
     private BillingClient billingClient;
     // 진행 중인 결제 1건의 PluginCall. onPurchasesUpdated에서 resolve/reject 한다.
+    // purchase()(백그라운드 스레드)에서 가드 read하므로 volatile.
     @Nullable
-    private PluginCall pendingPurchaseCall;
+    private volatile PluginCall pendingPurchaseCall;
 
     @Override
     public void load() {
@@ -129,10 +130,16 @@ public class FindersBillingPlugin extends Plugin implements PurchasesUpdatedList
                                             .build()))
                             .build();
 
+                    final android.app.Activity activity = getActivity();
+                    if (activity == null) {
+                        // pendingPurchaseCall 세팅 전에 reject — sticky lock 방지
+                        call.reject("ACTIVITY_UNAVAILABLE");
+                        return;
+                    }
                     pendingPurchaseCall = call;
-                    getActivity().runOnUiThread(() -> {
+                    activity.runOnUiThread(() -> {
                         BillingResult launch =
-                                billingClient.launchBillingFlow(getActivity(), flowParams);
+                                billingClient.launchBillingFlow(activity, flowParams);
                         if (launch.getResponseCode() != BillingClient.BillingResponseCode.OK) {
                             pendingPurchaseCall = null;
                             call.reject(
@@ -189,11 +196,32 @@ public class FindersBillingPlugin extends Plugin implements PurchasesUpdatedList
             call.reject("PENDING");
         } else if (code == BillingClient.BillingResponseCode.USER_CANCELED) {
             call.reject("USER_CANCELED");
+        } else if (code == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+            // 이전 구매가 아직 consume되지 않으면 기존 토큰을 찾아 클라가 재검증하도록 반환
+            resolveWithOwnedPurchase(call);
         } else {
             call.reject(
                     "PURCHASE_FAILED: " + billingResult.getDebugMessage(),
                     String.valueOf(code));
         }
+    }
+
+    // 보유 중인 PURCHASED 구매 토큰을 찾아 resolve.
+    private void resolveWithOwnedPurchase(PluginCall call) {
+        QueryPurchasesParams params = QueryPurchasesParams.newBuilder()
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build();
+        billingClient.queryPurchasesAsync(params, (billingResult, purchases) -> {
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                for (Purchase purchase : purchases) {
+                    if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+                        call.resolve(toPurchaseJS(purchase));
+                        return;
+                    }
+                }
+            }
+            call.reject("ITEM_ALREADY_OWNED");
+        });
     }
 
     /** BillingClient 연결을 보장한 뒤 action 실행. 실패 시 call이 있으면 reject. */
