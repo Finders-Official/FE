@@ -10,6 +10,7 @@ import {
 } from "@/components/credit";
 import { useCreditHistories, useCreditPurchasePage } from "@/hooks/credit";
 import { useMe } from "@/hooks/member";
+import { useReconcileGooglePurchases } from "@/hooks/payment";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
 import type { CreditProduct } from "@/types/credit";
 import { getPaymentProvider } from "@/utils/platform";
@@ -29,6 +30,9 @@ export function CreditPage() {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const navigate = useNavigate();
   const setProduct = usePaymentOrderStore((s) => s.setProduct);
+
+  // 진입 시 검증 누락된 Google 구매 복구 (Android 전용, 내부에서 분기)
+  useReconcileGooglePurchases();
 
   const { data: me } = useMe();
   const balance = me?.roleData.user?.creditBalance ?? 0;
