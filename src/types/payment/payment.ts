@@ -1,9 +1,9 @@
-import type { ApiResponse } from "@/types/common/apiResponse";
 import type { CreditProduct } from "@/types/credit";
 
 export type PaymentMethod = "CARD" | "EASY_PAY" | "PHONE";
 
-export type EasyPayProvider = "KAKAO_PAY" | "TOSS" | "PAYCO" | "NAVER_PAY";
+// PAYCO는 서버 PgProvider 미지원으로 제외
+export type EasyPayProvider = "KAKAO_PAY" | "TOSS" | "NAVER_PAY";
 
 export interface PaymentResultSuccess {
   status: "success";
@@ -32,18 +32,3 @@ export interface OrdererInfo {
   name: string;
   phoneNumber: string;
 }
-
-export interface PaymentRequest {
-  productId: string;
-  method: PaymentMethod;
-  cardId?: string;
-  easyPayProvider?: EasyPayProvider;
-  agreedToTerms: boolean;
-}
-
-export interface PaymentInitResponse {
-  paymentId: string;
-  pgRedirectUrl?: string;
-}
-
-export type PaymentInitApiResponse = ApiResponse<PaymentInitResponse>;
