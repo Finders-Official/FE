@@ -19,12 +19,14 @@ import {
   CREDIT_CARD_OPTIONS,
   EASY_PAY_OPTIONS,
 } from "@/constants/payment/payment.constant";
-import { MOCK_ORDERER } from "@/constants/payment/payment.mock";
+import { useMe } from "@/hooks/member";
+import { usePurchaseCreditPortone } from "@/hooks/payment";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
 import { isAndroidApp } from "@/utils/platform";
 import type {
   EasyPayProvider,
   PaymentMethod,
+  PaymentResultFail,
   PaymentResultSuccess,
   PaymentTermsSection,
 } from "@/types/payment";
@@ -43,9 +45,17 @@ export function PaymentPage() {
     PaymentTermsSection["id"] | null
   >(null);
 
+  const { data: me } = useMe();
+  const { purchaseCredit, isPurchasing } = usePurchaseCreditPortone();
+
   useEffect(() => {
     if (product) clear();
   }, [product, clear]);
+
+  const member = me?.member;
+  const ordererEmail =
+    me?.roleData.user?.socialAccounts.find((account) => account.email)?.email ??
+    undefined;
 
   const selectedCardName = useMemo(
     () => CREDIT_CARD_OPTIONS.find((c) => c.id === cardId)?.name ?? null,
@@ -58,7 +68,9 @@ export function PaymentPage() {
       : method === "EASY_PAY"
         ? easyPayId !== null
         : true;
-  const isPayable = agreed && isMethodReady;
+  // 이니시스 PC 결제는 주문자 이름·연락처 필수
+  const hasOrderer = Boolean(member?.name && member?.phone);
+  const isPayable = agreed && isMethodReady && hasOrderer;
 
   if (!product) {
     return <Navigate to="/mypage/credit" replace />;
@@ -69,8 +81,8 @@ export function PaymentPage() {
     return <AndroidCreditPayment product={product} />;
   }
 
-  const handleSubmit = () => {
-    if (!isPayable) return;
+  const handleSubmit = async () => {
+    if (!isPayable || isPurchasing || !member) return;
 
     let methodLabel: string;
     if (method === "CARD") {
@@ -83,10 +95,34 @@ export function PaymentPage() {
       methodLabel = "휴대폰 결제";
     }
 
-    const state: PaymentResultSuccess = {
-      status: "success",
+    const outcome = await purchaseCredit({
       product,
+      method,
+      cardId,
+      easyPayId,
       methodLabel,
+      customer: {
+        fullName: member.name,
+        phoneNumber: member.phone,
+        email: ordererEmail,
+      },
+    });
+
+    if (outcome.status === "canceled") return;
+
+    if (outcome.status === "success") {
+      const state: PaymentResultSuccess = {
+        status: "success",
+        product,
+        methodLabel,
+      };
+      navigate("/mypage/credit/payment/result", { state });
+      return;
+    }
+
+    const state: PaymentResultFail = {
+      status: "fail",
+      errorCode: outcome.status === "fail" ? outcome.errorCode : undefined,
     };
     navigate("/mypage/credit/payment/result", { state });
   };
@@ -94,7 +130,12 @@ export function PaymentPage() {
   return (
     <div className="flex flex-col pb-[6.5rem]">
       <div className="-mx-4">
-        <PaymentOrdererSection orderer={MOCK_ORDERER} />
+        <PaymentOrdererSection
+          orderer={{
+            name: member?.name ?? "",
+            phoneNumber: member?.phone ?? "",
+          }}
+        />
         <PaymentProductSection product={product} />
 
         {/* TODO: 결제수단 플랫폼 분기 필요 — iOS는 Apple IAP, Android·웹은 카드/간편결제/휴대폰(현재 탭). 약관(paymentTerms.constant) 기준. */}
@@ -149,8 +190,8 @@ export function PaymentPage() {
         <CTA_Button
           text="결제하기"
           size="xlarge"
-          color={isPayable ? "orange" : "black"}
-          disabled={!isPayable}
+          color={isPayable && !isPurchasing ? "orange" : "black"}
+          disabled={!isPayable || isPurchasing}
           onClick={handleSubmit}
         />
       </footer>
