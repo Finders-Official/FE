@@ -26,7 +26,6 @@ export const CREDIT_CARD_OPTIONS: CardOption[] = [
 export const EASY_PAY_OPTIONS: EasyPayOption[] = [
   { id: "KAKAO_PAY", name: "카카오페이" },
   { id: "TOSS", name: "토스" },
-  { id: "PAYCO", name: "페이코" },
   { id: "NAVER_PAY", name: "네이버페이" },
 ];
 
