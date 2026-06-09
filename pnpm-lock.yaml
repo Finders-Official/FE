@@ -24,6 +24,9 @@ importers:
       '@capacitor/ios':
         specifier: ^8.3.4
         version: 8.3.4(@capacitor/core@8.3.4)
+      '@portone/browser-sdk':
+        specifier: ^0.1.8
+        version: 0.1.8
       '@tanstack/react-query':
         specifier: ^5.90.12
         version: 5.90.12(react@19.2.3)
@@ -503,6 +506,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@portone/browser-sdk@0.1.8':
+    resolution: {integrity: sha512-/9DqqiJckIAaOiCMXYdX+Pyj1Mxa8COInaI7ziUa5KeqnBuE0Q2+7dNSNMor+q6WM7OtnrVqmRRv5cC+gc02sw==}
 
   '@rolldown/pluginutils@1.0.0-beta.53':
     resolution: {integrity: sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ==}
@@ -2637,6 +2643,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@portone/browser-sdk@0.1.8': {}
 
   '@rolldown/pluginutils@1.0.0-beta.53': {}
 
