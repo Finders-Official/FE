@@ -6,3 +6,4 @@ export {
   useCreditHistories,
   CREDIT_HISTORIES_QUERY_KEY,
 } from "./useCreditHistories";
+export { invalidateCreditQueries } from "./invalidateCreditQueries";
