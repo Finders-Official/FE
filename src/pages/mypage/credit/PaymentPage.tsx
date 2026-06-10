@@ -126,7 +126,7 @@ export function PaymentPage() {
         product,
         methodLabel,
       };
-      navigate("/mypage/credit/payment/result", { state });
+      navigate("/mypage/credit/payment/result", { state, replace: true });
       return;
     }
 
@@ -134,7 +134,7 @@ export function PaymentPage() {
       status: "fail",
       errorCode: outcome.status === "fail" ? outcome.errorCode : undefined,
     };
-    navigate("/mypage/credit/payment/result", { state });
+    navigate("/mypage/credit/payment/result", { state, replace: true });
   };
 
   return (
