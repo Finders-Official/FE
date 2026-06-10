@@ -67,9 +67,9 @@ export type PortoneCheckoutResult =
   | { status: "canceled" }
   | { status: "fail"; errorCode?: string };
 
-// 취소 메시지("사용자가 결제를 취소하였습니다.") 판별
-function isUserCanceledMessage(message?: string): boolean {
-  return message?.includes("취소") ?? false;
+// V2에는 표준 취소 코드가 없어 SDK가 세팅하는 문구로 판별
+export function isPortoneUserCanceled(message?: string | null): boolean {
+  return message?.includes("사용자가 결제를 취소") ?? false;
 }
 
 // 포트원 결제창 호출.
@@ -115,7 +115,7 @@ export async function requestPortoneCheckout(
   }
 
   if (response.code !== undefined) {
-    if (isUserCanceledMessage(response.message)) {
+    if (isPortoneUserCanceled(response.message)) {
       return { status: "canceled" };
     }
     return { status: "fail", errorCode: response.code };

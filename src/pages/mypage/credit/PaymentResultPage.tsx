@@ -18,6 +18,7 @@ import {
   clearPendingPortonePayment,
   loadPendingPortonePayment,
 } from "@/lib/payment/pendingPortonePayment";
+import { isPortoneUserCanceled } from "@/lib/payment/portone";
 import type {
   PaymentResult,
   PaymentResultSuccess,
@@ -84,7 +85,7 @@ export function PaymentResultPage() {
     // 결제창 단계에서 실패/취소로 복귀, complete 호출 X
     if (redirectErrorCode) {
       clearPendingPortonePayment();
-      if (redirectMessage?.includes("취소")) {
+      if (isPortoneUserCanceled(redirectMessage)) {
         navigate("/mypage/credit", { replace: true });
         return;
       }
