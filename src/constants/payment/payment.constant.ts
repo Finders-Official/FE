@@ -29,6 +29,9 @@ export const EASY_PAY_OPTIONS: EasyPayOption[] = [
   { id: "NAVER_PAY", name: "네이버페이" },
 ];
 
+// 서버 ErrorCode, 성공/실패 단정 불가
+export const PAYMENT_ALREADY_PROCESSED_CODE = "PAYMENT_410";
+
 export const PAYMENT_TERMS = [
   { id: "PRIVACY", label: "개인정보 수집·이용 및 처리 동의" },
   { id: "EPAYMENT", label: "전자지급 결제대행 서비스 이용약관 동의" },

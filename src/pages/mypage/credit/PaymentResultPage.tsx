@@ -8,6 +8,7 @@ import {
 import { ConfirmationIcon } from "@/components/common";
 import Header from "@/components/common/Header";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { PAYMENT_ALREADY_PROCESSED_CODE } from "@/constants/payment/payment.constant";
 import {
   extractPortoneErrorCode,
   mapPortoneDetailToOutcome,
@@ -106,8 +107,8 @@ export function PaymentResultPage() {
       })
       .catch((error: unknown) => {
         const errorCode = extractPortoneErrorCode(error);
-        // 이미 처리된 결제(새로고침 등 중복 호출, 충전 내역에서 확인하도록 이동
-        if (errorCode === "PAYMENT_410") {
+        // 이미 처리된 결제(새로고침 등 중복 호출), 충전 내역에서 확인하도록 이동
+        if (errorCode === PAYMENT_ALREADY_PROCESSED_CODE) {
           navigate("/mypage/credit?tab=history", { replace: true });
           return;
         }

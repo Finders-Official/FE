@@ -18,6 +18,7 @@ import {
 import {
   CREDIT_CARD_OPTIONS,
   EASY_PAY_OPTIONS,
+  PAYMENT_ALREADY_PROCESSED_CODE,
 } from "@/constants/payment/payment.constant";
 import { useMe } from "@/hooks/member";
 import { usePurchaseCreditPortone } from "@/hooks/payment";
@@ -109,6 +110,15 @@ export function PaymentPage() {
     });
 
     if (outcome.status === "canceled") return;
+
+    // 이미 처리된 결제, 성공/실패 단정 불가, 충전 내역에서 확인하도록 이동
+    if (
+      outcome.status === "fail" &&
+      outcome.errorCode === PAYMENT_ALREADY_PROCESSED_CODE
+    ) {
+      navigate("/mypage/credit?tab=history", { replace: true });
+      return;
+    }
 
     if (outcome.status === "success") {
       const state: PaymentResultSuccess = {

@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { preRegisterPortonePayment } from "@/apis/payment";
+import { PAYMENT_ALREADY_PROCESSED_CODE } from "@/constants/payment/payment.constant";
+import { invalidateCreditQueries } from "@/hooks/credit";
 import {
   clearPendingPortonePayment,
   savePendingPortonePayment,
@@ -51,6 +54,7 @@ export interface PortonePurchaseParams {
 }
 
 export function usePurchaseCreditPortone() {
+  const queryClient = useQueryClient();
   const complete = useCompletePortonePayment();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
@@ -92,7 +96,12 @@ export function usePurchaseCreditPortone() {
       return mapPortoneDetailToOutcome(completed.data);
     } catch (error) {
       clearPendingPortonePayment();
-      return { status: "fail", errorCode: extractPortoneErrorCode(error) };
+      const errorCode = extractPortoneErrorCode(error);
+      // 이미 처리된 결제, 웹훅이 먼저 충전했을 수 있어 잔액 캐시를 미리 갱신
+      if (errorCode === PAYMENT_ALREADY_PROCESSED_CODE) {
+        invalidateCreditQueries(queryClient);
+      }
+      return { status: "fail", errorCode };
     } finally {
       setIsPurchasing(false);
     }
