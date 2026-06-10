@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { preRegisterPortonePayment } from "@/apis/payment";
@@ -57,6 +57,18 @@ export function usePurchaseCreditPortone() {
   const queryClient = useQueryClient();
   const complete = useCompletePortonePayment();
   const [isPurchasing, setIsPurchasing] = useState(false);
+
+  // PG로 리다이렉트된 뒤 뒤로가기로 bfcache 복원되면 결제창 promise가 풀리지 않음
+  // 복원 시점에 진행 상태를 리셋
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return;
+      setIsPurchasing(false);
+      clearPendingPortonePayment();
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
 
   const purchaseCredit = async (
     params: PortonePurchaseParams,
