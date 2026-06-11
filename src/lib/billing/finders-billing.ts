@@ -1,6 +1,6 @@
 import { registerPlugin } from "@capacitor/core";
 
-// Google Play 인앱결제 상품 정보
+// 인앱결제 상품 정보 (Android: Google Play / iOS: App Store)
 export interface BillingProduct {
   productId: string;
   title: string;
@@ -10,7 +10,7 @@ export interface BillingProduct {
   currency: string;
 }
 
-// 결제/소유 구매 결과
+// 결제/소유 구매 결과 — purchaseToken은 Android: Play purchaseToken / iOS: transactionId
 export interface BillingPurchase {
   productId: string;
   purchaseToken: string;
@@ -26,6 +26,8 @@ export interface FindersBillingPlugin {
   purchase(options: { productId: string }): Promise<BillingPurchase>;
   // 아직 consume되지 않은 보유 구매 목록
   getOwnedPurchases(): Promise<{ purchases: BillingPurchase[] }>;
+  // iOS 전용: 서버 검증 완료 후 StoreKit 트랜잭션 종료 (Android는 서버가 consume하므로 호출하지 않음)
+  finishPurchase(options: { purchaseToken: string }): Promise<void>;
 }
 
 export const FindersBilling =
