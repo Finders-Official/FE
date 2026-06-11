@@ -17,6 +17,11 @@ export type {
 } from "./googlePayment";
 
 export type {
+  ApplePaymentVerifyRequest,
+  ApplePaymentVerifyResponse,
+} from "./applePayment";
+
+export type {
   PortonePaymentStatus,
   PortonePaymentMethod,
   PortonePreRegisterRequest,
