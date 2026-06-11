@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router";
 import { CTA_Button } from "@/components/common";
 import {
   AndroidCreditPayment,
+  AppleCreditPayment,
   CardSelectBottomSheet,
   CardSelectButton,
   EasyPayRadioList,
@@ -23,7 +24,7 @@ import {
 import { useMe } from "@/hooks/member";
 import { usePurchaseCreditPortone } from "@/hooks/payment";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
-import { isAndroidApp } from "@/utils/platform";
+import { isAndroidApp, isIosApp } from "@/utils/platform";
 import type {
   EasyPayProvider,
   PaymentMethod,
@@ -80,6 +81,11 @@ export function PaymentPage() {
   // Android는 Play 인앱결제로 (카드/간편결제/PG 약관 UI는 웹 전용)
   if (isAndroidApp()) {
     return <AndroidCreditPayment product={product} />;
+  }
+
+  // iOS는 App Store 인앱결제로
+  if (isIosApp()) {
+    return <AppleCreditPayment product={product} />;
   }
 
   const handleSubmit = async () => {
