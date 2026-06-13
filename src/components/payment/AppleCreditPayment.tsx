@@ -28,7 +28,7 @@ export function AppleCreditPayment({ product }: AppleCreditPaymentProps) {
         product,
         methodLabel: "App Store",
       };
-      navigate("/mypage/credit/payment/result", { state });
+      navigate("/mypage/credit/payment/result", { state, replace: true });
       return;
     }
 

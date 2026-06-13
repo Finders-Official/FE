@@ -1,12 +1,15 @@
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { FindersBilling } from "@/lib/billing/finders-billing";
 import { PAYMENT_ALREADY_PROCESSED_CODE } from "@/constants/payment/payment.constant";
+import { invalidateCreditQueries } from "@/hooks/credit";
 import { useVerifyApplePayment } from "@/hooks/payment/useVerifyApplePayment";
 import { extractPortoneErrorCode } from "./usePurchaseCreditPortone";
 import { isIosApp } from "@/utils/platform";
 
 // 결제됐지만 검증/종료가 누락된 Apple 트랜잭션을 진입 시 복구
 export function useReconcileApplePurchases() {
+  const queryClient = useQueryClient();
   const { mutateAsync } = useVerifyApplePayment();
 
   useEffect(() => {
@@ -32,6 +35,8 @@ export function useReconcileApplePurchases() {
           ) {
             continue;
           }
+          // 검증 성공 경로(onSuccess)와 달리 여기선 캐시 무효화가 안 되므로 직접 갱신
+          invalidateCreditQueries(queryClient);
         }
         await FindersBilling.finishPurchase({
           purchaseToken: purchase.purchaseToken,
@@ -42,5 +47,5 @@ export function useReconcileApplePurchases() {
     return () => {
       cancelled = true;
     };
-  }, [mutateAsync]);
+  }, [mutateAsync, queryClient]);
 }
