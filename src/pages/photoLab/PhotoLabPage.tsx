@@ -76,14 +76,14 @@ export default function PhotoLabPage() {
   const { mutate: toggleFavorite } = useFavoriteToggle();
 
   const handleFavoriteToggle = useCallback(
-    (photoLabId: number, isFavorite: boolean) => {
+    (photoLabId: string, isFavorite: boolean) => {
       toggleFavorite({ photoLabId, isFavorite });
     },
     [toggleFavorite],
   );
 
   // 카드 클릭
-  const handleCardClick = (photoLabId: number) => {
+  const handleCardClick = (photoLabId: string) => {
     navigate(`/photolab/${photoLabId}`);
   };
 
@@ -122,7 +122,7 @@ export default function PhotoLabPage() {
         }}
         rightAction={{
           type: "icon",
-          icon: <FilterIcon className="h-5 w-5 text-neutral-200" />,
+          icon: <FilterIcon className="h-6 w-6 text-neutral-200" />,
           onClick: () => setIsFilterOpen(true),
         }}
       />

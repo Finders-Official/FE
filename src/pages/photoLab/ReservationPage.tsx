@@ -48,7 +48,7 @@ export default function ReservationPage() {
   const location = useLocation();
   const { photoLabId } = useParams();
   const state = location.state as LocationState | null;
-  const labId = photoLabId ? Number(photoLabId) : undefined;
+  const labId = photoLabId;
 
   const labName = state?.labName ?? "현상소";
   const distanceKm = state?.distanceKm ?? null;

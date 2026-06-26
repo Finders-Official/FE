@@ -11,13 +11,13 @@ export interface RecentSearch {
 // 인기 현상소 랭킹
 export interface PopularLab {
   rank: number;
-  photoLabId: number;
+  photoLabId: string;
   name: string;
 }
 
 // 현상소 프리뷰 (검색 미리보기용)
 export interface LabPreview {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   address: string;
   imageUrl: string | null;

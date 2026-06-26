@@ -5,7 +5,7 @@ export function useDeleteComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (commentId: number) => deleteComment(commentId),
+    mutationFn: (commentId: string) => deleteComment(commentId),
 
     onSuccess: () => {
       // 댓글 리스트 최신화

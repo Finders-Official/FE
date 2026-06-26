@@ -3,7 +3,7 @@ import { createReservation } from "@/apis/photoLab";
 import type { CreateReservationRequest } from "@/types/reservation";
 
 interface CreateReservationParams {
-  photoLabId: number;
+  photoLabId: string;
   data: CreateReservationRequest;
 }
 

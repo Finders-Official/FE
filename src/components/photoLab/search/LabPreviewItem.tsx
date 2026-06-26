@@ -5,7 +5,7 @@ import { useState } from "react";
 interface LabPreviewItemProps {
   lab: LabPreview;
   onClick?: () => void;
-  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
+  onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
 }
 
 export default function LabPreviewItem({

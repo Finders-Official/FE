@@ -7,7 +7,7 @@ interface UsePhotoLabDetailParams {
 }
 
 export function usePhotoLabDetail(
-  photoLabId: number | undefined,
+  photoLabId: string | undefined,
   params?: UsePhotoLabDetailParams,
 ) {
   return useQuery({

@@ -3,7 +3,7 @@ import LabPreviewItem from "@/components/photoLab/search/LabPreviewItem";
 
 interface LabPreviewSectionProps {
   labs: LabPreview[];
-  onLabClick?: (photoLabId: number) => void;
+  onLabClick?: (photoLabId: string) => void;
 }
 
 export default function LabPreviewSection({

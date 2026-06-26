@@ -80,7 +80,7 @@ export function LikedPhotoLabPage() {
       }));
 
       toggleFavorite(
-        { photoLabId, isFavorite: prevIsFavoriteFromCard },
+        { photoLabId: String(photoLabId), isFavorite: prevIsFavoriteFromCard },
         {
           onError: () => {
             setFavoriteOverrideById((prev) => ({

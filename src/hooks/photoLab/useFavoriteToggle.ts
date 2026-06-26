@@ -4,7 +4,7 @@ import type { PagedApiResponse, PhotoLabItem } from "@/types/photoLab";
 import type { InfiniteData } from "@tanstack/react-query";
 
 interface ToggleParams {
-  photoLabId: number;
+  photoLabId: string;
   isFavorite: boolean;
 }
 

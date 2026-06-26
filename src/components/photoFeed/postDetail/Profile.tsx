@@ -14,7 +14,7 @@ interface ProfileProps {
   date: string;
   comment?: string;
   isOwner: boolean;
-  objectId: number; // postId or commentId
+  objectId: string; // postId or commentId
 }
 
 function formatKoreanDate(iso: string) {

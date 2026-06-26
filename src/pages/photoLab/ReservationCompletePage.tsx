@@ -12,7 +12,7 @@ import { TASK_OPTIONS } from "@/constants/photoLab";
 import { formatKoreanDateTime } from "@/utils/dateFormat";
 
 interface LocationState {
-  reservationId?: number;
+  reservationId?: string;
   distanceKm?: number | null;
 }
 
@@ -20,7 +20,7 @@ export default function ReservationCompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { photoLabId } = useParams();
-  const labId = photoLabId ? Number(photoLabId) : undefined;
+  const labId = photoLabId;
 
   const state = location.state as LocationState | null;
   const reservationId = state?.reservationId;

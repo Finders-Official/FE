@@ -38,7 +38,7 @@ export function LikedPostPage() {
   const { mutate: likePost } = useLikePost();
 
   const [likedOverrideById, setLikedOverrideById] = useState<
-    Record<number, boolean>
+    Record<string, boolean>
   >({});
 
   const items = useMemo(
@@ -77,7 +77,7 @@ export function LikedPostPage() {
   const isEmpty = !isLoading && !isFetchingNextPage && viewItems.length === 0;
 
   const handleToggleLike = useCallback(
-    (postId: number, prevIsLiked: boolean) => {
+    (postId: string, prevIsLiked: boolean) => {
       // 1) UI 즉시 반영
       setLikedOverrideById((prev) => ({
         ...prev,
