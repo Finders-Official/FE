@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { StarIcon } from "@/assets/icon";
+import { photoLabPlaceholder } from "@/assets/images";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { Link } from "react-router";
 
@@ -57,9 +58,9 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
           <div className="flex gap-3">
             {/* 이미지 */}
             <img
-              src={photoLab.imageUrls[0]}
+              src={photoLab.imageUrls?.[0] || photoLabPlaceholder}
               alt={photoLab.name}
-              className="h-[3.75rem] w-[3.75rem] rounded-md"
+              className="h-[3.75rem] w-[3.75rem] rounded-md object-cover"
             />
             <section className="flex flex-col p-1">
               <h2 className="text-[1.175rem] font-semibold tracking-[-0.0225rem] text-neutral-100">

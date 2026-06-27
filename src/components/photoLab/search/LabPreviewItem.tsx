@@ -1,4 +1,5 @@
 import type { LabPreview } from "@/types/photoLabSearch";
+import { photoLabPlaceholder } from "@/assets/images";
 
 interface LabPreviewItemProps {
   lab: LabPreview;
@@ -20,15 +21,11 @@ export default function LabPreviewItem({ lab, onClick }: LabPreviewItemProps) {
       className="flex w-full cursor-pointer items-center gap-3.5 py-[1rem] first:pt-0"
     >
       {/* 이미지 */}
-      {lab.imageUrl ? (
-        <img
-          src={lab.imageUrl}
-          alt={lab.name}
-          className="h-[3.75rem] w-[3.75rem] shrink-0 rounded-[0.375rem] object-cover"
-        />
-      ) : (
-        <div className="h-[3.75rem] w-[3.75rem] shrink-0 rounded-[0.375rem] bg-neutral-800" />
-      )}
+      <img
+        src={lab.imageUrl || photoLabPlaceholder}
+        alt={lab.name}
+        className="h-[3.75rem] w-[3.75rem] shrink-0 rounded-[0.375rem] object-cover"
+      />
 
       {/* 텍스트 */}
       <div className="flex flex-1 flex-col justify-center gap-0.5">
