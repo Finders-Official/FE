@@ -29,12 +29,6 @@ export default function PhotoLabPage() {
     isLoading: isLocationLoading,
   } = useGeolocation();
 
-  // 현상소 공지
-  /* const { data: notices } = usePhotoLabNotices({
-    lat: latitude ?? undefined,
-    lng: longitude ?? undefined,
-  }); */
-
   // 현상소 목록 조회
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePhotoLabList(
@@ -126,14 +120,6 @@ export default function PhotoLabPage() {
           onClick: () => setIsFilterOpen(true),
         }}
       />
-
-      {/* 현상소 소식 배너 */}
-      {/* <div className="pb-4">
-        <LabNewsBanner
-          newsList={notices ?? []}
-          onNewsClick={(news) => navigate(`/photolab/${news.photoLabId}`)}
-        />
-      </div> */}
 
       {/* 필터 섹션 - 스크롤 시 상단 고정 */}
       {/* <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">

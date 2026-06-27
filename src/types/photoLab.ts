@@ -86,19 +86,6 @@ export type FilterTag =
   | "영화용 필름"
   | "택배 접수";
 
-// 현상소 롤링 공지
-export type NoticeType = "GENERAL" | "EVENT" | "POLICY";
-
-export interface PhotoLabNoticeRolling {
-  photoLabId: string;
-  photoLabName: string;
-  noticeTitle: string;
-  noticeType: NoticeType;
-  // TODO: 백엔드 response에 startDate, endDate 추가 예정
-  startDate?: string;
-  endDate?: string;
-}
-
 // 지역 선택 항목 (복수 선택용)
 export interface RegionSelection {
   parentName: string; // "서울"
@@ -152,11 +139,6 @@ export interface PhotoLabLocation {
   longitude: number;
 }
 
-export interface PhotoLabNotice {
-  noticeType: "EVENT" | "NOTICE";
-  title: string;
-}
-
 export interface PhotoLabDetail {
   photoLabId: string;
   name: string;
@@ -170,7 +152,6 @@ export interface PhotoLabDetail {
   //workCount: number;
   reviewCount: number;
   //avgWorkTime: number | null;
-  //mainNotice: PhotoLabNotice | null;
   postImageUrls: string[];
   latitude: number;
   longitude: number;

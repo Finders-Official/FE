@@ -6,4 +6,3 @@ export { usePhotoLabDetail } from "./usePhotoLabDetail";
 export { useRegionFilters } from "./useRegionFilters";
 export { useAutocomplete } from "./useAutocomplete";
 export { useSearchPreview } from "./useSearchPreview";
-export { usePhotoLabNotices } from "./usePhotoLabNotices";

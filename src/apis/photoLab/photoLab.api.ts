@@ -5,7 +5,6 @@ import type {
   PhotoLabListParams,
   PhotoLabFavoriteStatus,
   PhotoLabDetail,
-  PhotoLabNoticeRolling,
   PagedApiResponse,
   RegionFilterData,
 } from "@/types/photoLab";
@@ -134,27 +133,6 @@ export async function getSearchPreview(
   const res = await axiosInstance.get<PagedApiResponse<LabPreview[]>>(
     "/photo-labs/search/preview",
     { params: serializeListParams(params), signal },
-  );
-
-  const body = res.data;
-
-  if (!body.success) {
-    throw new Error(body.message);
-  }
-
-  return body;
-}
-
-// 현상소 공지 조회 (롤링)
-export async function getPhotoLabNotices(params?: {
-  page?: number;
-  size?: number;
-  lat?: number;
-  lng?: number;
-}): Promise<ApiResponse<PhotoLabNoticeRolling[]>> {
-  const res = await axiosInstance.get<ApiResponse<PhotoLabNoticeRolling[]>>(
-    "/photo-labs/notices",
-    { params },
   );
 
   const body = res.data;

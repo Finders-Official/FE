@@ -78,9 +78,6 @@ export default function PhotoLabDetailPage() {
         {/* 기본 정보 */}
         <LabBasicInfo lab={lab} onFavoriteToggle={handleFavoriteToggle} />
 
-        {/* 주요 공지 */}
-        {/* <LabNoticeSection notice={lab.mainNotice} /> */}
-
         {/* 작업 결과물 */}
         <LabWorkResultsSection
           labName={lab.name}
