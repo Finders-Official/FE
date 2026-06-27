@@ -39,7 +39,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
             setIsFavorite((prev) => !prev);
 
             // 2) 서버에는 현재값을 넘김
-            onToggleLike?.(photoLab.id, photoLab.isFavorite);
+            onToggleLike?.(photoLab.id, isFavorite);
           }}
         >
           <StarIcon className={`h-5 w-5 ${starColorClass}`} />

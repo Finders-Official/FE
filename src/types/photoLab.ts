@@ -1,17 +1,4 @@
 // 현상소 아이템 (GET /photo-labs 응답)
-export interface PhotoLabItem {
-  photoLabId: string;
-  name: string;
-  tags: string[];
-  address: string;
-  distanceKm: number | null;
-  workCount: number;
-  avgWorkTime: number;
-  imageUrls: string[];
-  isFavorite: boolean;
-}
-
-// 현상소 아이템 -v2용 (GET /photo-labs 응답)
 export interface SimplePhotoLabItem {
   photoLabId: string;
   name: string;
@@ -24,6 +11,7 @@ export interface SimplePhotoLabItem {
 
 // 즐겨찾기 응답
 export interface PhotoLabFavoriteStatus {
+  photoLabId: string;
   isFavorite: boolean;
 }
 
@@ -124,15 +112,11 @@ export interface PhotoLabDetail {
   photoLabId: string;
   name: string;
   imageUrls: string[];
-  //tags: string[];
   address: string;
   addressDetail: string | null;
   distanceKm: number | null;
   isFavorite: boolean;
   favoriteCount: number;
-  //workCount: number;
-  reviewCount: number;
-  //avgWorkTime: number | null;
   postImageUrls: string[];
   latitude: number;
   longitude: number;

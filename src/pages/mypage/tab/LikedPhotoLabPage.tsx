@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import {
   EmptyOrderState,
   PhotoLabCard,
@@ -32,29 +32,20 @@ export function LikedPhotoLabPage() {
     () => data?.pages.flatMap((p) => p.data.photoLabs) ?? [],
     [data],
   );
-  const [favoriteOverrideById, setFavoriteOverrideById] = useState<
-    Record<string, boolean>
-  >({});
 
   const { mutate: toggleFavorite } = useFavoriteToggle();
 
   const labs: PhotoLab[] = useMemo(() => {
-    return labsDto.map((l) => {
-      const override = favoriteOverrideById[l.photoLabId];
-      const isFavorite =
-        typeof override === "boolean" ? override : l.isFavorite;
-
-      return {
-        id: l.photoLabId,
-        name: l.name,
-        imageUrls: l.imageUrls,
-        address: l.address,
-        distanceKm: l.distanceKm,
-        isFavorite,
-        favoriteCount: l.favoriteCount,
-      };
-    });
-  }, [labsDto, favoriteOverrideById]);
+    return labsDto.map((l) => ({
+      id: l.photoLabId,
+      name: l.name,
+      imageUrls: l.imageUrls,
+      address: l.address,
+      distanceKm: l.distanceKm,
+      isFavorite: l.isFavorite,
+      favoriteCount: l.favoriteCount,
+    }));
+  }, [labsDto]);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -80,22 +71,7 @@ export function LikedPhotoLabPage() {
 
   const handleFavoriteToggle = useCallback(
     (photoLabId: string, prevIsFavoriteFromCard: boolean) => {
-      setFavoriteOverrideById((prev) => ({
-        ...prev,
-        [photoLabId]: !prevIsFavoriteFromCard,
-      }));
-
-      toggleFavorite(
-        { photoLabId, isFavorite: prevIsFavoriteFromCard },
-        {
-          onError: () => {
-            setFavoriteOverrideById((prev) => ({
-              ...prev,
-              [photoLabId]: prevIsFavoriteFromCard,
-            }));
-          },
-        },
-      );
+      toggleFavorite({ photoLabId, isFavorite: prevIsFavoriteFromCard });
     },
     [toggleFavorite],
   );
