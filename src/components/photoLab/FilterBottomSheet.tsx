@@ -38,8 +38,8 @@ export default function FilterBottomSheet({
 
   // regionId 매핑: "parentName-childName" → regionId
   const regionIdMap = useMemo(() => {
-    if (!regionData) return new Map<string, number>();
-    const map = new Map<string, number>();
+    if (!regionData) return new Map<string, string>();
+    const map = new Map<string, string>();
     for (const child of regionData.regions) {
       const parent = regionData.parents.find(
         (p) => p.parentId === child.parentId,
@@ -86,7 +86,7 @@ export default function FilterBottomSheet({
   };
 
   // RegionSelection[] → regionIds[] 변환
-  const selectionsToRegionIds = (selections: RegionSelection[]): number[] => {
+  const selectionsToRegionIds = (selections: RegionSelection[]): string[] => {
     const ids = selections.flatMap((sel) => {
       if (sel.subRegion === "전체") {
         if (!regionData) return [];
@@ -100,7 +100,7 @@ export default function FilterBottomSheet({
       }
       const key = `${sel.parentName}-${sel.subRegion}`;
       const id = regionIdMap.get(key);
-      return id ? [id] : [];
+      return id != null ? [id] : [];
     });
     return [...new Set(ids)];
   };

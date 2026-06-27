@@ -52,8 +52,8 @@ export interface PagedApiResponse<T> {
 // 현상소 목록 조회 파라미터
 export interface PhotoLabListParams {
   q?: string;
-  parentRegionId?: number;
-  regionIds?: number[];
+  parentRegionId?: string;
+  regionIds?: string[];
   page?: number;
   size?: number;
   lat?: number;
@@ -78,20 +78,20 @@ export interface RegionSelection {
 // 필터 상태 (바텀시트용)
 export interface FilterState {
   regionSelections?: RegionSelection[]; // 지역 선택 목록 (복수, 최대 10개)
-  regionIds?: number[]; // 하위(구/군) regionId 배열 (API용)
+  regionIds?: string[]; // 하위(구/군) regionId 배열 (API용)
 }
 
 // GET /photo-labs/regions 응답
 export interface RegionParent {
-  parentId: number;
+  parentId: string;
   parentName: string;
   photoLabCount: number;
 }
 
 export interface RegionChild {
-  regionId: number;
+  regionId: string;
   regionName: string;
-  parentId: number;
+  parentId: string;
 }
 
 export interface RegionFilterData {
