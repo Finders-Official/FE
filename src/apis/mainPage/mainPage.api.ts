@@ -2,11 +2,9 @@ import { axiosInstance } from "@/lib/axiosInstance";
 import { isAxiosError } from "axios";
 
 export interface Lab {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   mainImageUrl: string;
-  workCount: number;
-  tags: string[];
 }
 
 export interface CommunityPost {

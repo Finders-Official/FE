@@ -8,11 +8,11 @@ export interface RecentSearch {
   timestamp: number;
 }
 
-// 인기 현상소 랭킹
+// 인기 현상소 (GET /photo-labs/popular)
 export interface PopularLab {
-  rank: number;
   photoLabId: string;
   name: string;
+  mainImageUrl: string;
 }
 
 // 현상소 프리뷰 (검색 미리보기용)
