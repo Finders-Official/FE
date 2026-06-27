@@ -5,7 +5,7 @@ export interface FavoritePhotoLabDto {
   name: string;
   imageUrls: string[];
   address: string;
-  distanceKm: string;
+  distanceKm: number | null;
   isFavorite: boolean;
   favoriteCount: number;
 }
@@ -29,7 +29,7 @@ export type PhotoLab = {
   name: string;
   imageUrls: string[];
   address: string;
-  distanceKm: string; // "1.5km"
+  distanceKm: number | null; // 위치 동의 없으면 null
   isFavorite: boolean;
-  favoriteCount: number; // 총 좋아요 개수 추가 필요
+  favoriteCount: number; // 총 좋아요 개수
 };

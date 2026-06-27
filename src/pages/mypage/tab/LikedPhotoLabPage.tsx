@@ -5,6 +5,7 @@ import {
   PhotoLabCardSkeleton,
 } from "@/components/mypage";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useGeolocation } from "@/hooks/common/useGeolocation";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { useLikedPhotoLabsInfinite } from "@/hooks/my";
 import { useFavoriteToggle } from "@/hooks/photoLab";
@@ -12,6 +13,7 @@ import { useFavoriteToggle } from "@/hooks/photoLab";
 const SKELETON_COUNT = 5;
 
 export function LikedPhotoLabPage() {
+  const { latitude, longitude } = useGeolocation();
   const {
     data,
     isLoading,
@@ -20,7 +22,11 @@ export function LikedPhotoLabPage() {
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useLikedPhotoLabsInfinite(10);
+  } = useLikedPhotoLabsInfinite(
+    10,
+    latitude ?? undefined,
+    longitude ?? undefined,
+  );
 
   const labsDto = useMemo(
     () => data?.pages.flatMap((p) => p.data.photoLabs) ?? [],

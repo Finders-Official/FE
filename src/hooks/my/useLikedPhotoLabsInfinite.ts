@@ -7,7 +7,11 @@ export const FAVORITE_PHOTO_LABS_QUERY_KEY = [
   "favorites",
 ] as const;
 
-export function useLikedPhotoLabsInfinite(size = 10) {
+export function useLikedPhotoLabsInfinite(
+  size = 10,
+  lat?: number,
+  lng?: number,
+) {
   return useInfiniteQuery<
     GetFavoritePhotoLabsResponse,
     Error,
@@ -15,9 +19,10 @@ export function useLikedPhotoLabsInfinite(size = 10) {
     readonly unknown[],
     number
   >({
-    queryKey: [...FAVORITE_PHOTO_LABS_QUERY_KEY, { size }],
+    queryKey: [...FAVORITE_PHOTO_LABS_QUERY_KEY, { size, lat, lng }],
     initialPageParam: 0,
-    queryFn: ({ pageParam }) => favoritePhotoLab({ page: pageParam, size }),
+    queryFn: ({ pageParam }) =>
+      favoritePhotoLab({ page: pageParam, size, lat, lng }),
     getNextPageParam: (lastPage, allPages) => {
       const isLast = lastPage.data.pageInfo.isLast;
       if (isLast) return undefined;

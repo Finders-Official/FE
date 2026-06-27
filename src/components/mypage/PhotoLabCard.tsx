@@ -69,7 +69,9 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
               {/* 주소 + 거리 */}
               <section className="mt-1 flex items-center gap-1 text-[0.85rem] font-light text-neutral-200">
                 <span>{photoLab.address}</span>
-                <span>({photoLab.distanceKm}km)</span>
+                {photoLab.distanceKm != null && (
+                  <span>({photoLab.distanceKm.toFixed(1)}km)</span>
+                )}
               </section>
             </section>
           </div>
