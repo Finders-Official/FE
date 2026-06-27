@@ -52,21 +52,12 @@ export interface PagedApiResponse<T> {
 // 현상소 목록 조회 파라미터
 export interface PhotoLabListParams {
   q?: string;
-  tagIds?: number[];
   parentRegionId?: number;
   regionIds?: number[];
-  date?: string;
-  time?: string[]; // ["HH:mm:ss", ...] 형식, 복수 선택
   page?: number;
   size?: number;
   lat?: number;
   lng?: number;
-}
-
-// 태그 정의
-export interface PhotoLabTag {
-  id: number;
-  name: string;
 }
 
 // 위치 정보 상태
@@ -78,14 +69,6 @@ export interface GeolocationState {
   isDefault: boolean;
 }
 
-// 필터 태그
-export type FilterTag =
-  | "따뜻한 색감"
-  | "청량한"
-  | "빈티지한"
-  | "영화용 필름"
-  | "택배 접수";
-
 // 지역 선택 항목 (복수 선택용)
 export interface RegionSelection {
   parentName: string; // "서울"
@@ -94,8 +77,6 @@ export interface RegionSelection {
 
 // 필터 상태 (바텀시트용)
 export interface FilterState {
-  date?: string; // "2026-01-15" 형식 (yyyy-MM-dd)
-  time?: string[]; // ["오전 10:00", "오후 2:00"] 형식 (display용, 복수 선택)
   regionSelections?: RegionSelection[]; // 지역 선택 목록 (복수, 최대 10개)
   regionIds?: number[]; // 하위(구/군) regionId 배열 (API용)
 }

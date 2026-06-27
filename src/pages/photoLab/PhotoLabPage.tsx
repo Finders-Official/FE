@@ -19,7 +19,7 @@ export default function PhotoLabPage() {
   // const isFromMain = location.state?.from === "main";
 
   // 필터 상태 (검색 페이지와 공유)
-  const { filter, setFilter, selectedTagIds } = usePhotoLabFilter();
+  const { filter, setFilter } = usePhotoLabFilter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // 위치 정보
@@ -33,13 +33,7 @@ export default function PhotoLabPage() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePhotoLabList(
       {
-        //tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
         regionIds: filter.regionIds,
-        /* date: filter.date,
-        time:
-          filter.time && filter.time.length > 0
-            ? displayTimesToApiTimes(filter.time)
-            : undefined, */
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },
@@ -51,20 +45,6 @@ export default function PhotoLabPage() {
     () => data?.pages.flatMap((page) => page.data) ?? [],
     [data],
   );
-
-  //const filterValue = formatFilterValue(filter);
-
-  // 태그 토글
-  /* const handleTagToggle = useCallback(
-    (tagId: number) => {
-      setSelectedTagIds((prev) =>
-        prev.includes(tagId)
-          ? prev.filter((id) => id !== tagId)
-          : [...prev, tagId],
-      );
-    },
-    [setSelectedTagIds],
-  ); */
 
   // 즐겨찾기 토글
   const { mutate: toggleFavorite } = useFavoriteToggle();
@@ -85,11 +65,6 @@ export default function PhotoLabPage() {
   const handleSearchClick = () => {
     navigate("/photolab/search");
   };
-
-  // 날짜/지역 필터 클릭
-  /* const handleFilterClick = () => {
-    setIsFilterOpen(true);
-  }; */
 
   // 필터 적용
   const handleFilterApply = (newFilter: FilterState) => {
@@ -121,23 +96,6 @@ export default function PhotoLabPage() {
         }}
       />
 
-      {/* 필터 섹션 - 스크롤 시 상단 고정 */}
-      {/* <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
-        <div className="flex flex-col gap-4 pb-6">
-          <FilterContainer
-            label="날짜 / 지역"
-            value={filterValue}
-            onClick={handleFilterClick}
-          />
-          <FilterTagList
-            selectedTagIds={selectedTagIds}
-            onTagToggle={handleTagToggle}
-          />
-        </div> */}
-      {/* 구분선 */}
-      {/* <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
-      </div> */}
-
       {/* 현상소 목록 */}
       <LabList
         labs={labs}
@@ -147,11 +105,7 @@ export default function PhotoLabPage() {
         onLoadMore={handleLoadMore}
         onFavoriteToggle={handleFavoriteToggle}
         onCardClick={handleCardClick}
-        emptyMessage={
-          selectedTagIds.length > 0
-            ? "검색 조건에 맞는 현상소가 없어요"
-            : "아직 현상소가 없어요"
-        }
+        emptyMessage="아직 현상소가 없어요"
         className="pt-4 pb-(--tabbar-height)"
       />
 

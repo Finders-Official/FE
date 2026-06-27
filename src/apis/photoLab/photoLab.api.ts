@@ -14,9 +14,7 @@ import type { PopularLab, LabPreview } from "@/types/photoLabSearch";
 function serializeListParams(params: PhotoLabListParams) {
   return {
     ...params,
-    tagIds: params.tagIds?.join(","),
     regionIds: params.regionIds?.join(","),
-    time: params.time?.join(","),
   };
 }
 
