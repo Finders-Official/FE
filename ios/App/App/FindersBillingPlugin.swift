@@ -104,8 +104,9 @@ public class FindersBillingPlugin: CAPPlugin, CAPBridgedPlugin {
         Task {
             var purchases: [[String: Any]] = []
             for await verification in Transaction.unfinished {
-                if case .verified(let transaction) = verification,
-                   transaction.revocationDate == nil {
+                // 로컬 검증 실패(.unverified)도 서버가 최종 검증
+                let transaction = self.unwrap(verification)
+                if transaction.revocationDate == nil {
                     purchases.append(self.purchaseDict(transaction))
                 }
             }
@@ -143,8 +144,9 @@ public class FindersBillingPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private func firstUnfinishedTransaction(productId: String) async -> Transaction? {
         for await verification in Transaction.unfinished {
-            if case .verified(let transaction) = verification,
-               transaction.productID == productId,
+            // 검증 여부와 무관하게 미완료 트랜잭션을 찾아 새 결제로 꼬이지 않도록
+            let transaction = self.unwrap(verification)
+            if transaction.productID == productId,
                transaction.revocationDate == nil {
                 return transaction
             }
