@@ -10,36 +10,57 @@ import { isNativeApp } from "@/utils/auth/envUtils";
 import { oauth } from "@/apis/auth";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { consumeRedirectAfterLogin } from "../demoDay/redirectAfterLogin";
+import { SplashScreen } from "@capacitor/splash-screen"; // 앱 초기 스플래시 제어용
 
 const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
 const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
 
+type AuthCheckStatus = "pending" | "loggedIn" | "loggedOut";
+
 export function LoginPage() {
   const [sp, setSp] = useSearchParams();
-
   const nickname = useAuthStore((s) => s.user?.nickname);
-
   const welcome = sp.get("welcome") === "1";
   const nonce = sp.get("nonce");
+  const navigate = useNavigate();
 
-  //이번 요청에서 welcome을 보여줘야 하는지(세션스토리지 기준)
+  // 자동 로그인(토큰 유무) 상태 관리
+  const [authCheckStatus, setAuthCheckStatus] =
+    useState<AuthCheckStatus>("pending");
+
+  // 앱 실행 시 네이티브 스플래시 숨김 & 백그라운드 토큰 검사
+  useEffect(() => {
+    // 앱인 경우 기본 제공되는 스플래시를 즉시 가리고 리액트 애니메이션 띄우기
+    if (isNativeApp()) {
+      SplashScreen.hide().catch(console.error);
+    }
+
+    const checkToken = async () => {
+      try {
+        const accessToken = await tokenStorage.getAccessToken();
+        setAuthCheckStatus(accessToken ? "loggedIn" : "loggedOut");
+      } catch {
+        setAuthCheckStatus("loggedOut");
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  // 환영 화면 세션스토리지 로직
   const shouldForceNow = useMemo(() => {
     if (!welcome) return false;
     if (typeof window === "undefined") return false;
-
     if (nonce) {
       const shownNonce = sessionStorage.getItem(WELCOME_NONCE_SHOWN_KEY);
       return shownNonce !== nonce;
     }
-
     const shown = sessionStorage.getItem(WELCOME_ONCE_FALLBACK_KEY) === "1";
     return !shown;
   }, [welcome, nonce]);
 
-  // 핵심: ref 없이 "초기값으로만" latch (렌더 중 ref 접근 금지 룰 회피)
   const [forceWelcomeOnce] = useState<boolean>(() => shouldForceNow);
 
-  // latch가 true인 케이스에서만: 기록 + URL 정리
   useEffect(() => {
     if (!forceWelcomeOnce) return;
     if (typeof window === "undefined") return;
@@ -58,12 +79,23 @@ export function LoginPage() {
     );
   }, [forceWelcomeOnce, nonce, setSp]);
 
+  // 애니메이션 훅 실행 (기본 2초 세팅)
   const ui = useLoginIntroUi({
     forceWelcomeOnce,
     splashMs: 2000,
   });
 
-  const navigate = useNavigate();
+  //  애니메이션 완료 & 토큰 검사 완료 시점 동기화하여 라우팅
+  useEffect(() => {
+    // welcome 모드일 때는 자동 라우팅을 막고 사용자가 '홈으로' 버튼을 누르게 함
+    if (ui.mode === "welcome") return;
+
+    // 애니메이션 2초가 끝났고 && 로그인 상태임이 확인되면 -> 메인으로 이동
+    if (!ui.isSplash && authCheckStatus === "loggedIn") {
+      const redirect = consumeRedirectAfterLogin();
+      navigate(redirect ?? "/mainpage", { replace: true });
+    }
+  }, [ui.isSplash, authCheckStatus, ui.mode, navigate]);
 
   const apple = useAppleLogin({
     onExistingMember: () => {
@@ -80,9 +112,7 @@ export function LoginPage() {
         Capacitor3KakaoLogin.initializeKakao({
           app_key: nativeAppKey,
           web_key: "",
-        })
-          .then(() => console.log("카카오 플러그인 초기화 완료!"))
-          .catch((error) => console.error("카카오 초기화 실패:", error));
+        }).catch((error) => console.error("카카오 초기화 실패:", error));
       }
     }
   }, []);
@@ -93,59 +123,48 @@ export function LoginPage() {
     if (isNativeApp()) {
       try {
         const result = await Capacitor3KakaoLogin.kakaoLogin();
-        const accessToken = result.value;
-
         const response = await oauth({
           provider: "KAKAO",
           credentialType: "ACCESS_TOKEN",
-          credential: accessToken,
+          credential: result.value,
         });
 
         const data = response.data;
 
-        // 1. 신규 회원 분기
         if ("isNewMember" in data && data.isNewMember === true) {
-          // 훅에 있던 로직 가져옴 (signupToken 저장)
           tokenStorage.setTokens({
             accessToken: null,
             signupToken: data.signupToken,
           });
           navigate("/auth/onboarding", { replace: true });
-        }
-        // 2. 기존 회원 분기
-        else if ("member" in data) {
-          // 훅에 있던 로직 가져옴 (accessToken 저장 및 전역 상태 세팅)
+        } else if ("member" in data) {
           tokenStorage.setTokens({
             accessToken: data.accessToken,
             signupToken: null,
           });
           setUser({ memberId: data.member.id, nickname: data.member.nickname });
-
-          // const redirect = consumeRedirectAfterLogin();
-          // navigate(redirect ?? "/mainpage", { replace: true });
           navigate("/mainpage", { replace: true });
-        } else {
-          console.error("알 수 없는 로그인 응답 타입입니다:", data);
-          navigate("/auth/login", { replace: true });
         }
       } catch (error) {
-        console.error("앱 카카오 로그인/API 실패:", error);
-        navigate("/auth/login", { replace: true });
+        console.error("앱 카카오 로그인 실패:", error);
       }
     } else {
-      // 일반 웹은 기존처럼 URL 이동 (이후 콜백 페이지에서 올려주신 훅이 알아서 처리함)
-      const url = buildKakaoAuthorizeUrl();
-      window.location.assign(url);
+      window.location.assign(buildKakaoAuthorizeUrl());
     }
   };
 
-  //화면 정책
-  //1.mode=welcome : 축하 화면만
-  //2.mode=normal & isSplash=true : "뷰파인더..." 문구만 2초
-  //3.mode=normal & isSplash=false : 버튼(카카오/둘러보기)
+  // 화면 정책 (번쩍임 방지 로직 적용)
   const showWelcome = ui.mode === "welcome";
-  const showSplash = ui.mode === "normal" && ui.isSplash;
-  const showLogin = ui.mode === "normal" && !ui.isSplash;
+
+  // 훅의 애니메이션이 안 끝났거나 OR 토큰 검사가 아직 안 끝났으면 계속 스플래시 노출
+  const isEffectivelySplash =
+    ui.mode === "normal" && (ui.isSplash || authCheckStatus === "pending");
+
+  // 스플래시도 끝났고, 토큰 검사 결과 로그아웃 상태일 때만 로그인 버튼 노출
+  const showLogin =
+    ui.mode === "normal" &&
+    !isEffectivelySplash &&
+    authCheckStatus === "loggedOut";
 
   return (
     <main className="flex w-full flex-1 flex-col items-center">
@@ -168,7 +187,7 @@ export function LoginPage() {
                 뷰파인더 너머 {nickname}님의 취향을 찾아보세요
               </p>
             </div>
-          ) : showSplash ? (
+          ) : isEffectivelySplash ? (
             <div className={ui.taglineAnim}>
               <p className="font-ydestreet mt-3 text-[2.5rem] leading-none font-extrabold sm:text-[3rem]">
                 Finders
@@ -202,7 +221,7 @@ export function LoginPage() {
               size="compact"
             />
           </div>
-        ) : showSplash ? (
+        ) : isEffectivelySplash ? (
           <div
             key={ui.footerKey}
             className={`mx-auto mb-10 flex w-full max-w-sm justify-center ${ui.footerAnim}`}
