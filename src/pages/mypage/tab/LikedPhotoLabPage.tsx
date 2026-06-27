@@ -27,7 +27,7 @@ export function LikedPhotoLabPage() {
     [data],
   );
   const [favoriteOverrideById, setFavoriteOverrideById] = useState<
-    Record<number, boolean>
+    Record<string, boolean>
   >({});
 
   const { mutate: toggleFavorite } = useFavoriteToggle();
@@ -73,14 +73,14 @@ export function LikedPhotoLabPage() {
   const isEmpty = !isLoading && !isFetchingNextPage && labs.length === 0;
 
   const handleFavoriteToggle = useCallback(
-    (photoLabId: number, prevIsFavoriteFromCard: boolean) => {
+    (photoLabId: string, prevIsFavoriteFromCard: boolean) => {
       setFavoriteOverrideById((prev) => ({
         ...prev,
         [photoLabId]: !prevIsFavoriteFromCard,
       }));
 
       toggleFavorite(
-        { photoLabId: String(photoLabId), isFavorite: prevIsFavoriteFromCard },
+        { photoLabId, isFavorite: prevIsFavoriteFromCard },
         {
           onError: () => {
             setFavoriteOverrideById((prev) => ({

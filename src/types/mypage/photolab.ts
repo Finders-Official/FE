@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/types/common/apiResponse";
 
 export interface FavoritePhotoLabDto {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   imageUrls: string[];
   address: string;
@@ -25,7 +25,7 @@ export type GetFavoritePhotoLabsResponse =
   ApiResponse<FavoritePhotoLabsDataDto>;
 
 export type PhotoLab = {
-  id: number; // photoLabId
+  id: string; // photoLabId
   name: string;
   imageUrls: string[];
   address: string;

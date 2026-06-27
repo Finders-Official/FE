@@ -5,7 +5,7 @@ import { Link } from "react-router";
 
 type Props = {
   photoLab: PhotoLab;
-  onToggleLike?: (id: number, isFavorite: boolean) => void; // 서버 토글(현재값 기준)
+  onToggleLike?: (id: string, isFavorite: boolean) => void; // 서버 토글(현재값 기준)
 };
 
 export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
