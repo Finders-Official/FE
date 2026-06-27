@@ -1,10 +1,6 @@
 import { favoritePhotoLab } from "@/apis/my";
 import type { GetFavoritePhotoLabsResponse } from "@/types/mypage/photolab";
-import {
-  useInfiniteQuery,
-  keepPreviousData,
-  type InfiniteData,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, type InfiniteData } from "@tanstack/react-query";
 
 export const FAVORITE_PHOTO_LABS_QUERY_KEY = [
   "photoLabs",
@@ -15,6 +11,7 @@ export function useLikedPhotoLabsInfinite(
   size = 10,
   lat?: number,
   lng?: number,
+  enabled = true,
 ) {
   return useInfiniteQuery<
     GetFavoritePhotoLabsResponse,
@@ -32,7 +29,7 @@ export function useLikedPhotoLabsInfinite(
       if (isLast) return undefined;
       return allPages.length; // page가 0부터 시작 -> 다음은 pages.length
     },
-    // 위치 정보가 뒤늦게 들어와 queryKey가 바뀔 때 스켈레톤 재깜빡임 방지
-    placeholderData: keepPreviousData,
+    // 위치 확정 후에만 실행, 최종 좌표로 1회 fetch
+    enabled,
   });
 }

@@ -13,7 +13,11 @@ import { useFavoriteToggle } from "@/hooks/photoLab";
 const SKELETON_COUNT = 5;
 
 export function LikedPhotoLabPage() {
-  const { latitude, longitude } = useGeolocation();
+  const {
+    latitude,
+    longitude,
+    isLoading: isLocationLoading,
+  } = useGeolocation();
   const {
     data,
     isLoading,
@@ -26,7 +30,11 @@ export function LikedPhotoLabPage() {
     10,
     latitude ?? undefined,
     longitude ?? undefined,
+    !isLocationLoading,
   );
+
+  // 위치 확정 전에는 쿼리가 disabled(데이터 없음) → 빈 상태 대신 스켈레톤 유지
+  const isInitialLoading = isLoading || isLocationLoading;
 
   const labsDto = useMemo(
     () => data?.pages.flatMap((p) => p.data.photoLabs) ?? [],
@@ -67,7 +75,7 @@ export function LikedPhotoLabPage() {
   const shouldShowSentinel =
     !isLoading && !isError && hasNextPage && labs.length > 0;
 
-  const isEmpty = !isLoading && !isFetchingNextPage && labs.length === 0;
+  const isEmpty = !isInitialLoading && !isFetchingNextPage && labs.length === 0;
 
   const handleFavoriteToggle = useCallback(
     (photoLabId: string, prevIsFavoriteFromCard: boolean) => {
@@ -100,7 +108,7 @@ export function LikedPhotoLabPage() {
           isEmpty ? "overflow-hidden" : "scrollbar-hide overflow-y-auto",
         ].join(" ")}
       >
-        {isLoading ? (
+        {isInitialLoading ? (
           <div className="flex flex-col">
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <PhotoLabCardSkeleton key={`post-skeleton-${i}`} />
