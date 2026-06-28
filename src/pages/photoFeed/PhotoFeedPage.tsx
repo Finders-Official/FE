@@ -172,12 +172,10 @@ export default function PhotoFeedPage() {
         <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
       </button>
 
-      {isCreateModalOpen && (
-        <NewPostModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-        />
-      )}
+      <NewPostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
 
       {/* 센티널 요소 */}
       <div ref={sentinelRef} style={{ height: 1 }} />

@@ -380,12 +380,10 @@ export default function PhotoFeedSearchPage() {
         </button>
       )}
 
-      {isCreateModalOpen && (
-        <NewPostModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-        />
-      )}
+      <NewPostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
 
       {/** 정렬 기준 선택 바텀시트 */}
       {bottomSheetOpen && (

@@ -3,6 +3,7 @@ import { PencilLineFillIcon, XMarkIcon } from "@/assets/icon";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { useNewPostState } from "@/store/useNewPostState.store";
+import { useReveal, useDismiss } from "@/transitions";
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,20 +13,30 @@ interface ModalProps {
 export default function NewPostModal({ isOpen, onClose }: ModalProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
+  const { mounted, state, ref, getRevealProps } = useReveal(isOpen, {
+    variant: "modal",
+  });
+  useDismiss(ref, onClose, isOpen);
 
-  if (!isOpen) return null;
+  if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* 배경 오버레이 */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-
-      {/* 모달 */}
+    <div
+      className={`ease-smooth-out fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity ${
+        state === "closing"
+          ? "duration-[var(--duration-quick)]"
+          : "duration-[var(--duration-fast)]"
+      }`}
+      style={{ opacity: state === "open" ? 1 : 0 }}
+    >
       <div
+        {...getRevealProps({
+          className:
+            "border-neutral-850 bg-neutral-875/80 h-[22.375rem] w-[19.625rem] rounded-3xl pt-7 pr-7 pb-14 pl-7 backdrop-blur-3xl",
+        })}
         role="dialog"
         aria-modal="true"
         aria-labelledby="new-post-modal-title"
-        className="border-neutral-850 bg-neutral-875/80 h-[22.375rem] w-[19.625rem] rounded-3xl pt-7 pr-7 pb-14 pl-7 backdrop-blur-3xl"
       >
         {/* 닫기 버튼 */}
         <div className="mb-2 flex justify-end">
