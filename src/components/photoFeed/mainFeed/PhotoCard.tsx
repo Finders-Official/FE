@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { CSSProperties } from "react";
 import { HeartIcon } from "@/assets/icon";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { Link } from "react-router";
@@ -8,6 +9,7 @@ type Props = {
   isLiked?: boolean; // optional override (없으면 photo.isLiked 사용)
   isShowLiked?: boolean; // 포토 카드에서 좋아요 표시 여부
   onToggleLike?: (id: string) => void;
+  staggerIndex?: number;
 };
 
 export default function PhotoCard({
@@ -15,6 +17,7 @@ export default function PhotoCard({
   isLiked,
   onToggleLike,
   isShowLiked,
+  staggerIndex,
 }: Props) {
   const { width, height } = photo.image;
   const aspect = width && height ? `${width} / ${height}` : "1 / 1";
@@ -32,6 +35,16 @@ export default function PhotoCard({
     setOptimisticLiked(likedFromProps);
   }
 
+  const [shown, setShown] = useState(staggerIndex === undefined);
+  useEffect(() => {
+    if (staggerIndex === undefined) return;
+    const id = requestAnimationFrame(() => setShown(true));
+    return () => cancelAnimationFrame(id);
+  }, [staggerIndex]);
+
+  const staggerClass =
+    staggerIndex === undefined ? "" : `t-stagger-item${shown ? " is-in" : ""}`;
+
   const heartColorClass = optimisticLiked
     ? "fill-orange-500 text-orange-500"
     : "text-white fill-none";
@@ -48,7 +61,14 @@ export default function PhotoCard({
   };
 
   return (
-    <div className="[break-inside:avoid]">
+    <div
+      className={`[break-inside:avoid] ${staggerClass}`}
+      style={
+        staggerIndex !== undefined
+          ? ({ "--i": staggerIndex } as CSSProperties)
+          : undefined
+      }
+    >
       <div className="group relative">
         <Link to={`/photoFeed/post/${photo.postId}`} className="block w-full">
           <div
@@ -61,7 +81,7 @@ export default function PhotoCard({
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/10" />
+            <div className="ease-smooth-out pointer-events-none absolute inset-0 bg-black/10 opacity-0 transition-opacity duration-[var(--duration-fast)] group-hover:opacity-100" />
           </div>
 
           <div className="mt-1 text-[0.625rem] break-words text-white">

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import { CheckCircleIcon, FloatingIcon, SearchIcon } from "@/assets/icon";
-import { Header, Toast } from "@/components/common";
+import { Header, Toast, Press } from "@/components/common";
 import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
@@ -74,6 +74,12 @@ export default function PhotoFeedPage() {
 
   const posts = data?.pages.flatMap((p) => p.previewList) ?? [];
 
+  const firstPageCountRef = useRef<number | null>(null);
+  if (firstPageCountRef.current === null && posts.length > 0) {
+    firstPageCountRef.current = posts.length;
+  }
+  const firstPageCount = firstPageCountRef.current ?? 0;
+
   return (
     <main className="mx-auto w-full max-w-6xl pb-6">
       <Header
@@ -122,25 +128,26 @@ export default function PhotoFeedPage() {
                   />
                 );
               })
-            : posts.map((postPreview) => (
+            : posts.map((postPreview, index) => (
                 <PhotoCard
                   key={postPreview.postId}
                   photo={postPreview}
                   isLiked={postPreview.isLiked}
+                  staggerIndex={index < firstPageCount ? index : undefined}
                 />
               ))}
         </Masonry>
       </section>
 
       {/* 새 게시물 작성 플로팅 버튼 */}
-      <button
+      <Press
         type="button"
         aria-label="새 게시물 작성"
         onClick={() => setIsCreateModalOpen(true)}
         className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
       >
         <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
-      </button>
+      </Press>
 
       <NewPostModal
         isOpen={isCreateModalOpen}
