@@ -55,7 +55,8 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
           </p>
         </Press>
 
-        <Link
+        <Press
+          as={Link}
           to={`/photolab/${photoLab.id}`}
           className="block rounded-2xl"
           aria-label={`${photoLab.name} 상세로 이동`}
@@ -82,7 +83,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
               </section>
             </section>
           </div>
-        </Link>
+        </Press>
       </div>
     </div>
   );

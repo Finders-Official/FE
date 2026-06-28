@@ -1,6 +1,7 @@
 import type { NoticeItem } from "@/types/mypage/notice";
 import { formatYmdDot } from "@/utils/dateFormat";
 import { Link } from "react-router";
+import { Press } from "@/components/common";
 
 interface NoticeListItemProps {
   data: NoticeItem;
@@ -28,7 +29,8 @@ export function NoticeListItem({ data }: NoticeListItemProps) {
   const targetUrl = `${getNoticePath(data.type)}?id=${data.id}`;
 
   return (
-    <Link
+    <Press
+      as={Link}
       to={targetUrl}
       className="ease-smooth-out flex w-full cursor-pointer flex-col gap-1.5 border-b border-neutral-800 px-6 py-4 transition-colors duration-[var(--duration-quick)] hover:bg-neutral-900"
     >
@@ -44,6 +46,6 @@ export function NoticeListItem({ data }: NoticeListItemProps) {
       <p className="text-[0.875rem] leading-[126%] font-normal tracking-[-0.015rem] text-neutral-300">
         {date}
       </p>
-    </Link>
+    </Press>
   );
 }

@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from "@/assets/icon";
-import { Toast } from "@/components/common";
+import { Press, Toast } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { OptionLink } from "@/components/mypage/OptionLink";
@@ -253,14 +253,14 @@ export function EditInfoPage() {
           />
         </div>
 
-        <button
+        <Press
           type="button"
           className="text-orange-500"
           onClick={openPicker}
           disabled={isUploadingProfile}
         >
           {isUploadingProfile ? "업로드 중..." : "사진 수정"}
-        </button>
+        </Press>
 
         {error ? (
           <p className="mt-2 text-sm text-orange-600" role="alert">

@@ -1,6 +1,7 @@
 import { HeartIcon } from "@/assets/icon";
 import type { Post } from "@/types/mypage/post";
 import { Link } from "react-router";
+import { Press } from "@/components/common";
 
 interface PostCardProps {
   post: Post;
@@ -9,7 +10,8 @@ interface PostCardProps {
 export const PostCard = ({ post }: PostCardProps) => {
   return (
     <div>
-      <Link
+      <Press
+        as={Link}
         to={`/photoFeed/post/${post.id}`}
         state={"mypost"}
         className="block"
@@ -22,7 +24,7 @@ export const PostCard = ({ post }: PostCardProps) => {
             loading="lazy"
           />
         </div>
-      </Link>
+      </Press>
 
       <p className="truncate py-1">{post.title}</p>
 

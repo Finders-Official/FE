@@ -1,6 +1,7 @@
 import { ChevronLeftIcon } from "@/assets/icon";
 import type { OptionLinkItem } from "@/types/mypage/optionlink";
 import { Link } from "react-router";
+import { Press } from "@/components/common";
 
 export const OptionLink = ({
   to,
@@ -31,15 +32,15 @@ export const OptionLink = ({
   // 'to'가 있으면 Link, 없으면 button 렌더링
   if (to) {
     return (
-      <Link to={to} onClick={onClick} className={commonClass}>
+      <Press as={Link} to={to} onClick={onClick} className={commonClass}>
         {Content}
-      </Link>
+      </Press>
     );
   }
 
   return (
-    <button type="button" onClick={onClick} className={commonClass}>
+    <Press type="button" onClick={onClick} className={commonClass}>
       {Content}
-    </button>
+    </Press>
   );
 };

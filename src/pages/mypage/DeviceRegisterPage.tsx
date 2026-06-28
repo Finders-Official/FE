@@ -10,6 +10,7 @@ import {
   Checkbox,
   CTA_Button,
   PageSlide,
+  Press,
   SearchBar,
   Toast,
 } from "@/components/common";
@@ -467,7 +468,8 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
                 {currentItems.map((item) => {
                   const itemId = item.cameraId ?? item.filmId ?? "";
                   return (
-                    <li
+                    <Press
+                      as="li"
                       key={itemId}
                       className="cursor-pointer border-b border-neutral-800 py-4 text-neutral-200 hover:bg-neutral-800"
                       onClick={() => handleSelectItem(itemId, item.name)}
@@ -475,7 +477,7 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
                       <p className="font-semibold">
                         {item.company} {item.model}
                       </p>
-                    </li>
+                    </Press>
                   );
                 })}
 
