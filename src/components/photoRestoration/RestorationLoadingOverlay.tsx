@@ -1,5 +1,6 @@
 import { SparklesFillIcon } from "@/assets/icon";
 import React from "react";
+import { useReveal } from "@/transitions";
 
 interface RestorationLoadingOverlayProps {
   isGenerating: boolean;
@@ -10,12 +11,21 @@ interface RestorationLoadingOverlayProps {
 export const RestorationLoadingOverlay: React.FC<
   RestorationLoadingOverlayProps
 > = ({ isGenerating, progress }) => {
-  if (!isGenerating) return null;
+  const { mounted, getRevealProps } = useReveal(isGenerating, {
+    variant: "fade",
+  });
 
   const FIXED_MESSAGE = "사진 복원을 진행중이에요";
 
+  if (!mounted) return null;
+
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 backdrop-blur-[2px]">
+    <div
+      {...getRevealProps({
+        className:
+          "fixed inset-0 z-100 flex items-center justify-center bg-black/70 backdrop-blur-[2px]",
+      })}
+    >
       <div className="flex w-48.75 flex-col items-center gap-3">
         <div className="flex h-12.5 w-13.25 items-center justify-center">
           <SparklesFillIcon className="h-12.5 w-13.25 text-orange-500" />

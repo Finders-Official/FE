@@ -1,4 +1,6 @@
+import type { CSSProperties } from "react";
 import { useNavigate } from "react-router";
+import { useReveal } from "@/transitions";
 
 import { Tooltip } from "@/components/common/ToolTip";
 import { CapsuleButton } from "@/components/common/CapsuleButton";
@@ -38,6 +40,7 @@ export const RestorationFooter = ({
   handleRegenerateClick,
 }: RestorationFooterProps) => {
   const navigate = useNavigate();
+  const tip = useReveal(shouldShowCreditTooltip, { variant: "popover" });
 
   // 힌트 툴팁 표시 상태(초기 편집)와 액션 버튼 표시 상태는 상호배타
   const isHintState =
@@ -56,9 +59,14 @@ export const RestorationFooter = ({
       <RestorationHintTooltip open={isHintState} />
 
       <div className="pointer-events-auto relative mt-2 inline-flex">
-        {shouldShowCreditTooltip && (
+        {tip.mounted && (
           <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2">
-            <div className="pointer-events-auto mb-4.5">
+            <div
+              {...tip.getRevealProps({
+                className: "pointer-events-auto mb-4.5",
+              })}
+              style={{ "--reveal-origin": "50% 100%" } as CSSProperties}
+            >
               <Tooltip
                 used={usedFree}
                 total={totalFree}
