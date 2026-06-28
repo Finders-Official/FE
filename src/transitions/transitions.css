@@ -1325,7 +1325,10 @@
 .t-press {
   transition:
     transform var(--duration-quick) var(--ease-ios-out),
-    filter var(--duration-quick) var(--ease-ios-out);
+    filter var(--duration-quick) var(--ease-ios-out),
+    color var(--duration-quick) var(--ease-smooth-out),
+    background-color var(--duration-quick) var(--ease-smooth-out),
+    border-color var(--duration-quick) var(--ease-smooth-out);
   will-change: transform;
 }
 @media (hover: hover) and (pointer: fine) {

@@ -1,3 +1,5 @@
+import { Press } from "@/components/common/motion";
+
 interface DateChipProps {
   day: number | string;
   label?: string;
@@ -23,11 +25,11 @@ export default function DateChip({
   };
 
   return (
-    <button
+    <Press
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex h-[3rem] w-[3rem] flex-col items-center justify-center rounded-[0.625rem] px-[0.875rem] py-[0.375rem] transition-colors ${
+      className={`flex h-[3rem] w-[3rem] flex-col items-center justify-center rounded-[0.625rem] px-[0.875rem] py-[0.375rem] ${
         selected ? "bg-orange-500" : ""
       } ${disabled ? "cursor-not-allowed" : ""} ${className}`}
     >
@@ -41,7 +43,7 @@ export default function DateChip({
       >
         {label || "\u00A0"}
       </span>
-    </button>
+    </Press>
   );
 }
 

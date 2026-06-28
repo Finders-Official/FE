@@ -1,3 +1,5 @@
+import { Press } from "@/components/common/motion";
+
 interface TimeSlotChipProps {
   time: string;
   selected?: boolean;
@@ -24,14 +26,14 @@ export default function TimeSlotChip({
   };
 
   return (
-    <button
+    <Press
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex h-[3rem] w-full items-center justify-center rounded-[0.625rem] px-[1.25rem] py-[0.625rem] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] transition-colors ${getStyles()} ${className}`}
+      className={`flex h-[3rem] w-full items-center justify-center rounded-[0.625rem] px-[1.25rem] py-[0.625rem] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] ${getStyles()} ${className}`}
     >
       {time}
-    </button>
+    </Press>
   );
 }
 
