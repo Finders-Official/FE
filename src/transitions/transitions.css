@@ -495,6 +495,30 @@
   }
 }
 
+.t-page-enter {
+  animation: t-page-enter var(--page-slide-dur) var(--page-slide-ease);
+}
+.t-page-enter[data-dir="back"] {
+  --t-page-enter-x: calc(var(--page-slide-distance) * -1);
+}
+@keyframes t-page-enter {
+  from {
+    opacity: 0;
+    transform: translateX(var(--t-page-enter-x, var(--page-slide-distance)));
+    filter: blur(var(--page-blur));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-page-enter {
+    animation: none;
+  }
+}
+
 :root {
   --digit-dur: var(--duration-very-slow);
   --digit-distance: var(--distance-base);

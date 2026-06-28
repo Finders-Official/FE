@@ -24,6 +24,7 @@ export {
   Collapse,
   IconSwap,
   NumberPopIn,
+  PageSlide,
 } from "./motion";
 
 export { default as UnderlineTabs } from "./UnderlineTabs";

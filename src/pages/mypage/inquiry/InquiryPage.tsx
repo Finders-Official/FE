@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CTA_Button, TextArea, Toast } from "@/components/common";
+import { CTA_Button, PageSlide, TextArea, Toast } from "@/components/common";
 import {
   EmptyOrderState,
   InquiryDropBox,
@@ -40,11 +40,17 @@ export function InquiryPage() {
 
   return (
     <div className="flex h-full flex-1 flex-col">
-      {step === "LIST" ? (
-        <InquiryListView onGoToCreate={() => setStep("CREATE")} />
-      ) : (
-        <InquiryCreateView onSuccess={() => setStep("LIST")} />
-      )}
+      <PageSlide
+        step={step}
+        direction={step === "CREATE" ? "forward" : "back"}
+        className="flex flex-1 flex-col"
+      >
+        {step === "LIST" ? (
+          <InquiryListView onGoToCreate={() => setStep("CREATE")} />
+        ) : (
+          <InquiryCreateView onSuccess={() => setStep("LIST")} />
+        )}
+      </PageSlide>
     </div>
   );
 }

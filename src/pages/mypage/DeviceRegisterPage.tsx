@@ -6,7 +6,13 @@ import {
   PlusIcon,
 } from "@/assets/icon";
 import { InputForm } from "@/components/auth";
-import { Checkbox, CTA_Button, SearchBar, Toast } from "@/components/common";
+import {
+  Checkbox,
+  CTA_Button,
+  PageSlide,
+  SearchBar,
+  Toast,
+} from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { EmptyOrderState } from "@/components/mypage";
@@ -70,21 +76,26 @@ export function DeviceRegisterPage() {
 
   return (
     <div className="relative flex h-full flex-1 flex-col">
-      {step === "LIST" ? (
-        <ListView
-          onGoToRegister={() => handleGoToRegister()}
-          onGoToEdit={handleGoToRegister}
-        />
-      ) : (
-        <RegisterView
-          initialData={editingItem}
-          // 완료 시 토스트 메시지를 전달받아 상태를 업데이트하고 리스트로 이동
-          onSubmit={(message) => {
-            setToastMessage(message);
-            setStep("LIST");
-          }}
-        />
-      )}
+      <PageSlide
+        step={step}
+        direction={step === "REGISTER" ? "forward" : "back"}
+        className="flex flex-1 flex-col"
+      >
+        {step === "LIST" ? (
+          <ListView
+            onGoToRegister={() => handleGoToRegister()}
+            onGoToEdit={handleGoToRegister}
+          />
+        ) : (
+          <RegisterView
+            initialData={editingItem}
+            onSubmit={(message) => {
+              setToastMessage(message);
+              setStep("LIST");
+            }}
+          />
+        )}
+      </PageSlide>
 
       <Toast
         open={!!toastMessage}
