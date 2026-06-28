@@ -47,7 +47,7 @@ export const InputForm = ({
           disabled={disabled}
           className={[
             sizeClass[size],
-            "rounded-lg border border-neutral-800 p-2 transition-colors duration-100 placeholder:text-neutral-600 focus:outline-none",
+            "ease-smooth-out rounded-lg border border-neutral-800 p-2 transition-colors duration-[var(--duration-quick)] placeholder:text-neutral-600 focus:outline-none",
             borderClass ?? "",
             disabled
               ? "bg-neutral-850 cursor-not-allowed text-neutral-400 placeholder:text-neutral-500"

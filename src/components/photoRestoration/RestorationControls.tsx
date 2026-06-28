@@ -26,7 +26,7 @@ export default function RestorationControls({
           className="flex items-center justify-center"
         >
           <UndoIcon
-            className={`h-3.5 w-3.5 transition-colors ${
+            className={`ease-smooth-out h-3.5 w-3.5 transition-colors duration-[var(--duration-quick)] ${
               canUndo ? "text-neutral-300" : "text-neutral-700"
             }`}
           />
@@ -39,7 +39,7 @@ export default function RestorationControls({
           className="flex items-center justify-center"
         >
           <RedoIcon
-            className={`h-3.5 w-3.5 transition-colors ${
+            className={`ease-smooth-out h-3.5 w-3.5 transition-colors duration-[var(--duration-quick)] ${
               canRedo ? "text-neutral-300" : "text-neutral-700"
             }`}
           />

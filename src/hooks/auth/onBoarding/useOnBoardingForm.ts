@@ -101,12 +101,12 @@ export function useOnBoardingForm(options?: Options) {
 
   const nicknameBorderClass =
     debouncedNicknameError && isNicknameErrorText
-      ? "transition-colors duration-100 border-orange-500"
+      ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out border-orange-500"
       : undefined;
 
   const nicknameTextClass =
     debouncedNicknameError && isNicknameErrorText
-      ? "transition-colors duration-100 text-orange-500"
+      ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out text-orange-500"
       : undefined;
 
   // 폰 인증
@@ -184,11 +184,11 @@ export function useOnBoardingForm(options?: Options) {
   const debouncedPhoneError = useDebouncedValue(isPhoneError, 100);
 
   const phoneBorderClass = debouncedPhoneError
-    ? "transition-colors duration-100 border-orange-500"
+    ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out border-orange-500"
     : undefined;
 
   const phoneTextClass = debouncedPhoneError
-    ? "transition-colors duration-100 text-orange-500"
+    ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out text-orange-500"
     : undefined;
 
   // 인증 완료 후 비활성화를 위함

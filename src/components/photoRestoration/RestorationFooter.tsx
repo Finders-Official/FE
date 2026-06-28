@@ -53,7 +53,7 @@ export const RestorationFooter = ({
         isHintState ? "pb-4.5" : "pb-5.75"
       }`}
     >
-      {isHintState && <RestorationHintTooltip />}
+      <RestorationHintTooltip open={isHintState} />
 
       <div className="pointer-events-auto relative mt-2 inline-flex">
         {shouldShowCreditTooltip && (
