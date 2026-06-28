@@ -1,10 +1,31 @@
+import { useEffect, useState } from "react";
+
 interface ConfirmationIconProps {
   className?: string;
+  animate?: boolean;
 }
 
-export default function ConfirmationIcon({ className }: ConfirmationIconProps) {
+export default function ConfirmationIcon({
+  className,
+  animate = false,
+}: ConfirmationIconProps) {
+  const [state, setState] = useState<"out" | "in">("out");
+
+  useEffect(() => {
+    if (!animate) return;
+    const id = requestAnimationFrame(() =>
+      requestAnimationFrame(() => setState("in")),
+    );
+    return () => cancelAnimationFrame(id);
+  }, [animate]);
+
+  const size = className ?? "h-12 w-12";
+  const wrapperClass = animate
+    ? `t-success-check [--check-rotate-from:28deg] [--check-y-amount:16px] [--check-blur-from:6px] relative ${size}`
+    : `relative ${size}`;
+
   return (
-    <div className={`relative ${className ?? "h-12 w-12"}`}>
+    <div className={wrapperClass} data-state={animate ? state : undefined}>
       <svg
         className="absolute top-0 left-0 h-[60%] w-[60%]"
         viewBox="0 0 30 30"
@@ -37,6 +58,7 @@ export default function ConfirmationIcon({ className }: ConfirmationIconProps) {
       >
         <path
           d="M2 9.34L8.18 13.8L17 2"
+          pathLength={20}
           stroke="#D9D9D9"
           strokeWidth="4"
           strokeLinecap="round"

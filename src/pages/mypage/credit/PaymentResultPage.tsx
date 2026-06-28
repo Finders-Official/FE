@@ -153,6 +153,7 @@ export function PaymentResultPage() {
           <ResultHero
             title="크레딧 결제가 완료되었어요"
             subtitle="크레딧으로 타거나 망가진 사진을 복원해보세요."
+            animateIcon
           />
 
           <section className="bg-neutral-875 flex w-full flex-col gap-2.5 rounded-[0.75rem] p-5">
@@ -226,10 +227,18 @@ function ResultLayout({ header, footer, children }: ResultLayoutProps) {
   );
 }
 
-function ResultHero({ title, subtitle }: { title: string; subtitle: string }) {
+function ResultHero({
+  title,
+  subtitle,
+  animateIcon = false,
+}: {
+  title: string;
+  subtitle: string;
+  animateIcon?: boolean;
+}) {
   return (
     <div className="flex w-full flex-col items-center gap-[1.375rem]">
-      <ConfirmationIcon className="h-12 w-12" />
+      <ConfirmationIcon className="h-12 w-12" animate={animateIcon} />
       <div className="flex w-full flex-col gap-0.5 text-center">
         <h1 className="text-neutral-0 text-[1.25rem] leading-[1.28] font-semibold tracking-[-0.02em] break-keep">
           {title}
