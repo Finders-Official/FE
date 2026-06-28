@@ -2,16 +2,22 @@ import { useEffect, useState } from "react";
 import Header from "@/components/common/Header";
 import { shareImageFromUrl } from "@/utils/photoRestoration/shareImage";
 import { ShareIcon } from "@/assets/icon";
+import { useReveal } from "@/transitions";
 
 interface RestorationSavedOverlayProps {
+  open: boolean;
   imageUrl: string;
   onClose: () => void;
 }
 
 export default function RestorationSavedOverlay({
+  open,
   imageUrl,
   onClose,
 }: RestorationSavedOverlayProps) {
+  const { mounted, getRevealProps } = useReveal(open, {
+    variant: "sheet-bottom",
+  });
   const [previewUrl, setPreviewUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -71,8 +77,15 @@ export default function RestorationSavedOverlay({
     }
   };
 
+  if (!mounted) return null;
+
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+    <div
+      {...getRevealProps({
+        className:
+          "fixed inset-0 z-40 flex flex-col bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]",
+      })}
+    >
       <div className="relative z-10000">
         <Header
           title="저장 완료"
