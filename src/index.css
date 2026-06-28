@@ -118,33 +118,6 @@
   }
 }
 
-/* 토스트 애니메이션 */
-@keyframes toast-slide {
-  from {
-    transform: translateY(1.25rem);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes toast-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.animate-toast-in {
-  animation: toast-slide 0.3s ease-out;
-}
-
-.animate-toast-content {
-  animation: toast-fade 0.3s ease-out;
-}
-
 /* DEMO-DAY 애니메이션 (제거 시 이 블록 전체 삭제) */
 @keyframes demoday-fade-in {
   from {

@@ -6,7 +6,7 @@ import { useMyPostsInfinite } from "@/hooks/my";
 import { EmptyOrderState, PostCardSkeleton } from "@/components/mypage";
 import { formatYmdDot } from "@/utils/dateFormat";
 import { useLocation, useNavigate } from "react-router";
-import { ToastItem } from "@/components/common";
+import { Toast } from "@/components/common";
 import { CheckCircleIcon } from "@/assets/icon";
 
 const SKELETON_COUNT = 6;
@@ -18,28 +18,13 @@ export function MyPostPage() {
   const location = useLocation();
   const state = (location.state as LocationState) ?? null;
 
-  //최초 1회만 삭제 트리거 캡처
   const [toastTrigger] = useState(() => Boolean(state?.isDeleted));
-
-  const [toastVisible, setToastVisible] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [toastOpen, setToastOpen] = useState(toastTrigger);
 
   useEffect(() => {
-    if (!toastTrigger) return;
-
-    //state는 바로 제거
-    navigate(location.pathname, { replace: true, state: null });
-
-    setMounted(true);
-    setToastVisible(true);
-
-    const fadeTimer = window.setTimeout(() => setToastVisible(false), 1600);
-    const removeTimer = window.setTimeout(() => setMounted(false), 3000);
-
-    return () => {
-      window.clearTimeout(fadeTimer);
-      window.clearTimeout(removeTimer);
-    };
+    if (toastTrigger) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
   }, [toastTrigger, navigate, location.pathname]);
 
   const {
@@ -146,20 +131,13 @@ export function MyPostPage() {
           </>
         )}
 
-        {mounted && (
-          <div className="fixed right-0 bottom-0 left-0 z-[100] flex justify-center px-5 py-5">
-            <div
-              className={`transition-opacity duration-300 ease-out ${
-                toastVisible ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <ToastItem
-                message="게시글이 삭제되었습니다"
-                icon={<CheckCircleIcon className="h-5 w-5" />}
-              />
-            </div>
-          </div>
-        )}
+        <Toast
+          open={toastOpen}
+          onClose={() => setToastOpen(false)}
+          className="fixed right-0 bottom-0 left-0 z-[100] flex justify-center px-5 py-5"
+          message="게시글이 삭제되었습니다"
+          icon={<CheckCircleIcon className="h-5 w-5" />}
+        />
       </main>
     </div>
   );

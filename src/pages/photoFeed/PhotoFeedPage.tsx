@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import { CheckCircleIcon, FloatingIcon, SearchIcon } from "@/assets/icon";
-import { Header, ToastItem } from "@/components/common";
+import { Header, Toast } from "@/components/common";
 import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
@@ -25,9 +25,6 @@ const breakpointColumnsObj = {
   1024: 2,
 };
 
-export const TOAST_FADE_START_DELAY = 1600;
-export const TOAST_UNMOUNT_DELAY = 3000;
-
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -43,11 +40,10 @@ export default function PhotoFeedPage() {
   );
 
   // 토스트 메세지 관련 상태
-  const [toastVisible, setToastVisible] = useState(isDeleted);
-  const [mounted, setMounted] = useState(isDeleted);
+  const [toastOpen, setToastOpen] = useState(isDeleted);
 
   // 라우터 state를 "즉시" 비운다.
-  // 3초 타이머 안에서 지우면, 그 전에 다른 페이지로 이동할 경우 state가 남아
+  // 토스트가 닫힐 때 지우면, 그 전에 다른 페이지로 이동할 경우 state가 남아
   // 뒤로가기로 돌아왔을 때 토스트가 다시 뜨는 버그가 생긴다.
   useEffect(() => {
     const state = location.state as { isDeleted?: boolean } | null;
@@ -58,24 +54,6 @@ export default function PhotoFeedPage() {
       });
     }
   }, [location, navigate]);
-
-  useEffect(() => {
-    if (!isDeleted) return;
-
-    const fadeTimer = setTimeout(
-      () => setToastVisible(false),
-      TOAST_FADE_START_DELAY,
-    );
-    const removeTimer = setTimeout(
-      () => setMounted(false),
-      TOAST_UNMOUNT_DELAY,
-    );
-
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
-    };
-  }, [isDeleted]);
 
   const {
     data,
@@ -117,21 +95,13 @@ export default function PhotoFeedPage() {
         </div>
       )}
 
-      {/** toast 메세지 */}
-      {isDeleted && mounted && (
-        <div className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5">
-          <div
-            className={`transition-opacity duration-300 ease-out ${
-              toastVisible ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <ToastItem
-              message="게시글이 삭제되었습니다"
-              icon={<CheckCircleIcon className="h-5 w-5" />}
-            />
-          </div>
-        </div>
-      )}
+      <Toast
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+        className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5"
+        message="게시글이 삭제되었습니다"
+        icon={<CheckCircleIcon className="h-5 w-5" />}
+      />
 
       {/* Masonry 레이아웃 */}
       <section className="mb-20">

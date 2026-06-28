@@ -53,7 +53,11 @@ export function CopyButton({
         onClose={() => setOpen(false)}
         resetKey={nonce}
         duration={1800}
-        aboveTabBar={aboveTabBar}
+        className={
+          aboveTabBar
+            ? "fixed bottom-[calc(var(--tabbar-height)+1rem)] left-1/2 z-[9999] -translate-x-1/2"
+            : "fixed bottom-[2rem] left-1/2 z-[9999] -translate-x-1/2"
+        }
         message={isError ? "복사에 실패했습니다." : toastMessage}
         icon={
           isError ? (

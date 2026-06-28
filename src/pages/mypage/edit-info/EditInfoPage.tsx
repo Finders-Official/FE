@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from "@/assets/icon";
-import { ToastItem } from "@/components/common";
+import { Toast } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { OptionLink } from "@/components/mypage/OptionLink";
@@ -88,7 +88,7 @@ export function EditInfoPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state as LocationState) ?? null;
-  const [showToast, setShowToast] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
   const [message, setMessage] = useState("");
 
   // 로그아웃 모달
@@ -121,21 +121,9 @@ export function EditInfoPage() {
   useEffect(() => {
     const toast = state?.toast;
     if (!toast) return;
-
-    const showId = window.setTimeout(() => {
-      setMessage(toast);
-      setShowToast(true);
-    }, 0);
-
-    const id = window.setTimeout(() => {
-      navigate(location.pathname, { replace: true, state: null });
-      setShowToast(false);
-    }, 2000);
-
-    return () => {
-      window.clearTimeout(id);
-      window.clearTimeout(showId);
-    };
+    setMessage(toast);
+    setToastOpen(true);
+    navigate(location.pathname, { replace: true, state: null });
   }, [state?.toast, navigate, location.pathname]);
 
   const openPicker = () => {
@@ -323,14 +311,13 @@ export function EditInfoPage() {
 
       <LoadingSpinner open={isLoading} />
 
-      {showToast ? (
-        <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-          <ToastItem
-            message={message}
-            icon={<CheckCircleIcon className="h-5 w-5" />}
-          />
-        </div>
-      ) : null}
+      <Toast
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+        className="fixed bottom-[var(--tabbar-height)] ml-4 flex items-center justify-center"
+        message={message}
+        icon={<CheckCircleIcon className="h-5 w-5" />}
+      />
     </div>
   );
 }

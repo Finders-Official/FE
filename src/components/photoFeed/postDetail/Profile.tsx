@@ -3,11 +3,11 @@ import {
   DefaultProfileIcon,
   EllipsisVerticalIcon,
 } from "@/assets/icon";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import ActionSheet, { type ActionSheetAction } from "./ActionSheet";
 import ReportSheet from "./ReportSheet";
-import { ToastItem, ToastList } from "@/components/common";
+import { Toast } from "@/components/common";
 import { timeAgo } from "@/utils/timeAgo";
 import {
   useDeletePost,
@@ -110,13 +110,6 @@ export default function Profile({
       }
     }, // TODO 실패 토스트
   });
-
-  // 토스트 자동 숨김
-  useEffect(() => {
-    if (!toastMessage) return;
-    const t = setTimeout(() => setToastMessage(null), 3000);
-    return () => clearTimeout(t);
-  }, [toastMessage]);
 
   // 공유하기: 공유 시트(모바일) 또는 클립보드 복사(데스크톱). 복사 시 토스트로 안내.
   const handleShare = useCallback(async () => {
@@ -294,16 +287,15 @@ export default function Profile({
       />
 
       {/* 공용 토스트 (신고 완료 / 링크 복사 등) */}
-      {toastMessage &&
-        createPortal(
-          <ToastList>
-            <ToastItem
-              message={toastMessage}
-              icon={<CheckCircleIcon className="h-5 w-5" />}
-            />
-          </ToastList>,
-          document.body,
-        )}
+      {createPortal(
+        <Toast
+          open={Boolean(toastMessage)}
+          onClose={() => setToastMessage(null)}
+          message={toastMessage ?? ""}
+          icon={<CheckCircleIcon className="h-5 w-5" />}
+        />,
+        document.body,
+      )}
     </div>
   );
 }

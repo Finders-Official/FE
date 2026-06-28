@@ -9,7 +9,7 @@ interface ToastProps {
   icon?: ReactNode;
   duration?: number;
   resetKey?: number;
-  aboveTabBar?: boolean;
+  className?: string;
 }
 
 export function Toast({
@@ -19,7 +19,7 @@ export function Toast({
   icon,
   duration = 2000,
   resetKey,
-  aboveTabBar = false,
+  className = "fixed bottom-[2rem] left-1/2 z-[9999] -translate-x-1/2",
 }: ToastProps) {
   const { mounted, getRevealProps } = useReveal(open, { variant: "toast" });
   const onCloseRef = useRef(onClose);
@@ -29,18 +29,12 @@ export function Toast({
     if (!open) return;
     const id = window.setTimeout(() => onCloseRef.current(), duration);
     return () => window.clearTimeout(id);
-  }, [open, duration, resetKey]);
+  }, [open, duration, message, resetKey]);
 
   if (!mounted) return null;
 
   return (
-    <div
-      className={`fixed left-1/2 z-[9999] -translate-x-1/2 ${
-        aboveTabBar
-          ? "bottom-[calc(var(--tabbar-height)+1rem)]"
-          : "bottom-[2rem]"
-      }`}
-    >
+    <div className={className}>
       <div {...getRevealProps({ className: "relative w-[20.3125rem]" })}>
         <div className="bg-neutral-875/70 absolute inset-0 rounded-[1.125rem] border border-neutral-800 shadow-lg backdrop-blur-3xl" />
         <div className="relative flex items-center gap-[1rem] px-[1.25rem] py-[1rem]">

@@ -6,12 +6,7 @@ import {
   PlusIcon,
 } from "@/assets/icon";
 import { InputForm } from "@/components/auth";
-import {
-  Checkbox,
-  CTA_Button,
-  SearchBar,
-  ToastItem,
-} from "@/components/common";
+import { Checkbox, CTA_Button, SearchBar, Toast } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { EmptyOrderState } from "@/components/mypage";
@@ -40,15 +35,6 @@ export function DeviceRegisterPage() {
 
   // 토스트 메시지 상태 관리
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // 토스트 타이머 (3초 후 자동 제거)
-  useEffect(() => {
-    if (!toastMessage) return;
-    const timer = setTimeout(() => {
-      setToastMessage(null);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [toastMessage]);
 
   // 등록 취소 다이얼로그 상태 추가
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
@@ -100,15 +86,14 @@ export function DeviceRegisterPage() {
         />
       )}
 
-      {/*  토스트 렌더링 영역  */}
-      {toastMessage && (
-        <div className="fixed bottom-[var(--tabbar-height)] z-50 ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-          <ToastItem
-            message={toastMessage}
-            icon={<CheckCircleIcon className="h-5 w-5" />}
-          />
-        </div>
-      )}
+      <Toast
+        open={!!toastMessage}
+        onClose={() => setToastMessage(null)}
+        duration={3000}
+        className="fixed bottom-[var(--tabbar-height)] z-50 ml-4 flex items-center justify-center"
+        message={toastMessage ?? ""}
+        icon={<CheckCircleIcon className="h-5 w-5" />}
+      />
 
       <DialogBox
         isOpen={isCancelDialogOpen}

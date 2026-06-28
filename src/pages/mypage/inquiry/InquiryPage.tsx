@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CTA_Button, TextArea, ToastItem } from "@/components/common";
+import { CTA_Button, TextArea, Toast } from "@/components/common";
 import {
   EmptyOrderState,
   InquiryDropBox,
@@ -154,12 +154,6 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
   // Mutation 훅 호출
   const { mutate: createInquiry, isPending } = useCreateInquiry();
 
-  useEffect(() => {
-    if (!toastMessage) return;
-    const timer = setTimeout(() => setToastMessage(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toastMessage]);
-
   const handleSubmitClick = () => {
     if (!selectedInquiry) {
       setToastMessage("문의 유형을 선택해 주세요.");
@@ -230,11 +224,13 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
           <InquiryNoticeCard />
         </section>
 
-        {toastMessage && (
-          <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-            <ToastItem message={toastMessage} />
-          </div>
-        )}
+        <Toast
+          open={!!toastMessage}
+          onClose={() => setToastMessage(null)}
+          duration={3000}
+          className="fixed bottom-[var(--tabbar-height)] ml-4 flex items-center justify-center"
+          message={toastMessage ?? ""}
+        />
       </main>
 
       <footer className="border-neutral-850 mt-auto border-t py-5">
