@@ -17,7 +17,7 @@ export { TextArea } from "./TextArea";
 export { CopyButton } from "./CopyButton";
 export { default as ConfirmationIcon } from "./ConfirmationIcon";
 
-export { Press, Toast, SlidingTabs, Collapse } from "./motion";
+export { Press, Toast, SlidingTabs, Collapse, IconSwap } from "./motion";
 
 export { default as UnderlineTabs } from "./UnderlineTabs";
 export type { UnderlineTabsProps, TabItem } from "./UnderlineTabs";

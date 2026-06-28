@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 import { HeartIcon } from "@/assets/icon";
+import { IconSwap } from "@/components/common";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { Link } from "react-router";
 
@@ -44,10 +45,6 @@ export default function PhotoCard({
 
   const staggerClass =
     staggerIndex === undefined ? "" : `t-stagger-item${shown ? " is-in" : ""}`;
-
-  const heartColorClass = optimisticLiked
-    ? "fill-orange-500 text-orange-500"
-    : "text-white fill-none";
 
   const handleClickLike = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Link 이동 방지
@@ -95,8 +92,17 @@ export default function PhotoCard({
             className="absolute right-2 bottom-7"
             onClick={handleClickLike}
             aria-label="좋아요 토글"
+            aria-pressed={optimisticLiked}
           >
-            <HeartIcon className={`h-6 w-6 ${heartColorClass}`} />
+            <IconSwap
+              active={optimisticLiked}
+              bounce
+              className="h-6 w-6"
+              iconA={<HeartIcon className="h-6 w-6 fill-none text-white" />}
+              iconB={
+                <HeartIcon className="h-6 w-6 fill-orange-500 text-orange-500" />
+              }
+            />
           </button>
         ) : null}
       </div>
