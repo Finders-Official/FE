@@ -1,5 +1,5 @@
 import type { RecentSearch } from "@/types/photoLabSearch";
-import { SearchItem } from "@/components/common";
+import { SearchItem, Collapse } from "@/components/common";
 import { ChevronLeftIcon } from "@/assets/icon";
 
 interface RecentSearchSectionProps {
@@ -21,7 +21,6 @@ export default function RecentSearchSection({
 }: RecentSearchSectionProps) {
   if (searches.length === 0) return null;
 
-  const visibleSearches = isExpanded ? searches : searches.slice(0, 5);
   const showExpandButton = searches.length > 5;
 
   return (
@@ -42,16 +41,33 @@ export default function RecentSearchSection({
         </div>
 
         {/* 검색어 리스트 */}
-        <div className="flex flex-col gap-4">
-          {visibleSearches.map((search) => (
-            <SearchItem
-              key={search.id}
-              type="recent"
-              text={search.keyword}
-              onClick={() => onSearchClick(search.keyword)}
-              onDelete={() => onDelete(search.id)}
-            />
-          ))}
+        <div className="flex flex-col">
+          <div className="flex flex-col gap-4">
+            {searches.slice(0, 5).map((search) => (
+              <SearchItem
+                key={search.id}
+                type="recent"
+                text={search.keyword}
+                onClick={() => onSearchClick(search.keyword)}
+                onDelete={() => onDelete(search.id)}
+              />
+            ))}
+          </div>
+          {showExpandButton && (
+            <Collapse open={isExpanded}>
+              <div className="flex flex-col gap-4 pt-4">
+                {searches.slice(5).map((search) => (
+                  <SearchItem
+                    key={search.id}
+                    type="recent"
+                    text={search.keyword}
+                    onClick={() => onSearchClick(search.keyword)}
+                    onDelete={() => onDelete(search.id)}
+                  />
+                ))}
+              </div>
+            </Collapse>
+          )}
         </div>
       </div>
 
@@ -68,7 +84,7 @@ export default function RecentSearchSection({
               {isExpanded ? "접기" : "펼쳐서 더보기"}
             </span>
             <ChevronLeftIcon
-              className={`h-4 w-4 text-neutral-300 transition-transform ${
+              className={`ease-smooth-out h-4 w-4 text-neutral-300 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
                 isExpanded ? "rotate-90" : "-rotate-90"
               }`}
             />

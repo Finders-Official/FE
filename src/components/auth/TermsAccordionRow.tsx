@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import type { AgreementGroup } from "@/types/auth";
 import { TermsContent } from "./TermsContent";
+import { Collapse } from "@/components/common";
 
 type Props = {
   leading: ReactNode;
@@ -21,10 +22,7 @@ export function TermsAccordionRow({
   id,
 }: Props) {
   return (
-    <div
-      id={id}
-      className="border-neutral-850 flex flex-col gap-2 border-b py-2"
-    >
+    <div id={id} className="border-neutral-850 flex flex-col border-b py-2">
       <div className="flex items-center justify-between">
         {leading}
         <button
@@ -35,13 +33,17 @@ export function TermsAccordionRow({
           className="flex h-6 w-6 items-center justify-center"
         >
           <ChevronLeftIcon
-            className={`h-6 w-6 text-neutral-400 transition-transform ${
+            className={`ease-smooth-out h-6 w-6 text-neutral-400 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
               expanded ? "rotate-90" : "-rotate-90"
             }`}
           />
         </button>
       </div>
-      {expanded && <TermsContent groups={groups} />}
+      <Collapse open={expanded}>
+        <div className="pt-2">
+          <TermsContent groups={groups} />
+        </div>
+      </Collapse>
     </div>
   );
 }
