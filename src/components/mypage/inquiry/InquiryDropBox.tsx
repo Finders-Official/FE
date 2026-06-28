@@ -1,5 +1,6 @@
 import { ChevronLeftIcon } from "@/assets/icon";
 import { INQUIRY_OPTIONS, type InquiryOption } from "@/types/mypage/inquiry";
+import { Collapse } from "@/components/common";
 
 type InquiryDropBoxProps = {
   value: InquiryOption | null;
@@ -33,7 +34,7 @@ export function InquiryDropBox({
 
         <div className="shrink-0">
           <ChevronLeftIcon
-            className={`h-4 w-4 text-neutral-200 transition-transform ${
+            className={`ease-smooth-out h-4 w-4 text-neutral-200 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
               isOpen ? "rotate-90" : "rotate-270"
             }`}
           />
@@ -41,7 +42,7 @@ export function InquiryDropBox({
       </button>
 
       {/* 드롭다운 메뉴 */}
-      {isOpen && (
+      <Collapse open={isOpen}>
         <div className="border-neutral-850 mt-2 overflow-hidden rounded-[0.625rem] border">
           <ul>
             {INQUIRY_OPTIONS.map((opt) => {
@@ -69,7 +70,7 @@ export function InquiryDropBox({
             })}
           </ul>
         </div>
-      )}
+      </Collapse>
     </div>
   );
 }

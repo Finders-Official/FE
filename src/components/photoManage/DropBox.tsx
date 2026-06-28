@@ -4,6 +4,7 @@ import type {
   DropDownCategory,
   DropDownOption,
 } from "@/types/photomanage/category";
+import { Collapse } from "@/components/common";
 
 type DropBoxProps = {
   category: DropDownCategory;
@@ -39,14 +40,14 @@ export function DropBox({
 
         <div className="shrink-0">
           <ChevronLeftIcon
-            className={`h-4 w-4 text-neutral-200 transition-transform ${
+            className={`ease-smooth-out h-4 w-4 text-neutral-200 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
               isOpen ? "rotate-90" : "rotate-270"
             }`}
           />
         </div>
       </div>
 
-      {isOpen && (
+      <Collapse open={isOpen}>
         <div className="border-neutral-850 mt-2 overflow-hidden rounded-[0.625rem] border">
           <ul>
             {category.options.map((opt) => {
@@ -73,7 +74,7 @@ export function DropBox({
             })}
           </ul>
         </div>
-      )}
+      </Collapse>
     </button>
   );
 }

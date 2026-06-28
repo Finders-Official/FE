@@ -13,7 +13,9 @@ export function Collapse({ open, children, className = "" }: CollapseProps) {
         open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
       } ${className}`}
     >
-      <div className="min-h-0 overflow-hidden">{children}</div>
+      <div className="min-h-0 overflow-hidden" inert={!open}>
+        {children}
+      </div>
     </div>
   );
 }
