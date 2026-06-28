@@ -747,8 +747,15 @@
   }
 }
 
+.t-shake {
+  animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2)
+    linear;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .t-input {
+  .t-input,
+  .t-shake {
     animation: none !important;
     transform: none !important;
   }
