@@ -25,7 +25,7 @@ export function InquiryListItem({ item }: InquiryListItemProps) {
 
   return (
     <div
-      className="flex cursor-pointer flex-col border-b border-neutral-800 px-1 py-5 transition-colors hover:bg-neutral-900"
+      className="ease-smooth-out flex cursor-pointer flex-col border-b border-neutral-800 px-1 py-5 transition-colors duration-[var(--duration-quick)] hover:bg-neutral-900"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       {/* 1. 상단: 문의 유형 및 토글 아이콘 */}
