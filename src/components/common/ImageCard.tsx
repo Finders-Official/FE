@@ -1,4 +1,5 @@
 import { CheckCircleIcon, EmptyCheckCircleIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 type BaseImageCardProps = {
   src: string;
@@ -38,7 +39,7 @@ export function ImageCard({
       : null;
 
   return (
-    <button
+    <Press
       type="button"
       onClick={(e) => {
         const target = e.target as HTMLElement; // 클릭 위치로 분기
@@ -82,6 +83,6 @@ export function ImageCard({
           <EmptyCheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
         </div>
       )}
-    </button>
+    </Press>
   );
 }

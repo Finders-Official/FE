@@ -1,5 +1,6 @@
 import { ChevronLeftIcon } from "@/assets/icon";
 import Icon from "./Icon";
+import { Press } from "@/components/common/motion";
 
 interface FilterContainerProps {
   label: string;
@@ -17,7 +18,7 @@ export default function FilterContainer({
   const displayText = value || label;
 
   return (
-    <button
+    <Press
       type="button"
       onClick={onClick}
       className={`flex h-[1.5625rem] w-full items-center justify-between ${className}`}
@@ -28,7 +29,7 @@ export default function FilterContainer({
       <Icon size="lg" className="-rotate-90 text-neutral-200">
         <ChevronLeftIcon />
       </Icon>
-    </button>
+    </Press>
   );
 }
 

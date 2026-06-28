@@ -1,4 +1,5 @@
 import { EmptyBoxIcon, CheckBoxIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 type CheckboxProps = {
   checked: boolean;
@@ -22,7 +23,7 @@ export function Checkbox({
     onClick?.(nextChecked); // 선택적 동작
   };
   return (
-    <button
+    <Press
       type="button"
       aria-pressed={checked}
       aria-label={ariaLabel}
@@ -34,6 +35,6 @@ export function Checkbox({
       ) : (
         <EmptyBoxIcon className={iconClassName} />
       )}
-    </button>
+    </Press>
   );
 }

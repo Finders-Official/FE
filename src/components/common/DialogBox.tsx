@@ -103,12 +103,12 @@ export const DialogBox = ({
               {confirmText}
             </Press>
           ) : (
-            <button
+            <Press
               onClick={onConfirm}
-              className="font-regular px-2 py-1 text-[0.875rem] leading-[155%] text-orange-500 transition-colors"
+              className="font-regular px-2 py-1 text-[0.875rem] leading-[155%] text-orange-500"
             >
               {confirmText}
-            </button>
+            </Press>
           )}
         </div>
       </div>

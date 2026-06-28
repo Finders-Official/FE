@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { CopyIcon, CopyFillIcon, ExclamationCircleIcon } from "@/assets/icon";
-import { Toast } from "@/components/common/motion";
+import { Press, Toast } from "@/components/common/motion";
 
 interface CopyButtonProps {
   text: string;
@@ -39,14 +39,14 @@ export function CopyButton({
 
   return (
     <>
-      <button
+      <Press
         type="button"
         onClick={handleCopy}
         className={className}
         aria-label={ariaLabel}
       >
         {children ?? <CopyIcon className={iconClassName} />}
-      </button>
+      </Press>
 
       <Toast
         open={open}
