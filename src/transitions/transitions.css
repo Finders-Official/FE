@@ -142,6 +142,15 @@
   --reveal-blur: var(--blur-medium);
 }
 
+.t-reveal[data-variant="toast"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: var(--distance-base);
+  --reveal-blur: var(--blur-small);
+  --reveal-enter: var(--duration-fast);
+  --reveal-exit: var(--duration-quick);
+}
+
 .t-reveal[data-variant="sheet-bottom"] {
   --reveal-scale: 1;
   --reveal-scale-exit: 1;

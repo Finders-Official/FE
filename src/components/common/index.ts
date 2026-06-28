@@ -18,8 +18,7 @@ export { ToastItem, ToastList } from "./ToastMessage";
 export { CopyButton } from "./CopyButton";
 export { default as ConfirmationIcon } from "./ConfirmationIcon";
 
-// Motion presets (transitions-dev)
-export { Press } from "./motion";
+export { Press, Toast } from "./motion";
 
 export { default as UnderlineTabs } from "./UnderlineTabs";
 export type { UnderlineTabsProps, TabItem } from "./UnderlineTabs";

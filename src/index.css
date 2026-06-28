@@ -145,19 +145,6 @@
   animation: toast-fade 0.3s ease-out;
 }
 
-@keyframes toast-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.animate-toast-out {
-  animation: toast-out 0.1s ease-in forwards;
-}
-
 /* DEMO-DAY 애니메이션 (제거 시 이 블록 전체 삭제) */
 @keyframes demoday-fade-in {
   from {
