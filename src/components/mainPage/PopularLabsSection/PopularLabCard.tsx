@@ -1,11 +1,5 @@
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
-
-export interface Lab {
-  photoLabId: number;
-  name: string;
-  mainImageUrl: string;
-  workCount: number;
-}
+import type { Lab } from "@/apis/mainPage/mainPage.api";
 
 interface PopularLabCardProps {
   lab: Lab;

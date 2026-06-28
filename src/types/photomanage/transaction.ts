@@ -11,7 +11,7 @@ export interface LabAccountInfo {
 }
 
 export interface TransactionRouteState {
-  photoLabId: number;
+  photoLabId: string;
   printOrderId: number;
   totalPrice: number;
   receiptMethod: "PICKUP" | "DELIVERY";

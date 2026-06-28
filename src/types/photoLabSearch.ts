@@ -8,19 +8,18 @@ export interface RecentSearch {
   timestamp: number;
 }
 
-// 인기 현상소 랭킹
+// 인기 현상소 (GET /photo-labs/popular)
 export interface PopularLab {
-  rank: number;
   photoLabId: string;
   name: string;
+  mainImageUrl: string;
 }
 
-// 현상소 프리뷰 (검색 미리보기용)
+// 현상소 프리뷰 (GET /photo-labs/search/preview)
 export interface LabPreview {
   photoLabId: string;
   name: string;
-  address: string;
   imageUrl: string | null;
-  isFavorite: boolean;
-  favoriteCount: number;
+  address: string;
+  distanceKm: number | null;
 }

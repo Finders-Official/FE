@@ -1,12 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addFavorite, removeFavorite } from "@/apis/photoLab";
-import type { PagedApiResponse, PhotoLabItem } from "@/types/photoLab";
 import type { InfiniteData } from "@tanstack/react-query";
+import { addFavorite, removeFavorite } from "@/apis/photoLab";
+import type { ApiResponse } from "@/types/common/apiResponse";
+import type {
+  PagedApiResponse,
+  SimplePhotoLabItem,
+  PhotoLabDetail,
+} from "@/types/photoLab";
+import type { GetFavoritePhotoLabsResponse } from "@/types/mypage/photolab";
 
 interface ToggleParams {
   photoLabId: string;
   isFavorite: boolean;
 }
+
+const LIST_KEY = ["photoLab", "list"];
+const FAVORITES_KEY = ["photoLabs", "favorites"];
 
 export function useFavoriteToggle() {
   const queryClient = useQueryClient();
@@ -15,19 +24,33 @@ export function useFavoriteToggle() {
     mutationFn: ({ photoLabId, isFavorite }: ToggleParams) =>
       isFavorite ? removeFavorite(photoLabId) : addFavorite(photoLabId),
 
+    // 낙관적 업데이트: 별(isFavorite)만 즉시 반영, 실패 시 롤백
     onMutate: async ({ photoLabId, isFavorite }) => {
-      // 진행 중인 쿼리 취소
-      await queryClient.cancelQueries({ queryKey: ["photoLab", "list"] });
+      const nextFavorite = !isFavorite;
+      const detailKey = ["photoLab", "detail", photoLabId];
 
-      // 이전 데이터 백업
-      const previous = queryClient.getQueriesData<
-        InfiniteData<PagedApiResponse<PhotoLabItem[]>>
-      >({ queryKey: ["photoLab", "list"] });
+      // 진행 중인 refetch가 낙관적 값을 덮어쓰지 않도록 취소
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: LIST_KEY }),
+        queryClient.cancelQueries({ queryKey: FAVORITES_KEY }),
+        queryClient.cancelQueries({ queryKey: detailKey }),
+      ]);
 
-      // Optimistic update
+      // 롤백용 백업
+      const previousList = queryClient.getQueriesData<
+        InfiniteData<PagedApiResponse<SimplePhotoLabItem[]>>
+      >({ queryKey: LIST_KEY });
+      const previousFavorites = queryClient.getQueriesData<
+        InfiniteData<GetFavoritePhotoLabsResponse>
+      >({ queryKey: FAVORITES_KEY });
+      const previousDetail = queryClient.getQueriesData<
+        ApiResponse<PhotoLabDetail>
+      >({ queryKey: detailKey });
+
+      // 현상소 목록 캐시 (SimplePhotoLabItem[])
       queryClient.setQueriesData<
-        InfiniteData<PagedApiResponse<PhotoLabItem[]>>
-      >({ queryKey: ["photoLab", "list"] }, (old) => {
+        InfiniteData<PagedApiResponse<SimplePhotoLabItem[]>>
+      >({ queryKey: LIST_KEY }, (old) => {
         if (!old) return old;
         return {
           ...old,
@@ -35,27 +58,66 @@ export function useFavoriteToggle() {
             ...page,
             data: page.data.map((lab) =>
               lab.photoLabId === photoLabId
-                ? { ...lab, isFavorite: !isFavorite }
+                ? { ...lab, isFavorite: nextFavorite }
                 : lab,
             ),
           })),
         };
       });
 
-      return { previous };
+      // 관심현상소(마이페이지) 캐시 (FavoritePhotoLabDto[])
+      queryClient.setQueriesData<InfiniteData<GetFavoritePhotoLabsResponse>>(
+        { queryKey: FAVORITES_KEY },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              data: {
+                ...page.data,
+                photoLabs: page.data.photoLabs.map((lab) =>
+                  lab.photoLabId === photoLabId
+                    ? { ...lab, isFavorite: nextFavorite }
+                    : lab,
+                ),
+              },
+            })),
+          };
+        },
+      );
+
+      // 현상소 상세 캐시 (PhotoLabDetail)
+      queryClient.setQueriesData<ApiResponse<PhotoLabDetail>>(
+        { queryKey: detailKey },
+        (old) => {
+          if (!old?.data || old.data.photoLabId !== photoLabId) return old;
+          return { ...old, data: { ...old.data, isFavorite: nextFavorite } };
+        },
+      );
+
+      return { previousList, previousFavorites, previousDetail };
     },
 
     onError: (_err, _vars, context) => {
-      // 롤백
-      if (context?.previous) {
-        for (const [queryKey, data] of context.previous) {
-          queryClient.setQueryData(queryKey, data);
-        }
-      }
+      // 백업 데이터로 롤백
+      context?.previousList?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data),
+      );
+      context?.previousFavorites?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data),
+      );
+      context?.previousDetail?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data),
+      );
     },
 
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["photoLab", "list"] });
+    onSettled: (_data, _err, { photoLabId }) => {
+      queryClient.invalidateQueries({ queryKey: LIST_KEY });
+      queryClient.invalidateQueries({ queryKey: FAVORITES_KEY });
+      queryClient.invalidateQueries({
+        queryKey: ["photoLab", "detail", photoLabId],
+      });
     },
   });
 }

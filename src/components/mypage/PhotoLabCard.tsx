@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { StarIcon } from "@/assets/icon";
+import { photoLabPlaceholder } from "@/assets/images";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { Link } from "react-router";
 
 type Props = {
   photoLab: PhotoLab;
-  onToggleLike?: (id: number, isFavorite: boolean) => void; // 서버 토글(현재값 기준)
+  onToggleLike?: (id: string, isFavorite: boolean) => void; // 서버 토글(현재값 기준)
 };
 
 export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
@@ -17,7 +18,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
   if (photoLab.isFavorite !== prevFavorite) {
     setPrevFavorite(photoLab.isFavorite);
     setIsFavorite(photoLab.isFavorite);
-  } // TODO: useEffect 사용 or 페이지에서 override
+  }
 
   const starColorClass = isFavorite
     ? "fill-orange-500 text-orange-500"
@@ -39,7 +40,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
             setIsFavorite((prev) => !prev);
 
             // 2) 서버에는 현재값을 넘김
-            onToggleLike?.(photoLab.id, photoLab.isFavorite);
+            onToggleLike?.(photoLab.id, isFavorite);
           }}
         >
           <StarIcon className={`h-5 w-5 ${starColorClass}`} />
@@ -57,9 +58,9 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
           <div className="flex gap-3">
             {/* 이미지 */}
             <img
-              src={photoLab.imageUrls[0]}
+              src={photoLab.imageUrls?.[0] || photoLabPlaceholder}
               alt={photoLab.name}
-              className="h-[3.75rem] w-[3.75rem] rounded-md"
+              className="h-[3.75rem] w-[3.75rem] rounded-md object-cover"
             />
             <section className="flex flex-col p-1">
               <h2 className="text-[1.175rem] font-semibold tracking-[-0.0225rem] text-neutral-100">
@@ -69,7 +70,9 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
               {/* 주소 + 거리 */}
               <section className="mt-1 flex items-center gap-1 text-[0.85rem] font-light text-neutral-200">
                 <span>{photoLab.address}</span>
-                <span>({photoLab.distanceKm}km)</span>
+                {photoLab.distanceKm != null && (
+                  <span>({photoLab.distanceKm.toFixed(1)}km)</span>
+                )}
               </section>
             </section>
           </div>

@@ -60,11 +60,6 @@ export default function PhotoLabSearchPage() {
     useRecentSearches();
   const [isRecentExpanded, setIsRecentExpanded] = useState(false);
 
-  // 필터 상태 (목록 페이지와 공유)
-  /* const { filter, setFilter, selectedTagIds, setSelectedTagIds } =
-    usePhotoLabFilter();
-  const [isFilterOpen, setIsFilterOpen] = useState(false); */
-
   // 검색 미리보기 (경량 API)
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
   const {
@@ -98,13 +93,6 @@ export default function PhotoLabSearchPage() {
     usePhotoLabList(
       {
         q: searchQuery || undefined,
-        /* tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
-        regionIds: filter.regionIds,
-        date: filter.date,
-        time:
-          filter.time && filter.time.length > 0
-            ? displayTimesToApiTimes(filter.time)
-            : undefined, */
         lat: latitude ?? undefined,
         lng: longitude ?? undefined,
       },
@@ -132,8 +120,6 @@ export default function PhotoLabSearchPage() {
       fetchNextPage();
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  /* const filterValue = formatFilterValue(filter); */
 
   // 뒤로가기: 검색 결과 → 검색 입력, 검색 입력 → 현상소 목록
   const handleBack = () => {
@@ -173,14 +159,6 @@ export default function PhotoLabSearchPage() {
   const handleLabClick = (photoLabId: string) => {
     navigate(`/photolab/${photoLabId}`);
   };
-
-  /* const handleTagToggle = (tagId: number) => {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId)
-        ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId],
-    );
-  }; */
 
   return (
     <div className="flex w-full flex-col">
@@ -245,22 +223,6 @@ export default function PhotoLabSearchPage() {
       {/* PL-011-3: 검색 결과 */}
       {isResultsState && (
         <>
-          {/* 필터 섹션 */}
-          {/* <div className="sticky top-0 z-10 bg-neutral-900">
-            <div className="flex flex-col gap-4 pb-6">
-              <FilterContainer
-                label="날짜 / 지역"
-                value={filterValue}
-                onClick={() => setIsFilterOpen(true)}
-              />
-              <FilterTagList
-                selectedTagIds={selectedTagIds}
-                onTagToggle={handleTagToggle}
-              />
-            </div>
-            <div className="bg-neutral-850 -mx-4 h-[0.1875rem]" />
-          </div> */}
-
           {/* 검색 결과 목록 */}
           <LabList
             labs={labs}
@@ -275,14 +237,6 @@ export default function PhotoLabSearchPage() {
           />
         </>
       )}
-
-      {/* 필터 바텀시트 (vh 초기값 유지) */}
-      {/* <FilterBottomSheet
-        open={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        initialFilter={filter}
-        onApply={setFilter}
-      /> */}
     </div>
   );
 }
