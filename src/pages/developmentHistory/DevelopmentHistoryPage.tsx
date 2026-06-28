@@ -9,6 +9,7 @@ import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
 import DevelopmentOrderCard from "@/components/developmentHistory/DevelopmentOrderCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import EmptyView from "@/components/common/EmptyView";
+import { Press } from "@/components/common";
 
 interface FormattedDevelopmentOrder {
   id: number;
@@ -97,13 +98,13 @@ const DevelopmentHistoryPage = () => {
               지난 작업
             </h2>
             {isMenu && (
-              <button
+              <Press
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex h-9 w-9 items-center justify-center text-neutral-200 active:opacity-70"
+                className="flex h-9 w-9 items-center justify-center text-neutral-200"
               >
                 <CloseIcon className="h-3 w-3 text-neutral-200" />
-              </button>
+              </Press>
             )}
           </header>
 

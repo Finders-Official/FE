@@ -5,7 +5,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router";
-import { ConfirmationIcon } from "@/components/common";
+import { ConfirmationIcon, Press } from "@/components/common";
 import Header from "@/components/common/Header";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { PAYMENT_ALREADY_PROCESSED_CODE } from "@/constants/payment/payment.constant";
@@ -283,20 +283,20 @@ function ResultActions({
 }: ResultActionsProps) {
   return (
     <div className="flex items-center gap-3">
-      <button
+      <Press
         type="button"
         onClick={onLeftClick}
         className="flex h-14 flex-1 items-center justify-center rounded-[1.125rem] border border-neutral-700 text-[1rem] leading-[1.55] font-semibold tracking-[-0.02em] text-neutral-200"
       >
         {leftLabel}
-      </button>
-      <button
+      </Press>
+      <Press
         type="button"
         onClick={onRightClick}
         className="flex h-14 flex-1 items-center justify-center rounded-[1.125rem] bg-orange-500 text-[1rem] leading-[1.55] font-semibold tracking-[-0.02em] text-neutral-100"
       >
         {rightLabel}
-      </button>
+      </Press>
     </div>
   );
 }
