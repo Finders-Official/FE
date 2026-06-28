@@ -1,6 +1,3 @@
-// transitions-dev 모션 시스템의 헤드리스 로직. transitions.css(.t-reveal 엔진 + 토큰)와 짝.
-// 반환 props를 직접 마크업에 spread. 로직은 원본 hooks.js와 동일, 타입만 추가.
-
 import { useEffect, useRef, useState } from "react";
 import type {
   CSSProperties,
@@ -11,7 +8,6 @@ import type {
 
 export type RevealState = "closed" | "open" | "closing";
 
-// transitions.css의 reveal variant 목록. variant 추가 = CSS 규칙 1개 + 여기 멤버 1개.
 export type RevealVariant =
   | "fade"
   | "scale"
@@ -33,13 +29,11 @@ export type RevealVariant =
   | "ios-zoom"
   | "ios-sheet"
   | "push-ios"
-  // Finders 전용
   | "toast"
   | "banner-roll"
   | "intro-fade"
   | "carousel";
 
-// CSS 시간값("250ms"/"0.4s")을 ms 숫자로. el 주면 그 요소 기준, 없으면 :root.
 export function cssMs(
   name: string,
   fallback = 200,
@@ -51,7 +45,7 @@ export function cssMs(
   if (!raw) return fallback;
   const n = parseFloat(raw);
   if (!Number.isFinite(n)) return fallback;
-  return raw.endsWith("ms") ? n : n * 1000; // "0.4s" -> 400
+  return raw.endsWith("ms") ? n : n * 1000;
 }
 
 type ExitTransitionOptions = {
@@ -61,7 +55,6 @@ type ExitTransitionOptions = {
   fallback?: number;
 };
 
-// mount→enter→exit→unmount 상태머신(closed/open/closing). exit 시간만큼 hold 후 unmount.
 export function useExitTransition(
   open: boolean,
   {
@@ -100,8 +93,6 @@ type RevealPropsInput<T extends HTMLElement> = HTMLAttributes<T> & {
   className?: string;
 };
 
-// 헤드리스 reveal. getRevealProps()를 원하는 엘리먼트에 spread.
-// element 타입 제네릭(기본 HTMLDivElement) — div 외엔 useReveal<HTMLButtonElement>(...)로 지정.
 export function useReveal<T extends HTMLElement = HTMLDivElement>(
   open: boolean,
   { variant = "scale", exitMs }: RevealOptions = {},
@@ -123,7 +114,6 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
   return { mounted, state, ref, getRevealProps };
 }
 
-// 바깥 pointerdown(capture) + Esc로 닫기. enabled에 open을 넘기면 열려있을 때만 리스너 부착.
 export function useDismiss(
   ref: RefObject<HTMLElement | null>,
   onDismiss: () => void,
@@ -146,7 +136,6 @@ export function useDismiss(
   }, [ref, onDismiss, enabled]);
 }
 
-// 마우스/트랙패드 같은 fine hover 포인터일 때만 true. 터치에서 hover 끼임 방지.
 export function useHoverCapable(): boolean {
   const [can, setCan] = useState(false);
   useEffect(() => {
@@ -177,8 +166,6 @@ type SwipeDragProps = {
   style: CSSProperties;
 };
 
-// 시트/드로어 드래그-투-디스미스(iOS 제스처). 손가락 추적 + 역방향 러버밴드 +
-// 거리/속도 판정으로 dismiss 또는 복귀(스프링). reduced-motion이면 드래그 비활성.
 export function useSwipeDismiss(
   ref: RefObject<HTMLElement | null>,
   onDismiss: () => void,
@@ -206,7 +193,7 @@ export function useSwipeDismiss(
   }>({ id: null, start: 0, last: 0, lastT: 0, vel: 0 });
 
   const axis = from === "left" || from === "right" ? "x" : "y";
-  const dir = from === "bottom" || from === "right" ? 1 : -1; // sign that means "toward dismissal"
+  const dir = from === "bottom" || from === "right" ? 1 : -1;
 
   const reduced =
     typeof window !== "undefined" &&
@@ -214,7 +201,6 @@ export function useSwipeDismiss(
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (reduced) {
-    // No live drag under reduced motion; fall back to button close.
     return { dragging: false, getDragProps: () => ({}) };
   }
 
@@ -252,18 +238,18 @@ export function useSwipeDismiss(
     if (st.current.id !== e.pointerId) return;
     const p = pos(e);
     const dt = e.timeStamp - st.current.lastT;
-    if (dt > 0) st.current.vel = (p - st.current.last) / dt; // px/ms (signed)
+    if (dt > 0) st.current.vel = (p - st.current.last) / dt;
     st.current.last = p;
     st.current.lastT = e.timeStamp;
 
-    const raw = (p - st.current.start) * dir; // >0 = toward dismissal
+    const raw = (p - st.current.start) * dir;
     let moved: number;
     if (raw >= 0) {
-      moved = raw; // free along the dismiss direction
+      moved = raw;
     } else {
       const x = -raw;
       const d = size();
-      moved = -((x * d * rubberBand) / (d + rubberBand * x)); // Apple rubber-band
+      moved = -((x * d * rubberBand) / (d + rubberBand * x));
     }
     setTransform(moved * dir);
   };
@@ -292,8 +278,8 @@ export function useSwipeDismiss(
     st.current.id = null;
     setDragging(false);
 
-    const raw = (pos(e) - st.current.start) * dir; // distance toward dismissal
-    const velToward = st.current.vel * dir; // px/ms toward dismissal
+    const raw = (pos(e) - st.current.start) * dir;
+    const velToward = st.current.vel * dir;
     const dismiss = raw > threshold * size() || velToward > velocity;
 
     if (dismiss) {

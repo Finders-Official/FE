@@ -1285,7 +1285,9 @@
 }
 
 .t-press {
-  transition: transform var(--duration-quick) var(--ease-ios-out);
+  transition:
+    transform var(--duration-quick) var(--ease-ios-out),
+    filter var(--duration-quick) var(--ease-ios-out);
   will-change: transform;
 }
 @media (hover: hover) and (pointer: fine) {
