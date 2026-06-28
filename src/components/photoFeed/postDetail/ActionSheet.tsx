@@ -1,3 +1,4 @@
+import { Press } from "@/components/common";
 import SheetPopup from "./SheetPopup";
 
 export type ActionSheetAction = {
@@ -23,17 +24,17 @@ export default function ActionSheet({
       open={open}
       onClose={onClose}
       footer={
-        <button
+        <Press
           type="button"
           onClick={onClose}
           className="bg-neutral-875 my-4 w-full rounded-3xl border border-neutral-800 py-4 text-center text-[0.9375rem] text-neutral-100"
         >
           취소
-        </button>
+        </Press>
       }
     >
       {actions.map((a) => (
-        <button
+        <Press
           key={a.label}
           type="button"
           onClick={() => {
@@ -45,7 +46,7 @@ export default function ActionSheet({
           }`}
         >
           {a.label}
-        </button>
+        </Press>
       ))}
     </SheetPopup>
   );
