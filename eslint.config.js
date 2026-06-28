@@ -7,7 +7,14 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import prettierConfig from "eslint-config-prettier";
 
 export default defineConfig([
-  globalIgnores(["dist", "build", "coverage", "node_modules"]),
+  globalIgnores([
+    "dist",
+    "build",
+    "coverage",
+    "node_modules",
+    "android",
+    "ios",
+  ]),
 
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
