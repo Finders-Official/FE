@@ -1,6 +1,6 @@
 // src/pages/mypage/PhoneEditPage.tsx
 import { ActionButton, InputForm } from "@/components/auth";
-import { CTA_Button } from "@/components/common";
+import { Collapse, CTA_Button } from "@/components/common";
 import { formatMMSS } from "@/utils/time";
 import { useOnBoardingForm } from "@/hooks/auth/onBoarding";
 import { useEditMe, useMe } from "@/hooks/member";
@@ -83,42 +83,40 @@ export function PhoneEditPage() {
           />
         </section>
 
-        {f.isSending && (
-          <>
-            <section className="flex gap-[1.25rem]">
-              <InputForm
-                placeholder="인증번호 입력"
-                size="medium"
-                borderClass={`focus:border-orange-500 ${f.phoneBorderClass} ${
-                  f.lockPhoneForm ? "bg-neutral-850" : ""
-                }`}
-                value={f.verifiedNumber}
-                timer={
-                  !f.lockPhoneForm ? (
-                    <span className="text-sm text-orange-500">
-                      {formatMMSS(Math.max(f.remainSec, 0))}
-                    </span>
-                  ) : null
-                }
-                onChange={f.handleVerifiedNumberChange}
-                disabled={f.lockPhoneForm}
-              />
+        <Collapse open={f.isSending}>
+          <section className="flex gap-[1.25rem]">
+            <InputForm
+              placeholder="인증번호 입력"
+              size="medium"
+              borderClass={`focus:border-orange-500 ${f.phoneBorderClass} ${
+                f.lockPhoneForm ? "bg-neutral-850" : ""
+              }`}
+              value={f.verifiedNumber}
+              timer={
+                !f.lockPhoneForm ? (
+                  <span className="text-sm text-orange-500">
+                    {formatMMSS(Math.max(f.remainSec, 0))}
+                  </span>
+                ) : null
+              }
+              onChange={f.handleVerifiedNumberChange}
+              disabled={f.lockPhoneForm}
+            />
 
-              <ActionButton
-                type="button"
-                text={f.isConfirmingCode ? "확인중..." : "확인"}
-                onClick={f.handleVerify}
-                disabled={f.lockPhoneForm || f.verifiedNumber.length !== 6}
-                className={
-                  f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""
-                }
-              />
-            </section>
-            <p className={`mt-2 px-2 text-sm ${f.phoneTextClass}`}>
-              {f.phoneStatusText}
-            </p>
-          </>
-        )}
+            <ActionButton
+              type="button"
+              text={f.isConfirmingCode ? "확인중..." : "확인"}
+              onClick={f.handleVerify}
+              disabled={f.lockPhoneForm || f.verifiedNumber.length !== 6}
+              className={
+                f.lockPhoneForm ? "bg-neutral-850 text-neutral-500" : ""
+              }
+            />
+          </section>
+          <p className={`mt-2 px-2 text-sm ${f.phoneTextClass}`}>
+            {f.phoneStatusText}
+          </p>
+        </Collapse>
       </form>
 
       <footer className="border-neutral-850 mt-auto border-t py-5">
