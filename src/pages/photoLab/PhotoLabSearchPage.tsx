@@ -198,7 +198,7 @@ export default function PhotoLabSearchPage() {
       {/* PL-011-2: 검색어 입력 중 */}
       {!isResultsState && query.trim() && (
         <div
-          className={`pt-5 transition-opacity duration-200 ${
+          className={`pt-5 transition-opacity duration-[var(--duration-fast)] ${
             isPreviewStale ? "opacity-40" : "opacity-100"
           }`}
         >

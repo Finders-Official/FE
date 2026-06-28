@@ -2,6 +2,7 @@ import LocationChip from "@/components/common/chips/LocationChip";
 import { XMarkIcon } from "@/assets/icon";
 import { MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import type { Region, RegionSelection } from "@/types/photoLab";
+import { Press } from "@/components/common";
 
 interface RegionSelectorProps {
   regions: Region[];
@@ -65,7 +66,7 @@ export default function RegionSelector({
             const isLastItem = index === subRegions.length - 1;
 
             return (
-              <button
+              <Press
                 key={subRegion}
                 type="button"
                 onClick={() => onSubRegionToggle(displayedRegion, subRegion)}
@@ -94,7 +95,7 @@ export default function RegionSelector({
                     ({currentRegion.count})
                   </span>
                 )}
-              </button>
+              </Press>
             );
           })}
         </div>
@@ -118,7 +119,7 @@ export default function RegionSelector({
                   : sel.subRegion;
 
               return (
-                <button
+                <Press
                   key={`${sel.parentName}-${sel.subRegion}`}
                   type="button"
                   onClick={() =>
@@ -130,7 +131,7 @@ export default function RegionSelector({
                     {chipLabel}
                   </span>
                   <XMarkIcon className="h-3 w-3 text-neutral-200" />
-                </button>
+                </Press>
               );
             })}
           </div>

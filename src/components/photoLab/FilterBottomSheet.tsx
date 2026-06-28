@@ -4,6 +4,7 @@ import RegionSelector from "@/components/photoLab/RegionSelector";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
+import { Press } from "@/components/common";
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -162,22 +163,22 @@ export default function FilterBottomSheet({
         {/* 하단 버튼 영역 */}
         <div className="bg-neutral-875 flex gap-3 border-t border-neutral-800 px-4 py-5">
           {/* 초기화 버튼 */}
-          <button
+          <Press
             type="button"
             onClick={handleReset}
             className="flex h-14 w-[7.5625rem] items-center justify-center rounded-[1.125rem] border border-neutral-600 text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200"
           >
             초기화
-          </button>
+          </Press>
 
           {/* 적용 버튼 */}
-          <button
+          <Press
             type="button"
             onClick={handleApply}
             className="flex h-14 flex-1 items-center justify-center rounded-[1.125rem] bg-orange-500 text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100"
           >
             적용
-          </button>
+          </Press>
         </div>
       </div>
     </BottomSheet>

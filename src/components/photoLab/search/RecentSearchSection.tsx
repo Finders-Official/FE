@@ -1,5 +1,5 @@
 import type { RecentSearch } from "@/types/photoLabSearch";
-import { SearchItem, Collapse } from "@/components/common";
+import { SearchItem, Collapse, Press } from "@/components/common";
 import { ChevronLeftIcon } from "@/assets/icon";
 
 interface RecentSearchSectionProps {
@@ -31,13 +31,13 @@ export default function RecentSearchSection({
           <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
             최근 검색어
           </h2>
-          <button
+          <Press
             type="button"
             onClick={onClearAll}
             className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
           >
             전체 삭제
-          </button>
+          </Press>
         </div>
 
         {/* 검색어 리스트 */}
@@ -75,7 +75,7 @@ export default function RecentSearchSection({
       {showExpandButton && (
         <div className="flex items-center">
           <div className="h-px flex-1 bg-neutral-800" />
-          <button
+          <Press
             type="button"
             onClick={onToggleExpand}
             className="flex items-center gap-0.5 rounded-[3.125rem] border border-neutral-800 px-4 py-2"
@@ -88,7 +88,7 @@ export default function RecentSearchSection({
                 isExpanded ? "rotate-90" : "-rotate-90"
               }`}
             />
-          </button>
+          </Press>
           <div className="h-px flex-1 bg-neutral-800" />
         </div>
       )}

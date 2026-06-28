@@ -1,4 +1,5 @@
 import { ChevronLeftIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 
 interface LabWorkResultsSectionProps {
   labName: string;
@@ -28,14 +29,14 @@ export default function LabWorkResultsSection({
           </p>
         </div>
         {onMoreClick && (
-          <button
+          <Press
             type="button"
             onClick={onMoreClick}
             className="flex h-6 w-6 items-center justify-center"
             aria-label="더보기"
           >
             <ChevronLeftIcon className="h-5 w-5 rotate-180 text-neutral-200" />
-          </button>
+          </Press>
         )}
       </div>
 
