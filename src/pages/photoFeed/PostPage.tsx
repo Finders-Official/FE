@@ -5,7 +5,7 @@ import {
   HeartFillIcon,
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
-import { Header, Toast } from "@/components/common";
+import { Header, IconSwap, Press, Toast } from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
@@ -141,11 +141,12 @@ export default function PostPage() {
 
             <div className="flex h-5 w-full justify-start gap-3 pl-1">
               <div className="flex items-center gap-1">
-                <button
+                <Press
                   type="button"
                   disabled={isMutating}
                   aria-label="좋아요"
                   aria-pressed={postDetail.isLiked}
+                  className="flex items-center"
                   onClick={() => {
                     if (isMutating) return;
 
@@ -153,24 +154,31 @@ export default function PostPage() {
                     else likePost(postDetail.postId);
                   }}
                 >
-                  {postDetail.isLiked ? (
-                    <HeartFillIcon className="h-[1.25rem] w-[1.40625rem] text-orange-500" />
-                  ) : (
-                    <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
-                  )}
-                </button>
+                  <IconSwap
+                    active={postDetail.isLiked}
+                    bounce
+                    className="h-[1.25rem] w-[1.40625rem]"
+                    iconA={
+                      <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
+                    }
+                    iconB={
+                      <HeartFillIcon className="h-[1.25rem] w-[1.40625rem] text-orange-500" />
+                    }
+                  />
+                </Press>
                 <p className="text-[0.8125rem]">{postDetail.likeCount}</p>
               </div>
               <div className="flex items-center gap-1">
-                <button
+                <Press
                   type="button"
                   aria-label="댓글 보기"
+                  className="flex items-center"
                   onClick={() => {
                     setCommentVisible(true);
                   }}
                 >
                   <ChatBubbleEmptyIcon className="h-[1.25rem] w-[1.25rem]" />
-                </button>
+                </Press>
                 <p className="text-[0.8125rem]">{postDetail.commentCount}</p>
               </div>
             </div>
@@ -197,7 +205,7 @@ export default function PostPage() {
                 </p>
               </div>
             ) : (
-              <button
+              <Press
                 type="button"
                 aria-label="현상소 보러가기"
                 onClick={() =>
@@ -216,7 +224,7 @@ export default function PostPage() {
                     {postDetail.labReview?.content}
                   </p>
                 </div>
-              </button>
+              </Press>
             )}
           </div>
         </section>
