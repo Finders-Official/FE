@@ -1,4 +1,5 @@
 import { DeleteIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 
 type ImageCardProps = {
   src: string;
@@ -29,14 +30,14 @@ export function PhotoCardPreview({
 
       {/* 우측 상단 X */}
       {showClose && (
-        <button
+        <Press
           type="button"
           onClick={onClose}
           aria-label="선택 해제"
           className="absolute top-[-0.375rem] right-[-0.375rem] flex"
         >
           <DeleteIcon className="h-[1.375rem] w-[1.375rem]" />
-        </button>
+        </Press>
       )}
     </div>
   );

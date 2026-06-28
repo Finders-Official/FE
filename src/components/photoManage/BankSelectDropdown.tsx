@@ -4,6 +4,7 @@ import { ChevronLeftIcon } from "@/assets/icon";
 import { ALL_FINANCIAL_INSTITUTIONS } from "@/constants/photomanage/banks.constant";
 import type { BankInfo } from "@/types/photomanage/transaction";
 import { useReveal, useDismiss } from "@/transitions";
+import { Press } from "@/components/common";
 
 interface BankSelectDropdownProps {
   value: BankInfo | null;
@@ -33,7 +34,7 @@ export function BankSelectDropdown({
       </label>
 
       <div ref={containerRef} className="relative">
-        <button
+        <Press
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="border-neutral-850 flex w-full items-center justify-between rounded-[0.625rem] border px-4 py-[0.875rem]"
@@ -50,7 +51,7 @@ export function BankSelectDropdown({
               isOpen ? "rotate-90" : "-rotate-90"
             }`}
           />
-        </button>
+        </Press>
 
         {mounted && (
           <ul
@@ -64,7 +65,7 @@ export function BankSelectDropdown({
               const selected = value?.code === bank.code;
               return (
                 <li key={bank.code}>
-                  <button
+                  <Press
                     type="button"
                     onClick={() => handleSelect(bank)}
                     className={`w-full px-4 py-3 text-left text-[0.9375rem] leading-[1.55] tracking-[-0.01875rem] text-neutral-100 ${
@@ -72,7 +73,7 @@ export function BankSelectDropdown({
                     }`}
                   >
                     {bank.name}
-                  </button>
+                  </Press>
                 </li>
               );
             })}

@@ -117,12 +117,12 @@ const ScanResultViewer = ({
               })}
               style={{ "--reveal-origin": "top right" } as CSSProperties}
             >
-              <button
+              <Press
                 onClick={handleDownloadAll}
                 className="hover:text-neutral-0 w-full text-center text-[0.9375rem] font-normal tracking-[-0.02em] text-neutral-100"
               >
                 사진 전체 다운로드
-              </button>
+              </Press>
             </div>
           )}
         </div>

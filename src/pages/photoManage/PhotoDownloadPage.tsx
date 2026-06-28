@@ -1,4 +1,4 @@
-import { CTA_Button, Header, ImageCard } from "@/components/common";
+import { CTA_Button, Header, ImageCard, Press } from "@/components/common";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { PhotoCardPreview } from "@/components/photoManage/PhotoCardPreview";
@@ -321,7 +321,7 @@ export default function PhotoDownload() {
 
         {/** 선택 영역 */}
         <div className="mb-5 flex h-[3.4375rem] w-full justify-end">
-          <button
+          <Press
             type="button"
             onClick={() => {
               if (currentPhotoId !== null) {
@@ -336,7 +336,7 @@ export default function PhotoDownload() {
             ) : (
               <EmptyCheckCircleIcon className="h-10 w-10" />
             )}
-          </button>
+          </Press>
         </div>
 
         {/** 확대한 사진 노출 영역 */}
