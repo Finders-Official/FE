@@ -310,7 +310,6 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
 
   const closeBottomSheet = () => {
     setIsBottomSheetOpen(false);
-    setTimeout(() => setBottomSheetType(null), 200);
   };
 
   // 선택 시 이름과 아이디를 세트로 상태 주입
@@ -435,7 +434,11 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
         onConfirm={() => setIsDuplicateDialogOpen(false)}
       />
 
-      <BottomSheet open={isBottomSheetOpen} onClose={closeBottomSheet}>
+      <BottomSheet
+        open={isBottomSheetOpen}
+        onClose={closeBottomSheet}
+        onExited={() => setBottomSheetType(null)}
+      >
         <div className="flex h-full flex-col gap-6 px-4 pt-4">
           <SearchBar
             value={searchValue}

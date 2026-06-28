@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { useReveal } from "@/transitions";
 
-const ANIMATION_MS = 150;
 const CLOSE_THRESHOLD_RATIO = 0.4;
 
 type Snap = "collapsed" | "expanded"; // "2/3" | "전체"
@@ -19,6 +19,7 @@ type BottomSheetProps = {
   /** true면 TabBar 위에 표시 (z-60/70), false면 TabBar 아래 (z-40) */
   overlay?: boolean;
   fixedMin?: boolean; // true면 처음 높이가 최소 높이(더 내려가지 않음)
+  onExited?: () => void;
 };
 
 // clamp 유틸
@@ -39,8 +40,17 @@ export default function BottomSheet({
   isBackDrop = true,
   overlay = false,
   fixedMin = false,
+  onExited,
 }: BottomSheetProps) {
-  const sheetRef = useRef<HTMLDivElement | null>(null);
+  const { mounted, state, getRevealProps } = useReveal(open, {
+    variant: "sheet-bottom",
+  });
+
+  const prevMountedRef = useRef(mounted);
+  useEffect(() => {
+    if (prevMountedRef.current && !mounted) onExited?.();
+    prevMountedRef.current = mounted;
+  }, [mounted, onExited]);
 
   const [snap, setSnap] = useState<Snap>(initialSnap);
   const [dragging, setDragging] = useState(false);
@@ -185,62 +195,68 @@ export default function BottomSheet({
     setSheetH(nextSnap === "expanded" ? expandedH : baseCollapsedH);
   };
 
-  if (!open) return null;
+  if (!mounted) return null;
 
-  const transition = dragging ? "none" : `height ${ANIMATION_MS}ms ease`;
+  const heightTransition = dragging
+    ? "none"
+    : "height var(--duration-quick) var(--ease-smooth-out)";
 
   return (
     <>
-      {/* Backdrop */}
       {isBackDrop && (
         <button
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          className={`fixed inset-0 bg-black/80 ${overlay ? "z-[60]" : "z-40"}`}
+          className={`ease-smooth-out fixed inset-0 bg-black/80 transition-opacity ${
+            overlay ? "z-[60]" : "z-40"
+          } ${
+            state === "closing"
+              ? "duration-[var(--duration-medium)]"
+              : "duration-[var(--duration-slow)]"
+          }`}
+          style={{ opacity: state === "open" ? 1 : 0 }}
         />
       )}
 
-      {/* Sheet */}
       <div
-        ref={sheetRef}
-        className={`fixed inset-x-0 bottom-0 ${overlay ? "z-[70]" : "z-40"}`}
-        style={{
-          height: `${sheetH}px`,
-          transition,
-        }}
+        {...getRevealProps({
+          className: `fixed inset-x-0 bottom-0 ${overlay ? "z-[70]" : "z-40"}`,
+        })}
       >
-        <div
-          className={[
-            "mx-auto flex h-full w-full max-w-[32rem] flex-col rounded-t-4xl shadow-[0_-0.75rem_2.5rem_rgba(0,0,0,0.4)]",
-            "bg-neutral-875",
-            sheetClassName,
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {/* Handle + Header */}
+        <div style={{ height: `${sheetH}px`, transition: heightTransition }}>
           <div
-            className="flex shrink-0 cursor-grab touch-none flex-col items-center gap-3 px-4 py-[0.625rem] select-none"
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
+            className={[
+              "mx-auto flex h-full w-full max-w-[32rem] flex-col rounded-t-4xl shadow-[0_-0.75rem_2.5rem_rgba(0,0,0,0.4)]",
+              "bg-neutral-875",
+              sheetClassName,
+            ]
+              .filter(Boolean)
+              .join(" ")}
           >
-            <div className="mx-auto h-[0.1875rem] w-[2.5625rem] rounded-full bg-neutral-500" />
-            {title && (
-              <h2 className="text-[1rem] font-bold text-neutral-200">
-                {title}
-              </h2>
-            )}
-          </div>
+            {/* Handle + Header */}
+            <div
+              className="flex shrink-0 cursor-grab touch-none flex-col items-center gap-3 px-4 py-[0.625rem] select-none"
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
+            >
+              <div className="mx-auto h-[0.1875rem] w-[2.5625rem] rounded-full bg-neutral-500" />
+              {title && (
+                <h2 className="text-[1rem] font-bold text-neutral-200">
+                  {title}
+                </h2>
+              )}
+            </div>
 
-          {/* Content 영역 */}
-          <div
-            className="min-h-0 flex-1"
-            style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-          >
-            {children}
+            {/* Content 영역 */}
+            <div
+              className="min-h-0 flex-1"
+              style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+            >
+              {children}
+            </div>
           </div>
         </div>
       </div>
