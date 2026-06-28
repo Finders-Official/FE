@@ -1,8 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import type { CSSProperties } from "react";
 import { CloseIcon } from "@/assets/icon";
 import { EllipsisVerticalIcon } from "@/assets/icon";
 import { DownloadIcon } from "@/assets/icon";
 import { useImageDownload } from "@/hooks/common/useImageDownload";
+import { useReveal, useDismiss } from "@/transitions";
+import { Press } from "@/components/common";
 
 interface ScanResultViewerProps {
   isOpen: boolean;
@@ -25,8 +28,10 @@ const ScanResultViewer = ({
   const touchEnd = useRef<number>(0);
   const minSwipeDistance = 50;
 
-  // 메뉴 외부 클릭 감지를 위한 Ref
-  const menuRef = useRef<HTMLDivElement>(null);
+  const { mounted, getRevealProps } = useReveal(isOpen, { variant: "fade" });
+  const menu = useReveal<HTMLDivElement>(isMenuOpen, { variant: "dropdown" });
+  const menuWrapRef = useRef<HTMLDivElement>(null);
+  useDismiss(menuWrapRef, () => setIsMenuOpen(false), isMenuOpen);
 
   const { downloadOne, downloadAll } = useImageDownload({
     prefixSingle: "scan",
@@ -35,25 +40,7 @@ const ScanResultViewer = ({
     extension: "jpg",
   });
 
-  // 메뉴 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
-  // [Defensive] 이미지가 없으면 렌더링하지 않음
-  if (!isOpen || !images || images.length === 0) return null;
+  if (!mounted || !images || images.length === 0) return null;
 
   const currentImage = images[currentIndex];
 
@@ -99,28 +86,36 @@ const ScanResultViewer = ({
   };
 
   return (
-    <div className="fixed inset-0 z-9999 flex h-full w-full flex-col bg-neutral-900/10">
+    <div
+      {...getRevealProps({
+        className:
+          "fixed inset-0 z-9999 flex h-full w-full flex-col bg-neutral-900/10",
+      })}
+    >
       {/* 1. 헤더 */}
       <header className="absolute top-13.75 right-0 left-0 z-50 flex h-14 items-center justify-between px-4">
-        <button
+        <Press
           onClick={onClose}
-          className="text-neutral-0 flex h-9 w-9 items-center justify-center active:opacity-70"
+          className="text-neutral-0 flex h-9 w-9 items-center justify-center"
         >
           <CloseIcon className="h-6 w-6" />
-        </button>
+        </Press>
 
-        <div className="relative">
-          <button
+        <div ref={menuWrapRef} className="relative">
+          <Press
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex h-9 w-9 items-center justify-center text-neutral-200 active:opacity-70"
+            className="flex h-9 w-9 items-center justify-center text-neutral-200"
           >
             <EllipsisVerticalIcon className="h-6 w-6" />
-          </button>
+          </Press>
 
-          {isMenuOpen && (
+          {menu.mounted && (
             <div
-              ref={menuRef}
-              className="bg-neutral-875/90 absolute top-full right-0 mt-2 w-36.25 rounded-2xl border border-neutral-800 p-4 backdrop-blur-md transition-all"
+              {...menu.getRevealProps({
+                className:
+                  "bg-neutral-875/90 absolute top-full right-0 mt-2 w-36.25 rounded-2xl border border-neutral-800 p-4 backdrop-blur-md",
+              })}
+              style={{ "--reveal-origin": "top right" } as CSSProperties}
             >
               <button
                 onClick={handleDownloadAll}
@@ -149,15 +144,15 @@ const ScanResultViewer = ({
           />
 
           {/* 개별 다운로드 버튼 */}
-          <button
+          <Press
             onClick={(e) => {
               e.stopPropagation();
               handleDownload();
             }}
-            className="border-neutral-750 bg-neutral-1000/40 absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border text-neutral-400 backdrop-blur-xs transition-transform active:scale-95"
+            className="border-neutral-750 bg-neutral-1000/40 absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border text-neutral-400 backdrop-blur-xs"
           >
             <DownloadIcon className="h-5 w-5 border-neutral-400" />
-          </button>
+          </Press>
         </div>
       </div>
 
@@ -168,7 +163,7 @@ const ScanResultViewer = ({
             <button
               key={img}
               onClick={() => setCurrentIndex(idx)}
-              className={`relative h-15 w-15 shrink-0 overflow-hidden rounded-[0.625rem] border transition-all ${
+              className={`ease-smooth-out relative h-15 w-15 shrink-0 overflow-hidden rounded-[0.625rem] border transition-[opacity,border-color] duration-[var(--duration-quick)] ${
                 currentIndex === idx
                   ? "border-neutral-100 opacity-100"
                   : "border-transparent opacity-50 hover:opacity-80"
