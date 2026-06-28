@@ -3,6 +3,7 @@ import { StarIcon } from "@/assets/icon";
 import { photoLabPlaceholder } from "@/assets/images";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { Link } from "react-router";
+import { Press, IconSwap } from "@/components/common";
 
 type Props = {
   photoLab: PhotoLab;
@@ -20,17 +21,14 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
     setIsFavorite(photoLab.isFavorite);
   }
 
-  const starColorClass = isFavorite
-    ? "fill-orange-500 text-orange-500"
-    : "fill-none text-white";
-
   return (
     <div className="mt-2 border-b border-neutral-800 py-4">
       <div className="group relative">
         {/*즐겨찾기 버튼: 클릭 시 링크 이동 방지 + UI 즉시 토글 */}
-        <button
+        <Press
           type="button"
           aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 등록"}
+          aria-pressed={isFavorite}
           className="absolute top-3 right-1 z-10 flex inline-flex h-10 w-10 flex-col items-center justify-center rounded-full"
           onClick={(e) => {
             e.preventDefault();
@@ -43,11 +41,19 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
             onToggleLike?.(photoLab.id, isFavorite);
           }}
         >
-          <StarIcon className={`h-5 w-5 ${starColorClass}`} />
+          <IconSwap
+            active={isFavorite}
+            bounce
+            className="h-5 w-5"
+            iconA={<StarIcon className="h-5 w-5 fill-none text-white" />}
+            iconB={
+              <StarIcon className="h-5 w-5 fill-orange-500 text-orange-500" />
+            }
+          />
           <p className="text-[0.725rem] text-neutral-400">
             {photoLab?.favoriteCount}
           </p>
-        </button>
+        </Press>
 
         <Link
           to={`/photolab/${photoLab.id}`}

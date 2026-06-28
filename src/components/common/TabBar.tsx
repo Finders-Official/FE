@@ -12,6 +12,7 @@ import {
   MyPageFillIcon,
 } from "@/assets/icon";
 import type { TabItem } from "@/types/tab";
+import { Press } from "@/components/common/motion";
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 import { useAuthStore } from "@/store/useAuth.store";
 
@@ -98,49 +99,49 @@ export const TabBar = () => {
           const isActive = isTabActive(tab);
           const Icon = isActive ? tab.activeIcon : tab.icon;
           return (
-            <button
+            <Press
               key={tab.to}
               type="button"
               onClick={() => onClickTab(tab.to)}
               className={[
-                "flex flex-col items-center justify-center gap-1.5 active:scale-[0.99]",
+                "flex flex-col items-center justify-center gap-1.5",
                 isActive ? "text-orange-500" : "text-neutral-300",
               ].join(" ")}
               aria-label={tab.label}
             >
               <Icon className="h-6 w-6" />
               <span className="text-center text-xs">{tab.label}</span>
-            </button>
+            </Press>
           );
         })}
 
-        <button
+        <Press
           type="button"
           onClick={handleRestoreClick}
-          className="flex flex-col items-center justify-center gap-1.5 text-neutral-300 active:scale-[0.99]"
+          className="flex flex-col items-center justify-center gap-1.5 text-neutral-300"
           aria-label="AI 사진복원"
         >
           <AiRestoreIcon className="h-6 w-6" />
           <span className="text-center text-xs">AI 사진복원</span>
-        </button>
+        </Press>
 
         {tabs.slice(3).map((tab) => {
           const isActive = isTabActive(tab);
           const Icon = isActive ? tab.activeIcon : tab.icon;
           return (
-            <button
+            <Press
               key={tab.to}
               type="button"
               onClick={() => onClickTab(tab.to)}
               className={[
-                "flex flex-col items-center justify-center gap-1.5 active:scale-[0.99]",
+                "flex flex-col items-center justify-center gap-1.5",
                 isActive ? "text-orange-500" : "text-neutral-300",
               ].join(" ")}
               aria-label={tab.label}
             >
               <Icon className="h-6 w-6" />
               <span className="text-center text-xs">{tab.label}</span>
-            </button>
+            </Press>
           );
         })}
       </nav>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { PhotoLabDetail } from "@/types/photoLab";
 import { StarIcon, StarFillIcon } from "@/assets/icon";
+import { Press, IconSwap } from "@/components/common";
 
 interface LabBasicInfoProps {
   lab: PhotoLabDetail;
@@ -49,18 +50,23 @@ export default function LabBasicInfo({
 
         {/* 즐겨찾기 */}
         <div className="flex flex-col items-center gap-0.5">
-          <button
+          <Press
             type="button"
             onClick={handleFavoriteClick}
             className="flex h-6 w-6 shrink-0 items-center justify-center"
             aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+            aria-pressed={isFavorite}
           >
-            {isFavorite ? (
-              <StarFillIcon className="h-6 w-6" />
-            ) : (
-              <StarIcon className="h-[1.125rem] w-[1.125rem] text-neutral-300" />
-            )}
-          </button>
+            <IconSwap
+              active={isFavorite}
+              bounce
+              className="h-6 w-6 place-items-center"
+              iconA={
+                <StarIcon className="h-[1.125rem] w-[1.125rem] text-neutral-300" />
+              }
+              iconB={<StarFillIcon className="h-6 w-6" />}
+            />
+          </Press>
           <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
             {lab.favoriteCount}
           </p>
