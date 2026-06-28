@@ -167,20 +167,18 @@ export default function ReviewPhotoLabPage() {
           />
         </div>
 
-        {isDialogOpen && (
-          <DialogBox
-            isOpen={isDialogOpen}
-            title="이 리뷰를 등록할까요?"
-            description="등록하면 이 리뷰가 사진수다에 공유돼요"
-            confirmText="네"
-            onConfirm={() => {
-              setIsDialogOpen(false);
-              handleSubmit();
-            }}
-            cancelText="아니오"
-            onCancel={() => setIsDialogOpen(false)}
-          />
-        )}
+        <DialogBox
+          isOpen={isDialogOpen}
+          title="이 리뷰를 등록할까요?"
+          description="등록하면 이 리뷰가 사진수다에 공유돼요"
+          confirmText="네"
+          onConfirm={() => {
+            setIsDialogOpen(false);
+            handleSubmit();
+          }}
+          cancelText="아니오"
+          onCancel={() => setIsDialogOpen(false)}
+        />
       </section>
     </div>
   );

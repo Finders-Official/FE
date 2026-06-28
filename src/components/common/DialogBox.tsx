@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Press } from "@/components/common/motion";
+import { useReveal, useDismiss } from "@/transitions";
 
 type TextAlign = "center" | "left";
 type ConfirmStyle = "filled" | "text";
@@ -30,21 +31,30 @@ export const DialogBox = ({
   align = "center",
   confirmButtonStyle = "filled",
 }: DialogBoxProps) => {
-  if (!isOpen || typeof document === "undefined") return null;
+  const { mounted, state, ref, getRevealProps } = useReveal(isOpen, {
+    variant: "modal",
+  });
+  useDismiss(ref, () => onCancel?.(), isOpen);
+
+  if (!mounted || typeof document === "undefined") return null;
 
   const borderGradient =
     "linear-gradient(139.21deg, rgba(172, 157, 157, 0.215) 0%, rgba(255, 255, 255, 0.5) 120.67%)";
 
   const modalContent = (
     <div
-      // 1. 배경(Wrapper)에 직접 onClick 이벤트 할당
-      onClick={onCancel}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem]"
+      className={`ease-smooth-out fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem] transition-opacity ${
+        state === "closing"
+          ? "duration-[var(--duration-quick)]"
+          : "duration-[var(--duration-fast)]"
+      }`}
+      style={{ opacity: state === "open" ? 1 : 0 }}
     >
       <div
-        // 2. 모달 내부 클릭 시 상위(배경)로 클릭 이벤트가 전파되지 않도록 차단
-        onClick={(e) => e.stopPropagation()}
-        className="bg-neutral-875/70 relative w-[20rem] rounded-[1.25rem] border border-neutral-800 px-6 py-8"
+        {...getRevealProps({
+          className:
+            "bg-neutral-875/70 relative w-[20rem] rounded-[1.25rem] border border-neutral-800 px-6 py-8",
+        })}
       >
         {children ? (
           <div className="mb-6 max-h-[60vh] overflow-y-auto">{children}</div>
