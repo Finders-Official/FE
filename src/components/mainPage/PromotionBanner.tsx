@@ -4,6 +4,7 @@ import {
   promotionBanner2,
   promotionBanner3,
 } from "@/assets/images";
+import { PageDots } from "./PageDots";
 
 interface MainBannerProps {
   id: number;
@@ -65,18 +66,11 @@ export default function PromotionBanner() {
       </div>
 
       {/* 페이지네이션 도트 */}
-      <div className="mt-4 flex justify-center gap-2">
-        {BANNERS.map((_, index) => (
-          <div
-            key={index}
-            className={`h-1 rounded-full transition-all duration-300 ${
-              currentIndex === index
-                ? "w-1 bg-orange-500"
-                : "w-1 bg-neutral-400"
-            }`}
-          />
-        ))}
-      </div>
+      <PageDots
+        count={BANNERS.length}
+        activeIndex={currentIndex}
+        className="mt-4 gap-2"
+      />
     </div>
   );
 }

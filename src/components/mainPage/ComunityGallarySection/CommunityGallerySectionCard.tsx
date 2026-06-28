@@ -6,6 +6,7 @@ import {
   type CommunityPost,
 } from "@/apis/mainPage/mainPage.api";
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
+import { Press } from "@/components/common";
 
 interface CommunityGallerySectionCardProps {
   post: CommunityPost;
@@ -107,7 +108,7 @@ export default function CommunityGallerySectionCard({
         <img
           src={imageUrl}
           alt={post.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="ease-smooth-out h-full w-full object-cover transition-transform duration-[var(--duration-fast)] group-hover:scale-105"
           onError={(e) => {
             (e.target as HTMLImageElement).src = fallbackImage;
           }}
@@ -118,10 +119,10 @@ export default function CommunityGallerySectionCard({
       <div className="flex flex-col gap-3 p-4">
         <div className="flex items-center gap-3">
           {/* 좋아요 */}
-          <button
+          <Press
             onClick={handleLikeClick}
             disabled={likeMutation.isPending}
-            className="flex items-center justify-center transition-transform active:scale-90 disabled:opacity-60"
+            className="flex items-center justify-center disabled:opacity-60"
             aria-pressed={post.isLiked}
           >
             <svg
@@ -146,12 +147,12 @@ export default function CommunityGallerySectionCard({
             <span className="ml-1 text-xs text-neutral-400">
               {post.likeCount}
             </span>
-          </button>
+          </Press>
 
           {/* 댓글 */}
-          <button
+          <Press
             onClick={handleCommentClick}
-            className="flex items-center justify-center transition-transform active:scale-90"
+            className="flex items-center justify-center"
           >
             <svg
               width="24"
@@ -171,7 +172,7 @@ export default function CommunityGallerySectionCard({
             <span className="ml-1 text-xs text-neutral-400">
               {post.commentCount}
             </span>
-          </button>
+          </Press>
         </div>
 
         <p className="font-regular line-clamp-2 min-h-7.5 text-[0.75rem] leading-[126%] tracking-[-0.02em] text-neutral-100">
