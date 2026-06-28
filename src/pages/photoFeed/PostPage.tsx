@@ -83,7 +83,7 @@ export default function PostPage() {
     if (isPostPending) {
       return (
         <>
-          <div className="flex animate-pulse flex-col gap-[0.625rem] pb-10">
+          <div className="t-skel-sheen flex flex-col gap-[0.625rem] pb-10">
             <Header
               title=""
               showBack

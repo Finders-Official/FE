@@ -49,7 +49,7 @@ export default function PopularLabsSection() {
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="aspect-163/230 animate-pulse rounded-[1.25rem] bg-neutral-800"
+              className="t-skel-sheen aspect-163/230 rounded-[1.25rem] bg-neutral-800"
             />
           ))}
         </div>

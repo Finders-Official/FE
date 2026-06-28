@@ -5,7 +5,7 @@ type Props = {
 export default function PhotoCardSkeleton({ className = "" }: Props) {
   return (
     <div className="[break-inside:avoid]">
-      <div className="block w-full animate-pulse">
+      <div className="t-skel-sheen block w-full">
         {/* 이미지 영역 */}
         <div
           className={`aspect-[3/4] w-full rounded-2xl bg-neutral-700 ${className}`}
