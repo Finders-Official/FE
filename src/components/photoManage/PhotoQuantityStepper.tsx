@@ -1,5 +1,5 @@
 import { EmptyCheckCircleIcon, MinusIcon, PlusIcon } from "@/assets/icon";
-import { Press } from "@/components/common";
+import { Press, NumberPopIn } from "@/components/common";
 
 type Props = {
   qty: number;
@@ -36,7 +36,12 @@ export function PhotoQuantityStepper({
         <MinusIcon className="fill-neutral-750 relative h-2 w-2" />
       </Press>
 
-      <p className="min-w-4 text-center text-neutral-100">{qty}</p>
+      <p className="min-w-4 text-center text-neutral-100">
+        <NumberPopIn
+          value={qty}
+          className="[--digit-dur:var(--duration-fast)]"
+        />
+      </p>
 
       <Press
         type="button"
