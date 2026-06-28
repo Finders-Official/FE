@@ -4,6 +4,7 @@
 import DaumPostcodeEmbed from "react-daum-postcode";
 import type { Address as DaumAddress } from "react-daum-postcode";
 import { Header } from "@/components/common";
+import { useReveal } from "@/transitions";
 
 interface DaumAddressSearchProps {
   open: boolean;
@@ -16,6 +17,10 @@ export function DaumAddressSearch({
   onClose,
   onComplete,
 }: DaumAddressSearchProps) {
+  const { mounted, getRevealProps } = useReveal(open, {
+    variant: "sheet-bottom",
+  });
+
   const handleComplete = (data: DaumAddress) => {
     onComplete({
       zipcode: data.zonecode,
@@ -24,10 +29,14 @@ export function DaumAddressSearch({
     onClose();
   };
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-neutral-900">
+    <div
+      {...getRevealProps({
+        className: "fixed inset-0 z-50 flex flex-col bg-neutral-900",
+      })}
+    >
       <Header title="주소 입력하기" showBack onBack={onClose} />
       <div className="min-h-0 flex-1">
         <DaumPostcodeEmbed
