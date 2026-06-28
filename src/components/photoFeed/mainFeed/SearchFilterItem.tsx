@@ -1,4 +1,5 @@
 import { EmptyCircleIcon, CircleFillIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 
 type Props = {
   text: string;
@@ -8,7 +9,7 @@ type Props = {
 
 export default function SearchFilterItem({ text, selected, onSelect }: Props) {
   return (
-    <button
+    <Press
       type="button"
       onClick={onSelect}
       className="flex w-full items-center justify-between"
@@ -21,6 +22,6 @@ export default function SearchFilterItem({ text, selected, onSelect }: Props) {
       ) : (
         <EmptyCircleIcon className="h-6 w-6 text-neutral-500" />
       )}
-    </button>
+    </Press>
   );
 }

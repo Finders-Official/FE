@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 import { HeartIcon } from "@/assets/icon";
-import { IconSwap } from "@/components/common";
+import { IconSwap, Press } from "@/components/common";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { Link } from "react-router";
 
@@ -67,7 +67,11 @@ export default function PhotoCard({
       }
     >
       <div className="group relative">
-        <Link to={`/photoFeed/post/${photo.postId}`} className="block w-full">
+        <Press
+          as={Link}
+          to={`/photoFeed/post/${photo.postId}`}
+          className="block w-full"
+        >
           <div
             className="relative w-full overflow-hidden rounded-2xl bg-neutral-800/60"
             style={{ aspectRatio: aspect }}
@@ -84,7 +88,7 @@ export default function PhotoCard({
           <div className="mt-1 text-[0.625rem] break-words text-white">
             {photo.title}
           </div>
-        </Link>
+        </Press>
 
         {isShowLiked ? (
           <button

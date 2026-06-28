@@ -1,4 +1,5 @@
 import { BigLogoIcon, XMarkIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 
 export type SearchPostProps = {
   historyId: string;
@@ -23,7 +24,8 @@ export default function SearchPost({
   };
 
   return (
-    <div
+    <Press
+      as="div"
       className={`flex items-center justify-between ${onClick ? "cursor-pointer" : ""} ${className}`}
       onClick={onClick}
     >
@@ -47,14 +49,14 @@ export default function SearchPost({
 
       {/* X 버튼 */}
       {onDelete && (
-        <button
+        <Press
           type="button"
           onClick={handleDelete}
           className="flex h-6 w-6 items-center justify-center"
         >
           <XMarkIcon className="h-3 w-3 text-neutral-400" />
-        </button>
+        </Press>
       )}
-    </div>
+    </Press>
   );
 }
