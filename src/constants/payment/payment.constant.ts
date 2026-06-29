@@ -26,9 +26,11 @@ export const CREDIT_CARD_OPTIONS: CardOption[] = [
 export const EASY_PAY_OPTIONS: EasyPayOption[] = [
   { id: "KAKAO_PAY", name: "카카오페이" },
   { id: "TOSS", name: "토스" },
-  { id: "PAYCO", name: "페이코" },
   { id: "NAVER_PAY", name: "네이버페이" },
 ];
+
+// 서버 ErrorCode, 성공/실패 단정 불가
+export const PAYMENT_ALREADY_PROCESSED_CODE = "PAYMENT_410";
 
 export const PAYMENT_TERMS = [
   { id: "PRIVACY", label: "개인정보 수집·이용 및 처리 동의" },

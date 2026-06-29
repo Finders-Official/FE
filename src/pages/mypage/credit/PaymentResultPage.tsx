@@ -1,19 +1,137 @@
-import type { ReactNode } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router";
+import { useEffect, useRef, type ReactNode } from "react";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router";
 import { ConfirmationIcon } from "@/components/common";
 import Header from "@/components/common/Header";
-import type { PaymentResult } from "@/types/payment";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { PAYMENT_ALREADY_PROCESSED_CODE } from "@/constants/payment/payment.constant";
+import {
+  extractPortoneErrorCode,
+  mapPortoneDetailToOutcome,
+  useCompletePortonePayment,
+} from "@/hooks/payment";
+import {
+  clearPendingPortonePayment,
+  loadPendingPortonePayment,
+} from "@/lib/payment/pendingPortonePayment";
+import { isPortoneUserCanceled } from "@/lib/payment/portone";
+import type {
+  PaymentResult,
+  PaymentResultSuccess,
+  PortonePaymentDetail,
+  PortonePaymentMethod,
+} from "@/types/payment";
 import { getCreditCoinImage } from "@/utils/getCreditCoinImage";
 
 const formatKrw = (price: number) => `₩ ${price.toLocaleString("ko-KR")}`;
 
+// 결제수단 라벨 폴백
+const PORTONE_METHOD_LABELS: Partial<Record<PortonePaymentMethod, string>> = {
+  CARD: "카드 결제",
+  EASY_PAY: "간편결제",
+  MOBILE: "휴대폰 결제",
+};
+
+// 결제창 호출 전에 저장한 스냅샷을 우선 사용하고, 없으면 완료 응답으로 복원
+function buildSuccessResult(
+  paymentId: string,
+  detail: PortonePaymentDetail,
+): PaymentResultSuccess {
+  const pending = loadPendingPortonePayment(paymentId);
+  return {
+    status: "success",
+    product: pending?.product ?? {
+      productId: detail.id,
+      name: detail.orderName,
+      creditAmount: detail.creditAmount ?? 0,
+      price: detail.amount,
+    },
+    methodLabel:
+      pending?.methodLabel ??
+      (detail.method ? PORTONE_METHOD_LABELS[detail.method] : undefined) ??
+      "온라인 결제",
+  };
+}
+
 export function PaymentResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const result = location.state as PaymentResult | null;
 
+  // 모바일 리다이렉트 복귀 시 포트원이 붙여주는 쿼리 (성공: paymentId만, 실패: code/message 추가)
+  const redirectPaymentId = searchParams.get("paymentId");
+  const redirectErrorCode = searchParams.get("code");
+  const redirectMessage = searchParams.get("message");
+
+  const complete = useCompletePortonePayment();
+  const handledPaymentIdRef = useRef<string | null>(null);
+
+  // 리다이렉트 복귀: complete 처리 후 navigate replace로 쿼리를 지우고 결과 state로 전환
+  useEffect(() => {
+    if (result || !redirectPaymentId) return;
+    // 같은 paymentId 중복 처리 방지
+    if (handledPaymentIdRef.current === redirectPaymentId) return;
+    handledPaymentIdRef.current = redirectPaymentId;
+
+    const toResult = (state: PaymentResult) =>
+      navigate("/mypage/credit/payment/result", { replace: true, state });
+
+    // 결제창 단계에서 실패/취소로 복귀, complete 호출 X
+    if (redirectErrorCode) {
+      clearPendingPortonePayment();
+      if (isPortoneUserCanceled(redirectMessage)) {
+        navigate("/mypage/credit", { replace: true });
+        return;
+      }
+      toResult({ status: "fail", errorCode: redirectErrorCode });
+      return;
+    }
+
+    complete
+      .mutateAsync({ paymentId: redirectPaymentId })
+      .then((response) => {
+        const outcome = mapPortoneDetailToOutcome(response.data);
+        if (outcome.status === "success") {
+          toResult(buildSuccessResult(redirectPaymentId, response.data));
+          return;
+        }
+        toResult({
+          status: "fail",
+          errorCode: outcome.status === "fail" ? outcome.errorCode : undefined,
+        });
+      })
+      .catch((error: unknown) => {
+        const errorCode = extractPortoneErrorCode(error);
+        // 이미 처리된 결제(새로고침 등 중복 호출), 충전 내역에서 확인하도록 이동
+        if (errorCode === PAYMENT_ALREADY_PROCESSED_CODE) {
+          navigate("/mypage/credit?tab=history", { replace: true });
+          return;
+        }
+        toResult({ status: "fail", errorCode });
+      })
+      .finally(() => {
+        clearPendingPortonePayment();
+      });
+  }, [
+    result,
+    redirectPaymentId,
+    redirectErrorCode,
+    redirectMessage,
+    complete,
+    navigate,
+  ]);
+
   if (!result) {
+    // 리다이렉트 복귀 처리 중, complete 완료 후 결과 state로 전환
+    if (redirectPaymentId) {
+      return <LoadingSpinner open />;
+    }
     return <Navigate to="/mypage/credit" replace />;
   }
 
@@ -74,7 +192,7 @@ export function PaymentResultPage() {
       footer={
         <ResultActions
           leftLabel="문의하기"
-          onLeftClick={() => {}}
+          onLeftClick={() => navigate("/mypage/inquiry")}
           rightLabel="재시도"
           onRightClick={() => navigate("/mypage/credit", { replace: true })}
         />

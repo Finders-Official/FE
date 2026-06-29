@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import { CTA_Button } from "@/components/common";
 import {
+  AndroidCreditPayment,
+  AppleCreditPayment,
   CardSelectBottomSheet,
   CardSelectButton,
   EasyPayRadioList,
@@ -17,12 +19,16 @@ import {
 import {
   CREDIT_CARD_OPTIONS,
   EASY_PAY_OPTIONS,
+  PAYMENT_ALREADY_PROCESSED_CODE,
 } from "@/constants/payment/payment.constant";
-import { MOCK_ORDERER } from "@/constants/payment/payment.mock";
+import { useMe } from "@/hooks/member";
+import { usePurchaseCreditPortone } from "@/hooks/payment";
 import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
+import { isAndroidApp, isIosApp } from "@/utils/platform";
 import type {
   EasyPayProvider,
   PaymentMethod,
+  PaymentResultFail,
   PaymentResultSuccess,
   PaymentTermsSection,
 } from "@/types/payment";
@@ -41,9 +47,17 @@ export function PaymentPage() {
     PaymentTermsSection["id"] | null
   >(null);
 
+  const { data: me } = useMe();
+  const { purchaseCredit, isPurchasing } = usePurchaseCreditPortone();
+
   useEffect(() => {
     if (product) clear();
   }, [product, clear]);
+
+  const member = me?.member;
+  const ordererEmail =
+    me?.roleData.user?.socialAccounts.find((account) => account.email)?.email ??
+    undefined;
 
   const selectedCardName = useMemo(
     () => CREDIT_CARD_OPTIONS.find((c) => c.id === cardId)?.name ?? null,
@@ -56,14 +70,26 @@ export function PaymentPage() {
       : method === "EASY_PAY"
         ? easyPayId !== null
         : true;
-  const isPayable = agreed && isMethodReady;
+  // 이니시스 PC 결제는 주문자 이름·연락처 필수
+  const hasOrderer = Boolean(member?.name && member?.phone);
+  const isPayable = agreed && isMethodReady && hasOrderer;
 
   if (!product) {
     return <Navigate to="/mypage/credit" replace />;
   }
 
-  const handleSubmit = () => {
-    if (!isPayable) return;
+  // Android는 Play 인앱결제로 (카드/간편결제/PG 약관 UI는 웹 전용)
+  if (isAndroidApp()) {
+    return <AndroidCreditPayment product={product} />;
+  }
+
+  // iOS는 App Store 인앱결제로
+  if (isIosApp()) {
+    return <AppleCreditPayment product={product} />;
+  }
+
+  const handleSubmit = async () => {
+    if (!isPayable || isPurchasing || !member) return;
 
     let methodLabel: string;
     if (method === "CARD") {
@@ -76,21 +102,58 @@ export function PaymentPage() {
       methodLabel = "휴대폰 결제";
     }
 
-    const state: PaymentResultSuccess = {
-      status: "success",
+    const outcome = await purchaseCredit({
       product,
+      method,
+      cardId,
+      easyPayId,
       methodLabel,
+      customer: {
+        fullName: member.name,
+        phoneNumber: member.phone,
+        email: ordererEmail,
+      },
+    });
+
+    if (outcome.status === "canceled") return;
+
+    // 이미 처리된 결제, 성공/실패 단정 불가, 충전 내역에서 확인하도록 이동
+    if (
+      outcome.status === "fail" &&
+      outcome.errorCode === PAYMENT_ALREADY_PROCESSED_CODE
+    ) {
+      navigate("/mypage/credit?tab=history", { replace: true });
+      return;
+    }
+
+    if (outcome.status === "success") {
+      const state: PaymentResultSuccess = {
+        status: "success",
+        product,
+        methodLabel,
+      };
+      navigate("/mypage/credit/payment/result", { state, replace: true });
+      return;
+    }
+
+    const state: PaymentResultFail = {
+      status: "fail",
+      errorCode: outcome.status === "fail" ? outcome.errorCode : undefined,
     };
-    navigate("/mypage/credit/payment/result", { state });
+    navigate("/mypage/credit/payment/result", { state, replace: true });
   };
 
   return (
     <div className="flex flex-col pb-[6.5rem]">
       <div className="-mx-4">
-        <PaymentOrdererSection orderer={MOCK_ORDERER} />
+        <PaymentOrdererSection
+          orderer={{
+            name: member?.name ?? "",
+            phoneNumber: member?.phone ?? "",
+          }}
+        />
         <PaymentProductSection product={product} />
 
-        {/* TODO: 결제수단 플랫폼 분기 필요 — iOS는 Apple IAP, Android·웹은 카드/간편결제/휴대폰(현재 탭). 약관(paymentTerms.constant) 기준. */}
         <PaymentSection title="결제 수단">
           <div
             className={`flex flex-col ${method === "EASY_PAY" ? "gap-4" : "gap-2"}`}
@@ -142,8 +205,8 @@ export function PaymentPage() {
         <CTA_Button
           text="결제하기"
           size="xlarge"
-          color={isPayable ? "orange" : "black"}
-          disabled={!isPayable}
+          color={isPayable && !isPurchasing ? "orange" : "black"}
+          disabled={!isPayable || isPurchasing}
           onClick={handleSubmit}
         />
       </footer>
