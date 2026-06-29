@@ -12,7 +12,7 @@ export type LabSearchRequest = {
  * 현상소 검색 응답 (CO-023)
  */
 export type LabSearchResponse = {
-  labId: number;
+  labId: string;
   name: string;
   address: string;
   distance?: string;

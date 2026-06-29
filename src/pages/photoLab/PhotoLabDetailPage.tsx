@@ -24,7 +24,7 @@ export default function PhotoLabDetailPage() {
     isLoading,
     error,
   } = usePhotoLabDetail(
-    photoLabId ? parseInt(photoLabId) : undefined,
+    photoLabId,
     latitude && longitude ? { lat: latitude, lng: longitude } : undefined,
   );
 
@@ -36,16 +36,9 @@ export default function PhotoLabDetailPage() {
     navigate(-1);
   };
 
-  const handleFavoriteToggle = (photoLabId: number, isFavorite: boolean) => {
+  const handleFavoriteToggle = (photoLabId: string, isFavorite: boolean) => {
     toggleFavorite({ photoLabId, isFavorite });
   };
-
-  /* const handleReservation = () => {
-    if (!lab) return;
-    navigate(`/photolab/${lab.photoLabId}/reservation`, {
-      state: { labName: lab.name, distanceKm: lab.distanceKm },
-    });
-  }; */
 
   // TODO: Skeleton UI로 교체
   if (isLoading) {
@@ -76,7 +69,7 @@ export default function PhotoLabDetailPage() {
         <Header title={lab.name} showBack onBack={handleBack} />
       </div>
 
-      <main className="pb-32">
+      <main className="pb-8">
         {/* 메인 이미지 캐러셀 */}
         <div className="-mx-4">
           <LabImageCarousel images={lab.imageUrls} altPrefix={lab.name} />
@@ -84,9 +77,6 @@ export default function PhotoLabDetailPage() {
 
         {/* 기본 정보 */}
         <LabBasicInfo lab={lab} onFavoriteToggle={handleFavoriteToggle} />
-
-        {/* 주요 공지 */}
-        {/* <LabNoticeSection notice={lab.mainNotice} /> */}
 
         {/* 작업 결과물 */}
         <LabWorkResultsSection
@@ -108,8 +98,6 @@ export default function PhotoLabDetailPage() {
           labName={lab.name}
         />
       </main>
-
-      {/* <LabBottomBar onReservationClick={handleReservation} /> */}
     </div>
   );
 }

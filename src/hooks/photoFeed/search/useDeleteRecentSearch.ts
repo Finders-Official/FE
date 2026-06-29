@@ -6,11 +6,11 @@ export function useDeleteRecentSearch() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (searchHistoryId: number) =>
+    mutationFn: (searchHistoryId: string) =>
       deleteRecentSearch(searchHistoryId),
 
     // 1. 요청 직전에 UI 먼저 변경
-    onMutate: async (searchHistoryId: number) => {
+    onMutate: async (searchHistoryId: string) => {
       // 진행 중인 refetch 중단 (덮어쓰기 방지)
       await queryClient.cancelQueries({
         queryKey: ["recentSearches"],

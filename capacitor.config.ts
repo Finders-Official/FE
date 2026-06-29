@@ -8,6 +8,14 @@ const config: CapacitorConfig = {
   ios: {
     packageManager: "cocoapods",
   },
+  plugins: {
+    CapacitorCookies: {
+      enabled: true,
+    },
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
 };
 
 export default config;

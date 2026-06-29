@@ -13,7 +13,7 @@ export type SearchRequest = {
  * 최근 검색어 조회 응답 (CO-011)
  */
 export type SearchHistory = {
-  searchHistoryId: number;
+  searchHistoryId: string;
   keyword: string;
   imageUrl: string;
   width: number;

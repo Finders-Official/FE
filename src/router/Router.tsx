@@ -46,8 +46,6 @@ import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
-import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
-import ReservationPage from "@/pages/photoLab/ReservationPage";
 
 // 마이페이지
 import {
@@ -113,11 +111,6 @@ const photoFeedStandaloneRoutes = [
 const photoLabStandaloneRoutes = [
   { path: "photolab/search", Component: PhotoLabSearchPage },
   { path: "photolab/:photoLabId", Component: PhotoLabDetailPage },
-  { path: "photolab/:photoLabId/reservation", Component: ReservationPage },
-  {
-    path: "photolab/:photoLabId/reservation/complete",
-    Component: ReservationCompletePage,
-  },
 ];
 
 const photoManageStandaloneRoutes = [

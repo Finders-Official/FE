@@ -13,3 +13,4 @@ export { default as creditCoin2 } from "./credit-2.webp";
 export { default as creditCoin3 } from "./credit-3.webp";
 export { default as creditCoin4 } from "./credit-4.webp";
 export { default as creditCoin5 } from "./credit-5.webp";
+export { default as photoLabPlaceholder } from "./placeholder.png";

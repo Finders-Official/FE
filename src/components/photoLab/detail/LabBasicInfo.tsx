@@ -4,7 +4,7 @@ import { StarIcon, StarFillIcon } from "@/assets/icon";
 
 interface LabBasicInfoProps {
   lab: PhotoLabDetail;
-  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
+  onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
   className?: string;
 }
 
@@ -29,12 +29,26 @@ export default function LabBasicInfo({
 
   return (
     <div className={className}>
-      <div className="flex flex-col gap-3 py-[1.875rem]">
-        {/* 이름 + 즐겨찾기 */}
-        <div className="flex items-center gap-2.5">
+      <div className="flex justify-between py-7.5">
+        {/* 현상소 이름 및 위치정보 */}
+        <div className="flex flex-col gap-1.5">
           <h2 className="min-w-0 flex-1 truncate text-[1.375rem] leading-[128%] font-semibold tracking-[-0.02em] text-neutral-100">
             {lab.name}
           </h2>
+          <div className="flex gap-1 px-1">
+            <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+              {lab.address}
+            </span>
+            {lab.distanceKm != null && (
+              <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
+                ({lab.distanceKm.toFixed(1)}km)
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* 즐겨찾기 */}
+        <div className="flex flex-col items-center gap-0.5">
           <button
             type="button"
             onClick={handleFavoriteClick}
@@ -50,68 +64,6 @@ export default function LabBasicInfo({
           <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
             {lab.favoriteCount}
           </p>
-        </div>
-
-        {/* 상세 정보 */}
-        <div className="flex flex-col gap-1.5">
-          {/* 태그 */}
-          {/* {lab.tags.length > 0 && (
-            <div className="flex items-center gap-1 px-1">
-              {lab.tags.map((tag) => (
-                <TagBadge key={tag} label={tag} />
-              ))}
-            </div>
-          )} */}
-
-          {/* 주소 및 통계 */}
-          <div className="flex flex-col gap-1">
-            {/* 주소 + 거리 */}
-            <div className="flex items-center gap-1 px-1">
-              <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                {lab.address}
-              </span>
-              {lab.distanceKm != null && (
-                <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                  ({lab.distanceKm.toFixed(1)}km)
-                </span>
-              )}
-            </div>
-
-            {/* 작업 건수 + 소요시간 */}
-            {/* <div className="flex items-center gap-2"> */}
-            {/* 작업 건수 */}
-            {/* <div className="flex items-center gap-1">
-                <div className="flex items-center">
-                  <div className="flex h-6 w-6 items-center justify-center">
-                    <BriefcaseIcon className="h-3 w-3 text-neutral-300" />
-                  </div>
-                  <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                    총 작업 건 수
-                  </span>
-                </div>
-                <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                  {lab.workCount}건
-                </span>
-              </div> */}
-
-            {/* 소요시간 */}
-            {/* {lab.avgWorkTime !== null && (
-                <div className="flex items-center gap-1">
-                  <div className="flex items-center">
-                    <div className="flex h-6 w-6 items-center justify-center">
-                      <ClockIcon className="h-3 w-3 text-neutral-300" />
-                    </div>
-                    <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                      작업 소요 시간
-                    </span>
-                  </div>
-                  <span className="text-[0.9375rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-200">
-                    {lab.avgWorkTime}분
-                  </span>
-                </div>
-              )}
-            </div> */}
-          </div>
         </div>
       </div>
       <div className="-mx-4 h-px bg-neutral-800" />

@@ -57,7 +57,7 @@ export interface DeliveryInfo {
 // 내 진행중 작업 응답
 export interface MyCurrentWorkResponse {
   developmentOrderId: number;
-  photoLabId: number;
+  photoLabId: string;
   photoLabName: string;
   developmentStatus: DevelopmentStatus;
   createdAt: string;

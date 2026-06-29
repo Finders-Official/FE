@@ -4,7 +4,7 @@ import type { PostImage } from "./postPreview";
  * 게시글 상세보기 응답 (CO-030)
  */
 export type PostDetailResponse = {
-  postId: number;
+  postId: string;
   nickname: string;
   profileImageUrl: string;
   createdAt: string;
@@ -20,8 +20,8 @@ export type PostDetailResponse = {
 };
 
 type LabReview = {
-  postId: number;
-  labId: number;
+  postId: string;
+  labId: string;
   labName: string;
   content: string;
 };
@@ -40,7 +40,7 @@ export type PostUploadRequest = {
   content: string;
   images: PostRequestImage[];
   isSelfDeveloped: boolean;
-  labId?: number;
+  labId?: string;
   reviewContent?: string;
 };
 
@@ -56,8 +56,8 @@ export type LikesResponse = {
  * 댓글 조회 응답 (CO-030)
  */
 export type PostComment = {
-  commentId: number;
-  postId: number;
+  commentId: string;
+  postId: string;
   nickname: string;
   profileImageUrl: string;
   content: string;

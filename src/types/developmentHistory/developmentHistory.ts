@@ -1,6 +1,6 @@
 export interface DevelopmentOrder {
   developmentOrderId: number;
-  photoLabId: number;
+  photoLabId: string;
   photoLabName: string;
   photoLabAddress: string;
   taskTypes: ("DEVELOP" | "SCAN" | "PRINT")[];

@@ -25,13 +25,12 @@ export default function PostPage() {
 
   // 게시글 Id 가져오기
   const { postId } = useParams<{ postId: string }>();
-  const numericPostId = Number(postId);
 
   useEffect(() => {
-    if (!postId || Number.isNaN(numericPostId)) {
+    if (!postId) {
       navigate("/photoFeed", { replace: true });
     }
-  }, [postId, numericPostId, navigate]);
+  }, [postId, navigate]);
 
   useEffect(() => {
     if (location.state?.openCommentSheet) {
@@ -44,7 +43,7 @@ export default function PostPage() {
     data: postDetail,
     isPending: isPostPending,
     isError: isPostError,
-  } = usePostDetail(numericPostId);
+  } = usePostDetail(postId);
 
   // 게시글 좋아요
   const { mutate: unlikePost, isPending: isUnliking } = useUnlikePost();

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import type { SimplePhotoLabItem } from "@/types/photoLab";
-import { StarIcon, StarFillIcon, LabThumbnailIcon } from "@/assets/icon";
+import { StarIcon, StarFillIcon } from "@/assets/icon";
+import { photoLabPlaceholder } from "@/assets/images";
 
 interface LabCardProps {
   lab: SimplePhotoLabItem;
-  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
-  onCardClick?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
+  onCardClick?: (photoLabId: string) => void;
   className?: string;
 }
 
@@ -47,20 +48,14 @@ export default function SimpleLabCard({
       }}
       className={`flex flex-col py-4 first:pt-0 ${onCardClick ? "cursor-pointer" : ""} ${className}`}
     >
-      <div className="flex gap-3.5 border-b border-neutral-800 pb-5">
+      <div className="flex gap-3.5 border-b-[0.5px] border-neutral-800 pb-5">
         {/* 썸네일 */}
-        {lab.imageUrls && lab.imageUrls.length > 0 ? (
-          <img
-            src={lab.imageUrls[0]}
-            alt={`${lab.name} 이미지`}
-            loading="lazy"
-            className="h-15 w-15 shrink-0 rounded-[0.625rem] object-cover"
-          />
-        ) : (
-          <div className="flex h-15 w-15 shrink-0 items-center justify-center rounded-[0.625rem] bg-neutral-800">
-            <LabThumbnailIcon className="h-8 w-8 text-neutral-500" />
-          </div>
-        )}
+        <img
+          src={lab.imageUrls?.[0] || photoLabPlaceholder}
+          alt={`${lab.name} 이미지`}
+          loading="lazy"
+          className="h-15 w-15 shrink-0 rounded-[0.625rem] object-cover"
+        />
         {/* 카드 상세 정보 */}
         <div className="flex flex-1 items-center justify-between">
           <div className="flex flex-col gap-1">

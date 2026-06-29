@@ -3,7 +3,7 @@ import PopularLabItem from "@/components/photoLab/search/PopularLabItem";
 
 interface PopularLabSectionProps {
   labs: PopularLab[];
-  onLabClick?: (photoLabId: number) => void;
+  onLabClick?: (photoLabId: string) => void;
 }
 
 export default function PopularLabSection({
@@ -19,7 +19,7 @@ export default function PopularLabSection({
         {labs.map((lab, index) => (
           <PopularLabItem
             key={lab.photoLabId}
-            rank={lab.rank ?? index + 1} // rank 사용할 건지 back이랑 확인 필요
+            rank={index + 1}
             name={lab.name}
             onClick={() => onLabClick?.(lab.photoLabId)}
           />

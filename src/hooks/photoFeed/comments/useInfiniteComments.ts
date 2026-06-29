@@ -7,7 +7,7 @@ import type { ApiResponseWithPagination } from "@/types/common/apiResponse";
 /**
  * 사진수다 게시글 댓글 조회 (CO-030)
  */
-export function useInfiniteComments(postId: number) {
+export function useInfiniteComments(postId: string) {
   return useInfiniteQuery<ApiResponseWithPagination<PostComment[]>>({
     queryKey: ["comments", postId, PAGE_SIZE],
     queryFn: ({ pageParam = 0 }) => getComments(postId, pageParam as number),

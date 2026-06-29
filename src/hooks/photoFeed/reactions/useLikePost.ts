@@ -4,14 +4,14 @@ import type { CommunityPost } from "@/apis/mainPage/mainPage.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const COMMUNITY_PREVIEW_QK = ["community", "posts", "preview"] as const;
-const POST_DETAIL_QK = (postId: number) => ["postDetail", postId] as const;
+const POST_DETAIL_QK = (postId: string) => ["postDetail", postId] as const;
 
 export function useLikePost() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ["likePost"],
-    mutationFn: (postId: number) => postLike(postId),
+    mutationFn: (postId: string) => postLike(postId),
 
     onMutate: async (postId) => {
       await Promise.all([
@@ -39,7 +39,7 @@ export function useLikePost() {
 
       queryClient.setQueryData<CommunityPost[]>(COMMUNITY_PREVIEW_QK, (old) =>
         old?.map((p) =>
-          p.postId === postId
+          String(p.postId) === postId
             ? {
                 ...p,
                 isLiked: true,
