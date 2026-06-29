@@ -132,13 +132,13 @@ export function LoginPage() {
         const data = response.data;
 
         if ("isNewMember" in data && data.isNewMember === true) {
-          tokenStorage.setTokens({
+          await tokenStorage.setTokens({
             accessToken: null,
             signupToken: data.signupToken,
           });
           navigate("/auth/onboarding", { replace: true });
         } else if ("member" in data) {
-          tokenStorage.setTokens({
+          await tokenStorage.setTokens({
             accessToken: data.accessToken,
             signupToken: null,
           });
