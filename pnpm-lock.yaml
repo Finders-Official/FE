@@ -27,6 +27,9 @@ importers:
       '@capacitor/ios':
         specifier: ^8.3.4
         version: 8.3.4(@capacitor/core@8.3.4)
+      '@portone/browser-sdk':
+        specifier: ^0.1.8
+        version: 0.1.8
       '@capacitor/splash-screen':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.3.4)
@@ -717,6 +720,9 @@ packages:
 
   '@prettier/plugin-xml@2.2.0':
     resolution: {integrity: sha512-UWRmygBsyj4bVXvDiqSccwT1kmsorcwQwaIy30yVh8T+Gspx4OlC0shX1y+ZuwXZvgnafmpRYKks0bAu9urJew==}
+
+  '@portone/browser-sdk@0.1.8':
+    resolution: {integrity: sha512-/9DqqiJckIAaOiCMXYdX+Pyj1Mxa8COInaI7ziUa5KeqnBuE0Q2+7dNSNMor+q6WM7OtnrVqmRRv5cC+gc02sw==}
 
   '@rolldown/pluginutils@1.0.0-beta.53':
     resolution: {integrity: sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ==}
@@ -4103,6 +4109,7 @@ snapshots:
     dependencies:
       '@xml-tools/parser': 1.0.11
       prettier: 3.7.4
+  '@portone/browser-sdk@0.1.8': {}
 
   '@rolldown/pluginutils@1.0.0-beta.53': {}
 

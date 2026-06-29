@@ -1,0 +1,24 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
+import { completePortonePayment } from "@/apis/payment";
+import { invalidateCreditQueries } from "@/hooks/credit";
+import type { PortoneCompleteRequest } from "@/types/payment";
+
+// PortOne 결제 완료 처리. 충전 성공(PAID) 시 캐시 무효화
+export function useCompletePortonePayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (request: PortoneCompleteRequest) =>
+      completePortonePayment(request),
+    // 네트워크/5xx 등 일시 오류만 재시도
+    retry: (failureCount, error) =>
+      failureCount < 2 &&
+      isAxiosError(error) &&
+      (!error.response || error.response.status >= 500),
+    onSuccess: (response) => {
+      if (response.data.status !== "PAID") return;
+      invalidateCreditQueries(queryClient);
+    },
+  });
+}

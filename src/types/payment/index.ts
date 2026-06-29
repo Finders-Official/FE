@@ -4,12 +4,32 @@ export type {
   CardOption,
   EasyPayOption,
   OrdererInfo,
-  PaymentRequest,
-  PaymentInitResponse,
-  PaymentInitApiResponse,
   PaymentResult,
   PaymentResultSuccess,
   PaymentResultFail,
 } from "./payment";
 
 export type { PaymentTermsGroup, PaymentTermsSection } from "./paymentTerms";
+
+export type {
+  GooglePaymentVerifyRequest,
+  GooglePaymentVerifyResponse,
+} from "./googlePayment";
+
+export type {
+  ApplePaymentVerifyRequest,
+  ApplePaymentVerifyResponse,
+} from "./applePayment";
+
+export type {
+  PortonePaymentStatus,
+  PortonePaymentMethod,
+  PortonePreRegisterRequest,
+  PortonePreRegistered,
+  PortonePreRegisterResponse,
+  PortoneCompleteRequest,
+  PortonePaymentDetail,
+  PortoneCompleteResponse,
+} from "./portone";
+
+export type { PaymentProvider } from "./provider";
