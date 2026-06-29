@@ -3,6 +3,9 @@ import { loginWithApple } from "@/utils/auth/appleSdk";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
+// 환경 체크 유틸 및 플러그인 임포트 추가
+import { isNativeApp } from "@/utils/auth/envUtils";
+import { SignInWithApple } from "@capacitor-community/apple-sign-in";
 
 type Props = {
   onExistingMember: () => void;
@@ -23,7 +26,6 @@ export function useAppleLogin({
       const data = res.data;
 
       if ("accessToken" in data) {
-        // 기존 회원: accessToken 저장 후 메인으로 (refreshToken은 httpOnly 쿠키)
         tokenStorage.setTokens({
           accessToken: data.accessToken,
           signupToken: null,
@@ -31,7 +33,6 @@ export function useAppleLogin({
         setUser({ memberId: data.member.id, nickname: data.member.nickname });
         onExistingMember();
       } else {
-        // 신규 회원: signupToken 저장 후 약관 동의로
         tokenStorage.setTokens({
           accessToken: null,
           signupToken: data.signupToken,
@@ -45,15 +46,32 @@ export function useAppleLogin({
   const login = async () => {
     try {
       setIsPopupPending(true);
-      const code = await loginWithApple();
+      let code = "";
+
+      // 환경(앱 or 웹_에 따른 로직 분기
+      if (isNativeApp()) {
+        // Capacitor 네이티브 플러그인 호출
+        const result = await SignInWithApple.authorize();
+
+        // 플러그인 결과에서 authorizationCode 추출
+        code = result.response.authorizationCode;
+      } else {
+        // 기존 웹 SDK 호출
+        code = await loginWithApple();
+      }
+
+      if (!code) {
+        throw new Error("인증 코드를 받아오지 못했습니다.");
+      }
+
+      // 백엔드로 코드 전송
       mutate({
         provider: "APPLE",
         credentialType: "AUTHORIZATION_CODE",
         credential: code,
       });
     } catch (e) {
-      // 사용자가 팝업을 닫거나 SDK 로드 실패/환경변수 누락 등
-      console.error(e);
+      console.error("애플 로그인 에러:", e);
       onFail?.();
     } finally {
       setIsPopupPending(false);
