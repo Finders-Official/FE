@@ -9,6 +9,16 @@ export type AuthTokens = {
 const ACCESS_KEY = "accessToken";
 const SIGNUP_KEY = "signupToken";
 
+// SecureStoragePlugin.remove 는 키가 없으면 reject 한다.
+// 토큰을 비우는 경우(저장된 적 없는 키 삭제)는 정상 흐름이므로 reject 를 무시한다.
+async function removeNativeKey(key: string): Promise<void> {
+  try {
+    await SecureStoragePlugin.remove({ key });
+  } catch {
+    // 키가 존재하지 않으면 무시
+  }
+}
+
 export const tokenStorage = {
   // Access Token 가져오기
   async getAccessToken(): Promise<string | null> {
@@ -44,14 +54,14 @@ export const tokenStorage = {
           key: ACCESS_KEY,
           value: tokens.accessToken,
         });
-      else await SecureStoragePlugin.remove({ key: ACCESS_KEY });
+      else await removeNativeKey(ACCESS_KEY);
 
       if (tokens.signupToken)
         await SecureStoragePlugin.set({
           key: SIGNUP_KEY,
           value: tokens.signupToken,
         });
-      else await SecureStoragePlugin.remove({ key: SIGNUP_KEY });
+      else await removeNativeKey(SIGNUP_KEY);
 
       // refreshToken 저장 로직 삭제!
     } else {
@@ -70,7 +80,7 @@ export const tokenStorage = {
     if (isNativeApp()) {
       if (token)
         await SecureStoragePlugin.set({ key: SIGNUP_KEY, value: token });
-      else await SecureStoragePlugin.remove({ key: SIGNUP_KEY });
+      else await removeNativeKey(SIGNUP_KEY);
     } else {
       if (token) localStorage.setItem(SIGNUP_KEY, token);
       else localStorage.removeItem(SIGNUP_KEY);
