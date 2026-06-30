@@ -117,6 +117,11 @@ export function setupInterceptors(instance: AxiosInstance) {
       // 401 아닌 경우 그냥 패스
       if (status !== 401) return Promise.reject(error);
 
+      // API 주소에 'logout'이 포함되어 있다면 무시
+      if (originalConfig.url?.includes("logout")) {
+        return Promise.reject(error);
+      }
+
       // refresh/reissue 요청이 401이면 더 이상 재시도하지 말고 토큰 정리
       if (shouldSkipAuth(originalConfig)) {
         await tokenStorage.clear(); // await 추가
@@ -186,6 +191,6 @@ export function setupInterceptors(instance: AxiosInstance) {
       } finally {
         isRefreshing = false;
       }
-    },
+    }, //
   );
 }

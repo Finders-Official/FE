@@ -16,10 +16,13 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
+import { tokenStorage } from "@/utils/tokenStorage";
+import { useQueryClient } from "@tanstack/react-query";
 
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
+  const queryClient = useQueryClient();
   const { data: me, isLoading } = useMe({ refetchOnMount: "always" });
 
   const phone = useMemo(() => {
@@ -87,13 +90,21 @@ export function EditInfoPage() {
   const clearUser = useAuthStore((s) => s.clearUser);
 
   const { mutate: doLogout, isPending: isLogoutPending } = useLogout({
-    onSuccess: () => {
-      clearUser();
+    onSettled: async () => {
+      // API 통신 원천 차단
+      queryClient.clear();
+
+      // 기기 내장 토큰 삭제 (비동기)
+      // (이때까지는 Zustand에 user 상태가 살아있어서 가드가 발동하지 않음)
+      await tokenStorage.clear();
+
+      // 앱 라우터로 부드럽게 로그인 화면 이동
       navigate("/auth/login", { replace: true });
-    },
-    onError: () => {
-      clearUser();
-      navigate("/auth/login", { replace: true });
+
+      // 화면 이동(렌더링)이 끝날 수 있도록 0.1초 뒤에 유저 상태 삭제
+      setTimeout(() => {
+        clearUser();
+      }, 100);
     },
   });
 
