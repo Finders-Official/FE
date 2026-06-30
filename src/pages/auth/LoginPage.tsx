@@ -11,6 +11,7 @@ import { oauth } from "@/apis/auth";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { consumeRedirectAfterLogin } from "../demoDay/redirectAfterLogin";
 import { SplashScreen } from "@capacitor/splash-screen"; // 앱 초기 스플래시 제어용
+import { me } from "@/apis/member";
 
 const WELCOME_NONCE_SHOWN_KEY = "finders:welcomeNonceShown";
 const WELCOME_ONCE_FALLBACK_KEY = "finders:welcomeOnceShown";
@@ -19,7 +20,11 @@ type AuthCheckStatus = "pending" | "loggedIn" | "loggedOut";
 
 export function LoginPage() {
   const [sp, setSp] = useSearchParams();
+
   const nickname = useAuthStore((s) => s.user?.nickname);
+  const setUser = useAuthStore((state) => state.setUser);
+  const clearUser = useAuthStore((state) => state.clearUser);
+
   const welcome = sp.get("welcome") === "1";
   const nonce = sp.get("nonce");
   const navigate = useNavigate();
@@ -36,10 +41,30 @@ export function LoginPage() {
     }
 
     const checkToken = async () => {
+      const accessToken = await tokenStorage.getAccessToken();
+
+      if (!accessToken) {
+        setAuthCheckStatus("loggedOut");
+        return;
+      }
+
       try {
-        const accessToken = await tokenStorage.getAccessToken();
-        setAuthCheckStatus(accessToken ? "loggedIn" : "loggedOut");
-      } catch {
+        const res = await me();
+
+        setUser({
+          memberId: res.data.member.memberId,
+          nickname:
+            res.data.roleData.user?.nickname ??
+            res.data.roleData.owner?.nickname ??
+            res.data.roleData.admin?.nickname ??
+            "",
+        });
+
+        setAuthCheckStatus("loggedIn");
+      } catch (e) {
+        console.error("me 실패", e);
+        await tokenStorage.clear();
+        clearUser();
         setAuthCheckStatus("loggedOut");
       }
     };
@@ -116,8 +141,6 @@ export function LoginPage() {
       }
     }
   }, []);
-
-  const setUser = useAuthStore((state) => state.setUser);
 
   const handleKakaoLogin = async () => {
     if (isNativeApp()) {

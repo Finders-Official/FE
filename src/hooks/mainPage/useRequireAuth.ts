@@ -9,7 +9,7 @@ export const useRequireAuth = () => {
 
   const requireAuth = (callback?: () => void) => {
     if (user) {
-      if (callback) callback();
+      callback?.();
     } else {
       openLoginModal();
     }
