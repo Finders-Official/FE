@@ -41,10 +41,10 @@ export default function PhotoLabPage() {
     );
 
   // 페이지 데이터 평탄화
-  const labs = useMemo(
-    () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data],
-  );
+  const labs = useMemo(() => {
+    const flat = data?.pages.flatMap((page) => page.data) ?? [];
+    return [...flat].sort((a, b) => b.favoriteCount - a.favoriteCount);
+  }, [data]);
 
   // 즐겨찾기 토글
   const { mutate: toggleFavorite } = useFavoriteToggle();

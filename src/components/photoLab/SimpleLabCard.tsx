@@ -7,6 +7,8 @@ interface LabCardProps {
   onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
   onCardClick?: (photoLabId: string) => void;
   className?: string;
+  // FLIP 재정렬용 고정 식별자 (useFlipReorder)
+  flipKey?: string;
 }
 
 export default function SimpleLabCard({
@@ -14,6 +16,7 @@ export default function SimpleLabCard({
   onFavoriteToggle,
   onCardClick,
   className = "",
+  flipKey,
 }: LabCardProps) {
   const handleCardClick = () => {
     onCardClick?.(lab.photoLabId);
@@ -21,6 +24,7 @@ export default function SimpleLabCard({
 
   return (
     <div
+      data-flip-key={flipKey}
       role={onCardClick ? "button" : undefined}
       tabIndex={onCardClick ? 0 : undefined}
       onClick={handleCardClick}

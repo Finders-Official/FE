@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react";
 import type { SimplePhotoLabItem } from "@/types/photoLab";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFlipReorder } from "@/transitions";
 import SimpleLabCard from "@/components/photoLab/SimpleLabCard";
 import SimpleLabCardSkeleton from "@/components/photoLab/SimpleLabCardSkeleton";
 import EmptyView from "@/components/common/EmptyView";
@@ -29,6 +30,8 @@ export default function LabList({
   className = "",
 }: LabListProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const orderKey = labs.map((lab) => lab.photoLabId).join(",");
+  const listRef = useFlipReorder<HTMLDivElement>(orderKey);
 
   const handleIntersect = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -59,11 +62,12 @@ export default function LabList({
   }
 
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div ref={listRef} className={`flex flex-col ${className}`}>
       {labs.map((lab) => (
         <SimpleLabCard
           key={lab.photoLabId}
           lab={lab}
+          flipKey={lab.photoLabId}
           onFavoriteToggle={onFavoriteToggle}
           onCardClick={onCardClick}
         />

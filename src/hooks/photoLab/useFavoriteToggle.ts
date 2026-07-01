@@ -24,9 +24,10 @@ export function useFavoriteToggle() {
     mutationFn: ({ photoLabId, isFavorite }: ToggleParams) =>
       isFavorite ? removeFavorite(photoLabId) : addFavorite(photoLabId),
 
-    // 낙관적 업데이트: 별(isFavorite)만 즉시 반영, 실패 시 롤백
+    // 낙관적 업데이트: 별(isFavorite)과 좋아요 수를 즉시 반영, 실패 시 롤백
     onMutate: async ({ photoLabId, isFavorite }) => {
       const nextFavorite = !isFavorite;
+      const countDelta = nextFavorite ? 1 : -1;
       const detailKey = ["photoLab", "detail", photoLabId];
 
       // 진행 중인 refetch가 낙관적 값을 덮어쓰지 않도록 취소
@@ -58,7 +59,11 @@ export function useFavoriteToggle() {
             ...page,
             data: page.data.map((lab) =>
               lab.photoLabId === photoLabId
-                ? { ...lab, isFavorite: nextFavorite }
+                ? {
+                    ...lab,
+                    isFavorite: nextFavorite,
+                    favoriteCount: Math.max(0, lab.favoriteCount + countDelta),
+                  }
                 : lab,
             ),
           })),
@@ -78,7 +83,14 @@ export function useFavoriteToggle() {
                 ...page.data,
                 photoLabs: page.data.photoLabs.map((lab) =>
                   lab.photoLabId === photoLabId
-                    ? { ...lab, isFavorite: nextFavorite }
+                    ? {
+                        ...lab,
+                        isFavorite: nextFavorite,
+                        favoriteCount: Math.max(
+                          0,
+                          lab.favoriteCount + countDelta,
+                        ),
+                      }
                     : lab,
                 ),
               },
@@ -92,7 +104,14 @@ export function useFavoriteToggle() {
         { queryKey: detailKey },
         (old) => {
           if (!old?.data || old.data.photoLabId !== photoLabId) return old;
-          return { ...old, data: { ...old.data, isFavorite: nextFavorite } };
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isFavorite: nextFavorite,
+              favoriteCount: Math.max(0, old.data.favoriteCount + countDelta),
+            },
+          };
         },
       );
 
