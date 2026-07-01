@@ -17,6 +17,7 @@ import { useSearchPosts } from "@/hooks/photoFeed/search/useSearchPosts";
 import { useDeleteRecentSearch } from "@/hooks/photoFeed/search/useDeleteRecentSearch";
 import { useDeleteRecentSearchesAll } from "@/hooks/photoFeed/search/useDeleteRecentSearchesAll";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import SearchItemSkeleton from "@/components/photoFeed/mainFeed/SearchItemSkeleton";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import SearchPostSkeleton from "@/components/photoFeed/mainFeed/SearchPostSkeleton";
@@ -111,6 +112,10 @@ export default function PhotoFeedSearchPage() {
 
   const previewList = searchData?.pages.flatMap((p) => p.previewList) ?? [];
   const totalCount = searchData?.pages[0]?.totalCount ?? 0;
+  const staggerIndexFor = useFirstPageStagger(
+    previewList.length,
+    searchTrimmed,
+  );
 
   /** 화면 모드: 최근/연관/결과 */
   const mode = useMemo(() => {
@@ -327,8 +332,12 @@ export default function PhotoFeedSearchPage() {
               className="my-masonry-grid"
               columnClassName="my-masonry-grid_column"
             >
-              {previewList.map((photo) => (
-                <PhotoCard key={photo.postId} photo={photo} />
+              {previewList.map((photo, index) => (
+                <PhotoCard
+                  key={photo.postId}
+                  photo={photo}
+                  staggerIndex={staggerIndexFor(index)}
+                />
               ))}
             </Masonry>
           </section>

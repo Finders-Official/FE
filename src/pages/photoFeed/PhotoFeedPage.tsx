@@ -7,6 +7,7 @@ import { Header, Toast } from "@/components/common";
 import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import Masonry from "react-masonry-css";
 
@@ -74,12 +75,7 @@ export default function PhotoFeedPage() {
   });
 
   const posts = data?.pages.flatMap((p) => p.previewList) ?? [];
-
-  const firstPageCountRef = useRef<number | null>(null);
-  if (firstPageCountRef.current === null && posts.length > 0) {
-    firstPageCountRef.current = posts.length;
-  }
-  const firstPageCount = firstPageCountRef.current ?? 0;
+  const staggerIndexFor = useFirstPageStagger(posts.length);
 
   return (
     <main className="mx-auto w-full max-w-6xl pb-6">
@@ -133,7 +129,7 @@ export default function PhotoFeedPage() {
                   key={postPreview.postId}
                   photo={postPreview}
                   isLiked={postPreview.isLiked}
-                  staggerIndex={index < firstPageCount ? index : undefined}
+                  staggerIndex={staggerIndexFor(index)}
                 />
               ))}
         </Masonry>
