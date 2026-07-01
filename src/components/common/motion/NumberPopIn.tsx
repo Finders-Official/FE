@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface NumberPopInProps {
   value: number | string;
@@ -7,22 +7,27 @@ interface NumberPopInProps {
 
 export function NumberPopIn({ value, className = "" }: NumberPopInProps) {
   const text = String(value);
-  const [animating, setAnimating] = useState(false);
+  const [prevText, setPrevText] = useState(text);
+  const [animKey, setAnimKey] = useState(0);
 
-  useEffect(() => {
-    setAnimating(false);
-    const id = requestAnimationFrame(() =>
-      requestAnimationFrame(() => setAnimating(true)),
-    );
-    return () => cancelAnimationFrame(id);
-  }, [text]);
+  if (prevText !== text) {
+    setPrevText(text);
+    setAnimKey((k) => k + 1);
+  }
+
+  const animate = animKey > 0;
+  const groupClassName = ["t-digit-group", animate && "is-animating", className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <span
-      className={`t-digit-group${animating ? "is-animating" : ""} ${className}`.trim()}
-    >
+    <span className={groupClassName}>
       {text.split("").map((ch, i) => (
-        <span key={i} className="t-digit" data-stagger={i > 0 ? i : undefined}>
+        <span
+          key={`${animKey}-${i}`}
+          className="t-digit"
+          data-stagger={i > 0 ? i : undefined}
+        >
           {ch}
         </span>
       ))}

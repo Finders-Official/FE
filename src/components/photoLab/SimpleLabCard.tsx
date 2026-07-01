@@ -1,8 +1,6 @@
-import { useState } from "react";
 import type { SimplePhotoLabItem } from "@/types/photoLab";
-import { StarIcon, StarFillIcon } from "@/assets/icon";
 import { photoLabPlaceholder } from "@/assets/images";
-import { Press, IconSwap } from "@/components/common";
+import { FavoriteStar } from "./FavoriteStar";
 
 interface LabCardProps {
   lab: SimplePhotoLabItem;
@@ -17,21 +15,6 @@ export default function SimpleLabCard({
   onCardClick,
   className = "",
 }: LabCardProps) {
-  // Optimistic
-  const [prevFavorite, setPrevFavorite] = useState(lab.isFavorite);
-  const [isFavorite, setIsFavorite] = useState(lab.isFavorite);
-
-  if (lab.isFavorite !== prevFavorite) {
-    setPrevFavorite(lab.isFavorite);
-    setIsFavorite(lab.isFavorite);
-  }
-
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId, isFavorite);
-  };
-
   const handleCardClick = () => {
     onCardClick?.(lab.photoLabId);
   };
@@ -80,28 +63,13 @@ export default function SimpleLabCard({
           </div>
 
           {/* 즐겨찾기 */}
-          <div className="flex flex-col items-center justify-center gap-1">
-            <Press
-              type="button"
-              onClick={handleFavoriteClick}
-              className="flex h-6 w-6 shrink-0 items-center justify-center"
-              aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
-              aria-pressed={isFavorite}
-            >
-              <IconSwap
-                active={isFavorite}
-                bounce
-                className="h-6 w-6 place-items-center"
-                iconA={
-                  <StarIcon className="h-[1.125rem] w-[1.125rem] text-neutral-300" />
-                }
-                iconB={<StarFillIcon className="h-6 w-6" />}
-              />
-            </Press>
-            <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
-              {lab.favoriteCount}
-            </p>
-          </div>
+          <FavoriteStar
+            photoLabId={lab.photoLabId}
+            isFavorite={lab.isFavorite}
+            favoriteCount={lab.favoriteCount}
+            onToggle={onFavoriteToggle}
+            className="justify-center gap-1"
+          />
         </div>
       </div>
     </div>

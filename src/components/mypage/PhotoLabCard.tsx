@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { StarIcon } from "@/assets/icon";
 import { photoLabPlaceholder } from "@/assets/images";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { Link } from "react-router";
-import { Press, IconSwap } from "@/components/common";
+import { Press, IconSwap, NumberPopIn } from "@/components/common";
+import { useOptimisticFavorite } from "@/hooks/photoLab";
 
 type Props = {
   photoLab: PhotoLab;
@@ -11,15 +11,11 @@ type Props = {
 };
 
 export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
-  //Optimistic UI 상태
-  const [prevFavorite, setPrevFavorite] = useState(photoLab.isFavorite);
-  const [isFavorite, setIsFavorite] = useState(photoLab.isFavorite);
-
-  //서버/캐시에서 isFavorite가 바뀌어 내려오면 로컬 상태 동기화
-  if (photoLab.isFavorite !== prevFavorite) {
-    setPrevFavorite(photoLab.isFavorite);
-    setIsFavorite(photoLab.isFavorite);
-  }
+  const { isFavorite, favoriteCount, toggle } = useOptimisticFavorite({
+    isFavorite: photoLab.isFavorite,
+    favoriteCount: photoLab.favoriteCount,
+    onToggle: (current) => onToggleLike?.(photoLab.id, current),
+  });
 
   return (
     <div className="mt-2 border-b border-neutral-800 py-4">
@@ -33,12 +29,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-
-            // 1) UI는 즉시 토글
-            setIsFavorite((prev) => !prev);
-
-            // 2) 서버에는 현재값을 넘김
-            onToggleLike?.(photoLab.id, isFavorite);
+            toggle();
           }}
         >
           <IconSwap
@@ -51,7 +42,10 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
             }
           />
           <p className="text-[0.725rem] text-neutral-400">
-            {photoLab?.favoriteCount}
+            <NumberPopIn
+              value={favoriteCount}
+              className="[--digit-dur:var(--duration-fast)]"
+            />
           </p>
         </Press>
 
