@@ -569,6 +569,36 @@
   }
 }
 
+.t-chip-reveal {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-right: 0.625rem;
+  opacity: 1;
+  transition-property: grid-template-columns, margin-right, opacity;
+  transition-timing-function: var(--ease-smooth-out);
+  transition-duration: var(--duration-fast);
+}
+.t-chip-reveal > * {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.t-chip-reveal[data-state="closed"],
+.t-chip-reveal[data-state="closing"] {
+  grid-template-columns: 0fr;
+  margin-right: 0;
+  opacity: 0;
+}
+.t-chip-reveal[data-state="closing"] {
+  transition-duration: var(--duration-quick);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-chip-reveal {
+    transition: none;
+  }
+}
+
 :root {
   --check-opacity-dur: var(--duration-very-slow);
   --check-rotate-dur: var(--duration-very-slow);

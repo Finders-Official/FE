@@ -2,7 +2,8 @@ import LocationChip from "@/components/common/chips/LocationChip";
 import { XMarkIcon } from "@/assets/icon";
 import { MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import type { Region, RegionSelection } from "@/types/photoLab";
-import { Press } from "@/components/common";
+import { Press, Collapse } from "@/components/common";
+import { useAnimatedPresence } from "@/transitions";
 
 interface RegionSelectorProps {
   regions: Region[];
@@ -34,15 +35,21 @@ export default function RegionSelector({
   const parentHasSelections = (parentName: string) =>
     selectedRegions.some((s) => s.parentName === parentName);
 
+  // 선택 칩 등장/사라짐
+  const chipEntries = useAnimatedPresence(
+    selectedRegions,
+    (s) => `${s.parentName}-${s.subRegion}`,
+  );
+
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col">
       {/* 제목 */}
       <h3 className="text-neutral-0 text-[1.0625rem] leading-[155%] font-semibold tracking-[-0.02em]">
         지역을 선택해주세요.
       </h3>
 
       {/* 2열 레이아웃 */}
-      <div className="flex min-h-0 flex-1 gap-[3.75rem] overflow-hidden">
+      <div className="mt-4 flex min-h-0 flex-1 gap-[3.75rem] overflow-hidden">
         {/* 왼쪽: 광역 자치단체 */}
         <div className="scrollbar-hide flex w-[4.9375rem] flex-col gap-[0.625rem] overflow-y-auto">
           {regions.map((region) => (
@@ -101,42 +108,49 @@ export default function RegionSelector({
         </div>
       </div>
 
-      {/* 선택된 지역 칩 영역 */}
-      {selectedRegions.length > 0 && (
-        <div className="-mx-4 flex flex-col gap-2 border-t-2 border-neutral-800 px-4 pt-4">
-          <p className="text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
-            <span className="text-orange-500">
-              최대 {MAX_REGION_SELECTIONS}개
-            </span>
-            까지 선택할 수 있어요.
-          </p>
+      {/* 선택된 지역 칩 영역 (칩이 모두 빠지면 섹션도 함께 접힘) */}
+      <Collapse open={chipEntries.length > 0} className="-mx-4">
+        <div className="pt-4">
+          <div className="flex flex-col gap-2 border-t-2 border-neutral-800 px-4 pt-4">
+            <p className="text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
+              <span className="text-orange-500">
+                최대 {MAX_REGION_SELECTIONS}개
+              </span>
+              까지 선택할 수 있어요.
+            </p>
 
-          <div className="scrollbar-hide -mr-4 flex gap-[0.625rem] overflow-x-auto pr-4">
-            {selectedRegions.map((sel) => {
-              const chipLabel =
-                sel.subRegion === "전체"
-                  ? `${sel.parentName} 전체`
-                  : sel.subRegion;
+            <div className="scrollbar-hide -mr-4 flex overflow-x-auto pr-4">
+              {chipEntries.map(({ key, item: sel, state }) => {
+                const chipLabel =
+                  sel.subRegion === "전체"
+                    ? `${sel.parentName} 전체`
+                    : sel.subRegion;
 
-              return (
-                <Press
-                  key={`${sel.parentName}-${sel.subRegion}`}
-                  type="button"
-                  onClick={() =>
-                    onRemoveSelection(sel.parentName, sel.subRegion)
-                  }
-                  className="bg-neutral-850 flex shrink-0 items-center gap-2 rounded-[0.75rem] px-3 py-[0.625rem]"
-                >
-                  <span className="text-[0.8125rem] leading-[155%] font-normal tracking-[-0.02em] text-white">
-                    {chipLabel}
-                  </span>
-                  <XMarkIcon className="h-3 w-3 text-neutral-200" />
-                </Press>
-              );
-            })}
+                return (
+                  <div
+                    key={key}
+                    className="t-chip-reveal shrink-0"
+                    data-state={state}
+                  >
+                    <Press
+                      type="button"
+                      onClick={() =>
+                        onRemoveSelection(sel.parentName, sel.subRegion)
+                      }
+                      className="bg-neutral-850 flex items-center gap-2 rounded-[0.75rem] px-3 py-[0.625rem]"
+                    >
+                      <span className="text-[0.8125rem] leading-[155%] font-normal tracking-[-0.02em] text-white">
+                        {chipLabel}
+                      </span>
+                      <XMarkIcon className="h-3 w-3 text-neutral-200" />
+                    </Press>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      )}
+      </Collapse>
     </div>
   );
 }
