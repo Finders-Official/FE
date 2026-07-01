@@ -42,10 +42,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
             }
           />
           <p className="text-[0.725rem] text-neutral-400">
-            <NumberPopIn
-              value={favoriteCount}
-              className="[--digit-dur:var(--duration-fast)]"
-            />
+            <NumberPopIn value={favoriteCount} />
           </p>
         </Press>
 

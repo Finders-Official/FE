@@ -53,10 +53,7 @@ export function FavoriteStar({
         />
       </Press>
       <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
-        <NumberPopIn
-          value={count}
-          className="[--digit-dur:var(--duration-fast)]"
-        />
+        <NumberPopIn value={count} />
       </p>
     </div>
   );

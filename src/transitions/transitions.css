@@ -520,7 +520,7 @@
 }
 
 :root {
-  --digit-dur: var(--duration-very-slow);
+  --digit-dur: var(--duration-fast);
   --digit-distance: var(--distance-base);
   --digit-stagger: 70ms;
   --digit-blur: var(--blur-small);

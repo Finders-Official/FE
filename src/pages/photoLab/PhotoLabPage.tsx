@@ -41,10 +41,10 @@ export default function PhotoLabPage() {
     );
 
   // 페이지 데이터 평탄화
-  const labs = useMemo(() => {
-    const flat = data?.pages.flatMap((page) => page.data) ?? [];
-    return [...flat].sort((a, b) => b.favoriteCount - a.favoriteCount);
-  }, [data]);
+  const labs = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data],
+  );
 
   // 즐겨찾기 토글
   const { mutate: toggleFavorite } = useFavoriteToggle();
@@ -101,6 +101,7 @@ export default function PhotoLabPage() {
       {/* 현상소 목록 */}
       <LabList
         labs={labs}
+        reorderByFavorite
         isLoading={isLoading || isLocationLoading}
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage ?? false}

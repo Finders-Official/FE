@@ -37,10 +37,7 @@ export function PhotoQuantityStepper({
       </Press>
 
       <p className="min-w-4 text-center text-neutral-100">
-        <NumberPopIn
-          value={qty}
-          className="[--digit-dur:var(--duration-fast)]"
-        />
+        <NumberPopIn value={qty} />
       </p>
 
       <Press

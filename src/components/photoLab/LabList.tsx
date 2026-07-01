@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import type { SimplePhotoLabItem } from "@/types/photoLab";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import { useFlipReorder } from "@/transitions";
@@ -16,6 +16,8 @@ interface LabListProps {
   onCardClick?: (photoLabId: string) => void;
   emptyMessage?: string;
   className?: string;
+  /** 좋아요 수 내림차순 정렬 + 순위 이동 FLIP */
+  reorderByFavorite?: boolean;
 }
 
 export default function LabList({
@@ -28,9 +30,17 @@ export default function LabList({
   onCardClick,
   emptyMessage = "현상소가 없습니다",
   className = "",
+  reorderByFavorite = false,
 }: LabListProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const orderKey = labs.map((lab) => lab.photoLabId).join(",");
+  const orderedLabs = useMemo(
+    () =>
+      reorderByFavorite
+        ? [...labs].sort((a, b) => b.favoriteCount - a.favoriteCount)
+        : labs,
+    [labs, reorderByFavorite],
+  );
+  const orderKey = orderedLabs.map((lab) => lab.photoLabId).join(",");
   const listRef = useFlipReorder<HTMLDivElement>(orderKey);
 
   const handleIntersect = useCallback(() => {
@@ -63,7 +73,7 @@ export default function LabList({
 
   return (
     <div ref={listRef} className={`flex flex-col ${className}`}>
-      {labs.map((lab) => (
+      {orderedLabs.map((lab) => (
         <SimpleLabCard
           key={lab.photoLabId}
           lab={lab}
