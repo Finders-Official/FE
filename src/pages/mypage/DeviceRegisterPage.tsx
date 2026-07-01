@@ -102,7 +102,7 @@ export function DeviceRegisterPage() {
         open={!!toastMessage}
         onClose={() => setToastMessage(null)}
         duration={3000}
-        className="fixed bottom-[var(--tabbar-height)] z-50 ml-4 flex items-center justify-center"
+        placement="above-tab"
         message={toastMessage ?? ""}
         icon={<CheckCircleIcon className="h-5 w-5" />}
       />

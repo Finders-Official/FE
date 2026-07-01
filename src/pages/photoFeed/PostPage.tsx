@@ -241,7 +241,6 @@ export default function PostPage() {
         // isNewPost는 언마운트 시에만 초기화한다.
         // (여기서 false로 바꾸면 토스트가 닫힌 뒤 하드웨어 뒤로가기가 피드가 아닌 이전 단계로 감)
         onClose={() => setToastOpen(false)}
-        className="fixed right-0 bottom-0 left-0 z-50 flex justify-center px-5 py-5"
         message="게시글이 성공적으로 업로드 되었어요 :)"
         icon={<CheckCircleIcon className="h-5 w-5" />}
       />

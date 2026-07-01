@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { CTA_Button, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
-import { ChevronLeftIcon, FloatingIcon } from "@/assets/icon";
+import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
+import { ChevronLeftIcon } from "@/assets/icon";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import BottomSheet from "@/components/common/BottomSheet";
 import SelectFilter from "@/components/photoFeed/mainFeed/SelectFilter";
@@ -370,14 +371,7 @@ export default function PhotoFeedSearchPage() {
 
       {/* 새 게시물 작성 플로팅 버튼 */}
       {mode === "result" && !bottomSheetOpen && (
-        <button
-          type="button"
-          aria-label="새 게시물 작성"
-          onClick={() => setIsCreateModalOpen(true)}
-          className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
-        >
-          <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
-        </button>
+        <NewPostFab onClick={() => setIsCreateModalOpen(true)} />
       )}
 
       <NewPostModal

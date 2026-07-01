@@ -314,7 +314,7 @@ export function EditInfoPage() {
       <Toast
         open={toastOpen}
         onClose={() => setToastOpen(false)}
-        className="fixed bottom-[var(--tabbar-height)] ml-4 flex items-center justify-center"
+        placement="above-tab"
         message={message}
         icon={<CheckCircleIcon className="h-5 w-5" />}
       />

@@ -234,7 +234,7 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
           open={!!toastMessage}
           onClose={() => setToastMessage(null)}
           duration={3000}
-          className="fixed bottom-[var(--tabbar-height)] ml-4 flex items-center justify-center"
+          placement="above-tab"
           message={toastMessage ?? ""}
         />
       </main>

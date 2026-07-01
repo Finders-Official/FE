@@ -134,7 +134,6 @@ export function MyPostPage() {
         <Toast
           open={toastOpen}
           onClose={() => setToastOpen(false)}
-          className="fixed right-0 bottom-0 left-0 z-[100] flex justify-center px-5 py-5"
           message="게시글이 삭제되었습니다"
           icon={<CheckCircleIcon className="h-5 w-5" />}
         />

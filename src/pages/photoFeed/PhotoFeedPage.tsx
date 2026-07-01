@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
+import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
-import { CheckCircleIcon, FloatingIcon, SearchIcon } from "@/assets/icon";
-import { Header, Toast, Press } from "@/components/common";
+import { CheckCircleIcon, SearchIcon } from "@/assets/icon";
+import { Header, Toast } from "@/components/common";
 import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
@@ -104,7 +105,6 @@ export default function PhotoFeedPage() {
       <Toast
         open={toastOpen}
         onClose={() => setToastOpen(false)}
-        className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5"
         message="게시글이 삭제되었습니다"
         icon={<CheckCircleIcon className="h-5 w-5" />}
       />
@@ -140,14 +140,7 @@ export default function PhotoFeedPage() {
       </section>
 
       {/* 새 게시물 작성 플로팅 버튼 */}
-      <Press
-        type="button"
-        aria-label="새 게시물 작성"
-        onClick={() => setIsCreateModalOpen(true)}
-        className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
-      >
-        <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
-      </Press>
+      <NewPostFab onClick={() => setIsCreateModalOpen(true)} />
 
       <NewPostModal
         isOpen={isCreateModalOpen}
