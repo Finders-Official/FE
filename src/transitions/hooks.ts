@@ -62,13 +62,11 @@ export function useExitTransition(
   const [mounted, setMounted] = useState(open);
   const [state, setState] = useState<RevealState>(open ? "open" : "closed");
 
+  // 마운트 / 닫힘(exit) 처리
   useEffect(() => {
     if (open) {
       setMounted(true);
-      const id = requestAnimationFrame(() =>
-        requestAnimationFrame(() => setState("open")),
-      );
-      return () => cancelAnimationFrame(id);
+      return;
     }
     if (!mounted) return;
     setState("closing");
@@ -79,6 +77,12 @@ export function useExitTransition(
     }, ms);
     return () => window.clearTimeout(id);
   }, [open]);
+
+  useEffect(() => {
+    if (!open || !mounted || state !== "closed") return;
+    const id = requestAnimationFrame(() => setState("open"));
+    return () => cancelAnimationFrame(id);
+  }, [open, mounted, state]);
 
   return { mounted, state };
 }
