@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/common/Header";
 import RestorationSavedOverlay from "@/components/photoRestoration/RestorationSavedOverlay";
 import { getCreditBalance } from "@/apis/member";
+import { useAuthStore } from "@/store/useAuth.store";
 
 import { RestorationImageContainer } from "@/components/photoRestoration/RestorationImageContainer";
 import { RestorationDialogs } from "@/components/photoRestoration/RestorationDialogs";
@@ -50,7 +51,7 @@ export default function PhotoRestorationPage() {
   const { data: creditRes, isLoading: isCreditLoading } = useQuery({
     queryKey: ["credit-balance"],
     queryFn: getCreditBalance,
-    enabled: !!localStorage.getItem("accessToken"),
+    enabled: !!useAuthStore.getState().user,
   });
 
   const FREE_CREDIT_CAP = 5;

@@ -1,5 +1,6 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import { useAuthStore } from "@/store/useAuth.store";
+import { tokenStorage } from "@/utils/tokenStorage";
 import { jwtDecode } from "jwt-decode";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import { issuePresignedUrl } from "@/apis/file/presignedUrl.api";
@@ -30,7 +31,7 @@ export async function getPresignedUrl(
   category: "RESTORATION_ORIGINAL" | "RESTORATION_MASK",
   fileName: string,
 ): Promise<PresignedUrlResponse> {
-  const token = localStorage.getItem("accessToken");
+  const token = await tokenStorage.getAccessToken();
   if (!token) throw new Error("로그인이 필요합니다.");
 
   const storeMemberId = useAuthStore.getState().user?.memberId;
