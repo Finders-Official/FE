@@ -9,7 +9,10 @@ android {
 
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
+    implementation project(':capacitor-community-apple-sign-in')
     implementation project(':capacitor-app')
+    implementation project(':capacitor-splash-screen')
+    implementation project(':capacitor-secure-storage-plugin')
     implementation project(':capacitor3-kakao-login')
 
 }
