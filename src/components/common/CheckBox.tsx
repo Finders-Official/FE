@@ -1,5 +1,5 @@
 import { EmptyBoxIcon, CheckBoxIcon } from "@/assets/icon";
-import { Press } from "@/components/common/motion";
+import { IconSwap, Press } from "@/components/common/motion";
 
 type CheckboxProps = {
   checked: boolean;
@@ -30,11 +30,12 @@ export function Checkbox({
       onClick={handleClick}
       className="inline-flex items-center justify-center"
     >
-      {checked ? (
-        <CheckBoxIcon className={iconClassName} />
-      ) : (
-        <EmptyBoxIcon className={iconClassName} />
-      )}
+      <IconSwap
+        active={checked}
+        className={iconClassName}
+        iconA={<EmptyBoxIcon className={iconClassName} />}
+        iconB={<CheckBoxIcon className={iconClassName} />}
+      />
     </Press>
   );
 }
