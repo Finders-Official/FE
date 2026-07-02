@@ -14,6 +14,7 @@ import { useInquiriesInfinite } from "@/hooks/my";
 import { useCreateInquiry } from "@/hooks/my/inquiries/useCreateInquiry";
 import { useOutletContext } from "react-router";
 import type { MyPageOutletContext } from "@/layouts/MyPageLayout";
+import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
 
 // 스텝 타입 정의
 type Step = "LIST" | "CREATE";
@@ -154,6 +155,8 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
     null,
   );
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const typeShake = useShakeTrigger();
+  const contentShake = useShakeTrigger();
 
   const isContentValid = content.length >= 20;
 
@@ -163,10 +166,12 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
   const handleSubmitClick = () => {
     if (!selectedInquiry) {
       setToastMessage("문의 유형을 선택해 주세요.");
+      typeShake.shake();
       return;
     }
     if (!isContentValid) {
       setToastMessage("문의 내용을 20자 이상 입력해 주세요.");
+      contentShake.shake();
       return;
     }
 
@@ -208,6 +213,7 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
 
               setIsOpen(false);
             }}
+            shakeKey={typeShake.shakeKey}
           />
         </section>
 
@@ -223,6 +229,7 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
             placeholder="문의하실 내용이나 오류 내용을 입력해주세요"
             minLength={20}
             emptyHint="min"
+            shakeKey={contentShake.shakeKey}
           />
         </section>
 

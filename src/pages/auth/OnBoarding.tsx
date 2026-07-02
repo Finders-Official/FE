@@ -41,6 +41,7 @@ export function OnBoardingPage() {
           onChange={(e) => f.setNickname(e.target.value)}
           borderClass={f.nicknameBorderClass}
           textClass={f.nicknameTextClass}
+          shakeKey={f.nicknameShakeKey}
         />
 
         <section className="flex gap-[1.25rem]">
@@ -87,6 +88,7 @@ export function OnBoardingPage() {
               }
               onChange={f.handleVerifiedNumberChange}
               disabled={f.lockPhoneForm}
+              shakeKey={f.phoneShakeKey}
             />
             <ActionButton
               type="button"

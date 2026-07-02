@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import { INQUIRY_OPTIONS, type InquiryOption } from "@/types/mypage/inquiry";
 import { Collapse } from "@/components/common";
@@ -7,6 +8,7 @@ type InquiryDropBoxProps = {
   isOpen: boolean;
   onToggle: () => void;
   onSelect: (option: InquiryOption) => void;
+  shakeKey?: number;
 };
 
 export function InquiryDropBox({
@@ -14,7 +16,23 @@ export function InquiryDropBox({
   isOpen,
   onToggle,
   onSelect,
+  shakeKey,
 }: InquiryDropBoxProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const didShakeMount = useRef(false);
+
+  useEffect(() => {
+    if (!didShakeMount.current) {
+      didShakeMount.current = true;
+      return;
+    }
+    const el = rootRef.current;
+    if (!el) return;
+    el.classList.remove("t-shake");
+    void el.offsetWidth;
+    el.classList.add("t-shake");
+  }, [shakeKey]);
+
   // 선택된 값이 없으면 기본 텍스트인 '문의 유형' 표시
   const leftText = value ? value.label : "문의 유형";
   const leftTextClass = value
@@ -22,7 +40,7 @@ export function InquiryDropBox({
     : "text-neutral-600 text-[1rem]";
 
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative w-full">
       {/* 토글 버튼 */}
       <button
         type="button"

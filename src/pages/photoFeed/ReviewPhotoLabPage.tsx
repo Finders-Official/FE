@@ -9,6 +9,7 @@ import { useNewPostState } from "@/store/useNewPostState.store";
 import { useAuthStore } from "@/store/useAuth.store";
 import { useCreatePostWithUpload } from "@/hooks/photoFeed";
 import { scrollToCenter } from "@/utils/scrollToCenter";
+import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
 
 const MIN = 20;
 const MAX = 300;
@@ -18,6 +19,7 @@ export default function ReviewPhotoLabPage() {
 
   const [reviewTextError, setReviewTextError] = useState(false);
   const reviewTextRef = useRef<HTMLTextAreaElement | null>(null);
+  const reviewShake = useShakeTrigger();
 
   const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -61,6 +63,7 @@ export default function ReviewPhotoLabPage() {
   const handleTextArea = () => {
     if (!canSave) {
       setReviewTextError(true);
+      reviewShake.shake();
 
       // 스크롤 + 포커스
       const el = reviewTextRef.current;
@@ -135,6 +138,7 @@ export default function ReviewPhotoLabPage() {
             enforceMaxLength={false}
             emptyHint={"max"}
             isError={reviewTextError}
+            shakeKey={reviewShake.shakeKey}
           />
           {reviewText.length > MAX ? (
             <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">

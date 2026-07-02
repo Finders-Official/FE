@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type React from "react";
 
 type InputFormSize = "medium" | "large";
@@ -13,6 +14,7 @@ interface InputFormProps {
   timer?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
+  shakeKey?: number;
 }
 
 export const InputForm = ({
@@ -26,7 +28,23 @@ export const InputForm = ({
   timer,
   onChange,
   disabled,
+  shakeKey,
 }: InputFormProps) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const didShakeMount = useRef(false);
+
+  useEffect(() => {
+    if (!didShakeMount.current) {
+      didShakeMount.current = true;
+      return;
+    }
+    const el = inputRef.current;
+    if (!el) return;
+    el.classList.remove("t-shake");
+    void el.offsetWidth;
+    el.classList.add("t-shake");
+  }, [shakeKey]);
+
   const sizeClass: Record<InputFormSize, string> = {
     medium: "h-[3.25rem] w-[15.75rem]",
     large: "h-[3.25rem] w-full",
@@ -38,6 +56,7 @@ export const InputForm = ({
 
       <div className="relative mt-[1rem]">
         <input
+          ref={inputRef}
           autoComplete="off"
           id={name}
           placeholder={placeholder}
