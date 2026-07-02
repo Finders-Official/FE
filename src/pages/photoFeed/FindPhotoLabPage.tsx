@@ -7,7 +7,7 @@ import LabSearchResultSkeleton from "@/components/photoFeed/upload/LabSearchResu
 import type { LabSearchResponse } from "@/types/photoFeed/labSearch";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
-import { Header } from "@/components/common";
+import { Header, Press } from "@/components/common";
 import { useGeolocation } from "@/hooks/common/useGeolocation";
 import EmptyView from "@/components/common/EmptyView";
 import { useSearchLabs, useCreatePostWithUpload } from "@/hooks/photoFeed";
@@ -191,19 +191,19 @@ export default function FindPhotoLabPage() {
         {data.map((r) => (
           <li
             key={r.labId}
-            className="py-4"
             onPointerDown={(e) => {
               e.preventDefault();
               inputRef.current?.blur();
             }}
-            onClick={() => handleLabSelect(r)}
           >
-            <p className="font-semibold">
-              <HighlightText text={r.name} keyword={keyword} />
-            </p>
-            <p className="text-sm text-neutral-400">
-              {r.address} ({r.distance})
-            </p>
+            <Press as="div" onClick={() => handleLabSelect(r)} className="py-4">
+              <p className="font-semibold">
+                <HighlightText text={r.name} keyword={keyword} />
+              </p>
+              <p className="text-sm text-neutral-400">
+                {r.address} ({r.distance})
+              </p>
+            </Press>
           </li>
         ))}
       </ul>
