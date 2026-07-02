@@ -5,7 +5,13 @@ import {
   HeartFillIcon,
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
-import { Header, IconSwap, Press, Toast } from "@/components/common";
+import {
+  Header,
+  IconSwap,
+  NumberPopIn,
+  Press,
+  Toast,
+} from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
@@ -166,7 +172,10 @@ export default function PostPage() {
                     }
                   />
                 </Press>
-                <p className="text-[0.8125rem]">{postDetail.likeCount}</p>
+                <NumberPopIn
+                  value={postDetail.likeCount}
+                  className="text-[0.8125rem]"
+                />
               </div>
               <div className="flex items-center gap-1">
                 <Press
