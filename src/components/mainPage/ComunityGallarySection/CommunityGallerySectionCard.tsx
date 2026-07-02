@@ -6,13 +6,16 @@ import {
   type CommunityPost,
 } from "@/apis/mainPage/mainPage.api";
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
-import { Press } from "@/components/common";
+import { IconSwap, NumberPopIn, Press } from "@/components/common";
 
 interface CommunityGallerySectionCardProps {
   post: CommunityPost;
 }
 
 const COMMUNITY_PREVIEW_QK = ["community", "posts", "preview"] as const;
+
+const HEART_PATH =
+  "M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.68998C2 5.59998 4.49 3.09998 7.56 3.09998C9.38 3.09998 10.99 3.97998 12 5.33998C13.01 3.97998 14.63 3.09998 16.44 3.09998C19.51 3.09998 22 5.59998 22 8.68998C22 15.69 15.52 19.82 12.62 20.81Z";
 
 type LikeVars = { postId: string; nextLiked: boolean };
 type LikeCtx = { previous?: CommunityPost[] };
@@ -126,28 +129,49 @@ export default function CommunityGallerySectionCard({
             className="flex items-center justify-center disabled:opacity-60"
             aria-pressed={post.isLiked}
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.68998C2 5.59998 4.49 3.09998 7.56 3.09998C9.38 3.09998 10.99 3.97998 12 5.33998C13.01 3.97998 14.63 3.09998 16.44 3.09998C19.51 3.09998 22 5.59998 22 8.68998C22 15.69 15.52 19.82 12.62 20.81Z"
-                className={`ease-smooth-out transition-colors duration-[var(--duration-quick)] ${
-                  post.isLiked
-                    ? "fill-orange-500 stroke-orange-500"
-                    : "fill-none stroke-neutral-200"
-                }`}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="ml-1 text-xs text-neutral-400">
-              {post.likeCount}
-            </span>
+            <IconSwap
+              active={post.isLiked}
+              bounce
+              className="h-6 w-6"
+              iconA={
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d={HEART_PATH}
+                    className="fill-none stroke-neutral-200"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconB={
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d={HEART_PATH}
+                    className="fill-orange-500 stroke-orange-500"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+            />
+            <NumberPopIn
+              value={post.likeCount}
+              className="ml-1 text-xs text-neutral-400"
+            />
           </Press>
 
           {/* 댓글 */}
