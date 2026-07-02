@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PostCard } from "@/components/mypage/PostCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import type { Post } from "@/types/mypage/post";
 import { useMyPostsInfinite } from "@/hooks/my";
 import { EmptyOrderState, PostCardSkeleton } from "@/components/mypage";
 import { formatYmdDot } from "@/utils/dateFormat";
 import { useLocation, useNavigate } from "react-router";
-import { Toast } from "@/components/common";
+import { StaggerItem, Toast } from "@/components/common";
 import { CheckCircleIcon } from "@/assets/icon";
 
 const SKELETON_COUNT = 6;
@@ -53,6 +54,8 @@ export function MyPostPage() {
       })),
     [previews],
   );
+
+  const staggerIndexFor = useFirstPageStagger(posts.length);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -112,8 +115,10 @@ export function MyPostPage() {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-4">
-              {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
+              {posts.map((post, index) => (
+                <StaggerItem key={post.id} index={staggerIndexFor(index)}>
+                  <PostCard post={post} />
+                </StaggerItem>
               ))}
             </div>
 

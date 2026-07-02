@@ -9,6 +9,8 @@ import { useGeolocation } from "@/hooks/common/useGeolocation";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { useLikedPhotoLabsInfinite } from "@/hooks/my";
 import { useFavoriteToggle } from "@/hooks/photoLab";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
+import { StaggerItem } from "@/components/common";
 
 const SKELETON_COUNT = 5;
 
@@ -77,6 +79,8 @@ export function LikedPhotoLabPage() {
 
   const isEmpty = !isInitialLoading && !isFetchingNextPage && labs.length === 0;
 
+  const staggerIndexFor = useFirstPageStagger(labs.length);
+
   const handleFavoriteToggle = useCallback(
     (photoLabId: string, prevIsFavoriteFromCard: boolean) => {
       toggleFavorite({ photoLabId, isFavorite: prevIsFavoriteFromCard });
@@ -120,12 +124,13 @@ export function LikedPhotoLabPage() {
           </div>
         ) : (
           <>
-            {labs.map((photolab) => (
-              <PhotoLabCard
-                key={photolab.id}
-                photoLab={photolab}
-                onToggleLike={handleFavoriteToggle}
-              />
+            {labs.map((photolab, index) => (
+              <StaggerItem key={photolab.id} index={staggerIndexFor(index)}>
+                <PhotoLabCard
+                  photoLab={photolab}
+                  onToggleLike={handleFavoriteToggle}
+                />
+              </StaggerItem>
             ))}
 
             {isFetchingNextPage && (

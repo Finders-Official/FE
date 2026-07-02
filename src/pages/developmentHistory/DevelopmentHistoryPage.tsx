@@ -9,7 +9,8 @@ import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
 import DevelopmentOrderCard from "@/components/developmentHistory/DevelopmentOrderCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import EmptyView from "@/components/common/EmptyView";
-import { Press } from "@/components/common";
+import { Press, StaggerItem } from "@/components/common";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 
 interface FormattedDevelopmentOrder {
   id: number;
@@ -65,6 +66,8 @@ const DevelopmentHistoryPage = () => {
     return data?.pages.flatMap((p) => p.items) ?? [];
   }, [data]);
 
+  const staggerIndexFor = useFirstPageStagger(orders.length);
+
   const hasData = orders.length > 0;
 
   const handleOpenViewer = (images: string[]) => {
@@ -114,12 +117,13 @@ const DevelopmentHistoryPage = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {orders.map((item) => (
-                <DevelopmentOrderCard
-                  key={item.id}
-                  item={item}
-                  onOpenViewer={handleOpenViewer}
-                />
+              {orders.map((item, index) => (
+                <StaggerItem key={item.id} index={staggerIndexFor(index)}>
+                  <DevelopmentOrderCard
+                    item={item}
+                    onOpenViewer={handleOpenViewer}
+                  />
+                </StaggerItem>
               ))}
 
               {hasNextPage && <div ref={loadMoreRef} className="h-10" />}

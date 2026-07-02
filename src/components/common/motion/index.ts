@@ -5,3 +5,4 @@ export { Collapse } from "./Collapse";
 export { IconSwap } from "./IconSwap";
 export { NumberPopIn } from "./NumberPopIn";
 export { PageSlide } from "./PageSlide";
+export { StaggerItem } from "./StaggerItem";

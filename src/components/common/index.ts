@@ -25,6 +25,7 @@ export {
   IconSwap,
   NumberPopIn,
   PageSlide,
+  StaggerItem,
 } from "./motion";
 
 export { default as UnderlineTabs } from "./UnderlineTabs";
