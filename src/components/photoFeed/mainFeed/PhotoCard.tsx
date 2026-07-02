@@ -82,7 +82,6 @@ export default function PhotoCard({
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="ease-smooth-out pointer-events-none absolute inset-0 bg-black/10 opacity-0 transition-opacity duration-[var(--duration-fast)] group-hover:opacity-100" />
           </div>
 
           <div className="mt-1 text-[0.625rem] break-words text-white">

@@ -29,7 +29,7 @@ export const CapsuleButton = ({
   const backgroundColor = "var(--color-neutral-900)";
 
   const baseClass =
-    "inline-flex items-center justify-center rounded-[3.125rem] border border-transparent text-white hover:brightness-110 h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold";
+    "inline-flex items-center justify-center rounded-[3.125rem] border border-transparent text-white h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold";
 
   const sizeClass: Record<CapsuleSize, string> = {
     small: "w-[8.8125rem]",

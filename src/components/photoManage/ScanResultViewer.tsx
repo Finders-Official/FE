@@ -119,7 +119,7 @@ const ScanResultViewer = ({
             >
               <Press
                 onClick={handleDownloadAll}
-                className="hover:text-neutral-0 w-full text-center text-[0.9375rem] font-normal tracking-[-0.02em] text-neutral-100"
+                className="w-full text-center text-[0.9375rem] font-normal tracking-[-0.02em] text-neutral-100"
               >
                 사진 전체 다운로드
               </Press>
@@ -166,7 +166,7 @@ const ScanResultViewer = ({
               className={`ease-smooth-out relative h-15 w-15 shrink-0 overflow-hidden rounded-[0.625rem] border transition-[opacity,border-color] duration-[var(--duration-quick)] ${
                 currentIndex === idx
                   ? "border-neutral-100 opacity-100"
-                  : "border-transparent opacity-50 hover:opacity-80"
+                  : "border-transparent opacity-50"
               }`}
             >
               <img

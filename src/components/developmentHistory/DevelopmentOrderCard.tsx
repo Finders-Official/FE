@@ -131,7 +131,7 @@ const DevelopmentOrderCard = ({
               <img
                 src={url}
                 alt={`result-${idx}`}
-                className="h-full w-full object-cover opacity-90 transition-opacity hover:opacity-100"
+                className="h-full w-full object-cover"
               />
             </div>
           ))}

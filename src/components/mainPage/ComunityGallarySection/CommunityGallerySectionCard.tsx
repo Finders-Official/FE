@@ -108,7 +108,7 @@ export default function CommunityGallerySectionCard({
         <img
           src={imageUrl}
           alt={post.title}
-          className="ease-smooth-out h-full w-full object-cover transition-transform duration-[var(--duration-fast)] group-hover:scale-105"
+          className="h-full w-full object-cover"
           onError={(e) => {
             (e.target as HTMLImageElement).src = fallbackImage;
           }}

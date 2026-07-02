@@ -81,7 +81,7 @@ export const DialogBox = ({
           {cancelText && (
             <Press
               onClick={onCancel}
-              className="h-12 flex-1 rounded-xl text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200 hover:brightness-110"
+              className="h-12 flex-1 rounded-xl text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200"
               style={{
                 background: `linear-gradient(#1C1C1C, #1C1C1C) padding-box, ${borderGradient} border-box`,
                 border: "1px solid transparent",
@@ -94,7 +94,7 @@ export const DialogBox = ({
           {confirmButtonStyle === "filled" ? (
             <Press
               onClick={onConfirm}
-              className={`${cancelText ? "flex-1" : "w-full"} h-12 rounded-xl text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100 hover:brightness-110`}
+              className={`${cancelText ? "flex-1" : "w-full"} h-12 rounded-xl text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100`}
               style={{
                 background: `linear-gradient(#E94E16, #E94E16) padding-box, ${borderGradient} border-box`,
                 border: "1px solid transparent",

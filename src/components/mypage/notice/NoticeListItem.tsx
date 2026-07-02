@@ -32,7 +32,7 @@ export function NoticeListItem({ data }: NoticeListItemProps) {
     <Press
       as={Link}
       to={targetUrl}
-      className="ease-smooth-out flex w-full cursor-pointer flex-col gap-1.5 border-b border-neutral-800 px-6 py-4 transition-colors duration-[var(--duration-quick)] hover:bg-neutral-900"
+      className="flex w-full cursor-pointer flex-col gap-1.5 border-b border-neutral-800 px-6 py-4"
     >
       <div className="flex items-start gap-1">
         <p className="text-[1rem] leading-[155%] font-normal tracking-[-0.01875rem] text-white">

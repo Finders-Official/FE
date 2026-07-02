@@ -471,7 +471,7 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
                     <Press
                       as="li"
                       key={itemId}
-                      className="cursor-pointer border-b border-neutral-800 py-4 text-neutral-200 hover:bg-neutral-800"
+                      className="cursor-pointer border-b border-neutral-800 py-4 text-neutral-200"
                       onClick={() => handleSelectItem(itemId, item.name)}
                     >
                       <p className="font-semibold">

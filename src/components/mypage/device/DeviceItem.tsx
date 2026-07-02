@@ -53,12 +53,8 @@ export function DeviceItem({
 
       {/* 하단: 수정 및 삭제 버튼 */}
       <div className="flex justify-end gap-5 text-base font-medium text-neutral-600">
-        <Press onClick={onEdit} className="hover:text-gray-800">
-          수정
-        </Press>
-        <Press onClick={onDelete} className="hover:text-red-500">
-          삭제
-        </Press>
+        <Press onClick={onEdit}>수정</Press>
+        <Press onClick={onDelete}>삭제</Press>
       </div>
     </div>
   );
