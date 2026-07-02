@@ -99,9 +99,10 @@ export default function CommunityGallerySectionCard({
   };
 
   return (
-    <div
+    <Press
+      as="div"
       onClick={handleCardClick}
-      className="group bg-neutral-875 flex w-66.25 cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800"
+      className="bg-neutral-875 flex w-66.25 cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800"
     >
       {/* 썸네일 이미지 */}
       <div className="relative aspect-square w-full overflow-hidden bg-neutral-800">
@@ -179,6 +180,6 @@ export default function CommunityGallerySectionCard({
           {post.title}
         </p>
       </div>
-    </div>
+    </Press>
   );
 }
