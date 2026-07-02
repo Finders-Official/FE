@@ -119,13 +119,8 @@ export default function PhotoRestorationPage() {
     if (!receivedImageUrl) navigate("/", { replace: true });
   }, [receivedImageUrl, navigate]);
 
-  useEffect(() => {
-    return () => {
-      if (receivedImageUrl?.startsWith("blob:")) {
-        URL.revokeObjectURL(receivedImageUrl);
-      }
-    };
-  }, [receivedImageUrl]);
+  // blob URL은 페이지 unload 시 자동 해제되므로 useEffect cleanup에서 revoke하지 않음
+  // (React StrictMode의 이중 mount로 인해 cleanup에서 revoke하면 fetch 실패)
 
   const handleGenerateClick = useCallback(async () => {
     if (creditBalance <= 0) {
