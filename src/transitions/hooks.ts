@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { HTMLAttributes, RefObject } from "react";
 
 export type RevealState = "closed" | "open" | "closing";
@@ -135,15 +135,38 @@ export function useDismiss(
   }, [ref, onDismiss, enabled]);
 }
 
-export function useHoverCapable(): boolean {
-  const [can, setCan] = useState(false);
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
+// hover 가능 여부는 앱 전역에서 동일하므로 matchMedia 리스너를 인스턴스마다 만들지 않고
+// 모듈 싱글턴 스토어 1개로 공유한다(Press가 수십 개 마운트돼도 리스너는 1개).
+type HoverStore = {
+  value: boolean;
+  listeners: Set<() => void>;
+};
+
+let hoverStore: HoverStore | null = null;
+
+function getHoverStore(): HoverStore {
+  if (hoverStore) return hoverStore;
+  const store: HoverStore = { value: false, listeners: new Set() };
+  if (typeof window !== "undefined" && window.matchMedia) {
     const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const update = () => setCan(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return can;
+    store.value = mq.matches;
+    mq.addEventListener("change", () => {
+      store.value = mq.matches;
+      store.listeners.forEach((l) => l());
+    });
+  }
+  hoverStore = store;
+  return store;
+}
+
+export function useHoverCapable(): boolean {
+  const store = getHoverStore();
+  return useSyncExternalStore(
+    (onChange) => {
+      store.listeners.add(onChange);
+      return () => store.listeners.delete(onChange);
+    },
+    () => store.value,
+    () => false,
+  );
 }
