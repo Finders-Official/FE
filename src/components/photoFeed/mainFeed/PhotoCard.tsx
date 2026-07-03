@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import type { CSSProperties } from "react";
+import { useState } from "react";
 import { HeartIcon } from "@/assets/icon";
-import { IconSwap, Press } from "@/components/common";
+import { IconSwap, Press, StaggerItem } from "@/components/common";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { Link } from "react-router";
 
@@ -36,16 +35,6 @@ export default function PhotoCard({
     setOptimisticLiked(likedFromProps);
   }
 
-  const [shown, setShown] = useState(staggerIndex === undefined);
-  useEffect(() => {
-    if (staggerIndex === undefined) return;
-    const id = requestAnimationFrame(() => setShown(true));
-    return () => cancelAnimationFrame(id);
-  }, [staggerIndex]);
-
-  const staggerClass =
-    staggerIndex === undefined ? "" : `t-stagger-item${shown ? " is-in" : ""}`;
-
   const handleClickLike = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Link 이동 방지
     e.stopPropagation();
@@ -58,14 +47,7 @@ export default function PhotoCard({
   };
 
   return (
-    <div
-      className={`[break-inside:avoid] ${staggerClass}`}
-      style={
-        staggerIndex !== undefined
-          ? ({ "--i": staggerIndex } as CSSProperties)
-          : undefined
-      }
-    >
+    <StaggerItem index={staggerIndex} className="[break-inside:avoid]">
       <div className="group relative">
         <Press
           as={Link}
@@ -109,6 +91,6 @@ export default function PhotoCard({
           </button>
         ) : null}
       </div>
-    </div>
+    </StaggerItem>
   );
 }
