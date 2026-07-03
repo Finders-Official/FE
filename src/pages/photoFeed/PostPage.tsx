@@ -187,7 +187,9 @@ export default function PostPage() {
                 >
                   <ChatBubbleEmptyIcon className="h-[1.25rem] w-[1.25rem]" />
                 </Press>
-                <p className="text-[0.8125rem]">{postDetail.commentCount}</p>
+                <p className="text-[0.8125rem]">
+                  <NumberPopIn value={postDetail.commentCount} />
+                </p>
               </div>
             </div>
           </div>

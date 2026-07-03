@@ -194,9 +194,10 @@ export default function CommunityGallerySectionCard({
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="ml-1 text-xs text-neutral-400">
-              {post.commentCount}
-            </span>
+            <NumberPopIn
+              value={post.commentCount}
+              className="ml-1 text-xs text-neutral-400"
+            />
           </Press>
         </div>
 

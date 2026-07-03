@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { CTA_Button, Press, SearchBar } from "@/components/common";
+import { CTA_Button, NumberPopIn, Press, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
 import { ChevronLeftIcon } from "@/assets/icon";
@@ -310,7 +310,7 @@ export default function PhotoFeedSearchPage() {
               검색 결과
             </h2>
             <p className="text-[1rem] font-light text-neutral-100">
-              {totalCount}개
+              <NumberPopIn value={totalCount} />개
             </p>
           </div>
           <Press
