@@ -448,7 +448,7 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
       />
 
       <BottomSheet open={isBottomSheetOpen} onClose={closeBottomSheet}>
-        <div className="flex h-[60vh] flex-col gap-6 px-4 pt-4">
+        <div className="flex h-full flex-col gap-6 px-4 pt-4">
           <SearchBar
             value={searchValue}
             onChange={setSearchValue}
