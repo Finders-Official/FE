@@ -243,7 +243,6 @@
     opacity var(--duration-slow) var(--ease-smooth-out),
     filter var(--duration-slow) var(--ease-smooth-out);
   transition-delay: calc(var(--i, 0) * var(--stagger-step));
-  will-change: transform, opacity, filter;
 }
 .t-reveal[data-state="open"] .t-stagger-item,
 .is-in > .t-stagger-item,
@@ -275,7 +274,6 @@
     opacity var(--icon-swap-dur) var(--icon-swap-ease),
     filter var(--icon-swap-dur) var(--icon-swap-ease),
     transform var(--icon-swap-dur) var(--icon-swap-ease);
-  will-change: opacity, filter, transform;
 }
 .t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
 .t-icon-swap[data-state="b"] .t-icon[data-icon="b"] {
@@ -402,7 +400,6 @@
 }
 .t-digit {
   display: inline-block;
-  will-change: transform, opacity, filter;
 }
 .t-digit-group.is-animating .t-digit {
   animation: t-digit-pop-in var(--digit-dur) var(--digit-ease) both;
@@ -557,7 +554,6 @@
 
 .t-input {
   transition: border-color 150ms ease-out;
-  will-change: transform;
 }
 .t-input.is-error {
   transition: border-color var(--revert-dur, 280ms) ease-out;
@@ -725,7 +721,6 @@
     color var(--duration-quick) var(--ease-smooth-out),
     background-color var(--duration-quick) var(--ease-smooth-out),
     border-color var(--duration-quick) var(--ease-smooth-out);
-  will-change: transform;
 }
 @media (hover: hover) and (pointer: fine) {
   .t-press:active {
