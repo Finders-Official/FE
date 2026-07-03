@@ -12,12 +12,28 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import { useInquiriesInfinite } from "@/hooks/my";
 import { useCreateInquiry } from "@/hooks/my/inquiries/useCreateInquiry";
+import { useOutletContext } from "react-router";
+import type { MyPageOutletContext } from "@/layouts/MyPageLayout";
 
 // 스텝 타입 정의
 type Step = "LIST" | "CREATE";
 
 export function InquiryPage() {
   const [step, setStep] = useState<Step>("LIST");
+
+  // 부모(Layout)가 내려준 setCustomOnBack 가져오기
+  const { setCustomOnBack } = useOutletContext<MyPageOutletContext>();
+
+  // step이 CREATE일 때는 헤더 뒤로가기가 라우터 히스토리가 아닌 LIST로 돌아가게 함
+  useEffect(() => {
+    if (step === "CREATE") {
+      setCustomOnBack(() => () => setStep("LIST"));
+    } else {
+      setCustomOnBack(null);
+    }
+
+    return () => setCustomOnBack(null);
+  }, [step, setCustomOnBack]);
 
   return (
     <div className="flex h-full flex-1 flex-col">
