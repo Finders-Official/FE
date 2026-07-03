@@ -26,6 +26,8 @@ function emitChange(next: GeolocationResult) {
 
 let requested = false;
 
+const FALLBACK_TIMEOUT_MS = 12000;
+
 function requestLocation() {
   if (requested) return;
   requested = true;
@@ -41,8 +43,19 @@ function requestLocation() {
     return;
   }
 
+  const fallbackTimer = setTimeout(() => {
+    emitChange({
+      latitude: null,
+      longitude: null,
+      isLoading: false,
+      error: "Geolocation timeout",
+      locationAgreed: false,
+    });
+  }, FALLBACK_TIMEOUT_MS);
+
   navigator.geolocation.getCurrentPosition(
     (position) => {
+      clearTimeout(fallbackTimer);
       emitChange({
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -52,6 +65,7 @@ function requestLocation() {
       });
     },
     (error) => {
+      clearTimeout(fallbackTimer);
       emitChange({
         latitude: null,
         longitude: null,
