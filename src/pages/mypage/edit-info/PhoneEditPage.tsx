@@ -101,6 +101,7 @@ export function PhoneEditPage() {
               }
               onChange={f.handleVerifiedNumberChange}
               disabled={f.lockPhoneForm}
+              shakeKey={f.phoneShakeKey}
             />
 
             <ActionButton
