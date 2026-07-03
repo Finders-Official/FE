@@ -6,6 +6,7 @@ import {
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
 import {
+  ErrorState,
   Header,
   IconSwap,
   NumberPopIn,
@@ -113,9 +114,7 @@ export default function PostPage() {
             onBack={handleGoBack}
             className="sticky top-0 z-50 bg-neutral-900"
           />
-          <div className="flex flex-1 items-center justify-center">
-            <p className="text-red-400">불러오기에 실패했어요.</p>
-          </div>
+          <ErrorState className="flex flex-1 items-center justify-center" />
         </div>
       );
     if (!postDetail) return <EmptyView content="게시글 정보가 없습니다." />;

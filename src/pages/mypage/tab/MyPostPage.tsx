@@ -7,7 +7,7 @@ import { useMyPostsInfinite } from "@/hooks/my";
 import { EmptyOrderState, PostCardSkeleton } from "@/components/mypage";
 import { formatYmdDot } from "@/utils/dateFormat";
 import { useLocation, useNavigate } from "react-router";
-import { StaggerItem, Toast } from "@/components/common";
+import { ErrorState, StaggerItem, Toast } from "@/components/common";
 import { CheckCircleIcon } from "@/assets/icon";
 
 const SKELETON_COUNT = 6;
@@ -80,18 +80,7 @@ export function MyPostPage() {
   const isEmpty = !isLoading && !isFetchingNextPage && posts.length === 0;
 
   if (isError) {
-    return (
-      <div className="p-6 text-neutral-100">
-        <p className="text-red-400">불러오기 실패</p>
-        <button
-          type="button"
-          className="mt-3 rounded-md border border-neutral-700 px-3 py-2 text-sm"
-          onClick={() => refetch()}
-        >
-          다시 시도
-        </button>
-      </div>
-    );
+    return <ErrorState message="불러오기 실패" onRetry={() => refetch()} />;
   }
 
   return (

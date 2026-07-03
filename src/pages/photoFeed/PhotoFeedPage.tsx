@@ -3,7 +3,7 @@ import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import { CheckCircleIcon, SearchIcon } from "@/assets/icon";
-import { Header, Toast } from "@/components/common";
+import { ErrorState, Header, Toast } from "@/components/common";
 import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
@@ -92,11 +92,7 @@ export default function PhotoFeedPage() {
       />
 
       {/* 에러 처리 */}
-      {isError && (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
-        </div>
-      )}
+      {isError && <ErrorState />}
 
       <Toast
         open={toastOpen}

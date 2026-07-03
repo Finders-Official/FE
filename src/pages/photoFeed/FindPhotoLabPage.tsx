@@ -7,7 +7,7 @@ import LabSearchResultSkeleton from "@/components/photoFeed/upload/LabSearchResu
 import type { LabSearchResponse } from "@/types/photoFeed/labSearch";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
-import { Header, Press } from "@/components/common";
+import { ErrorState, Header, Press } from "@/components/common";
 import { useGeolocation } from "@/hooks/common/useGeolocation";
 import EmptyView from "@/components/common/EmptyView";
 import { useSearchLabs, useCreatePostWithUpload } from "@/hooks/photoFeed";
@@ -177,11 +177,7 @@ export default function FindPhotoLabPage() {
       return <LabSearchResultSkeleton />;
     }
     if (isError) {
-      return (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
-        </div>
-      );
+      return <ErrorState />;
     }
     if (!data || data.length === 0) {
       return <EmptyView />;

@@ -12,6 +12,7 @@ export type { SearchItemProps, SearchItemType } from "./SearchItem";
 
 export { CTA_Button } from "./CTA_Button";
 export { Checkbox } from "./CheckBox";
+export { ErrorState } from "./ErrorState";
 export { ImageCard } from "./ImageCard";
 export { TextArea } from "./TextArea";
 export { CopyButton } from "./CopyButton";

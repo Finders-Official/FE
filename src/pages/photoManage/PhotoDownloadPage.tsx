@@ -1,4 +1,10 @@
-import { CTA_Button, Header, ImageCard, Press } from "@/components/common";
+import {
+  CTA_Button,
+  ErrorState,
+  Header,
+  ImageCard,
+  Press,
+} from "@/components/common";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { PhotoCardPreview } from "@/components/photoManage/PhotoCardPreview";
@@ -404,9 +410,7 @@ export default function PhotoDownload() {
   return (
     <main className="mx-auto w-full max-w-6xl overflow-x-hidden">
       {isError ? (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
-        </div>
+        <ErrorState />
       ) : !isLoading && results.length === 0 ? (
         <EmptyView content={"스캔한 사진이 없습니다."} />
       ) : step === "GRID" ? (

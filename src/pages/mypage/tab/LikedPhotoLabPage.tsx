@@ -10,7 +10,7 @@ import type { PhotoLab } from "@/types/mypage/photolab";
 import { useLikedPhotoLabsInfinite } from "@/hooks/my";
 import { useFavoriteToggle } from "@/hooks/photoLab";
 import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
-import { StaggerItem } from "@/components/common";
+import { ErrorState, StaggerItem } from "@/components/common";
 
 const SKELETON_COUNT = 5;
 
@@ -89,18 +89,7 @@ export function LikedPhotoLabPage() {
   );
 
   if (isError) {
-    return (
-      <div className="p-4 text-neutral-100">
-        <p className="text-red-400">불러오기 실패</p>
-        <button
-          type="button"
-          className="mt-3 rounded-md border border-neutral-700 px-3 py-2 text-sm"
-          onClick={() => refetch()}
-        >
-          다시 시도
-        </button>
-      </div>
-    );
+    return <ErrorState message="불러오기 실패" onRetry={() => refetch()} />;
   }
 
   return (
