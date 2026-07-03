@@ -4,7 +4,7 @@ export type Role = "USER" | "OWNER" | "ADMIN";
 export type MemberStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED" | "DELETED";
 
 export interface MemberDto {
-  memberId: number;
+  memberId: string;
   name: string;
   phone: string;
   role: Role;

@@ -10,7 +10,7 @@ type SubmitArgs = {
   content: string;
   files: File[];
   imageMetas: ImageMeta[];
-  memberId?: number | null;
+  memberId?: string | null;
 
   labId?: string;
   isSelfDeveloped: boolean;

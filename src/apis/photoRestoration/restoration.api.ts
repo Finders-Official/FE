@@ -9,16 +9,16 @@ import type { PresignedUrlIssueResDto } from "@/types/file/presignedUrl";
 export type PresignedUrlResponse = ApiResponse<PresignedUrlIssueResDto>;
 
 type JwtPayload = {
-  id?: number;
-  memberId?: number;
-  sub?: string | number;
+  id?: string;
+  memberId?: string;
+  sub?: string;
 };
 
-export function getMemberIdFromToken(token: string): number {
+export function getMemberIdFromToken(token: string): string {
   const decoded = jwtDecode<JwtPayload>(token);
-  const memberId = Number(decoded.id ?? decoded.memberId ?? decoded.sub);
+  const memberId = decoded.id ?? decoded.memberId ?? decoded.sub;
 
-  if (!Number.isInteger(memberId) || memberId <= 0) {
+  if (!memberId) {
     throw new Error("No valid memberId found in token");
   }
 
@@ -84,7 +84,7 @@ export async function uploadToGCS(
 }
 
 export interface RequestRestorationResponseData {
-  id: number;
+  id: string;
 }
 
 export type RestorationStatus =
@@ -94,7 +94,7 @@ export type RestorationStatus =
   | "FAILED";
 
 export interface RestorationStatusData {
-  id: number;
+  id: string;
   originalUrl: string;
   restoredUrl: string | null;
   restoredWidth: number | null;
@@ -139,7 +139,7 @@ export async function requestRestoration(
 
 // 4. 상태 조회 (GET) - creditUsed 포함
 export async function getRestorationStatus(
-  id: number,
+  id: string,
 ): Promise<ApiResponse<RestorationStatusData>> {
   const response = await axiosInstance.get<ApiResponse<RestorationStatusData>>(
     `/restorations/${id}`,
