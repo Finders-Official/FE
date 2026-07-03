@@ -5,6 +5,7 @@ import {
   promotionBanner3,
 } from "@/assets/images";
 import { PageDots } from "./PageDots";
+import { Press } from "@/components/common/motion";
 
 interface MainBannerProps {
   id: number;
@@ -50,7 +51,8 @@ export default function PromotionBanner() {
         className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5"
       >
         {BANNERS.map((banner) => (
-          <div
+          <Press
+            as="div"
             key={banner.id}
             className="min-w-[calc(100%-3px)] shrink-0 snap-center"
           >
@@ -61,7 +63,7 @@ export default function PromotionBanner() {
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
-          </div>
+          </Press>
         ))}
       </div>
 

@@ -4,7 +4,7 @@ import type {
   DropDownCategory,
   DropDownOption,
 } from "@/types/photomanage/category";
-import { Collapse } from "@/components/common";
+import { Collapse, Press } from "@/components/common";
 
 type DropBoxProps = {
   category: DropDownCategory;
@@ -55,7 +55,7 @@ export function DropBox({
 
               return (
                 <li key={opt.value}>
-                  <button
+                  <Press
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
@@ -68,7 +68,7 @@ export function DropBox({
                   >
                     <span className="text-neutral-100">{opt.label}</span>
                     <span className="text-neutral-400">{opt.priceText}</span>
-                  </button>
+                  </Press>
                 </li>
               );
             })}

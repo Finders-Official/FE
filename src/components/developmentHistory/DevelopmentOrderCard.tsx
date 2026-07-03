@@ -1,4 +1,5 @@
 import { ChevronLeftIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 interface DevelopmentOrderCardProps {
   item: {
@@ -106,7 +107,7 @@ const DevelopmentOrderCard = ({
 
       {/* 결과물 보기 버튼 및 만료일 안내 */}
       <div className="flex flex-col gap-3">
-        <button
+        <Press
           onClick={() => onOpenViewer(item.resultImageUrls)}
           className="flex w-full items-center justify-between"
         >
@@ -119,7 +120,7 @@ const DevelopmentOrderCard = ({
             </span>
           </div>
           <ChevronLeftIcon className="h-4 w-4 rotate-180 text-neutral-200" />
-        </button>
+        </Press>
 
         {/* 썸네일 리스트 */}
         <div className="scrollbar-hide flex gap-2.75 overflow-x-auto pb-1">

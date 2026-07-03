@@ -2,6 +2,7 @@ import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 import { PaperAirplaneFillIcon } from "@/assets/icon";
 import Icon from "@/components/common/Icon";
+import { Press } from "@/components/common/motion";
 
 interface CommentInputProps {
   value: string;
@@ -38,7 +39,7 @@ export default function CommentInput({
           }}
         />
 
-        <button
+        <Press
           type="button"
           onClick={onSubmit}
           disabled={!canSubmit}
@@ -48,7 +49,7 @@ export default function CommentInput({
           <Icon>
             <PaperAirplaneFillIcon />
           </Icon>
-        </button>
+        </Press>
       </div>
     </div>
   );

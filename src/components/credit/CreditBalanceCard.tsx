@@ -1,4 +1,5 @@
 import { QuestionCircleIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 interface CreditBalanceCardProps {
   balance: number;
@@ -17,7 +18,7 @@ export function CreditBalanceCard({
         <p className="text-[0.9375rem] leading-[1.26] font-semibold tracking-[-0.02em] text-neutral-100">
           내 크레딧
         </p>
-        <button
+        <Press
           type="button"
           onClick={onInfoClick}
           className="flex items-center gap-[0.1875rem]"
@@ -27,7 +28,7 @@ export function CreditBalanceCard({
             크레딧
           </span>
           <QuestionCircleIcon className="h-[1.125rem] w-[1.125rem] text-neutral-700" />
-        </button>
+        </Press>
       </div>
       <div className="flex items-end justify-between">
         <p className="text-neutral-0 text-[1.5rem] leading-[1.28] font-semibold tracking-[-0.02em]">

@@ -1,4 +1,4 @@
-import { Checkbox } from "@/components/common";
+import { Checkbox, Press } from "@/components/common";
 import type { AgreementTerm } from "@/types/auth";
 import { TermsAccordionRow } from "./TermsAccordionRow";
 
@@ -29,13 +29,13 @@ export function TermsAgreementItem({
             onChange={onToggleCheck}
             ariaLabel={term.label}
           />
-          <button
+          <Press
             type="button"
             onClick={onToggleCheck}
             className="text-left text-[1.0625rem] leading-[1.26] font-semibold tracking-[-0.02em] text-neutral-100"
           >
             {term.label}
-          </button>
+          </Press>
         </div>
       }
     />

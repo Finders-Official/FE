@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useReveal, useDismiss } from "@/transitions";
+import { Press } from "@/components/common/motion";
 
 interface ModalProps {
   isOpen: boolean;
@@ -40,9 +41,9 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
       >
         {/* 닫기 버튼 */}
         <div className="mb-2 flex justify-end">
-          <button onClick={onClose} aria-label="모달 닫기">
+          <Press onClick={onClose} aria-label="모달 닫기">
             <XMarkIcon className="h-[0.875rem] w-[0.875rem] text-neutral-200" />
-          </button>
+          </Press>
         </div>
 
         <section className="flex flex-col items-center gap-12">

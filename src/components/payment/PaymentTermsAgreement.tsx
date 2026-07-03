@@ -1,4 +1,4 @@
-import { Checkbox } from "@/components/common";
+import { Checkbox, Press } from "@/components/common";
 import { PAYMENT_TERMS } from "@/constants/payment/payment.constant";
 
 interface PaymentTermsAgreementProps {
@@ -21,13 +21,13 @@ export function PaymentTermsAgreement({
             className="flex items-center justify-between text-[0.8125rem] leading-[1.55] font-normal tracking-[-0.02em] text-neutral-300"
           >
             <span className="break-keep">{term.label}</span>
-            <button
+            <Press
               type="button"
               onClick={() => onViewTerm(term.id)}
               className="shrink-0 underline"
             >
               보기
-            </button>
+            </Press>
           </li>
         ))}
       </ul>

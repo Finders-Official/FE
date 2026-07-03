@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import { formatYmdDot } from "@/utils/dateFormat";
 import type { InquiryItem, InquiryType } from "@/types/mypage/inquiry";
-import { Collapse } from "@/components/common";
+import { Collapse, Press } from "@/components/common";
 
 // 문의 유형 영문을 한글 라벨로 변환하는 매핑 객체
 const INQUIRY_TYPE_LABEL: Record<InquiryType, string> = {
@@ -24,7 +24,8 @@ export function InquiryListItem({ item }: InquiryListItemProps) {
   const date = formatYmdDot(item.createdAt);
 
   return (
-    <div
+    <Press
+      as="div"
       className="flex cursor-pointer flex-col border-b border-neutral-800 px-1 py-5"
       onClick={() => setIsExpanded(!isExpanded)}
     >
@@ -75,6 +76,6 @@ export function InquiryListItem({ item }: InquiryListItemProps) {
           </div>
         </Collapse>
       )}
-    </div>
+    </Press>
   );
 }

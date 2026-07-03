@@ -1,6 +1,7 @@
 import type { SimplePhotoLabItem } from "@/types/photoLab";
 import { photoLabPlaceholder } from "@/assets/images";
 import { FavoriteStar } from "./FavoriteStar";
+import { Press } from "@/components/common/motion";
 
 interface LabCardProps {
   lab: SimplePhotoLabItem;
@@ -23,7 +24,8 @@ export default function SimpleLabCard({
   };
 
   return (
-    <div
+    <Press
+      as="div"
       data-flip-key={flipKey}
       role={onCardClick ? "button" : undefined}
       tabIndex={onCardClick ? 0 : undefined}
@@ -76,7 +78,7 @@ export default function SimpleLabCard({
           />
         </div>
       </div>
-    </div>
+    </Press>
   );
 }
 

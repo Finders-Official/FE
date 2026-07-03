@@ -16,6 +16,7 @@ import {
 } from "@/hooks/photoFeed";
 import { useLocation, useNavigate } from "react-router";
 import { isAxiosError } from "axios";
+import { Press } from "@/components/common/motion";
 
 type ProfileType = "post" | "comment";
 
@@ -253,14 +254,14 @@ export default function Profile({
 
       {/* menu icon */}
       {showMenu && (
-        <button
+        <Press
           type="button"
           className="inline-flex h-9 w-9 items-center justify-center"
           aria-label="더보기"
           onClick={() => setMoreMenu(true)}
         >
           <EllipsisVerticalIcon className="h-4 w-[3px]" />
-        </button>
+        </Press>
       )}
 
       {/* ActionSheet */}

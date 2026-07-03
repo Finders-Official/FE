@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import { INQUIRY_OPTIONS, type InquiryOption } from "@/types/mypage/inquiry";
-import { Collapse } from "@/components/common";
+import { Collapse, Press } from "@/components/common";
 
 type InquiryDropBoxProps = {
   value: InquiryOption | null;
@@ -42,7 +42,7 @@ export function InquiryDropBox({
   return (
     <div ref={rootRef} className="relative w-full">
       {/* 토글 버튼 */}
-      <button
+      <Press
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
@@ -57,7 +57,7 @@ export function InquiryDropBox({
             }`}
           />
         </div>
-      </button>
+      </Press>
 
       {/* 드롭다운 메뉴 */}
       <Collapse open={isOpen}>
@@ -68,7 +68,7 @@ export function InquiryDropBox({
 
               return (
                 <li key={opt.value}>
-                  <button
+                  <Press
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
@@ -82,7 +82,7 @@ export function InquiryDropBox({
                     <span className="text-[1rem] text-neutral-100">
                       {opt.label}
                     </span>
-                  </button>
+                  </Press>
                 </li>
               );
             })}

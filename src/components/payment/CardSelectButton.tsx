@@ -1,4 +1,5 @@
 import { ChevronLeftIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 interface CardSelectButtonProps {
   selectedName: string | null;
@@ -10,7 +11,7 @@ export function CardSelectButton({
   onClick,
 }: CardSelectButtonProps) {
   return (
-    <button
+    <Press
       type="button"
       onClick={onClick}
       className="flex h-[3.1875rem] w-full items-center justify-between rounded-[0.625rem] border border-neutral-800 px-4 py-[0.875rem]"
@@ -23,6 +24,6 @@ export function CardSelectButton({
         {selectedName ?? "카드 선택"}
       </span>
       <ChevronLeftIcon className="h-6 w-6 -rotate-90 text-neutral-200" />
-    </button>
+    </Press>
   );
 }

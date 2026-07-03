@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { CTA_Button, SearchBar } from "@/components/common";
+import { CTA_Button, Press, SearchBar } from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
 import { ChevronLeftIcon } from "@/assets/icon";
@@ -214,14 +214,14 @@ export default function PhotoFeedSearchPage() {
             <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
               최근 검색어
             </h2>
-            <button
+            <Press
               type="button"
               onClick={() => deleteRecentAll()}
               disabled={isDeletingAll}
               className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
             >
               전체 삭제
-            </button>
+            </Press>
           </div>
 
           {/* 최근 검색어 리스트 */}
@@ -313,7 +313,7 @@ export default function PhotoFeedSearchPage() {
               {totalCount}개
             </p>
           </div>
-          <button
+          <Press
             type="button"
             onClick={() => {
               setBottomSheetOpen(true);
@@ -322,7 +322,7 @@ export default function PhotoFeedSearchPage() {
           >
             <span>{FILTER_LABEL[filter]}</span>
             <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
-          </button>
+          </Press>
         </div>
         {previewList.length === 0 && <EmptyView />}
         {previewList.length > 0 && (
