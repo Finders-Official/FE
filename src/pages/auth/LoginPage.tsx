@@ -7,6 +7,7 @@ import { useAppleLogin, useLoginIntroUi } from "@/hooks/auth/login";
 import { useAuthStore } from "@/store/useAuth.store";
 import { Capacitor3KakaoLogin } from "capacitor3-kakao-login";
 import { isNativeApp } from "@/utils/auth/envUtils";
+import { isAndroidApp } from "@/utils/platform";
 import { oauth } from "@/apis/auth";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { consumeRedirectAfterLogin } from "../demoDay/redirectAfterLogin";
@@ -259,7 +260,9 @@ export function LoginPage() {
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
             <div className="flex flex-col gap-2">
-              <AppleButton onClick={apple.login} disabled={apple.isPending} />
+              {!isAndroidApp() && (
+                <AppleButton onClick={apple.login} disabled={apple.isPending} />
+              )}
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
 
