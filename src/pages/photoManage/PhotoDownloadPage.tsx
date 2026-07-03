@@ -4,7 +4,9 @@ import {
   Header,
   ImageCard,
   Press,
+  StaggerItem,
 } from "@/components/common";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { PhotoCardPreview } from "@/components/photoManage/PhotoCardPreview";
@@ -68,6 +70,8 @@ export default function PhotoDownload() {
     () => data?.pages.flatMap((page) => page.data) ?? [],
     [data],
   );
+
+  const staggerIndexFor = useFirstPageStagger(results.length);
 
   const onIntersect = useCallback(() => {
     fetchNextPage();
@@ -275,23 +279,27 @@ export default function PhotoDownload() {
               ? Array.from({ length: SKELETON_COUNT }).map((_, idx) => (
                   <ImageCardSkeleton key={`skeleton-${idx}`} />
                 ))
-              : results.map((p) => {
+              : results.map((p, index) => {
                   const isSelected = selectedSet.has(p.scannedPhotoId);
                   const selectionIndex = isSelected
                     ? selectedIndexMap.get(p.scannedPhotoId)
                     : undefined;
 
                   return (
-                    <ImageCard
+                    <StaggerItem
                       key={p.scannedPhotoId}
-                      src={p.signedUrl}
-                      mode="multi"
-                      isSelected={isSelected}
-                      selectionIndex={selectionIndex}
-                      onToggle={() => toggle(p.scannedPhotoId)}
-                      onOpen={() => setCurrentPhotoId(p.scannedPhotoId)}
-                      className="mx-auto"
-                    />
+                      index={staggerIndexFor(index)}
+                    >
+                      <ImageCard
+                        src={p.signedUrl}
+                        mode="multi"
+                        isSelected={isSelected}
+                        selectionIndex={selectionIndex}
+                        onToggle={() => toggle(p.scannedPhotoId)}
+                        onOpen={() => setCurrentPhotoId(p.scannedPhotoId)}
+                        className="mx-auto"
+                      />
+                    </StaggerItem>
                   );
                 })}
 

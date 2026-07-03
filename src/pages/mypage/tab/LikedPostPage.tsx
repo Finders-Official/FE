@@ -1,4 +1,5 @@
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import { useLikedPostsInfinite } from "@/hooks/my";
 import { useCallback, useMemo, useRef, useState } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
@@ -54,6 +55,8 @@ export function LikedPostPage() {
       return { ...p, isLiked: nextIsLiked };
     });
   }, [items, likedOverrideById]);
+
+  const staggerIndexFor = useFirstPageStagger(viewItems.length);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -149,12 +152,13 @@ export function LikedPostPage() {
               className="my-masonry-grid"
               columnClassName="my-masonry-grid_column"
             >
-              {viewItems.map((photo) => (
+              {viewItems.map((photo, index) => (
                 <PhotoCard
                   key={photo.postId}
                   photo={photo}
                   isLiked={photo.isLiked}
                   isShowLiked={true}
+                  staggerIndex={staggerIndexFor(index)}
                   onToggleLike={() =>
                     handleToggleLike(photo.postId, photo.isLiked)
                   }
