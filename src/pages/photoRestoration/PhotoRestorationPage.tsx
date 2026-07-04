@@ -122,8 +122,14 @@ export default function PhotoRestorationPage() {
     if (!receivedImageUrl) navigate("/", { replace: true });
   }, [receivedImageUrl, navigate]);
 
-  // blob URL은 페이지 unload 시 자동 해제되므로 useEffect cleanup에서 revoke하지 않음
-  // (React StrictMode의 이중 mount로 인해 cleanup에서 revoke하면 fetch 실패)
+  // blob URL은 Capacitor WebView에서 페이지 unload가 없어 자동 해제되지 않는다.
+  // StrictMode 이중 mount로 fetch가 깨지는 useEffect cleanup 대신,
+  // 편집기를 실제로 벗어나는 시점(뒤로가기/폐기)에 revoke한다.
+  const revokeReceivedImage = useCallback(() => {
+    if (receivedImageUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(receivedImageUrl);
+    }
+  }, [receivedImageUrl]);
 
   const handleGenerateClick = useCallback(async () => {
     if (creditBalance <= 0) {
@@ -165,6 +171,7 @@ export default function PhotoRestorationPage() {
   const handleDialogConfirm = useCallback(() => {
     switch (visibleDialog) {
       case "MASKING_BACK": {
+        revokeReceivedImage();
         navigate(-1);
         break;
       }
@@ -178,6 +185,7 @@ export default function PhotoRestorationPage() {
       }
       case "DISCARD_CONFIRM": {
         resetRestoration();
+        revokeReceivedImage();
         navigate(-1);
         break;
       }
@@ -193,7 +201,13 @@ export default function PhotoRestorationPage() {
         break;
     }
     setActiveDialog("NONE");
-  }, [visibleDialog, navigate, resetRestoration, setError]);
+  }, [
+    visibleDialog,
+    navigate,
+    resetRestoration,
+    setError,
+    revokeReceivedImage,
+  ]);
 
   const handleDialogCancel = useCallback(() => {
     if (visibleDialog === "SERVER_ERROR") setError(null);
