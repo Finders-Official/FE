@@ -54,10 +54,13 @@ export function DeviceRegisterPage() {
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   // 부모(Layout)가 내려준 setCustomOnBack 가져오기
-  const { setCustomOnBack } = useOutletContext<MyPageOutletContext>();
+  const context = useOutletContext<MyPageOutletContext | null>();
+  const setCustomOnBack = context?.setCustomOnBack;
 
   // tep이 변경될 때마다 뒤로가기 동작을 가로채거나 원상복구
   useEffect(() => {
+    if (!setCustomOnBack) return;
+
     if (step === "REGISTER") {
       // 등록 뷰일 때는 뒤로가기 누르면 다이얼로그 오픈!
       setCustomOnBack(() => () => setIsCancelDialogOpen(true));

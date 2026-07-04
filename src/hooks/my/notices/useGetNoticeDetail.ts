@@ -7,6 +7,6 @@ export const useNoticeDetail = (noticeId: string | null) => {
     queryKey: ["noticeDetail", noticeId],
     queryFn: () => getNoticeDetail(noticeId!),
     // 방어 코드: id가 유효한 값으로 넘어왔을 때만 API 요청을 보냄
-    enabled: typeof noticeId === "string" && noticeId.length > 0,
+    enabled: typeof noticeId === "string" && noticeId.trim().length > 0,
   });
 };

@@ -22,10 +22,13 @@ export function InquiryPage() {
   const [step, setStep] = useState<Step>("LIST");
 
   // 부모(Layout)가 내려준 setCustomOnBack 가져오기
-  const { setCustomOnBack } = useOutletContext<MyPageOutletContext>();
+  const context = useOutletContext<MyPageOutletContext | null>();
+  const setCustomOnBack = context?.setCustomOnBack;
 
   // step이 CREATE일 때는 헤더 뒤로가기가 라우터 히스토리가 아닌 LIST로 돌아가게 함
   useEffect(() => {
+    if (!setCustomOnBack) return;
+
     if (step === "CREATE") {
       setCustomOnBack(() => () => setStep("LIST"));
     } else {

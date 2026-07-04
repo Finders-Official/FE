@@ -16,13 +16,13 @@ type JwtPayload = {
 
 export function getMemberIdFromToken(token: string): string {
   const decoded = jwtDecode<JwtPayload>(token);
-  const memberId = decoded.id ?? decoded.memberId ?? decoded.sub;
+  const rawMemberId = decoded.id ?? decoded.memberId ?? decoded.sub;
 
-  if (!memberId) {
+  if (!rawMemberId) {
     throw new Error("No valid memberId found in token");
   }
 
-  return memberId;
+  return String(rawMemberId);
 }
 
 // 1. Presigned URL 발급 요청
