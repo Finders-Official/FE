@@ -53,14 +53,7 @@ export const RestorationFooter = ({
         isHintState ? "pb-4.5" : "pb-5.75"
       }`}
     >
-      {viewMode === "MAIN" && (
-        <RestorationHintTooltip
-          historyStep={historyStep}
-          currentPath={currentPath}
-          restoredImageUrl={restoredImageUrl}
-          isGenerating={isGenerating}
-        />
-      )}
+      {isHintState && <RestorationHintTooltip />}
 
       <div className="pointer-events-auto relative mt-2 inline-flex">
         {shouldShowCreditTooltip && (
@@ -83,14 +76,15 @@ export const RestorationFooter = ({
             onClick={() => navigate("/photoFeed")}
           />
         ) : (
-          <RestorationActionButtons
-            historyStep={historyStep}
-            currentPath={currentPath}
-            restoredImageUrl={restoredImageUrl}
-            isGenerating={isGenerating}
-            handleGenerateClick={handleGenerateClick}
-            handleRegenerateClick={handleRegenerateClick}
-          />
+          !isHintState && (
+            <RestorationActionButtons
+              historyStep={historyStep}
+              restoredImageUrl={restoredImageUrl}
+              isGenerating={isGenerating}
+              handleGenerateClick={handleGenerateClick}
+              handleRegenerateClick={handleRegenerateClick}
+            />
+          )
         )}
       </div>
     </div>
