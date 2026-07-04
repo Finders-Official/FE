@@ -13,12 +13,12 @@ interface CommunityGallerySectionCardProps {
 
 const COMMUNITY_PREVIEW_QK = ["community", "posts", "preview"] as const;
 
-type LikeVars = { postId: number; nextLiked: boolean };
+type LikeVars = { postId: string; nextLiked: boolean };
 type LikeCtx = { previous?: CommunityPost[] };
 
 function patchCommunityPreviewPost(
   prev: CommunityPost[] | undefined,
-  postId: number,
+  postId: string,
   patch: (p: CommunityPost) => CommunityPost,
 ) {
   if (!prev) return prev;

@@ -19,7 +19,7 @@ export default function PromotionBanner() {
   const navigate = useNavigate();
   const { requireAuth } = useRequireAuth();
   const user = useAuthStore((s) => s.user);
-  const isAuthed = Boolean(user && user.memberId > 0);
+  const isAuthed = Boolean(user?.memberId);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);

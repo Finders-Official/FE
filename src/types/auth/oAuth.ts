@@ -31,7 +31,7 @@ export type SocialLoginSignupRequired = {
 export type SocialLoginSuccess = {
   accessToken: string;
   member: {
-    id: number;
+    id: string;
     nickname: string;
   };
 };

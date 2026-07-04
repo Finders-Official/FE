@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type User = {
-  memberId: number;
+  memberId: string;
   nickname: string;
 };
 
@@ -13,7 +13,7 @@ type AuthState = {
   clearUser: () => void;
 
   setNickname: (nickname: string) => void;
-  setMemberId: (memberId: number) => void;
+  setMemberId: (memberId: string) => void;
 };
 
 const AUTH_STORAGE_KEY = "finders-auth";
@@ -53,6 +53,15 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "finders-auth",
       partialize: (state) => ({ user: state.user }),
+      version: 1,
+      // memberId가 number(구 형식)로 저장된 세션은 폐기 (TSID string 전환)
+      migrate: (persistedState) => {
+        const state = persistedState as { user: User | null } | undefined;
+        if (typeof state?.user?.memberId === "number") {
+          return { user: null };
+        }
+        return state;
+      },
     },
   ),
 );

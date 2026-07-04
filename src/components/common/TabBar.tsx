@@ -49,7 +49,7 @@ export const TabBar = () => {
 
   const { requireAuth, requireAuthNavigate } = useRequireAuth();
   const user = useAuthStore((s) => s.user);
-  const isAuthed = Boolean(user && user.memberId > 0);
+  const isAuthed = Boolean(user?.memberId);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
