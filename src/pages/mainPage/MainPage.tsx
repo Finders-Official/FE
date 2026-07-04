@@ -41,7 +41,7 @@ export default function MainPage() {
   useAnchorScroll(scrollRef);
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-sm flex-col bg-neutral-900 text-white">
+    <div className="mx-auto flex h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full max-w-sm flex-col bg-neutral-900 text-white">
       <Header />
       <div
         ref={scrollRef}
