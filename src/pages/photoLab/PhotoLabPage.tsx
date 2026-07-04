@@ -80,21 +80,23 @@ export default function PhotoLabPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 헤더 */}
-      <Header
-        title={"현상소 보기"}
-        showBack={false}
-        leftAction={{
-          type: "icon",
-          icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
-          onClick: handleSearchClick,
-        }}
-        rightAction={{
-          type: "icon",
-          icon: <FilterIcon className="h-6 w-6 text-neutral-200" />,
-          onClick: () => setIsFilterOpen(true),
-        }}
-      />
+      {/* 헤더 (스크롤 시에도 상단 고정) */}
+      <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
+        <Header
+          title={"현상소 보기"}
+          showBack={false}
+          leftAction={{
+            type: "icon",
+            icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
+            onClick: handleSearchClick,
+          }}
+          rightAction={{
+            type: "icon",
+            icon: <FilterIcon className="h-6 w-6 text-neutral-200" />,
+            onClick: () => setIsFilterOpen(true),
+          }}
+        />
+      </div>
 
       {/* 현상소 목록 */}
       <LabList
