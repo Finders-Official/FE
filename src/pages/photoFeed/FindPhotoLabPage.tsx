@@ -96,7 +96,10 @@ export default function FindPhotoLabPage() {
         isSelfDeveloped: isSelf,
       });
     } catch (e) {
-      console.error("게시글 업로드 실패", e);
+      // Android logcat은 객체를 그대로 넘기면 [object Object]로만 찍히므로 문자열화해서 남긴다.
+      console.error(
+        "게시글 업로드 실패: " + (e instanceof Error ? e.message : String(e)),
+      );
     }
   };
 
