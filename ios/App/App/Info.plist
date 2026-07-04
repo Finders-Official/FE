@@ -66,5 +66,7 @@
 		<string>storykompassauth</string>
 		<string>kakaolink</string>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>복원한 사진을 갤러리에 저장하기 위해 사진 접근 권한이 필요합니다.</string>
 </dict>
 </plist>
