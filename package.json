@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint . --max-warnings 0 --report-unused-disable-directives",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
@@ -15,6 +16,9 @@
     "cap:sync": "pnpm build && npx cap sync",
     "cap:sync:ios": "pnpm build && npx cap sync ios",
     "cap:sync:android": "pnpm build && npx cap sync android",
+    "cap:sync:dev": "pnpm build:dev && npx cap sync",
+    "cap:sync:ios:dev": "pnpm build:dev && npx cap sync ios",
+    "cap:sync:android:dev": "pnpm build:dev && npx cap sync android",
     "cap:open:ios": "npx cap open ios",
     "cap:open:android": "npx cap open android"
   },
