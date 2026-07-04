@@ -39,8 +39,20 @@ export const RestorationFooter = ({
 }: RestorationFooterProps) => {
   const navigate = useNavigate();
 
+  // 힌트 툴팁 표시 상태(초기 편집)와 액션 버튼 표시 상태는 상호배타
+  const isHintState =
+    viewMode === "MAIN" &&
+    historyStep === -1 &&
+    !currentPath &&
+    !restoredImageUrl &&
+    !isGenerating;
+
   return (
-    <div className="pointer-events-none absolute right-0 bottom-13 left-0 z-50 flex w-full flex-col items-center px-4">
+    <div
+      className={`pointer-events-none absolute inset-x-0 bottom-0 z-50 flex w-full flex-col items-center px-4 ${
+        isHintState ? "pb-4.5" : "pb-5.75"
+      }`}
+    >
       {viewMode === "MAIN" && (
         <RestorationHintTooltip
           historyStep={historyStep}
