@@ -66,5 +66,7 @@
 		<string>storykompassauth</string>
 		<string>kakaolink</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>위치 기반 필름 현상소 정보 및 추천 서비스 제공을 위해 위치정보를 이용합니다.</string>
 </dict>
 </plist>
