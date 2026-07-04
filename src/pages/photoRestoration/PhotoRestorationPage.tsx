@@ -48,10 +48,13 @@ export default function PhotoRestorationPage() {
 
   const imageUrl = useMemo(() => receivedImageUrl ?? "", [receivedImageUrl]);
 
+  // getState()는 스토어를 구독하지 않아 로그인 상태 변화에 반응하지 못하므로 훅으로 구독
+  const user = useAuthStore((s) => s.user);
+
   const { data: creditRes, isLoading: isCreditLoading } = useQuery({
     queryKey: ["credit-balance"],
     queryFn: getCreditBalance,
-    enabled: !!useAuthStore.getState().user,
+    enabled: !!user,
   });
 
   const FREE_CREDIT_CAP = 5;
