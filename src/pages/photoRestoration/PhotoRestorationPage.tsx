@@ -178,8 +178,11 @@ export default function PhotoRestorationPage() {
         navigate(-1);
         break;
       }
-      case "NO_MASK":
       case "NO_CREDIT": {
+        navigate("/mypage/credit?tab=buy");
+        break;
+      }
+      case "NO_MASK": {
         // 닫기만
         break;
       }
