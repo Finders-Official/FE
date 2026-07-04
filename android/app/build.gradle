@@ -14,7 +14,7 @@ android {
         applicationId "com.finders"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
+        versionCode project.hasProperty('versionCode') ? (project.property('versionCode') as Integer) : 2
         versionName "0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
