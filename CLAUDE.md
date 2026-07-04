@@ -14,7 +14,7 @@ React SPA를 **Capacitor로 감싼 하이브리드 앱** (Web + Android + iOS). 
 - 대상 작업 (예외 없음): 컴포넌트·훅·유틸·페이지·스토어의 생성/수정/리팩토링, API 함수(`apis/`)·Query 훅(`hooks/`)·Zustand 스토어(`store/`) 작업, 폼·밸리데이션·라우팅·레이아웃 변경. 사용자가 스킬을 언급하지 않아도 해당되면 자동 로드.
 - 단순 질문 답변·파일 탐색·설명만 하는 경우는 스킬 없이 진행 가능.
 - 스킬 사용 불가 환경이면 사용자에게 알리고 진행 여부 확인.
-- 핵심 원칙 (상세는 스킬 내부): Karpathy 행동 원칙(작게 시작, 요청 범위만, 기존 스타일 유지, 불필요한 추상화 금지) · feature 폴더 → Domain/Application/Infrastructure/Presentation 레이어 매핑 · TDD는 **vitest가 설치된 경우에만** 적용(스킬이 자동 판정 — 현재 이 레포에는 vitest가 없으므로 명시 요청 없이 테스트 파일을 만들지 않는다).
+- 핵심 원칙 (상세는 스킬 내부): Karpathy 행동 원칙(작게 시작, 요청 범위만, 기존 스타일 유지, 불필요한 추상화 금지) · feature 폴더 → Domain/Application/Infrastructure/Presentation 레이어 매핑 · TDD는 **vitest가 설치된 경우에만** 적용(스킬이 자동 판정 — vitest 설치되어 있음. 테스트는 대상 파일 옆에 co-locate).
 
 ### 2. 디자인은 디자이너의 몫 — 만들지도 바꾸지도 않는다
 
@@ -39,6 +39,7 @@ pnpm build            # tsc -b && vite build
 pnpm build:dev        # --mode development 빌드 (QA/dev 서버용)
 pnpm lint             # ESLint (--max-warnings 0)
 pnpm lint:fix / format / format:check
+pnpm test             # vitest watch (test:run = 1회 실행, test:coverage)
 
 pnpm cap:sync         # build 후 dist/를 android+ios 네이티브 프로젝트에 복사
 pnpm cap:sync:android / cap:sync:ios       # 각 :dev 변형은 build:dev 기반
