@@ -42,13 +42,13 @@ PODS:
   - SwiftKeychainWrapper (4.0.1)
 
 DEPENDENCIES:
-  - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios`)"
-  - "Capacitor3KakaoLogin (from `../../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.3.4/node_modules/capacitor3-kakao-login`)"
-  - "CapacitorApp (from `../../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.3.4/node_modules/@capacitor/app`)"
-  - "CapacitorCommunityAppleSignIn (from `../../node_modules/.pnpm/@capacitor-community+apple-sign-in@7.1.0_@capacitor+core@8.3.4/node_modules/@capacitor-community/apple-sign-in`)"
-  - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios`)"
-  - "CapacitorSecureStoragePlugin (from `../../node_modules/.pnpm/capacitor-secure-storage-plugin@0.13.0_@capacitor+core@8.3.4/node_modules/capacitor-secure-storage-plugin`)"
-  - "CapacitorSplashScreen (from `../../node_modules/.pnpm/@capacitor+splash-screen@8.0.1_@capacitor+core@8.3.4/node_modules/@capacitor/splash-screen`)"
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - Capacitor3KakaoLogin (from `../../node_modules/capacitor3-kakao-login`)
+  - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - "CapacitorCommunityAppleSignIn (from `../../node_modules/@capacitor-community/apple-sign-in`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - CapacitorSecureStoragePlugin (from `../../node_modules/capacitor-secure-storage-plugin`)
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
 
 SPEC REPOS:
   trunk:
@@ -63,19 +63,19 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Capacitor:
-    :path: "../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios"
+    :path: "../../node_modules/@capacitor/ios"
   Capacitor3KakaoLogin:
-    :path: "../../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.3.4/node_modules/capacitor3-kakao-login"
+    :path: "../../node_modules/capacitor3-kakao-login"
   CapacitorApp:
-    :path: "../../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.3.4/node_modules/@capacitor/app"
+    :path: "../../node_modules/@capacitor/app"
   CapacitorCommunityAppleSignIn:
-    :path: "../../node_modules/.pnpm/@capacitor-community+apple-sign-in@7.1.0_@capacitor+core@8.3.4/node_modules/@capacitor-community/apple-sign-in"
+    :path: "../../node_modules/@capacitor-community/apple-sign-in"
   CapacitorCordova:
-    :path: "../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios"
+    :path: "../../node_modules/@capacitor/ios"
   CapacitorSecureStoragePlugin:
-    :path: "../../node_modules/.pnpm/capacitor-secure-storage-plugin@0.13.0_@capacitor+core@8.3.4/node_modules/capacitor-secure-storage-plugin"
+    :path: "../../node_modules/capacitor-secure-storage-plugin"
   CapacitorSplashScreen:
-    :path: "../../node_modules/.pnpm/@capacitor+splash-screen@8.0.1_@capacitor+core@8.3.4/node_modules/@capacitor/splash-screen"
+    :path: "../../node_modules/@capacitor/splash-screen"
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
@@ -94,6 +94,6 @@ SPEC CHECKSUMS:
   KakaoSDKUser: 4c9cf1da78710d19d0b2c2dd32d1a44c544cdfa4
   SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
 
-PODFILE CHECKSUM: d9818cac3cf75db0a74d25b03c96371218593d22
+PODFILE CHECKSUM: 96d4bbc8bae1e1584bb874fb0b7a6eb74f45fd05
 
 COCOAPODS: 1.16.2
