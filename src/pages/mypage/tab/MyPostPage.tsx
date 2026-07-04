@@ -60,7 +60,7 @@ export function MyPostPage() {
   const posts: Post[] = useMemo(
     () =>
       previews.map((p) => ({
-        id: Number(p.postId),
+        id: p.postId,
         src: p.image.imageUrl,
         title: p.title,
         likes: p.likeCount,

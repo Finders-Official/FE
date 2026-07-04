@@ -8,7 +8,7 @@ export type InquiryStatus = "PENDING" | "COMPLETED"; // API에는 PENDING으로 
 
 // 개별 문의 아이템 타입
 export interface InquiryItem {
-  id: number;
+  id: string;
   type: InquiryType;
   content: string;
   status: InquiryStatus;

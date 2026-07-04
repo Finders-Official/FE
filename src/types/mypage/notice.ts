@@ -3,7 +3,7 @@ export type TabName = "일반공지" | "이벤트 안내" | "약관/정책";
 export type NoticeType = "GENERAL" | "EVENT" | "POLICY";
 
 export interface NoticeItem {
-  id: number;
+  id: string;
   title: string;
   type: NoticeType;
   createdAt: string;

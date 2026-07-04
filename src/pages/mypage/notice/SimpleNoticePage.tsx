@@ -6,9 +6,9 @@ import { useSearchParams } from "react-router";
 export function SimpleNoticePage() {
   const [searchParams] = useSearchParams();
 
-  // URL에서 ?id=... 값을 읽어와 숫자로 변환 (예: "?id=1" -> 1)
+  // URL에서 ?id=... 값을 읽어옴 (TSID 문자열)
   const idParam = searchParams.get("id");
-  const noticeId = idParam ? Number(idParam) : null;
+  const noticeId = idParam || null;
 
   //API 호출
   const { data: response, isLoading, isError } = useNoticeDetail(noticeId);

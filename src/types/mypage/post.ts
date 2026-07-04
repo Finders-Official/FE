@@ -2,7 +2,7 @@ import type { ApiResponse } from "@/types/common/apiResponse";
 import type { PhotoFeedResponse } from "../photoFeed/postPreview";
 
 export type Post = {
-  id: number;
+  id: string;
   src: string;
   title: string;
   date: string;

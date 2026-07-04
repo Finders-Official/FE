@@ -151,7 +151,7 @@ export function EditInfoPage() {
     if (!me) throw new Error("내 정보가 아직 없어요.");
 
     const memberId = me.member?.memberId;
-    if (typeof memberId !== "number")
+    if (typeof memberId !== "string" || memberId.length === 0)
       throw new Error("memberId를 찾을 수 없어요.");
 
     setIsUploadingProfile(true);
@@ -209,7 +209,15 @@ export function EditInfoPage() {
     try {
       await uploadProfileImage(picked);
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      setError("사진 업로드에 실패했어요. 다시 시도해 주세요.");
+
+      // 업로드 실패 시 낙관적으로 보여준 미리보기를 되돌림
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      setObjectUrl(null);
     }
   };
 
