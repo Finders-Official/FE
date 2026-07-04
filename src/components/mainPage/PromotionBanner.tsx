@@ -1,57 +1,25 @@
-import { useState, useRef, type ChangeEvent } from "react";
-import { useNavigate } from "react-router";
+import { useState, useRef } from "react";
 import {
   promotionBanner1,
   promotionBanner2,
   promotionBanner3,
 } from "@/assets/images";
-import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
-import { useAuthStore } from "@/store/useAuth.store";
 
 interface MainBannerProps {
   id: number;
   alt: string;
   src: string;
-  onClick?: () => void;
 }
 
 export default function PromotionBanner() {
-  const navigate = useNavigate();
-  const { requireAuth } = useRequireAuth();
-  const user = useAuthStore((s) => s.user);
-  const isAuthed = Boolean(user && user.memberId > 0);
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const selectedFile = e.target.files[0];
-    const objectUrl = URL.createObjectURL(selectedFile);
-
-    navigate("/restore/editor", {
-      state: { imageUrl: objectUrl },
-    });
-
-    e.target.value = "";
-  };
-
-  const handleRestoreClick = () => {
-    if (!isAuthed) {
-      requireAuth(() => fileInputRef.current?.click());
-      return;
-    }
-    fileInputRef.current?.click();
-  };
 
   const BANNERS: MainBannerProps[] = [
     {
       id: 1,
       alt: "AI 사진 복원 프로모션 배너",
       src: promotionBanner1,
-      onClick: handleRestoreClick,
     },
     {
       id: 2,
@@ -75,15 +43,6 @@ export default function PromotionBanner() {
 
   return (
     <div className="promotion-banner-wrapper w-full py-2">
-      {/* 사진 복원용 파일 입력 */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="image/*"
-        className="hidden"
-      />
-
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -93,9 +52,6 @@ export default function PromotionBanner() {
           <div
             key={banner.id}
             className="min-w-[calc(100%-3px)] shrink-0 snap-center"
-            onClick={banner.onClick}
-            role={banner.onClick ? "button" : undefined}
-            style={banner.onClick ? { cursor: "pointer" } : undefined}
           >
             <div className="relative aspect-335/250 w-full overflow-hidden rounded-2xl">
               <img
