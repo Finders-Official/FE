@@ -2,32 +2,24 @@ import React from "react";
 import { CapsuleButton } from "@/components/common/CapsuleButton";
 import { RestoraionSparkleIcon } from "@/assets/icon";
 
-import type { DrawPath } from "@/hooks/photoRestoration/useCanvasDrawing";
-
 interface RestorationActionButtonsProps {
   historyStep: number;
-  currentPath: DrawPath | null;
   restoredImageUrl: string | null;
   isGenerating: boolean;
   handleGenerateClick: () => void;
   handleRegenerateClick: () => void;
 }
 
+// 표시 여부(!isHintState)는 RestorationFooter가 결정한다.
 export const RestorationActionButtons: React.FC<
   RestorationActionButtonsProps
 > = ({
   historyStep,
-  currentPath,
   restoredImageUrl,
   isGenerating,
   handleGenerateClick,
   handleRegenerateClick,
 }) => {
-  const showHintTooltip =
-    historyStep === -1 && !currentPath && !restoredImageUrl && !isGenerating;
-
-  if (showHintTooltip) return null;
-
   return (
     <div className="pointer-events-auto flex items-center justify-center">
       {!restoredImageUrl ? (
