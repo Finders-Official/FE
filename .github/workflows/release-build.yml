@@ -3,10 +3,15 @@ name: Release Build (AAB / IPA)
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: release-build-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  # 빌드 번호 = VERSION_CODE_BASE + github.run_number (Android versionCode / iOS CFBundleVersion 공용).
+  VERSION_CODE_BASE: 2
 
 jobs:
   android-build:
@@ -30,6 +35,16 @@ jobs:
         run: pnpm install
 
       - name: Build web assets
+        env:
+          VITE_PUBLIC_API_URL: ${{ secrets.VITE_PUBLIC_API_URL }}
+          VITE_PUBLIC_KAKAO_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_KAKAO_REDIRECT_URI }}
+          VITE_PUBLIC_KAKAO_JS_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_JS_KEY }}
+          VITE_PUBLIC_KAKAO_REST_API_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_REST_API_KEY }}
+          VITE_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+          VITE_PUBLIC_APPLE_CLIENT_ID: ${{ secrets.VITE_PUBLIC_APPLE_CLIENT_ID }}
+          VITE_PUBLIC_APPLE_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_APPLE_REDIRECT_URI }}
+          VITE_PUBLIC_PORTONE_STORE_ID: ${{ secrets.VITE_PUBLIC_PORTONE_STORE_ID }}
+          VITE_PUBLIC_PORTONE_CHANNEL_KEY: ${{ secrets.VITE_PUBLIC_PORTONE_CHANNEL_KEY }}
         run: pnpm build
 
       - name: Sync Capacitor (android)
@@ -57,7 +72,7 @@ jobs:
           ANDROID_KEYSTORE_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
         run: |
           cat <<EOF > android/keystore.properties
-          storeFile=app/release.keystore
+          storeFile=release.keystore
           storePassword=$ANDROID_KEYSTORE_STORE_PASSWORD
           keyAlias=$ANDROID_KEYSTORE_KEY_ALIAS
           keyPassword=$ANDROID_KEYSTORE_KEY_PASSWORD
@@ -67,7 +82,9 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew bundleRelease --no-daemon -PversionCode=${{ github.run_number }}
+          VERSION_CODE=$((VERSION_CODE_BASE + GITHUB_RUN_NUMBER))
+          echo "versionCode: $VERSION_CODE"
+          ./gradlew bundleRelease --no-daemon -PversionCode=$VERSION_CODE
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
@@ -102,6 +119,16 @@ jobs:
         run: pnpm install
 
       - name: Build web assets
+        env:
+          VITE_PUBLIC_API_URL: ${{ secrets.VITE_PUBLIC_API_URL }}
+          VITE_PUBLIC_KAKAO_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_KAKAO_REDIRECT_URI }}
+          VITE_PUBLIC_KAKAO_JS_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_JS_KEY }}
+          VITE_PUBLIC_KAKAO_REST_API_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_REST_API_KEY }}
+          VITE_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+          VITE_PUBLIC_APPLE_CLIENT_ID: ${{ secrets.VITE_PUBLIC_APPLE_CLIENT_ID }}
+          VITE_PUBLIC_APPLE_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_APPLE_REDIRECT_URI }}
+          VITE_PUBLIC_PORTONE_STORE_ID: ${{ secrets.VITE_PUBLIC_PORTONE_STORE_ID }}
+          VITE_PUBLIC_PORTONE_CHANNEL_KEY: ${{ secrets.VITE_PUBLIC_PORTONE_CHANNEL_KEY }}
         run: pnpm build
 
       - name: Sync Capacitor (ios)
@@ -141,6 +168,8 @@ jobs:
       - name: Archive
         working-directory: ios/App
         run: |
+          BUILD_NUMBER=$((VERSION_CODE_BASE + GITHUB_RUN_NUMBER))
+          echo "build number: $BUILD_NUMBER"
           xcodebuild -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
@@ -151,6 +180,7 @@ jobs:
             DEVELOPMENT_TEAM="$TEAM_ID" \
             PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" \
+            CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
             archive
 
       - name: Create ExportOptions.plist
