@@ -44,6 +44,7 @@ function requestLocation() {
   }
 
   const fallbackTimer = setTimeout(() => {
+    requested = false;
     emitChange({
       latitude: null,
       longitude: null,
@@ -66,6 +67,7 @@ function requestLocation() {
     },
     (error) => {
       clearTimeout(fallbackTimer);
+      requested = false;
       emitChange({
         latitude: null,
         longitude: null,
