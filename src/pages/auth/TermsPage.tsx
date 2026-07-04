@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { Header } from "@/components/common";
 import { TermsAccordionRow } from "@/components/auth";
 import { AGREEMENT_TERMS } from "@/constants/auth/agreementTerms";
@@ -12,7 +12,22 @@ const createExpandedMap = (): ExpandMap =>
 
 export function TermsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [expanded, setExpanded] = useState<ExpandMap>(createExpandedMap);
+
+  // 해시(#privacy 등)로 진입 시 해당 약관 섹션으로 스크롤
+  useEffect(() => {
+    const id = location.hash.replace("#", "");
+    if (!id) return;
+
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // 렌더/레이아웃 완료 후 스크롤
+    requestAnimationFrame(() =>
+      el.scrollIntoView({ behavior: "smooth", block: "start" }),
+    );
+  }, [location.hash]);
 
   const toggle = (id: string) =>
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
