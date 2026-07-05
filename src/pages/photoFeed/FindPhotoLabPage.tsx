@@ -252,8 +252,13 @@ export default function FindPhotoLabPage() {
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
-      <Header title="현상소 입력하기" showBack onBack={handleGoBack} />
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
+      <Header
+        title="현상소 입력하기"
+        showBack
+        onBack={handleGoBack}
+        className="sticky top-0 z-50 bg-neutral-900"
+      />
 
       {/* 검색모드일 때: 화면 전체 클릭을 감지하는 투명 오버레이 */}
       {labReviewStep === "search" && (

@@ -343,7 +343,12 @@ export default function PhotoFeedSearchPage() {
     showBack: true,
     onBack: () => {
       if (mode === "recent" || mode === "related") navigate(-1);
-      else if (mode === "result") resetToRecent();
+      else if (mode === "result") {
+        // 검색 결과 → 검색어 입력 중(연관 검색어) 화면으로.
+        // inputText(검색어)는 유지하고, 제출된 검색어만 비워 related 모드로 전환한다.
+        setSearchText("");
+        setIsSearching(true);
+      }
     },
     onSearch: handleSearch,
     onFocus: () => setIsSearching(true),
@@ -354,7 +359,7 @@ export default function PhotoFeedSearchPage() {
   return (
     <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
-      <div className="mt-3 mb-5">
+      <div className="sticky top-0 z-50 bg-neutral-900 pt-3 pb-5">
         <SearchBar {...searchBarProps} />
       </div>
 

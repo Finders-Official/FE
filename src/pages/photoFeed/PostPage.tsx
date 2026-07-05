@@ -7,7 +7,7 @@ import {
 } from "@/assets/icon";
 import { Header, ToastItem } from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import { usePostDetail, useUnlikePost, useLikePost } from "@/hooks/photoFeed";
 import Profile from "@/components/photoFeed/postDetail/Profile";
@@ -54,6 +54,10 @@ export default function PostPage() {
   // 게시글 등록 직후인지 여부
   const isNewPost = useNewPostState((s) => s.isNewPost);
 
+  // 이 뷰가 "등록 직후" 진입인지 최초 마운트 시점에 고정한다.
+  // (토스트 타이머로 isNewPost가 false가 되어도 뒤로가기는 피드로 가야 하므로)
+  const cameFromNewPostRef = useRef(isNewPost);
+
   const [toastVisible, setToastVisible] = useState(isNewPost);
   const [mounted, setMounted] = useState(isNewPost);
 
@@ -79,7 +83,7 @@ export default function PostPage() {
   }, [isNewPost]);
 
   const handleGoBack = () => {
-    if (isNewPost) {
+    if (cameFromNewPostRef.current) {
       setIsNewPost(false);
       return navigate("/photoFeed");
     }
@@ -93,7 +97,12 @@ export default function PostPage() {
       return (
         <>
           <div className="flex animate-pulse flex-col gap-[0.625rem] pb-10">
-            <Header title="" showBack onBack={handleGoBack} />
+            <Header
+              title=""
+              showBack
+              onBack={handleGoBack}
+              className="sticky top-0 z-50 bg-neutral-900"
+            />
             <ProfileSkeleton />
             <div className="h-90 w-full bg-neutral-700"></div>
             <p className="h-4 w-70 rounded-xl bg-neutral-800"></p>
@@ -105,7 +114,12 @@ export default function PostPage() {
     if (isPostError)
       return (
         <div className="flex h-full flex-col">
-          <Header title="" showBack onBack={handleGoBack} />
+          <Header
+            title=""
+            showBack
+            onBack={handleGoBack}
+            className="sticky top-0 z-50 bg-neutral-900"
+          />
           <div className="flex flex-1 items-center justify-center">
             <p className="text-red-400">불러오기에 실패했어요.</p>
           </div>
@@ -114,7 +128,12 @@ export default function PostPage() {
     if (!postDetail) return <EmptyView content="게시글 정보가 없습니다." />;
     return (
       <>
-        <Header title="" showBack onBack={handleGoBack} />
+        <Header
+          title=""
+          showBack
+          onBack={handleGoBack}
+          className="sticky top-0 z-50 bg-neutral-900"
+        />
         <section className="flex flex-col gap-[0.625rem] pb-10">
           {/** 상단 */}
           <div className="flex flex-col gap-4">
