@@ -1,11 +1,10 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import type {
-  PhotoLabItem,
+  SimplePhotoLabItem,
   PhotoLabListParams,
   PhotoLabFavoriteStatus,
   PhotoLabDetail,
-  PhotoLabNoticeRolling,
   PagedApiResponse,
   RegionFilterData,
 } from "@/types/photoLab";
@@ -15,17 +14,15 @@ import type { PopularLab, LabPreview } from "@/types/photoLabSearch";
 function serializeListParams(params: PhotoLabListParams) {
   return {
     ...params,
-    tagIds: params.tagIds?.join(","),
     regionIds: params.regionIds?.join(","),
-    time: params.time?.join(","),
   };
 }
 
 // 현상소 목록 조회
 export async function getPhotoLabList(
   params: PhotoLabListParams,
-): Promise<PagedApiResponse<PhotoLabItem[]>> {
-  const res = await axiosInstance.get<PagedApiResponse<PhotoLabItem[]>>(
+): Promise<PagedApiResponse<SimplePhotoLabItem[]>> {
+  const res = await axiosInstance.get<PagedApiResponse<SimplePhotoLabItem[]>>(
     "/photo-labs",
     { params: serializeListParams(params) },
   );
@@ -41,7 +38,7 @@ export async function getPhotoLabList(
 
 // 현상소 즐겨찾기 추가
 export async function addFavorite(
-  photoLabId: number,
+  photoLabId: string,
 ): Promise<ApiResponse<PhotoLabFavoriteStatus>> {
   const res = await axiosInstance.post<ApiResponse<PhotoLabFavoriteStatus>>(
     `/photo-labs/${photoLabId}/favorites`,
@@ -58,7 +55,7 @@ export async function addFavorite(
 
 // 현상소 즐겨찾기 삭제
 export async function removeFavorite(
-  photoLabId: number,
+  photoLabId: string,
 ): Promise<ApiResponse<PhotoLabFavoriteStatus>> {
   const res = await axiosInstance.delete<ApiResponse<PhotoLabFavoriteStatus>>(
     `/photo-labs/${photoLabId}/favorites`,
@@ -145,30 +142,9 @@ export async function getSearchPreview(
   return body;
 }
 
-// 현상소 공지 조회 (롤링)
-export async function getPhotoLabNotices(params?: {
-  page?: number;
-  size?: number;
-  lat?: number;
-  lng?: number;
-}): Promise<ApiResponse<PhotoLabNoticeRolling[]>> {
-  const res = await axiosInstance.get<ApiResponse<PhotoLabNoticeRolling[]>>(
-    "/photo-labs/notices",
-    { params },
-  );
-
-  const body = res.data;
-
-  if (!body.success) {
-    throw new Error(body.message);
-  }
-
-  return body;
-}
-
 // 현상소 상세 조회
 export async function getPhotoLabDetail(
-  photoLabId: number,
+  photoLabId: string,
   params?: { lat?: number; lng?: number },
 ): Promise<ApiResponse<PhotoLabDetail>> {
   const res = await axiosInstance.get<ApiResponse<PhotoLabDetail>>(

@@ -72,8 +72,8 @@ export default function RestorationSavedOverlay({
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-neutral-900">
-      <div className="relative z-[10000]">
+    <div className="fixed inset-0 z-40 flex flex-col bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+      <div className="relative z-10000">
         <Header
           title="저장 완료"
           showBack

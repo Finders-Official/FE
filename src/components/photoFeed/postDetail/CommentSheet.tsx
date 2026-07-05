@@ -8,7 +8,7 @@ import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 type CommentSheetProps = {
   open: boolean;
   onClose: () => void;
-  postId: number;
+  postId: string;
 };
 
 export default function CommentSheet({

@@ -10,7 +10,6 @@ import axios from "axios";
 
 type RefreshResponse = {
   accessToken: string;
-  refreshToken?: string;
   accessTokenExpiresIn?: number;
 };
 
@@ -44,13 +43,15 @@ type AuthMetaConfig = InternalAxiosRequestConfig & {
 };
 
 async function requestRefreshToken(baseURL: string) {
-  const refreshToken = tokenStorage.getRefreshToken();
-  if (!refreshToken) throw new Error("No refresh token");
-
+  // refreshToken은 httpOnly 쿠키로 전송, 바디 없이 withCredentials로 요청
   const res = await axios.post<ApiResponse<RefreshResponse>>(
     `${baseURL}/auth/reissue`,
-    { refreshToken },
-    { headers: { "Content-Type": "application/json" }, timeout: 15000 },
+    null,
+    {
+      headers: { "Content-Type": "application/json" },
+      timeout: 15000,
+      withCredentials: true,
+    },
   );
 
   const body = res.data;
@@ -67,14 +68,13 @@ async function requestRefreshToken(baseURL: string) {
 
   return {
     accessToken: data.accessToken,
-    refreshToken: data.refreshToken,
   };
 }
 
 export function setupInterceptors(instance: AxiosInstance) {
-  // Request: accessToken 우선, 없으면 signupToken 첨부
+  // Request: accessToken 우선, 없으면 signupToken 첨부 (비동기로 변경)
   instance.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
+    async (config: InternalAxiosRequestConfig) => {
       const cfg = config as AuthMetaConfig;
 
       if (shouldSkipAuth(cfg)) {
@@ -82,8 +82,9 @@ export function setupInterceptors(instance: AxiosInstance) {
         return cfg;
       }
 
-      const accessToken = tokenStorage.getAccessToken();
-      const signupToken = tokenStorage.getSignupToken();
+      // 비동기 스토리지에서 토큰을 꺼내오므로 await
+      const accessToken = await tokenStorage.getAccessToken();
+      const signupToken = await tokenStorage.getSignupToken();
 
       if (accessToken) {
         cfg.headers = cfg.headers ?? {};
@@ -116,23 +117,26 @@ export function setupInterceptors(instance: AxiosInstance) {
       // 401 아닌 경우 그냥 패스
       if (status !== 401) return Promise.reject(error);
 
+      // API 주소에 'logout'이 포함되어 있다면 무시
+      if (originalConfig.url?.includes("logout")) {
+        return Promise.reject(error);
+      }
+
       // refresh/reissue 요청이 401이면 더 이상 재시도하지 말고 토큰 정리
       if (shouldSkipAuth(originalConfig)) {
-        tokenStorage.clear();
+        await tokenStorage.clear(); // await 추가
         return Promise.reject(error);
       }
 
       // signupToken으로 붙였던 요청은 refresh 대상이 아님
-      // (온보딩 토큰 만료/무효면 서버가 401 줄 수 있음 -> 그대로 실패 처리 or signupToken만 제거)
       if (originalConfig._authAttached === "signup") {
-        tokenStorage.setSignupToken(null); // 토큰스토리지에 이 메서드 없으면 clear에서 제거만 하거나 직접 remove
+        await tokenStorage.setSignupToken(null); // await 추가
         return Promise.reject(error);
       }
 
-      // accessToken을 붙였던 요청만 refresh 시도
       // 무한 루프 방지
       if (originalConfig._retry) {
-        tokenStorage.clear();
+        await tokenStorage.clear(); // await 추가
         return Promise.reject(error);
       }
       originalConfig._retry = true;
@@ -162,11 +166,13 @@ export function setupInterceptors(instance: AxiosInstance) {
       try {
         const data = await requestRefreshToken(baseURL);
 
-        // 토큰 저장 (signupToken은 그대로 유지)
-        tokenStorage.setTokens({
+        // 이전 signupToken도 비동기로 꺼내오기
+        const currentSignupToken = await tokenStorage.getSignupToken();
+
+        // 토큰 저장 (await 추가)
+        await tokenStorage.setTokens({
           accessToken: data.accessToken,
-          refreshToken: data.refreshToken ?? tokenStorage.getRefreshToken(),
-          signupToken: tokenStorage.getSignupToken(),
+          signupToken: currentSignupToken,
         });
 
         // 대기 중인 요청들 처리
@@ -180,11 +186,11 @@ export function setupInterceptors(instance: AxiosInstance) {
         return instance(originalConfig);
       } catch (refreshErr) {
         processQueue(refreshErr, null);
-        tokenStorage.clear();
+        await tokenStorage.clear(); // await 추가
         return Promise.reject(refreshErr);
       } finally {
         isRefreshing = false;
       }
-    },
+    }, //
   );
 }

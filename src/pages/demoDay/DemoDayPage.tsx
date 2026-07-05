@@ -46,7 +46,7 @@ export default function DemoDayPage() {
       const image = DEMO_IMAGES[index];
       if (!image) return;
 
-      const isAuthed = Boolean(user && user.memberId > 0);
+      const isAuthed = Boolean(user?.memberId);
 
       if (isAuthed) {
         navigate("/restore/editor", {

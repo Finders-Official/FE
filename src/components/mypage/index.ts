@@ -7,3 +7,16 @@ export { NoticeCard } from "./NoticeCard";
 export { PostCardSkeleton } from "./PostCardSkeleton";
 export { PhotoLabCardSkeleton } from "./PhotoLabCardSkeleton";
 export { EmptyOrderState } from "./EmptyOrderState";
+
+//notice 폴더
+export { NoticeListItem } from "./notice/NoticeListItem";
+export { TabNavigation } from "./notice/TabNavigaton";
+
+//inquiry 폴더
+export { InquiryNoticeCard } from "./inquiry/InquiryNoticeCard";
+export { InquiryDropBox } from "./inquiry/InquiryDropBox";
+export { InquiryListItem } from "./inquiry/InquiryListItem";
+
+//device 폴더
+export { DeviceItem } from "./device/DeviceItem";
+export { SpecButton } from "./device/SpecButton";

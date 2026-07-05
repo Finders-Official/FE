@@ -11,6 +11,7 @@ import {
   KakaoCallbackPage,
   LoginPage,
   OnBoardingPage,
+  TermsAgreementPage,
   TermsPage,
 } from "@/pages/auth";
 
@@ -45,18 +46,25 @@ import ReviewPhotoLabPage from "@/pages/photoFeed/ReviewPhotoLabPage";
 import PhotoLabDetailPage from "@/pages/photoLab/PhotoLabDetailPage";
 import PhotoLabPage from "@/pages/photoLab/PhotoLabPage";
 import PhotoLabSearchPage from "@/pages/photoLab/PhotoLabSearchPage";
-import ReservationCompletePage from "@/pages/photoLab/ReservationCompletePage";
-import ReservationPage from "@/pages/photoLab/ReservationPage";
 
 // 마이페이지
 import {
+  DeviceRegisterPage,
+  CreditPage,
   EditInfoPage,
+  EventNoticePage,
+  InquiryPage,
   LikedPhotoLabPage,
   LikedPostPage,
   MyPage,
   MyPostPage,
   NickNameEditPage,
+  NoticePage,
+  PaymentPage,
+  PaymentResultPage,
   PhoneEditPage,
+  PolicyNoticePage,
+  SimpleNoticePage,
   SocialPage,
   WithDrawPage,
 } from "@/pages/mypage";
@@ -67,6 +75,7 @@ type RouteHandle =
       title?: string;
       isTab?: boolean;
       showBack?: boolean;
+      hideHeader?: boolean;
     }
   | undefined;
 
@@ -79,6 +88,7 @@ const h = (handle: RouteHandle) => handle;
 const authRoutes = [
   { path: "login", Component: LoginPage },
   { path: "kakao/callback", Component: KakaoCallbackPage },
+  { path: "agreement", Component: TermsAgreementPage },
   { path: "onboarding", Component: OnBoardingPage },
   { path: "terms", Component: TermsPage },
 ];
@@ -101,11 +111,6 @@ const photoFeedStandaloneRoutes = [
 const photoLabStandaloneRoutes = [
   { path: "photolab/search", Component: PhotoLabSearchPage },
   { path: "photolab/:photoLabId", Component: PhotoLabDetailPage },
-  { path: "photolab/:photoLabId/reservation", Component: ReservationPage },
-  {
-    path: "photolab/:photoLabId/reservation/complete",
-    Component: ReservationCompletePage,
-  },
 ];
 
 const photoManageStandaloneRoutes = [
@@ -207,6 +212,51 @@ const mypageRoutes = [
     path: "edit-info/withdraw",
     Component: WithDrawPage,
     handle: h({ title: "회원 탈퇴" }),
+  },
+  {
+    path: "notice",
+    Component: NoticePage,
+    handle: h({ title: "공지사항" }),
+  },
+  {
+    path: "notice/general",
+    Component: SimpleNoticePage,
+    handle: h({ title: "일반공지" }),
+  },
+  {
+    path: "notice/event",
+    Component: EventNoticePage,
+    handle: h({ title: "이벤트 안내" }),
+  },
+  {
+    path: "notice/policy",
+    Component: PolicyNoticePage,
+    handle: h({ title: "약관/정책" }),
+  },
+  {
+    path: "inquiry",
+    Component: InquiryPage,
+    handle: h({ title: "1:1 문의게시판" }),
+  },
+  {
+    path: "device",
+    Component: DeviceRegisterPage,
+    handle: h({ title: "내 장비 등록하기" }),
+  },
+  {
+    path: "credit",
+    Component: CreditPage,
+    handle: h({ title: "크레딧 충전" }),
+  },
+  {
+    path: "credit/payment",
+    Component: PaymentPage,
+    handle: h({ title: "크레딧 충전" }),
+  },
+  {
+    path: "credit/payment/result",
+    Component: PaymentResultPage,
+    handle: h({ hideHeader: true }),
   },
 ];
 

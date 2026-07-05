@@ -25,13 +25,12 @@ export default function PostPage() {
 
   // 게시글 Id 가져오기
   const { postId } = useParams<{ postId: string }>();
-  const numericPostId = Number(postId);
 
   useEffect(() => {
-    if (!postId || Number.isNaN(numericPostId)) {
+    if (!postId) {
       navigate("/photoFeed", { replace: true });
     }
-  }, [postId, numericPostId, navigate]);
+  }, [postId, navigate]);
 
   useEffect(() => {
     if (location.state?.openCommentSheet) {
@@ -44,7 +43,7 @@ export default function PostPage() {
     data: postDetail,
     isPending: isPostPending,
     isError: isPostError,
-  } = usePostDetail(numericPostId);
+  } = usePostDetail(postId);
 
   // 게시글 좋아요
   const { mutate: unlikePost, isPending: isUnliking } = useUnlikePost();
@@ -105,8 +104,11 @@ export default function PostPage() {
     }
     if (isPostError)
       return (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
+        <div className="flex h-full flex-col">
+          <Header title="" showBack onBack={handleGoBack} />
+          <div className="flex flex-1 items-center justify-center">
+            <p className="text-red-400">불러오기에 실패했어요.</p>
+          </div>
         </div>
       );
     if (!postDetail) return <EmptyView content="게시글 정보가 없습니다." />;

@@ -1,15 +1,13 @@
 import type { ApiResponse } from "@/types/common/apiResponse";
 
 export interface FavoritePhotoLabDto {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   imageUrls: string[];
-  tags: string[];
   address: string;
-  distance: string;
+  distanceKm: number | null;
   isFavorite: boolean;
-  totalWorkCount: number;
-  avgWorkTime: number;
+  favoriteCount: number;
 }
 
 export interface PageInfoDto {
@@ -27,13 +25,11 @@ export type GetFavoritePhotoLabsResponse =
   ApiResponse<FavoritePhotoLabsDataDto>;
 
 export type PhotoLab = {
-  id: number; // photoLabId
+  id: string; // photoLabId
   name: string;
   imageUrls: string[];
-  tags: string[];
   address: string;
-  distanceText: string; // "1.5km"
+  distanceKm: number | null; // 위치 동의 없으면 null
   isFavorite: boolean;
-  totalWorkCount: number;
-  estimatedMinutes: number; // avgWorkTime
+  favoriteCount: number; // 총 좋아요 개수
 };

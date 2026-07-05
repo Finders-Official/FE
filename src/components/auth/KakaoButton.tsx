@@ -10,10 +10,10 @@ export const KakaoButton = ({ onClick }: KakaoButtonProps) => {
       className="inline-flex h-[3.125rem] w-full items-center justify-center gap-2 rounded-2xl bg-[#FEE500] font-semibold text-neutral-900 shadow-sm active:scale-[0.99]"
       onClick={onClick}
     >
-      <KakaoIcon className="h-6 w-6" />
-      <span>카카오 로그인</span>
+      <KakaoIcon className="h-5.5 w-5.5" />
+      <span className="leading-[126%] tracking-[-0.01875rem]">
+        카카오로 계속하기
+      </span>
     </button>
   );
 };
-
-//router 설정 추가

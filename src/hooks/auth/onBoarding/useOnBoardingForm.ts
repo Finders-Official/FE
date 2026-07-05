@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { useDebouncedValue } from "@/hooks/common";
+import type { TermsType } from "@/types/auth";
+import { useDebouncedValue, useDebouncedTrue } from "@/hooks/common";
 import {
   useConfirmPhoneVerification,
   useNicknameCheck,
@@ -9,12 +10,12 @@ import {
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useSocialSignup } from "./useSignUp";
 import { useAuthStore } from "@/store/useAuth.store";
-import { useDebouncedTrue } from "@/hooks/common/useDebounceValue";
 
 type PhonePurpose = "SIGNUP" | "MY_PAGE";
 
 type Options = {
   phonePurpose?: PhonePurpose;
+  agreedTermTypes?: TermsType[];
 };
 
 function isValidNickname(n: string) {
@@ -25,6 +26,7 @@ export function useOnBoardingForm(options?: Options) {
   const navigate = useNavigate();
 
   const phonePurpose: PhonePurpose = options?.phonePurpose ?? "SIGNUP";
+  const agreedTermTypes = options?.agreedTermTypes ?? [];
 
   const [isSending, setIsSending] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
@@ -199,7 +201,6 @@ export function useOnBoardingForm(options?: Options) {
     onSuccess: (res) => {
       tokenStorage.setTokens({
         accessToken: res.data.accessToken,
-        refreshToken: res.data.refreshToken,
         signupToken: null,
       });
       setUser({
@@ -213,6 +214,22 @@ export function useOnBoardingForm(options?: Options) {
     onError: (e) => console.error(e.message),
   });
 
+  const clearPhoneMessages = () => {
+    setPhoneVerifyMessage("");
+    setPhoneVerifyError("");
+  };
+
+  // 전화번호 변경 시 인증 진행 상태 전체 초기화
+  const resetPhoneVerification = () => {
+    setIsSending(false);
+    setRemainSec(0);
+    setVerifiedNumber("");
+    setIsVerified(false);
+    setRequestId(null);
+    setVerifiedPhoneToken(null);
+    clearPhoneMessages();
+  };
+
   const handleSend = () => requestCode({ phone, purpose: phonePurpose });
 
   const handleVerify = () => {
@@ -220,8 +237,7 @@ export function useOnBoardingForm(options?: Options) {
     if (verifiedNumber.length !== 6) return;
 
     //확인 누를 때 이전 문구 초기화
-    setPhoneVerifyMessage("");
-    setPhoneVerifyError("");
+    clearPhoneMessages();
 
     confirmCode({ requestId, code: verifiedNumber });
   };
@@ -229,17 +245,7 @@ export function useOnBoardingForm(options?: Options) {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
     setPhone(digits);
-
-    setIsSending(false);
-    setRemainSec(0);
-    setVerifiedNumber("");
-    setIsVerified(false);
-    setRequestId(null);
-    setVerifiedPhoneToken(null);
-
-    //문구 초기화
-    setPhoneVerifyMessage("");
-    setPhoneVerifyError("");
+    resetPhoneVerification();
   };
 
   const handleVerifiedNumberChange = (
@@ -247,26 +253,13 @@ export function useOnBoardingForm(options?: Options) {
   ) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
     setVerifiedNumber(digits);
-
-    //문구 초기화
-    setPhoneVerifyMessage("");
-    setPhoneVerifyError("");
+    clearPhoneMessages();
   };
 
   const initPhone = (rawPhone: string) => {
     const digits = rawPhone.replace(/\D/g, "").slice(0, 11);
     setPhone(digits);
-
-    setIsSending(false);
-    setRemainSec(0);
-    setVerifiedNumber("");
-    setIsVerified(false);
-    setRequestId(null);
-    setVerifiedPhoneToken(null);
-
-    //문구 초기화
-    setPhoneVerifyMessage("");
-    setPhoneVerifyError("");
+    resetPhoneVerification();
   };
 
   const handleSubmit = () => {
@@ -277,6 +270,7 @@ export function useOnBoardingForm(options?: Options) {
       nickname: nicknameTrimmed,
       phone,
       verifiedPhoneToken,
+      agreedTermTypes,
     });
   };
 

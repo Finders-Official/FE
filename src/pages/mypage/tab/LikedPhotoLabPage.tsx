@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import {
   EmptyOrderState,
   PhotoLabCard,
   PhotoLabCardSkeleton,
 } from "@/components/mypage";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useGeolocation } from "@/hooks/common/useGeolocation";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { useLikedPhotoLabsInfinite } from "@/hooks/my";
 import { useFavoriteToggle } from "@/hooks/photoLab";
@@ -13,6 +14,11 @@ const SKELETON_COUNT = 5;
 
 export function LikedPhotoLabPage() {
   const {
+    latitude,
+    longitude,
+    isLoading: isLocationLoading,
+  } = useGeolocation();
+  const {
     data,
     isLoading,
     isError,
@@ -20,37 +26,34 @@ export function LikedPhotoLabPage() {
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useLikedPhotoLabsInfinite(10);
+  } = useLikedPhotoLabsInfinite(
+    10,
+    latitude ?? undefined,
+    longitude ?? undefined,
+    !isLocationLoading,
+  );
+
+  // 위치 확정 전에는 쿼리가 disabled(데이터 없음) → 빈 상태 대신 스켈레톤 유지
+  const isInitialLoading = isLoading || isLocationLoading;
 
   const labsDto = useMemo(
     () => data?.pages.flatMap((p) => p.data.photoLabs) ?? [],
     [data],
   );
-  const [favoriteOverrideById, setFavoriteOverrideById] = useState<
-    Record<number, boolean>
-  >({});
 
   const { mutate: toggleFavorite } = useFavoriteToggle();
 
   const labs: PhotoLab[] = useMemo(() => {
-    return labsDto.map((l) => {
-      const override = favoriteOverrideById[l.photoLabId];
-      const isFavorite =
-        typeof override === "boolean" ? override : l.isFavorite;
-
-      return {
-        id: l.photoLabId,
-        name: l.name,
-        imageUrls: l.imageUrls,
-        tags: l.tags,
-        address: l.address,
-        distanceText: l.distance,
-        isFavorite,
-        totalWorkCount: l.totalWorkCount,
-        estimatedMinutes: l.avgWorkTime,
-      };
-    });
-  }, [labsDto, favoriteOverrideById]);
+    return labsDto.map((l) => ({
+      id: l.photoLabId,
+      name: l.name,
+      imageUrls: l.imageUrls,
+      address: l.address,
+      distanceKm: l.distanceKm,
+      isFavorite: l.isFavorite,
+      favoriteCount: l.favoriteCount,
+    }));
+  }, [labsDto]);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -72,26 +75,11 @@ export function LikedPhotoLabPage() {
   const shouldShowSentinel =
     !isLoading && !isError && hasNextPage && labs.length > 0;
 
-  const isEmpty = !isLoading && !isFetchingNextPage && labs.length === 0;
+  const isEmpty = !isInitialLoading && !isFetchingNextPage && labs.length === 0;
 
   const handleFavoriteToggle = useCallback(
-    (photoLabId: number, prevIsFavoriteFromCard: boolean) => {
-      setFavoriteOverrideById((prev) => ({
-        ...prev,
-        [photoLabId]: !prevIsFavoriteFromCard,
-      }));
-
-      toggleFavorite(
-        { photoLabId, isFavorite: prevIsFavoriteFromCard },
-        {
-          onError: () => {
-            setFavoriteOverrideById((prev) => ({
-              ...prev,
-              [photoLabId]: prevIsFavoriteFromCard,
-            }));
-          },
-        },
-      );
+    (photoLabId: string, prevIsFavoriteFromCard: boolean) => {
+      toggleFavorite({ photoLabId, isFavorite: prevIsFavoriteFromCard });
     },
     [toggleFavorite],
   );
@@ -113,14 +101,14 @@ export function LikedPhotoLabPage() {
 
   return (
     //이 페이지 자체가 스크롤을 만들지 않게 루트에서 차단
-    <div className="flex min-h-0 flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       <main
         className={[
-          "flex min-h-0 flex-1 flex-col px-4",
+          "flex min-h-0 flex-1 flex-col gap-1",
           isEmpty ? "overflow-hidden" : "scrollbar-hide overflow-y-auto",
         ].join(" ")}
       >
-        {isLoading ? (
+        {isInitialLoading ? (
           <div className="flex flex-col">
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <PhotoLabCardSkeleton key={`post-skeleton-${i}`} />

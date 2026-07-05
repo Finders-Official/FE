@@ -1,0 +1,215 @@
+import { useEffect, useMemo, useState } from "react";
+import { Navigate, useNavigate } from "react-router";
+import { CTA_Button } from "@/components/common";
+import {
+  AndroidCreditPayment,
+  AppleCreditPayment,
+  CardSelectBottomSheet,
+  CardSelectButton,
+  EasyPayRadioList,
+  PaymentMethodTabs,
+  PaymentOrdererSection,
+  PaymentProductSection,
+  PaymentRefundNotice,
+  PaymentSection,
+  PaymentSummary,
+  PaymentTermsAgreement,
+  PaymentTermsOverlay,
+} from "@/components/payment";
+import {
+  CREDIT_CARD_OPTIONS,
+  EASY_PAY_OPTIONS,
+  PAYMENT_ALREADY_PROCESSED_CODE,
+} from "@/constants/payment/payment.constant";
+import { useMe } from "@/hooks/member";
+import { usePurchaseCreditPortone } from "@/hooks/payment";
+import { usePaymentOrderStore } from "@/store/usePaymentOrder.store";
+import { isAndroidApp, isIosApp } from "@/utils/platform";
+import type {
+  EasyPayProvider,
+  PaymentMethod,
+  PaymentResultFail,
+  PaymentResultSuccess,
+  PaymentTermsSection,
+} from "@/types/payment";
+
+export function PaymentPage() {
+  const navigate = useNavigate();
+  const [product] = useState(() => usePaymentOrderStore.getState().product);
+  const clear = usePaymentOrderStore((s) => s.clear);
+
+  const [method, setMethod] = useState<PaymentMethod>("CARD");
+  const [cardId, setCardId] = useState<string | null>(null);
+  const [easyPayId, setEasyPayId] = useState<EasyPayProvider | null>(null);
+  const [isCardSheetOpen, setIsCardSheetOpen] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [viewingTermId, setViewingTermId] = useState<
+    PaymentTermsSection["id"] | null
+  >(null);
+
+  const { data: me } = useMe();
+  const { purchaseCredit, isPurchasing } = usePurchaseCreditPortone();
+
+  useEffect(() => {
+    if (product) clear();
+  }, [product, clear]);
+
+  const member = me?.member;
+  const ordererEmail =
+    me?.roleData.user?.socialAccounts.find((account) => account.email)?.email ??
+    undefined;
+
+  const selectedCardName = useMemo(
+    () => CREDIT_CARD_OPTIONS.find((c) => c.id === cardId)?.name ?? null,
+    [cardId],
+  );
+
+  const isMethodReady =
+    method === "CARD"
+      ? cardId !== null
+      : method === "EASY_PAY"
+        ? easyPayId !== null
+        : true;
+  // 이니시스 PC 결제는 주문자 이름·연락처 필수
+  const hasOrderer = Boolean(member?.name && member?.phone);
+  const isPayable = agreed && isMethodReady && hasOrderer;
+
+  if (!product) {
+    return <Navigate to="/mypage/credit" replace />;
+  }
+
+  // Android는 Play 인앱결제로 (카드/간편결제/PG 약관 UI는 웹 전용)
+  if (isAndroidApp()) {
+    return <AndroidCreditPayment product={product} />;
+  }
+
+  // iOS는 App Store 인앱결제로
+  if (isIosApp()) {
+    return <AppleCreditPayment product={product} />;
+  }
+
+  const handleSubmit = async () => {
+    if (!isPayable || isPurchasing || !member) return;
+
+    let methodLabel: string;
+    if (method === "CARD") {
+      methodLabel = `카드 결제(${selectedCardName ?? ""}카드)`;
+    } else if (method === "EASY_PAY") {
+      const easyPayName =
+        EASY_PAY_OPTIONS.find((o) => o.id === easyPayId)?.name ?? "";
+      methodLabel = `간편결제(${easyPayName})`;
+    } else {
+      methodLabel = "휴대폰 결제";
+    }
+
+    const outcome = await purchaseCredit({
+      product,
+      method,
+      cardId,
+      easyPayId,
+      methodLabel,
+      customer: {
+        fullName: member.name,
+        phoneNumber: member.phone,
+        email: ordererEmail,
+      },
+    });
+
+    if (outcome.status === "canceled") return;
+
+    // 이미 처리된 결제, 성공/실패 단정 불가, 충전 내역에서 확인하도록 이동
+    if (
+      outcome.status === "fail" &&
+      outcome.errorCode === PAYMENT_ALREADY_PROCESSED_CODE
+    ) {
+      navigate("/mypage/credit?tab=history", { replace: true });
+      return;
+    }
+
+    if (outcome.status === "success") {
+      const state: PaymentResultSuccess = {
+        status: "success",
+        product,
+        methodLabel,
+      };
+      navigate("/mypage/credit/payment/result", { state, replace: true });
+      return;
+    }
+
+    const state: PaymentResultFail = {
+      status: "fail",
+      errorCode: outcome.status === "fail" ? outcome.errorCode : undefined,
+    };
+    navigate("/mypage/credit/payment/result", { state, replace: true });
+  };
+
+  return (
+    <div className="flex flex-col pb-[6.5rem]">
+      <div className="-mx-4">
+        <PaymentOrdererSection
+          orderer={{
+            name: member?.name ?? "",
+            phoneNumber: member?.phone ?? "",
+          }}
+        />
+        <PaymentProductSection product={product} />
+
+        <PaymentSection title="결제 수단">
+          <div
+            className={`flex flex-col ${method === "EASY_PAY" ? "gap-4" : "gap-2"}`}
+          >
+            <PaymentMethodTabs value={method} onChange={setMethod} />
+            {method === "CARD" && (
+              <CardSelectButton
+                selectedName={selectedCardName}
+                onClick={() => setIsCardSheetOpen(true)}
+              />
+            )}
+            {method === "EASY_PAY" && (
+              <EasyPayRadioList value={easyPayId} onChange={setEasyPayId} />
+            )}
+          </div>
+        </PaymentSection>
+
+        <PaymentSummary
+          productPrice={product.price}
+          totalPrice={product.price}
+        />
+
+        <section className="flex flex-col gap-3.5 px-4 py-5">
+          <PaymentRefundNotice />
+          <PaymentTermsAgreement
+            agreed={agreed}
+            onAgreedChange={setAgreed}
+            onViewTerm={(termId) =>
+              setViewingTermId(termId === "EPAYMENT" ? "epayment" : "privacy")
+            }
+          />
+        </section>
+      </div>
+
+      <CardSelectBottomSheet
+        open={isCardSheetOpen}
+        onClose={() => setIsCardSheetOpen(false)}
+        selectedCardId={cardId}
+        onSelect={setCardId}
+      />
+
+      <PaymentTermsOverlay
+        open={viewingTermId !== null}
+        initialSectionId={viewingTermId}
+        onClose={() => setViewingTermId(null)}
+      />
+
+      <footer className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-120 border-t border-neutral-700 bg-neutral-900 px-4 py-5">
+        <CTA_Button
+          text="결제하기"
+          size="xlarge"
+          color={isPayable && !isPurchasing ? "orange" : "black"}
+          disabled={!isPayable || isPurchasing}
+          onClick={handleSubmit}
+        />
+      </footer>
+    </div>
+  );
+}

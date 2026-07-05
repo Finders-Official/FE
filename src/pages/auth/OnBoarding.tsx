@@ -1,11 +1,26 @@
-// src/pages/auth/OnBoardingPage/OnBoardingPage.tsx
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { formatMMSS } from "@/utils/time";
 import { ActionButton, InputForm } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
 import { useOnBoardingForm } from "@/hooks/auth/onBoarding";
+import type { TermsType } from "@/types/auth";
 
 export function OnBoardingPage() {
-  const f = useOnBoardingForm();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const agreedTermTypes = (
+    location.state as { agreedTermTypes?: TermsType[] } | null
+  )?.agreedTermTypes;
+
+  // 약관 동의 없이 직접 진입(새로고침 등) 시 약관 화면으로
+  useEffect(() => {
+    if (!agreedTermTypes || agreedTermTypes.length === 0) {
+      navigate("/auth/agreement", { replace: true });
+    }
+  }, [agreedTermTypes, navigate]);
+
+  const f = useOnBoardingForm({ agreedTermTypes: agreedTermTypes ?? [] });
 
   return (
     <div className="flex w-full flex-col items-center">

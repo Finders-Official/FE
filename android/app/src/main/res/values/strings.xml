@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Finders</string>
+    <string name="title_activity_main">Finders</string>
+    <string name="package_name">com.finders.app</string>
+    <string name="custom_url_scheme">com.finders.app</string>
+    <string name="kakao_app_key">c443732a811c903016adc898278b20ee</string>
+    <string name="kakao_scheme">kakaoc443732a811c903016adc898278b20ee</string>
+</resources>

@@ -2,15 +2,13 @@ import { axiosInstance } from "@/lib/axiosInstance";
 import { isAxiosError } from "axios";
 
 export interface Lab {
-  photoLabId: number;
+  photoLabId: string;
   name: string;
   mainImageUrl: string;
-  workCount: number;
-  tags: string[];
 }
 
 export interface CommunityPost {
-  postId: number;
+  postId: string;
   image: {
     imageUrl: string;
     width: number;
@@ -68,7 +66,7 @@ export const fetchCommunityPosts = async (): Promise<CommunityPost[]> => {
 };
 
 /** 게시글 좋아요 */
-export const likePost = async (postId: number): Promise<void> => {
+export const likePost = async (postId: string): Promise<void> => {
   try {
     await axiosInstance.post(`/posts/${postId}/likes`);
   } catch (error) {
@@ -80,6 +78,6 @@ export const likePost = async (postId: number): Promise<void> => {
 };
 
 /** 게시글 좋아요 취소 */
-export const unlikePost = async (postId: number): Promise<void> => {
+export const unlikePost = async (postId: string): Promise<void> => {
   await axiosInstance.delete(`/posts/${postId}/likes`);
 };

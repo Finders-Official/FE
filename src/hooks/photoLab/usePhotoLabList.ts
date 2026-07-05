@@ -3,13 +3,13 @@ import { getPhotoLabList } from "@/apis/photoLab";
 import type {
   PhotoLabListParams,
   PagedApiResponse,
-  PhotoLabItem,
+  SimplePhotoLabItem,
 } from "@/types/photoLab";
 
 type Params = Omit<PhotoLabListParams, "page" | "size">;
 
 export function usePhotoLabList(params: Params, enabled = true) {
-  return useInfiniteQuery<PagedApiResponse<PhotoLabItem[]>, Error>({
+  return useInfiniteQuery<PagedApiResponse<SimplePhotoLabItem[]>, Error>({
     queryKey: ["photoLab", "list", params],
     queryFn: ({ pageParam }) =>
       getPhotoLabList({

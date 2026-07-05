@@ -7,7 +7,7 @@ import { postComment } from "@/apis/photoFeed/comment.api";
 import type { PostComment } from "@/types/photoFeed/postDetail";
 
 type CreateCommentResult = PostComment;
-type CreateCommentVars = { postId: number; content: string };
+type CreateCommentVars = { postId: string; content: string };
 type CreateCommentError = Error;
 
 export function useCreateComment(

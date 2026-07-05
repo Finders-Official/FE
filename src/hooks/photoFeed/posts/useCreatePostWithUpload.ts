@@ -10,15 +10,15 @@ type SubmitArgs = {
   content: string;
   files: File[];
   imageMetas: ImageMeta[];
-  memberId?: number | null;
+  memberId?: string | null;
 
-  labId?: number;
+  labId?: string;
   isSelfDeveloped: boolean;
   reviewContent?: string;
 };
 
 type Options = {
-  onSuccess?: (postId: number) => void;
+  onSuccess?: (postId: string) => void;
   onError?: (e: unknown) => void;
 };
 

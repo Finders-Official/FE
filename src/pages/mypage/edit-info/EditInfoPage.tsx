@@ -14,12 +14,15 @@ import {
   pickUploadedFilePublicUrlOrKey,
 } from "@/utils/pickPresignedUrl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
+import { tokenStorage } from "@/utils/tokenStorage";
+import { useQueryClient } from "@tanstack/react-query";
 
 type LocationState = { toast?: string } | null;
 
 export function EditInfoPage() {
+  const queryClient = useQueryClient();
   const { data: me, isLoading } = useMe({ refetchOnMount: "always" });
 
   const phone = useMemo(() => {
@@ -87,13 +90,21 @@ export function EditInfoPage() {
   const clearUser = useAuthStore((s) => s.clearUser);
 
   const { mutate: doLogout, isPending: isLogoutPending } = useLogout({
-    onSuccess: () => {
-      clearUser();
+    onSettled: async () => {
+      // API 통신 원천 차단
+      queryClient.clear();
+
+      // 기기 내장 토큰 삭제 (비동기)
+      // (이때까지는 Zustand에 user 상태가 살아있어서 가드가 발동하지 않음)
+      await tokenStorage.clear();
+
+      // 앱 라우터로 부드럽게 로그인 화면 이동
       navigate("/auth/login", { replace: true });
-    },
-    onError: () => {
-      clearUser();
-      navigate("/auth/login", { replace: true });
+
+      // 화면 이동(렌더링)이 끝날 수 있도록 0.1초 뒤에 유저 상태 삭제
+      setTimeout(() => {
+        clearUser();
+      }, 100);
     },
   });
 
@@ -140,7 +151,7 @@ export function EditInfoPage() {
     if (!me) throw new Error("내 정보가 아직 없어요.");
 
     const memberId = me.member?.memberId;
-    if (typeof memberId !== "number")
+    if (typeof memberId !== "string" || memberId.length === 0)
       throw new Error("memberId를 찾을 수 없어요.");
 
     setIsUploadingProfile(true);
@@ -198,7 +209,15 @@ export function EditInfoPage() {
     try {
       await uploadProfileImage(picked);
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      setError("사진 업로드에 실패했어요. 다시 시도해 주세요.");
+
+      // 업로드 실패 시 낙관적으로 보여준 미리보기를 되돌림
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      setObjectUrl(null);
     }
   };
 
@@ -262,18 +281,14 @@ export function EditInfoPage() {
         />
       </header>
 
-      <main className="py-1">
+      <main className="flex flex-col gap-2 py-4">
         <OptionLink
           to="./nickname"
           text="닉네임"
           info={me?.roleData?.user?.nickname ?? ""}
           infoColor="gray"
         />
-
-        <div className="flex justify-between p-4">
-          <p>이름</p>
-          <p className="mr-8 text-neutral-500">{me?.member?.name ?? ""}</p>
-        </div>
+        <OptionLink text="이름" infoColor="gray" info={me?.member.name ?? ""} />
 
         <OptionLink to="./phone" text="연락처" info={phone} infoColor="gray" />
 
@@ -284,14 +299,8 @@ export function EditInfoPage() {
           infoColor="gray"
         />
 
-        <section className="flex flex-col">
-          <button onClick={handleLogout} className="p-4 text-left">
-            로그아웃
-          </button>
-          <Link to="./withdraw" className="p-4 text-left">
-            탈퇴하기
-          </Link>
-        </section>
+        <OptionLink onClick={handleLogout} text="로그아웃" />
+        <OptionLink to="./withdraw" text="탈퇴하기" />
 
         <DialogBox
           isOpen={isLogoutModalOpen}

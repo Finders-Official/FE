@@ -1,11 +1,11 @@
 import { BigLogoIcon, XMarkIcon } from "@/assets/icon";
 
 export type SearchPostProps = {
-  historyId: number;
+  historyId: string;
   image?: string;
   text: string;
   onClick?: () => void;
-  onDelete?: (historyId: number) => void;
+  onDelete?: (historyId: string) => void;
   className?: string;
 };
 

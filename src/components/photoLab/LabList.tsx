@@ -1,18 +1,18 @@
 import { useCallback, useRef } from "react";
-import type { PhotoLabItem } from "@/types/photoLab";
+import type { SimplePhotoLabItem } from "@/types/photoLab";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
-import LabCard from "@/components/photoLab/LabCard";
-import LabCardSkeleton from "@/components/photoLab/LabCardSkeleton";
+import SimpleLabCard from "@/components/photoLab/SimpleLabCard";
+import SimpleLabCardSkeleton from "@/components/photoLab/SimpleLabCardSkeleton";
 import EmptyView from "@/components/common/EmptyView";
 
 interface LabListProps {
-  labs: PhotoLabItem[];
+  labs: SimplePhotoLabItem[];
   isLoading: boolean;
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
   onLoadMore: () => void;
-  onFavoriteToggle?: (photoLabId: number, isFavorite: boolean) => void;
-  onCardClick?: (photoLabId: number) => void;
+  onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
+  onCardClick?: (photoLabId: string) => void;
   emptyMessage?: string;
   className?: string;
 }
@@ -47,8 +47,8 @@ export default function LabList({
   if (isLoading) {
     return (
       <div className={`flex flex-col ${className}`}>
-        {Array.from({ length: 3 }).map((_, i) => (
-          <LabCardSkeleton key={`lab-skeleton-${i}`} />
+        {Array.from({ length: 9 }).map((_, i) => (
+          <SimpleLabCardSkeleton key={`lab-skeleton-${i}`} />
         ))}
       </div>
     );
@@ -61,7 +61,7 @@ export default function LabList({
   return (
     <div className={`flex flex-col ${className}`}>
       {labs.map((lab) => (
-        <LabCard
+        <SimpleLabCard
           key={lab.photoLabId}
           lab={lab}
           onFavoriteToggle={onFavoriteToggle}

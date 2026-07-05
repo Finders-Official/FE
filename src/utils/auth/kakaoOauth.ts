@@ -1,3 +1,5 @@
+import { isNativeApp } from "./envUtils";
+
 // 상태 저장 키
 const KAKAO_STATE_KEY = "finders:kakaoOAuthState";
 
@@ -10,9 +12,17 @@ function createState() {
 
 // kakao Authorize url 생성하기
 export function buildKakaoAuthorizeUrl() {
-  const clientId = import.meta.env.VITE_PUBLIC_KAKAO_REST_API_KEY as string;
-  const redirectUri = import.meta.env.VITE_PUBLIC_KAKAO_REDIRECT_URI as string;
+  // 현재 환경이 패키징 앱 안인지 일반 웹 브라우저인지 판별
+  const isApp = isNativeApp();
 
+  // 환경에 따라 다른 환경변수 할당
+  const clientId = isApp
+    ? (import.meta.env.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY as string)
+    : (import.meta.env.VITE_PUBLIC_KAKAO_REST_API_KEY as string);
+
+  const redirectUri = isApp
+    ? `kakao${import.meta.env.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY as string}://oauth`
+    : (import.meta.env.VITE_PUBLIC_KAKAO_REDIRECT_URI as string);
   const state = createState();
   sessionStorage.setItem(KAKAO_STATE_KEY, state);
 

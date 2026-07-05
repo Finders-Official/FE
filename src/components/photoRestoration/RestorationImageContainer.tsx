@@ -46,7 +46,7 @@ export const RestorationImageContainer: React.FC<
   return (
     <div
       ref={containerRef}
-      className="relative flex max-h-full max-w-full items-center justify-center overflow-hidden rounded-[0.625rem] bg-neutral-800"
+      className="relative flex max-h-full max-w-full touch-none items-center justify-center overflow-hidden rounded-[0.625rem] bg-neutral-800"
       onMouseDown={startCompare}
       onMouseUp={endCompare}
       onMouseLeave={endCompare}

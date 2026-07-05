@@ -59,9 +59,13 @@ export const useRestoration = () => {
       ]);
       setProgress(50);
 
+      const maskFile = new File([maskBlob], "mask.png", {
+        type: "image/png",
+      });
+
       await Promise.all([
         uploadToGCS(originalPresigned.data.url, originalFile),
-        uploadToGCS(maskPresigned.data.url, maskBlob),
+        uploadToGCS(maskPresigned.data.url, maskFile),
       ]);
       setProgress(70);
 
@@ -86,7 +90,7 @@ export const useRestoration = () => {
     }
   };
 
-  const pollStatus = (id: number) => {
+  const pollStatus = (id: string) => {
     const MAX_RETRIES = 90;
     let count = 0;
 

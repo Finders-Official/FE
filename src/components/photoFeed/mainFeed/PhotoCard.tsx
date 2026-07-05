@@ -7,7 +7,7 @@ type Props = {
   photo: PostPreview;
   isLiked?: boolean; // optional override (없으면 photo.isLiked 사용)
   isShowLiked?: boolean; // 포토 카드에서 좋아요 표시 여부
-  onToggleLike?: (id: number) => void;
+  onToggleLike?: (id: string) => void;
 };
 
 export default function PhotoCard({
