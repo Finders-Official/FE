@@ -41,6 +41,19 @@ export default function NewPostPage() {
     }
   }, [files.length, navigate]);
 
+  // 뒤로가기로 연 갤러리를 취소(사진 미선택)하면 작성 플로우를 벗어나 피드로.
+  // (취소 시 그냥 두면 페이지에 갇히므로 cancel 이벤트를 탈출 경로로 사용)
+  useEffect(() => {
+    const el = galleryInputRef.current;
+    if (!el) return;
+    const handleCancel = () => {
+      useNewPostState.getState().reset();
+      navigate("/photoFeed", { replace: true });
+    };
+    el.addEventListener("cancel", handleCancel);
+    return () => el.removeEventListener("cancel", handleCancel);
+  }, [navigate]);
+
   const limitedFiles = useMemo(() => files.slice(0, LIMITS.maxPhotos), [files]);
 
   const isTitleValid = useMemo(
@@ -156,7 +169,7 @@ export default function NewPostPage() {
             isError={titleError}
           />
           {titleText.length > LIMITS.titleMax ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-red-500">
+            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {LIMITS.titleMax}자까지 입력 가능합니다.
             </p>
           ) : titleError ? (
@@ -188,7 +201,7 @@ export default function NewPostPage() {
             isError={contentError}
           />
           {contentText.length > LIMITS.contentMax ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-red-500">
+            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {LIMITS.contentMax}자까지 입력 가능합니다.
             </p>
           ) : contentError ? (

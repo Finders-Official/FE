@@ -132,6 +132,7 @@ export default function ReviewPhotoLabPage() {
             }
             maxLength={MAX}
             minLength={MIN}
+            enforceMaxLength={false}
             isError={reviewTextError}
           />
           {reviewTextError && (

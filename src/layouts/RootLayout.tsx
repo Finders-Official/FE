@@ -11,9 +11,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
-    let handle: { remove: () => void } | undefined;
-
-    App.addListener("backButton", ({ canGoBack }) => {
+    // Promise 자체를 붙잡아, resolve 타이밍과 무관하게 클린업에서 리스너를 제거한다.
+    const handlePromise = App.addListener("backButton", ({ canGoBack }) => {
       // 게시글 등록 직후엔 하드웨어 뒤로가기도 이전 작성 단계가 아니라 피드로 이동
       if (useNewPostState.getState().isNewPost) {
         useNewPostState.getState().setIsNewPost(false);
@@ -26,12 +25,10 @@ export default function RootLayout() {
       } else {
         App.exitApp();
       }
-    }).then((listenerHandle) => {
-      handle = listenerHandle;
     });
 
     return () => {
-      handle?.remove();
+      handlePromise.then((handle) => handle.remove());
     };
   }, [navigate]);
 

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import ActionSheet, { type ActionSheetAction } from "./ActionSheet";
 import ReportSheet from "./ReportSheet";
-import { ToastItem } from "@/components/common";
+import { ToastItem, ToastList } from "@/components/common";
 import { timeAgo } from "@/utils/timeAgo";
 import {
   useDeletePost,
@@ -36,19 +36,31 @@ function formatKoreanDate(iso: string) {
   return `${year}년 ${Number(month)}월 ${Number(day)}일`;
 }
 
-async function shareCurrentUrl() {
+type ShareResult = "shared" | "copied" | "cancelled" | "failed";
+
+async function shareCurrentUrl(): Promise<ShareResult> {
   const url = window.location.href;
 
+  // 네이티브/모바일: OS 공유 시트 (시트 자체가 피드백)
   if (navigator.share) {
-    await navigator.share({
-      title: "파인더스",
-      text: "게시글 공유",
-      url,
-    });
-    return;
+    try {
+      await navigator.share({ title: "파인더스", text: "게시글 공유", url });
+      return "shared";
+    } catch (e) {
+      // 사용자가 공유 시트를 닫으면 AbortError → 조용히 무시
+      return e instanceof Error && e.name === "AbortError"
+        ? "cancelled"
+        : "failed";
+    }
   }
 
-  await navigator.clipboard.writeText(url);
+  // 데스크톱 등 Web Share 미지원: 클립보드 복사 (호출부에서 토스트로 피드백)
+  try {
+    await navigator.clipboard.writeText(url);
+    return "copied";
+  } catch {
+    return "failed";
+  }
 }
 
 export default function Profile({
@@ -78,14 +90,16 @@ export default function Profile({
   const { mutateAsync: deleteCommentAsync, isPending: isCommentPending } =
     useDeleteComment();
 
-  // 신고 사유 선택 시트 + 완료 토스트
+  // 신고 사유 선택 시트 + 공용 토스트(신고 완료 / 링크 복사 등)
   const [reportOpen, setReportOpen] = useState(false);
-  const [reportedToast, setReportedToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const { mutate: report, isPending: isReporting } = useReportContent({
     onSuccess: () => {
       setReportOpen(false);
-      setReportedToast(true);
+      setToastMessage(
+        `${type === "post" ? "게시글" : "댓글"} 신고가 완료되었습니다.`,
+      );
     },
     onError: (e) => {
       // 서버가 400 등으로 거부하면 실제 사유는 response.data에 담겨온다.
@@ -97,12 +111,21 @@ export default function Profile({
     }, // TODO 실패 토스트
   });
 
-  // 신고 완료 토스트 자동 숨김
+  // 토스트 자동 숨김
   useEffect(() => {
-    if (!reportedToast) return;
-    const t = setTimeout(() => setReportedToast(false), 3000);
+    if (!toastMessage) return;
+    const t = setTimeout(() => setToastMessage(null), 3000);
     return () => clearTimeout(t);
-  }, [reportedToast]);
+  }, [toastMessage]);
+
+  // 공유하기: 공유 시트(모바일) 또는 클립보드 복사(데스크톱). 복사 시 토스트로 안내.
+  const handleShare = useCallback(async () => {
+    const result = await shareCurrentUrl();
+    if (result === "copied") {
+      setToastMessage("링크가 복사되었습니다.");
+    }
+    setMoreMenu(false);
+  }, []);
 
   const isPost = type === "post";
   const isComment = type === "comment";
@@ -136,51 +159,24 @@ export default function Profile({
   }, [isCommentPending, deleteCommentAsync, objectId]);
 
   const actions: ActionSheetAction[] = useMemo(() => {
-    // 타인 댓글: 공유하기 + 신고하기 (공유는 게시글과 동일 로직)
+    // 타인 댓글: 공유하기 + 신고하기
     if (isComment && !isOwner) {
       return [
-        {
-          label: "공유하기",
-          onClick: async () => {
-            await shareCurrentUrl();
-            setMoreMenu(false);
-          },
-        },
-        {
-          label: "신고하기",
-          onClick: () => setReportOpen(true),
-        },
+        { label: "공유하기", onClick: handleShare },
+        { label: "신고하기", onClick: () => setReportOpen(true) },
       ];
     }
     // 타인 게시글: 공유하기 + 신고하기
     if (isPost && !isOwner) {
       return [
-        {
-          label: "공유하기",
-          disabled: isPostPending,
-          onClick: async () => {
-            if (isPostPending) return;
-            await shareCurrentUrl();
-            setMoreMenu(false);
-          },
-        },
-        {
-          label: "신고하기",
-          onClick: () => setReportOpen(true),
-        },
+        { label: "공유하기", onClick: handleShare },
+        { label: "신고하기", onClick: () => setReportOpen(true) },
       ];
     }
-
+    // 내 게시글: 공유하기 + 삭제하기
     if (isPost && isOwner) {
       return [
-        {
-          label: "공유하기",
-          disabled: isPostPending,
-          onClick: async () => {
-            await shareCurrentUrl();
-            setMoreMenu(false);
-          },
-        },
+        { label: "공유하기", onClick: handleShare },
         {
           label: "삭제하기",
           disabled: isPostPending,
@@ -189,16 +185,9 @@ export default function Profile({
         },
       ];
     }
-
-    // 자기가 작성한 댓글: 공유하기 + 삭제하기
+    // 내 댓글: 공유하기 + 삭제하기
     return [
-      {
-        label: "공유하기",
-        onClick: async () => {
-          await shareCurrentUrl();
-          setMoreMenu(false);
-        },
-      },
+      { label: "공유하기", onClick: handleShare },
       {
         label: "삭제하기",
         disabled: isCommentPending,
@@ -207,6 +196,7 @@ export default function Profile({
       },
     ];
   }, [
+    handleShare,
     handleDeletePost,
     handleDeleteComment,
     isComment,
@@ -303,15 +293,15 @@ export default function Profile({
         }
       />
 
-      {/* 신고 완료 토스트 */}
-      {reportedToast &&
+      {/* 공용 토스트 (신고 완료 / 링크 복사 등) */}
+      {toastMessage &&
         createPortal(
-          <div className="fixed bottom-[2rem] left-1/2 z-[9999] -translate-x-1/2">
+          <ToastList>
             <ToastItem
-              message={`${isPost ? "게시글" : "댓글"} 신고가 완료되었습니다.`}
+              message={toastMessage}
               icon={<CheckCircleIcon className="h-5 w-5" />}
             />
-          </div>,
+          </ToastList>,
           document.body,
         )}
     </div>

@@ -297,7 +297,7 @@ export default function PhotoFeedSearchPage() {
     if (isSearchError) return errorResponse();
 
     return (
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">

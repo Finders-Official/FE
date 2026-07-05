@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import SheetPopup from "./SheetPopup";
 import type { ReportReason } from "@/apis/photoFeed/report.api";
 
 /** 신고 사유 옵션 (피그마 기획 순서) */
@@ -26,53 +26,16 @@ export default function ReportSheet({
 }: ReportSheetProps) {
   const [selected, setSelected] = useState<ReportReason | null>(null);
 
-  // ESC 닫기
-  useEffect(() => {
-    if (!open) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
-
   // 열릴 때마다 선택 초기화
   useEffect(() => {
     if (open) setSelected(null);
   }, [open]);
 
-  if (!open) return null;
-
-  const ui = (
-    <div className="fixed inset-0 z-500">
-      {/* backdrop */}
-      <button
-        type="button"
-        aria-label="닫기"
-        onClick={onClose}
-        className="absolute inset-0 bg-black/60"
-      />
-
-      {/* sheet */}
-      <div className="absolute inset-x-0 bottom-0 gap-4 px-4">
-        <div className="bg-neutral-875 overflow-hidden rounded-3xl border border-neutral-800">
-          <div className="divide-y divide-white/10">
-            {REPORT_REASONS.map((r) => (
-              <button
-                key={r.value}
-                type="button"
-                onClick={() => setSelected(r.value)}
-                className={`w-full py-4 text-center text-[0.9375rem] ${
-                  selected === r.value ? "text-red-400" : "text-neutral-100"
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 하단: 신고하기 (옵션 선택 시 활성/빨간색) */}
+  return (
+    <SheetPopup
+      open={open}
+      onClose={onClose}
+      footer={
         <button
           type="button"
           disabled={!selected || isSubmitting}
@@ -85,9 +48,20 @@ export default function ReportSheet({
         >
           신고하기
         </button>
-      </div>
-    </div>
+      }
+    >
+      {REPORT_REASONS.map((r) => (
+        <button
+          key={r.value}
+          type="button"
+          onClick={() => setSelected(r.value)}
+          className={`w-full py-4 text-center text-[0.9375rem] ${
+            selected === r.value ? "text-red-400" : "text-neutral-100"
+          }`}
+        >
+          {r.label}
+        </button>
+      ))}
+    </SheetPopup>
   );
-
-  return createPortal(ui, document.body);
 }

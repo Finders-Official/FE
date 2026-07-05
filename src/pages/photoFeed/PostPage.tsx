@@ -7,7 +7,7 @@ import {
 } from "@/assets/icon";
 import { Header, ToastItem } from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import { usePostDetail, useUnlikePost, useLikePost } from "@/hooks/photoFeed";
 import Profile from "@/components/photoFeed/postDetail/Profile";
@@ -51,18 +51,17 @@ export default function PostPage() {
 
   const isMutating = isLiking || isUnliking;
 
-  // 게시글 등록 직후인지 여부
-  const isNewPost = useNewPostState((s) => s.isNewPost);
+  // 게시글 등록한 직후인지에 대한 정보 저장 setter
+  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
 
-  // 이 뷰가 "등록 직후" 진입인지 최초 마운트 시점에 고정한다.
-  // (토스트 타이머로 isNewPost가 false가 되어도 뒤로가기는 피드로 가야 하므로)
-  const cameFromNewPostRef = useRef(isNewPost);
+  // 최초 마운트 시점의 isNewPost를 로컬로 "고정"한다.
+  // 스토어를 구독/직접 읽으면, 아래 언마운트 리셋(setIsNewPost(false))이
+  // 개발모드 StrictMode의 팬텀 언마운트 때 실행되면서 false가 되어
+  // 토스트가 사라지고 뒤로가기가 피드가 아닌 이전 단계로 가버린다.
+  const [isNewPost] = useState(() => useNewPostState.getState().isNewPost);
 
   const [toastVisible, setToastVisible] = useState(isNewPost);
   const [mounted, setMounted] = useState(isNewPost);
-
-  // 게시글 등록한 직후인지에 대한 정보 저장
-  const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
 
   useEffect(() => {
     if (!isNewPost) return;
@@ -71,8 +70,9 @@ export default function PostPage() {
       () => setToastVisible(false),
       TOAST_FADE_START_DELAY,
     );
+    // 토스트만 숨기고 isNewPost는 유지한다.
+    // (여기서 false로 바꾸면 3초 뒤 하드웨어 뒤로가기가 피드가 아닌 이전 단계로 감)
     const removeTimer = setTimeout(() => {
-      setIsNewPost(false);
       setMounted(false);
     }, TOAST_UNMOUNT_DELAY);
 
@@ -82,9 +82,17 @@ export default function PostPage() {
     };
   }, [isNewPost]);
 
-  const handleGoBack = () => {
-    if (cameFromNewPostRef.current) {
+  // 페이지를 벗어날 때(언마운트) 등록 직후 상태를 초기화한다.
+  // 화면에 머무는 동안 isNewPost가 유지되므로 헤더/하드웨어 뒤로가기 모두 피드로 간다.
+  useEffect(() => {
+    return () => {
       setIsNewPost(false);
+    };
+  }, [setIsNewPost]);
+
+  const handleGoBack = () => {
+    // 등록 직후 진입이면 항상 피드로 (isNewPost는 언마운트 시 초기화됨)
+    if (isNewPost) {
       return navigate("/photoFeed");
     }
     // 히스토리 없으면 fallback
