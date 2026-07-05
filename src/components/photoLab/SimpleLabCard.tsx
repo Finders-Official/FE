@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { SimplePhotoLabItem } from "@/types/photoLab";
 import { photoLabPlaceholder } from "@/assets/images";
 import { FavoriteStar } from "./FavoriteStar";
@@ -12,7 +13,7 @@ interface LabCardProps {
   flipKey?: string;
 }
 
-export default function SimpleLabCard({
+function SimpleLabCard({
   lab,
   onFavoriteToggle,
   onCardClick,
@@ -81,5 +82,8 @@ export default function SimpleLabCard({
     </Press>
   );
 }
+
+// memo로 토글된 카드 1장만 리렌더
+export default memo(SimpleLabCard);
 
 export type { LabCardProps };

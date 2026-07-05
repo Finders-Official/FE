@@ -56,10 +56,13 @@ export default function PhotoLabPage() {
     [toggleFavorite],
   );
 
-  // 카드 클릭
-  const handleCardClick = (photoLabId: string) => {
-    navigate(`/photolab/${photoLabId}`);
-  };
+  // 카드 클릭 (참조 고정 — memo된 SimpleLabCard가 리렌더를 건너뛸 수 있게)
+  const handleCardClick = useCallback(
+    (photoLabId: string) => {
+      navigate(`/photolab/${photoLabId}`);
+    },
+    [navigate],
+  );
 
   // 검색 클릭
   const handleSearchClick = () => {

@@ -156,9 +156,13 @@ export default function PhotoLabSearchPage() {
     }
   };
 
-  const handleLabClick = (photoLabId: string) => {
-    navigate(`/photolab/${photoLabId}`);
-  };
+  // 참조 고정 — memo된 SimpleLabCard가 리렌더를 건너뛸 수 있게
+  const handleLabClick = useCallback(
+    (photoLabId: string) => {
+      navigate(`/photolab/${photoLabId}`);
+    },
+    [navigate],
+  );
 
   return (
     <div className="flex w-full flex-col">
