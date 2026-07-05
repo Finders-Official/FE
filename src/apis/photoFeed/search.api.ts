@@ -1,4 +1,3 @@
-import axios from "axios";
 import { axiosInstance } from "@/lib/axiosInstance";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import {
@@ -119,41 +118,23 @@ export async function getLabSearches({
   longitude,
   locationAgreed,
 }: LabSearchRequest): Promise<LabSearchResponse[]> {
-  try {
-    const res = await axiosInstance.get<ApiResponse<LabSearchResponseList>>(
-      "/photo-labs/search",
-      {
-        params: {
-          keyword,
-          latitude,
-          longitude,
-          locationAgreed,
-        },
+  const res = await axiosInstance.get<ApiResponse<LabSearchResponseList>>(
+    "/photo-labs/search",
+    {
+      params: {
+        keyword,
+        latitude,
+        longitude,
+        locationAgreed,
       },
-    );
+    },
+  );
 
-    const body = res.data;
+  const body = res.data;
 
-    if (!body.success) {
-      throw new Error(body.message);
-    }
-
-    return body.data.photoLabSearchList ?? []; // 검색 결과 리스트 return
-  } catch (error) {
-    // TODO: 원인 확인되면 이 임시 로깅은 제거
-    // Android logcat은 객체를 그대로 넘기면 [object Object]로만 찍히므로 문자열화해서 남긴다.
-    if (axios.isAxiosError(error)) {
-      console.error(
-        "[현상소 검색 실패] " +
-          JSON.stringify({
-            status: error.response?.status,
-            data: error.response?.data,
-            message: error.message,
-          }),
-      );
-    } else {
-      console.error("[현상소 검색 실패] Unknown error: " + String(error));
-    }
-    throw error;
+  if (!body.success) {
+    throw new Error(body.message);
   }
+
+  return body.data.photoLabSearchList ?? []; // 검색 결과 리스트 return
 }
