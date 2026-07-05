@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import RegionSelector from "@/components/photoLab/RegionSelector";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
@@ -61,30 +61,36 @@ export default function FilterBottomSheet({
     initialFilter?.regionSelections?.[0]?.parentName ?? defaultDisplayRegion,
   );
 
-  // 지역 서브 리전 토글
-  const handleSubRegionToggle = (parentName: string, subRegion: string) => {
-    setSelectedRegions((prev) => {
-      const exists = prev.some(
-        (s) => s.parentName === parentName && s.subRegion === subRegion,
-      );
-      if (exists) {
-        return prev.filter(
-          (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+  // 지역 서브 리전 토글 (참조 고정 — RegionSelector 내부 memo 섹션이 리렌더를 건너뛸 수 있게)
+  const handleSubRegionToggle = useCallback(
+    (parentName: string, subRegion: string) => {
+      setSelectedRegions((prev) => {
+        const exists = prev.some(
+          (s) => s.parentName === parentName && s.subRegion === subRegion,
         );
-      }
-      if (prev.length >= MAX_REGION_SELECTIONS) return prev;
-      return [...prev, { parentName, subRegion }];
-    });
-  };
+        if (exists) {
+          return prev.filter(
+            (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+          );
+        }
+        if (prev.length >= MAX_REGION_SELECTIONS) return prev;
+        return [...prev, { parentName, subRegion }];
+      });
+    },
+    [],
+  );
 
   // 지역 선택 칩 제거
-  const handleRemoveSelection = (parentName: string, subRegion: string) => {
-    setSelectedRegions((prev) =>
-      prev.filter(
-        (s) => !(s.parentName === parentName && s.subRegion === subRegion),
-      ),
-    );
-  };
+  const handleRemoveSelection = useCallback(
+    (parentName: string, subRegion: string) => {
+      setSelectedRegions((prev) =>
+        prev.filter(
+          (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+        ),
+      );
+    },
+    [],
+  );
 
   // RegionSelection[] → regionIds[] 변환
   const selectionsToRegionIds = (selections: RegionSelection[]): string[] => {

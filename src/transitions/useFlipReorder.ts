@@ -1,7 +1,13 @@
 import { useLayoutEffect, useRef } from "react";
 
+type FlipReorderOptions = {
+  /** true면 항목 제거로 남은 항목이 밀리는 이동도 FLIP한다 (기본은 동일 집합의 재정렬만) */
+  animateRemovals?: boolean;
+};
+
 export function useFlipReorder<T extends HTMLElement = HTMLDivElement>(
   orderKey: string,
+  { animateRemovals = false }: FlipReorderOptions = {},
 ) {
   const containerRef = useRef<T>(null);
   const prevRects = useRef<Map<string, DOMRect>>(new Map());
@@ -18,9 +24,13 @@ export function useFlipReorder<T extends HTMLElement = HTMLDivElement>(
     const nextRects = new Map<string, DOMRect>();
     const rafIds: number[] = [];
 
-    const sameSet =
-      prev.size === items.length &&
-      Array.from(items).every((el) => prev.has(el.dataset.flipKey ?? ""));
+    const allInPrev = Array.from(items).every((el) =>
+      prev.has(el.dataset.flipKey ?? ""),
+    );
+    const sameSet = prev.size === items.length && allInPrev;
+    const removedOnly =
+      animateRemovals && items.length < prev.size && allInPrev;
+    const shouldFlip = sameSet || removedOnly;
 
     items.forEach((el) => {
       const key = el.dataset.flipKey;
@@ -29,7 +39,7 @@ export function useFlipReorder<T extends HTMLElement = HTMLDivElement>(
       nextRects.set(key, rect);
 
       const prevRect = prev.get(key);
-      if (reduce || !sameSet || !prevRect) return;
+      if (reduce || !shouldFlip || !prevRect) return;
       const dx = prevRect.left - rect.left;
       const dy = prevRect.top - rect.top;
       if (dx === 0 && dy === 0) return;
@@ -47,7 +57,7 @@ export function useFlipReorder<T extends HTMLElement = HTMLDivElement>(
 
     prevRects.current = nextRects;
     return () => rafIds.forEach((id) => cancelAnimationFrame(id));
-  }, [orderKey]);
+  }, [orderKey, animateRemovals]);
 
   return containerRef;
 }

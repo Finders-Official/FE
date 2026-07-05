@@ -438,33 +438,26 @@
   }
 }
 
-.t-chip-reveal {
-  display: grid;
-  grid-template-columns: 1fr;
-  margin-right: 0.625rem;
-  opacity: 1;
-  transition-property: grid-template-columns, margin-right, opacity;
-  transition-timing-function: var(--ease-smooth-out);
-  transition-duration: var(--duration-fast);
+/* 선택 칩 등장 팝인. 제거로 인한 남은 칩 이동은 useFlipReorder(transform FLIP)가 담당 —
+   폭(grid-template-columns) 트랜지션은 매 프레임 레이아웃을 유발해 WebView에서 프레임 드랍. */
+.t-chip-in {
+  animation: t-chip-in var(--duration-fast) var(--ease-smooth-out);
 }
-.t-chip-reveal > * {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.t-chip-reveal[data-state="closed"],
-.t-chip-reveal[data-state="closing"] {
-  grid-template-columns: 0fr;
-  margin-right: 0;
-  opacity: 0;
-}
-.t-chip-reveal[data-state="closing"] {
-  transition-duration: var(--duration-quick);
-  pointer-events: none;
+@keyframes t-chip-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--scale-large));
+    filter: blur(var(--blur-small));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .t-chip-reveal {
-    transition: none;
+  .t-chip-in {
+    animation: none;
   }
 }
 
