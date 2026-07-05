@@ -132,7 +132,9 @@ export function useFavoriteToggle() {
     },
 
     onSettled: (_data, _err, { photoLabId }) => {
-      queryClient.invalidateQueries({ queryKey: LIST_KEY });
+      // 목록(LIST_KEY)은 정산 시 재검증하지 않는다 — 낙관적 캐시가 이 액션의 최종 상태와
+      // 같은데, refetch가 서버 순서로 재정렬을 한 번 더 일으켜 카드가 "올라가다 멈췄다
+      // 다시 이동"하는 이중 FLIP이 생긴다. 서버 동기화는 staleTime 경과 후 자연 갱신에 맡긴다.
       // 화면에 떠 있는 동안 즉시 재조회되어 항목이 사라지지 않도록 stale 마킹만 수행 (진입 시 재조회)
       queryClient.invalidateQueries({
         queryKey: FAVORITES_KEY,
