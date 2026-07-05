@@ -193,7 +193,7 @@ export default function FindPhotoLabPage() {
         </div>
       );
     }
-    if (!data) {
+    if (!data || data.length === 0) {
       return <EmptyView />;
     }
     return (
