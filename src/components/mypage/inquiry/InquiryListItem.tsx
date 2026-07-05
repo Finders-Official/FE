@@ -6,7 +6,7 @@ import type { InquiryItem, InquiryType } from "@/types/mypage/inquiry";
 // 문의 유형 영문을 한글 라벨로 변환하는 매핑 객체
 const INQUIRY_TYPE_LABEL: Record<InquiryType, string> = {
   SERVICE_ERROR: "서비스 이용 오류",
-  ACCOUNT_INFO: "회원정보/정보변경",
+  MEMBER_INFO: "회원정보/정보변경",
   PROMOTION: "프로모션/크레딧",
   PAYMENT: "결제",
 };
@@ -51,19 +51,19 @@ export function InquiryListItem({ item }: InquiryListItemProps) {
       <div className="mt-3 flex items-center gap-2">
         <span
           className={`flex h-[1.375rem] items-center justify-center rounded px-1.5 text-[0.75rem] font-medium ${
-            item.status === "COMPLETED"
+            item.status === "ANSWERED"
               ? "bg-orange-450 text-neutral-100"
               : "bg-neutral-800 text-neutral-200"
           }`}
         >
-          {item.status === "COMPLETED" ? "답변 완료" : "답변 대기"}
+          {item.status === "ANSWERED" ? "답변 완료" : "답변 대기"}
         </span>
         <span className="text-[0.875rem] text-neutral-300">{date}</span>
       </div>
 
       {/* 4. 답변 박스: 펼쳐져 있고, 답변이 완료된 상태일 때만 노출 */}
       {isExpanded &&
-        item.status === "COMPLETED" &&
+        item.status === "ANSWERED" &&
         item.hasReply &&
         item.replyContent && (
           <div className="bg-neutral-850 mt-4 flex flex-col rounded-lg p-4">

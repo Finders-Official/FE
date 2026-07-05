@@ -1,10 +1,10 @@
 // 문의 유형 및 상태 Enum
 export type InquiryType =
   | "SERVICE_ERROR"
-  | "ACCOUNT_INFO"
+  | "MEMBER_INFO"
   | "PROMOTION"
   | "PAYMENT";
-export type InquiryStatus = "PENDING" | "COMPLETED"; // API에는 PENDING으로 명시됨
+export type InquiryStatus = "PENDING" | "ANSWERED" | "CLOSED"; // BE InquiryStatus enum과 일치
 
 // 개별 문의 아이템 타입
 export interface InquiryItem {
@@ -16,7 +16,7 @@ export interface InquiryItem {
   createdAt: string;
   hasReply: boolean;
 
-  // 답변이 완료(COMPLETED)되었을 경우를 위한 옵셔널 필드
+  // 답변이 완료(ANSWERED)되었을 경우를 위한 옵셔널 필드
   replyContent?: string;
   replyCreatedAt?: string;
 }
@@ -44,7 +44,7 @@ export type InquiryOption = {
 // 4가지 고정 옵션 데이터
 export const INQUIRY_OPTIONS: InquiryOption[] = [
   { label: "서비스 이용 오류", value: "SERVICE_ERROR" },
-  { label: "회원정보/정보변경", value: "ACCOUNT_INFO" },
+  { label: "회원정보/정보변경", value: "MEMBER_INFO" },
   { label: "프로모션/크레딧", value: "PROMOTION" },
   { label: "결제", value: "PAYMENT" },
 ];
