@@ -133,15 +133,20 @@ export default function ReviewPhotoLabPage() {
             maxLength={MAX}
             minLength={MIN}
             enforceMaxLength={false}
+            emptyHint={"max"}
             isError={reviewTextError}
           />
-          {reviewTextError && (
+          {reviewText.length > MAX ? (
+            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+              최대 {MAX}자까지 입력 가능합니다.
+            </p>
+          ) : reviewTextError ? (
             <p
               className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
             >
               최소 20글자 이상 입력해주세요.
             </p>
-          )}
+          ) : null}
         </div>
 
         <div className="bg-neutral-875 flex justify-center gap-2 rounded-2xl p-[1.25rem] text-neutral-500">
