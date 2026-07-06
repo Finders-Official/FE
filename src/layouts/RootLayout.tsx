@@ -1,7 +1,37 @@
+import { useEffect } from "react";
+import { useNavigate, Outlet } from "react-router";
+import { App } from "@capacitor/app";
+import { Capacitor } from "@capacitor/core";
 import GlobalLoginDialog from "@/components/common/GlobalLoginDialog";
-import { Outlet } from "react-router";
+import { useNewPostState } from "@/store/useNewPostState.store";
 
 export default function RootLayout() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    // Promise 자체를 붙잡아, resolve 타이밍과 무관하게 클린업에서 리스너를 제거한다.
+    const handlePromise = App.addListener("backButton", ({ canGoBack }) => {
+      // 게시글 등록 직후엔 하드웨어 뒤로가기도 이전 작성 단계가 아니라 피드로 이동
+      if (useNewPostState.getState().isNewPost) {
+        useNewPostState.getState().setIsNewPost(false);
+        navigate("/photoFeed");
+        return;
+      }
+
+      if (canGoBack) {
+        navigate(-1);
+      } else {
+        App.exitApp();
+      }
+    });
+
+    return () => {
+      handlePromise.then((handle) => handle.remove());
+    };
+  }, [navigate]);
+
   return (
     <div className="min-h-dvh w-full bg-neutral-900 text-neutral-100">
       <GlobalLoginDialog />

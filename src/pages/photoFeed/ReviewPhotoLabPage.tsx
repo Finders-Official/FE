@@ -88,13 +88,21 @@ export default function ReviewPhotoLabPage() {
         reviewContent: reviewText,
       });
     } catch (e) {
-      console.error("게시글 업로드 실패", e); // TODO 디자인 받고 토스트 메세지로 변경
+      // Android logcat은 객체를 그대로 넘기면 [object Object]로만 찍히므로 문자열화해서 남긴다.
+      console.error(
+        "게시글 업로드 실패: " + (e instanceof Error ? e.message : String(e)),
+      ); // TODO 디자인 받고 토스트 메세지로 변경
     }
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
-      <Header title="현상소 리뷰 작성" showBack onBack={() => navigate(-1)} />
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
+      <Header
+        title="현상소 리뷰 작성"
+        showBack
+        onBack={() => navigate(-1)}
+        className="sticky top-0 z-50 bg-neutral-900"
+      />
       <section className="flex flex-col gap-6 pt-10 pb-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-left text-[1.375rem] font-semibold text-white">
@@ -124,15 +132,21 @@ export default function ReviewPhotoLabPage() {
             }
             maxLength={MAX}
             minLength={MIN}
+            enforceMaxLength={false}
+            emptyHint={"max"}
             isError={reviewTextError}
           />
-          {reviewTextError && (
+          {reviewText.length > MAX ? (
+            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+              최대 {MAX}자까지 입력 가능합니다.
+            </p>
+          ) : reviewTextError ? (
             <p
               className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
             >
               최소 20글자 이상 입력해주세요.
             </p>
-          )}
+          ) : null}
         </div>
 
         <div className="bg-neutral-875 flex justify-center gap-2 rounded-2xl p-[1.25rem] text-neutral-500">

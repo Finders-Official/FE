@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useCreatePost } from "@/hooks/photoFeed/posts/useCreatePost";
 import type { PostRequestImage } from "@/types/photoFeed/postDetail";
@@ -23,6 +24,7 @@ type Options = {
 };
 
 export function useCreatePostWithUpload(options?: Options) {
+  const queryClient = useQueryClient();
   const issuePresigned = useIssuePresignedUrl();
   const uploadToPresigned = useUploadToPresignedUrl();
 
@@ -90,9 +92,17 @@ export function useCreatePostWithUpload(options?: Options) {
         reviewContent,
       });
 
+      // 5) 사진수다 피드 최신화 (새 글이 바로 보이도록)
+      // 등록 성공 시 상세 페이지로 이동해 피드 쿼리가 비활성 상태이므로,
+      // refetchType: "all"로 마운트 여부와 무관하게 즉시 갱신한다.
+      queryClient.invalidateQueries({
+        queryKey: ["photoFeed"],
+        refetchType: "all",
+      });
+
       return postId;
     },
-    [issuePresigned, uploadToPresigned, createPost],
+    [issuePresigned, uploadToPresigned, createPost, queryClient],
   );
 
   const isPending =

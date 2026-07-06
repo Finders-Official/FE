@@ -96,7 +96,10 @@ export default function FindPhotoLabPage() {
         isSelfDeveloped: isSelf,
       });
     } catch (e) {
-      console.error("게시글 업로드 실패", e);
+      // Android logcat은 객체를 그대로 넘기면 [object Object]로만 찍히므로 문자열화해서 남긴다.
+      console.error(
+        "게시글 업로드 실패: " + (e instanceof Error ? e.message : String(e)),
+      );
     }
   };
 
@@ -190,7 +193,7 @@ export default function FindPhotoLabPage() {
         </div>
       );
     }
-    if (!data) {
+    if (!data || data.length === 0) {
       return <EmptyView />;
     }
     return (
@@ -249,8 +252,13 @@ export default function FindPhotoLabPage() {
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
-      <Header title="현상소 입력하기" showBack onBack={handleGoBack} />
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
+      <Header
+        title="현상소 입력하기"
+        showBack
+        onBack={handleGoBack}
+        className="sticky top-0 z-50 bg-neutral-900"
+      />
 
       {/* 검색모드일 때: 화면 전체 클릭을 감지하는 투명 오버레이 */}
       {labReviewStep === "search" && (

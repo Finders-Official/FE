@@ -27,6 +27,8 @@
     "@capacitor/android": "^8.3.4",
     "@capacitor/app": "^8.1.0",
     "@capacitor/core": "^8.3.4",
+    "@capacitor/file-transfer": "^2.0.4",
+    "@capacitor/filesystem": "^8.1.2",
     "@capacitor/ios": "^8.3.4",
     "@capacitor/splash-screen": "^8.0.1",
     "@portone/browser-sdk": "^0.1.8",

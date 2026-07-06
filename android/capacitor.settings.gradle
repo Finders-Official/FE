@@ -8,6 +8,12 @@ project(':capacitor-community-apple-sign-in').projectDir = new File('../node_mod
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
 
+include ':capacitor-file-transfer'
+project(':capacitor-file-transfer').projectDir = new File('../node_modules/@capacitor/file-transfer/android')
+
+include ':capacitor-filesystem'
+project(':capacitor-filesystem').projectDir = new File('../node_modules/@capacitor/filesystem/android')
+
 include ':capacitor-splash-screen'
 project(':capacitor-splash-screen').projectDir = new File('../node_modules/@capacitor/splash-screen/android')
 

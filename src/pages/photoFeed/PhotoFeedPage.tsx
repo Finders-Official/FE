@@ -35,11 +35,29 @@ export default function PhotoFeedPage() {
   // 게시글 삭제 여부 정보
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDeleted } = location.state ?? {};
+
+  // 최초 진입 시점의 삭제 여부를 로컬로 "고정"한다.
+  // (라우터 state를 직접 읽으면, 아래에서 state를 비운 뒤 뒤로가기로 재진입 시 값이 흔들림)
+  const [isDeleted] = useState(
+    () => !!(location.state as { isDeleted?: boolean } | null)?.isDeleted,
+  );
 
   // 토스트 메세지 관련 상태
   const [toastVisible, setToastVisible] = useState(isDeleted);
   const [mounted, setMounted] = useState(isDeleted);
+
+  // 라우터 state를 "즉시" 비운다.
+  // 3초 타이머 안에서 지우면, 그 전에 다른 페이지로 이동할 경우 state가 남아
+  // 뒤로가기로 돌아왔을 때 토스트가 다시 뜨는 버그가 생긴다.
+  useEffect(() => {
+    const state = location.state as { isDeleted?: boolean } | null;
+    if (state?.isDeleted) {
+      navigate(location.pathname + location.search, {
+        replace: true,
+        state: null,
+      });
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     if (!isDeleted) return;
@@ -48,16 +66,16 @@ export default function PhotoFeedPage() {
       () => setToastVisible(false),
       TOAST_FADE_START_DELAY,
     );
-    const removeTimer = setTimeout(() => {
-      setMounted(false);
-      navigate(location.pathname, { replace: true }); // 타이머 없앨 때 state도 같이 삭제
-    }, TOAST_UNMOUNT_DELAY);
+    const removeTimer = setTimeout(
+      () => setMounted(false),
+      TOAST_UNMOUNT_DELAY,
+    );
 
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(removeTimer);
     };
-  }, [isDeleted, navigate, location.pathname]);
+  }, [isDeleted]);
 
   const {
     data,
@@ -138,7 +156,7 @@ export default function PhotoFeedPage() {
                 <PhotoCard
                   key={postPreview.postId}
                   photo={postPreview}
-                  isLiked={false}
+                  isLiked={postPreview.isLiked}
                 />
               ))}
         </Masonry>
