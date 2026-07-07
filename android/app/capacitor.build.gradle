@@ -13,6 +13,7 @@ dependencies {
     implementation project(':capacitor-app')
     implementation project(':capacitor-file-transfer')
     implementation project(':capacitor-filesystem')
+    implementation project(':capacitor-geolocation')
     implementation project(':capacitor-splash-screen')
     implementation project(':capacitor-secure-storage-plugin')
     implementation project(':capacitor3-kakao-login')

@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { Geolocation } from "@capacitor/geolocation";
 
 interface GeolocationResult {
   latitude: number | null;
@@ -32,17 +33,6 @@ function requestLocation() {
   if (requested) return;
   requested = true;
 
-  if (!navigator.geolocation) {
-    emitChange({
-      latitude: null,
-      longitude: null,
-      isLoading: false,
-      error: "Geolocation not supported",
-      locationAgreed: false,
-    });
-    return;
-  }
-
   const fallbackTimer = setTimeout(() => {
     requested = false;
     emitChange({
@@ -54,8 +44,14 @@ function requestLocation() {
     });
   }, FALLBACK_TIMEOUT_MS);
 
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
+  // 네이티브(iOS/Android)는 플러그인이 앱 권한 요청까지 처리하고,
+  // 웹은 내부적으로 navigator.geolocation에 동일 옵션으로 위임된다.
+  Geolocation.getCurrentPosition({
+    enableHighAccuracy: true,
+    timeout: 10000,
+    maximumAge: 300000, // 5분 위치 캐시
+  })
+    .then((position) => {
       clearTimeout(fallbackTimer);
       emitChange({
         latitude: position.coords.latitude,
@@ -64,24 +60,18 @@ function requestLocation() {
         error: null,
         locationAgreed: true,
       });
-    },
-    (error) => {
+    })
+    .catch((error: unknown) => {
       clearTimeout(fallbackTimer);
       requested = false;
       emitChange({
         latitude: null,
         longitude: null,
         isLoading: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         locationAgreed: false,
       });
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 300000, // 5분 위치 캐시
-    },
-  );
+    });
 }
 
 // 위치 권한 요청 + 위치 캐시
