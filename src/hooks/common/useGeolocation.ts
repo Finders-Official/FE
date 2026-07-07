@@ -84,6 +84,11 @@ function requestLocation() {
   );
 }
 
+// 위치 권한 요청 + 위치 캐시
+export function prefetchGeolocation(): void {
+  requestLocation();
+}
+
 function subscribe(listener: () => void) {
   listeners = [...listeners, listener];
   requestLocation();
