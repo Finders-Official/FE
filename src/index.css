@@ -35,7 +35,9 @@
 }
 
 :root {
-  --tabbar-height: 5.5625rem;
+  /* 탭바 총 높이 = 시각 높이 + OS 하단 인셋(Android 15 엣지-투-엣지 내비바, iOS 홈 인디케이터).
+     bottom-[var(--tabbar-height)]로 탭바 위에 얹히는 FAB/토스트도 이 값으로 함께 밀려난다. */
+  --tabbar-height: calc(5.5625rem + env(safe-area-inset-bottom, 0px));
   --fab-gap: 0.8rem;
 }
 
