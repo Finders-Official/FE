@@ -1,8 +1,39 @@
+import { Capacitor } from "@capacitor/core";
+import { Share } from "@capacitor/share";
+import { Filesystem, Directory } from "@capacitor/filesystem";
+import { FileTransfer } from "@capacitor/file-transfer";
+
 type ShareOptions = {
   title?: string;
   text?: string;
   filename?: string;
 };
+
+// 네이티브: 이미지를 캐시에 내려받아 파일로 공유해야 OS 공유 시트에
+// "이미지 저장" 등 이미지 액션이 노출된다. (Android WebView에는
+// navigator.share가 없어 웹 경로로는 시트 자체가 뜨지 않음)
+async function shareViaNative(url: string, title: string) {
+  const cachePath = `share-${Date.now()}.png`;
+  const { uri } = await Filesystem.getUri({
+    directory: Directory.Cache,
+    path: cachePath,
+  });
+
+  await FileTransfer.downloadFile({ url, path: uri });
+
+  try {
+    await Share.share({ title, files: [uri] });
+    return { method: "share-files" as const };
+  } catch (e) {
+    // 사용자가 공유 시트를 닫으면 플러그인이 "Share canceled"로 reject -> 에러 아님
+    if (e instanceof Error && /cancel/i.test(e.message)) {
+      return { method: "cancelled" as const };
+    }
+    throw e;
+  }
+  // 공유 대상 앱이 파일을 늦게 읽을 수 있어 즉시 삭제하지 않는다.
+  // 캐시 디렉토리라 OS가 공간 부족 시 자동 정리함.
+}
 
 export async function shareImageFromUrl(
   url: string,
@@ -13,6 +44,10 @@ export async function shareImageFromUrl(
     text = "",
     filename = "finders-restored.png",
   } = options;
+
+  if (Capacitor.isNativePlatform()) {
+    return shareViaNative(url, title);
+  }
 
   // Web Share 및 Clipboard API는 보안 컨텍스트(HTTPS)에서만 작동함
   if (!window.isSecureContext) {
