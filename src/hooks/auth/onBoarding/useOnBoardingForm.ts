@@ -158,8 +158,8 @@ export function useOnBoardingForm(options?: Options) {
         setIsVerified(false);
         setVerifiedPhoneToken(null);
 
-        setPhoneVerifyMessage("인증번호를 재발송해주세요.");
-        setPhoneVerifyError("인증번호가 올바르지 않습니다.");
+        setPhoneVerifyMessage("");
+        setPhoneVerifyError("인증번호를 재발송해주세요.");
       },
     });
 
