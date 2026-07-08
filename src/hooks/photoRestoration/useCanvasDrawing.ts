@@ -259,19 +259,37 @@ export const useCanvasDrawing = ({
 
     let targetW: number;
     let targetH: number;
+    let scaleX: number;
+    let scaleY: number;
+    let translateX = 0;
+    let translateY = 0;
 
-    if (naturalW > 0 && naturalH > 0) {
+    if (img && naturalW > 0 && naturalH > 0) {
       const cap = Math.min(
         1,
         MAX_MASK_DIMENSION / Math.max(naturalW, naturalH),
       );
       targetW = Math.max(1, Math.round(naturalW * cap));
       targetH = Math.max(1, Math.round(naturalH * cap));
+
+      // 현재 레이아웃은 컨테이너가 이미지를 감싸 두 rect가 일치하지만,
+      // CSS 변경으로 컨테이너 안에 여백이 생겨도 어긋나지 않도록
+      // 이미지 자신의 rect를 기준으로 스케일/오프셋을 계산한다.
+      const imgRect = img.getBoundingClientRect();
+      if (imgRect.width < 1 || imgRect.height < 1) return null;
+
+      scaleX = targetW / imgRect.width;
+      scaleY = targetH / imgRect.height;
+      // 경로 좌표는 컨테이너(=캔버스) 기준이므로 이미지 오프셋만큼 보정
+      translateX = -(imgRect.left - rect.left) * scaleX;
+      translateY = -(imgRect.top - rect.top) * scaleY;
     } else {
       // 원본 크기를 알 수 없으면 기존 방식(표시 크기 x DPR)으로 폴백
       const dpr = getDpr();
       targetW = Math.max(1, Math.round(rect.width * dpr));
       targetH = Math.max(1, Math.round(rect.height * dpr));
+      scaleX = dpr;
+      scaleY = dpr;
     }
 
     const offCanvas = document.createElement("canvas");
@@ -281,11 +299,12 @@ export const useCanvasDrawing = ({
     const ctx = offCanvas.getContext("2d");
     if (!ctx) return null;
 
-    // 좌표계 변환: CSS px -> 마스크 px (선 두께도 transform으로 함께 스케일됨)
-    ctx.setTransform(targetW / rect.width, 0, 0, targetH / rect.height, 0, 0);
-
+    // 배경은 변환 없이 캔버스 전체를 채운 뒤, 경로만 변환 좌표계로 그린다
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, rect.width, rect.height);
+    ctx.fillRect(0, 0, targetW, targetH);
+
+    // 좌표계 변환: CSS px -> 마스크 px (선 두께도 transform으로 함께 스케일됨)
+    ctx.setTransform(scaleX, 0, 0, scaleY, translateX, translateY);
 
     const visiblePaths = pathsRef.current.slice(0, historyStepRef.current + 1);
     for (const path of visiblePaths) drawPathOnCtx(ctx, path, "white");

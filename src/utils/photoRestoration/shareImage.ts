@@ -22,6 +22,9 @@ async function shareViaNative(url: string, title: string) {
   await FileTransfer.downloadFile({ url, path: uri });
 
   try {
+    // 웹 경로와 동일한 이유로 text는 의도적으로 뺀다: 파일 공유에 text를
+    // 섞으면 iOS 공유 시트가 "여러 항목 공유"로 처리되어 "이미지 저장"
+    // 액션이 사라진다.
     await Share.share({ title, files: [uri] });
     return { method: "share-files" as const };
   } catch (e) {
