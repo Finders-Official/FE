@@ -39,6 +39,7 @@ export default function PhotoRestorationPage() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isComparing, setIsComparing] = useState(false);
@@ -102,6 +103,7 @@ export default function PhotoRestorationPage() {
   } = useCanvasDrawing({
     canvasRef,
     containerRef,
+    imageRef,
     isImageLoaded,
     disabled: !!restoredImageUrl || isGenerating,
   });
@@ -264,6 +266,7 @@ export default function PhotoRestorationPage() {
                 isGenerating={isGenerating}
                 canvasRef={canvasRef}
                 containerRef={containerRef}
+                imageRef={imageRef}
                 startDrawing={startDrawing}
                 draw={draw}
                 stopDrawing={stopDrawing}

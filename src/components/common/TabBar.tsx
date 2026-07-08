@@ -70,15 +70,22 @@ export const TabBar = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    const objectUrl = URL.createObjectURL(e.target.files[0]);
+    // Android WebView의 file input File은 content provider를 가리키는 지연 참조라
+    // 이후 fetch(blob:)로 다시 읽을 때 실패할 수 있다. 선택 즉시 바이트를
+    // 메모리로 복사한 Blob으로 URL을 만들어 참조가 끊기지 않게 한다.
+    const file = e.target.files[0];
+    const blob = new Blob([await file.arrayBuffer()], {
+      type: file.type || "image/*",
+    });
+    const objectUrl = URL.createObjectURL(blob);
     navigate("/restore/editor", { state: { imageUrl: objectUrl } });
     e.target.value = "";
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 py-6">
+    <div className="fixed bottom-0 left-1/2 z-50 h-(--tabbar-height) w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
       <input
         type="file"
         ref={fileInputRef}
