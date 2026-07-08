@@ -43,7 +43,9 @@ async function uploadViaNativeFileTransfer({
   file,
   contentType,
 }: UploadToPresignedUrlArgs): Promise<void> {
-  const tempPath = `uploads/${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  // 하위 디렉토리를 쓰지 않는다: 두 파일을 Promise.all로 동시에 쓸 때
+  // 같은 부모 디렉토리 생성 경합으로 Android에서 writeFile이 실패한다(OS-PLUG-FILE-0011).
+  const tempPath = `upload-${Date.now()}-${Math.random().toString(36).slice(2)}.tmp`;
   const base64Data = await blobToBase64(file);
 
   const { uri } = await Filesystem.writeFile({
