@@ -114,10 +114,15 @@ export function useFavoriteToggle() {
 
     onSettled: (_data, _err, { photoLabId }) => {
       queryClient.invalidateQueries({ queryKey: LIST_KEY });
-      queryClient.invalidateQueries({ queryKey: FAVORITES_KEY });
+      // 화면에 떠 있는 동안 즉시 재조회되어 항목이 사라지지 않도록 stale 마킹만 수행 (진입 시 재조회)
+      queryClient.invalidateQueries({
+        queryKey: FAVORITES_KEY,
+        refetchType: "none",
+      });
       queryClient.invalidateQueries({
         queryKey: ["photoLab", "detail", photoLabId],
       });
     },
+    //
   });
 }
