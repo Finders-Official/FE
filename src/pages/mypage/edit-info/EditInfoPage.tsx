@@ -31,11 +31,12 @@ export function EditInfoPage() {
   }, [me?.member?.phone]);
 
   const socialAccount = me?.roleData?.user?.socialAccounts?.[0];
-  const socialProviderLabel = useMemo(() => {
-    if (socialAccount?.provider === "KAKAO") return "카카오톡";
-    if (socialAccount?.provider === "APPLE") return "Apple";
-    return socialAccount?.provider ?? "";
-  }, [socialAccount?.provider]);
+  const socialProviderLabel =
+    socialAccount?.provider === "KAKAO"
+      ? "카카오톡"
+      : socialAccount?.provider === "APPLE"
+        ? "Apple"
+        : (socialAccount?.provider ?? "");
 
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
