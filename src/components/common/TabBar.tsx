@@ -85,7 +85,7 @@ export const TabBar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 py-6">
+    <div className="fixed bottom-0 left-1/2 z-50 h-(--tabbar-height) w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
       <input
         type="file"
         ref={fileInputRef}
