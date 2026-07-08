@@ -15,6 +15,7 @@ export interface DrawPath {
 interface UseCanvasDrawingProps {
   canvasRef: RefObject<HTMLCanvasElement | null>;
   containerRef: RefObject<HTMLDivElement | null>;
+  imageRef: RefObject<HTMLImageElement | null>; // 마스크를 원본 해상도로 만들기 위한 참조
   isImageLoaded: boolean; // redraw 트리거로만 사용(사이즈 보장과 무관)
   disabled: boolean;
 }
@@ -22,6 +23,7 @@ interface UseCanvasDrawingProps {
 export const useCanvasDrawing = ({
   canvasRef,
   containerRef,
+  imageRef,
   isImageLoaded,
   disabled,
 }: UseCanvasDrawingProps) => {
@@ -237,22 +239,50 @@ export const useCanvasDrawing = ({
     redrawCanvas();
   }, [paths, historyStep, currentPath, redrawCanvas]);
 
-  // 마스크 생성 (API 전송용) - 좌표계/해상도 완전 동일하게 맞춤
+  // 초대형 원본에서 마스크 캔버스 메모리 폭주 방지 (긴 변 기준, 비율 유지 축소)
+  const MAX_MASK_DIMENSION = 4096;
+
+  // 마스크 생성 (API 전송용)
+  // 화면 표시 크기(뷰포트/DPR 종속)가 아니라 원본 이미지 해상도 기준으로 생성해
+  // 어떤 기기에서 그려도 동일한 마스크가 서버로 올라가게 한다.
+  // 경로 좌표는 CSS px이므로 (원본 크기 / 표시 크기) 배율로 변환한다.
   const createMaskBlob = async (): Promise<Blob | null> => {
     const container = containerRef.current;
     if (!container) return null;
 
-    const dpr = getDpr();
     const rect = container.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return null;
+
+    const img = imageRef.current;
+    const naturalW = img?.naturalWidth ?? 0;
+    const naturalH = img?.naturalHeight ?? 0;
+
+    let targetW: number;
+    let targetH: number;
+
+    if (naturalW > 0 && naturalH > 0) {
+      const cap = Math.min(
+        1,
+        MAX_MASK_DIMENSION / Math.max(naturalW, naturalH),
+      );
+      targetW = Math.max(1, Math.round(naturalW * cap));
+      targetH = Math.max(1, Math.round(naturalH * cap));
+    } else {
+      // 원본 크기를 알 수 없으면 기존 방식(표시 크기 x DPR)으로 폴백
+      const dpr = getDpr();
+      targetW = Math.max(1, Math.round(rect.width * dpr));
+      targetH = Math.max(1, Math.round(rect.height * dpr));
+    }
 
     const offCanvas = document.createElement("canvas");
-    offCanvas.width = Math.max(1, Math.round(rect.width * dpr));
-    offCanvas.height = Math.max(1, Math.round(rect.height * dpr));
+    offCanvas.width = targetW;
+    offCanvas.height = targetH;
 
     const ctx = offCanvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // 좌표계 변환: CSS px -> 마스크 px (선 두께도 transform으로 함께 스케일됨)
+    ctx.setTransform(targetW / rect.width, 0, 0, targetH / rect.height, 0, 0);
 
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, rect.width, rect.height);
