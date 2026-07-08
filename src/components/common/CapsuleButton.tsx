@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import type { ComponentType, SVGProps } from "react";
 
-type CapsuleSize = "small" | "medium";
+type CapsuleSize = "small" | "medium" | "large";
 
 interface CapsuleButtonProps {
   text: string;
@@ -32,7 +32,8 @@ export const CapsuleButton = ({
 
   const sizeClass: Record<CapsuleSize, string> = {
     small: "w-[8.8125rem]",
-    medium: "w-[13.25rem]",
+    medium: "w-[10.6875rem]",
+    large: "w-[13.25rem]",
   };
 
   const handleClick = () => {

@@ -72,7 +72,7 @@ export const RestorationFooter = ({
           <CapsuleButton
             text="사진수다에 자랑하기"
             image={PhotoFillIcon}
-            size="medium"
+            size="large"
             onClick={() => navigate("/photoFeed")}
           />
         ) : (
