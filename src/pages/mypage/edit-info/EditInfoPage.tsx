@@ -30,6 +30,13 @@ export function EditInfoPage() {
     return raw ? formatPhoneKorea(raw) : "";
   }, [me?.member?.phone]);
 
+  const socialAccount = me?.roleData?.user?.socialAccounts?.[0];
+  const socialProviderLabel = useMemo(() => {
+    if (socialAccount?.provider === "KAKAO") return "카카오톡";
+    if (socialAccount?.provider === "APPLE") return "Apple";
+    return socialAccount?.provider ?? "";
+  }, [socialAccount?.provider]);
+
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -295,7 +302,7 @@ export function EditInfoPage() {
         <OptionLink
           to="./social"
           text="연동된 소셜 계정"
-          info="카카오톡"
+          info={socialProviderLabel}
           infoColor="gray"
         />
 
