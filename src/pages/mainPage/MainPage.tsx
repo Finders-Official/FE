@@ -6,6 +6,7 @@ import FilmNewsSection from "@/components/mainPage/FilmNewsSection/FilmNewsSecti
 import CommunityGallerySection from "@/components/mainPage/ComunityGallarySection/CommunityGallerySection";
 import Footer from "@/components/mainPage/Footer";
 import { useAnchorScroll } from "@/hooks/common";
+import { prefetchGeolocation } from "@/hooks/common/useGeolocation";
 
 const SectionWrapper = ({
   id,
@@ -17,6 +18,11 @@ const SectionWrapper = ({
 
 export default function MainPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 로그인 직후 랜딩 시점에 위치 권한을 미리 요청
+  useEffect(() => {
+    prefetchGeolocation();
+  }, []);
 
   useEffect(() => {
     const resetScroll = () => {

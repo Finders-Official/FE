@@ -65,7 +65,7 @@ export default function PhotoLabDetailPage() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
+      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
         <Header title={lab.name} showBack onBack={handleBack} />
       </div>
 

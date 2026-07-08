@@ -30,6 +30,7 @@
     "@capacitor/core": "^8.3.4",
     "@capacitor/file-transfer": "^2.0.4",
     "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/geolocation": "^8.2.0",
     "@capacitor/ios": "^8.3.4",
     "@capacitor/share": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.1",

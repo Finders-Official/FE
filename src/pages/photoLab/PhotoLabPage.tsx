@@ -81,7 +81,7 @@ export default function PhotoLabPage() {
   return (
     <div className="flex w-full flex-col">
       {/* 헤더 (스크롤 시에도 상단 고정) */}
-      <div className="sticky top-0 z-20 -mx-4 bg-neutral-900 px-4">
+      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
         <Header
           title={"현상소 보기"}
           showBack={false}
