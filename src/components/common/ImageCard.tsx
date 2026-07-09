@@ -1,5 +1,5 @@
 import { CheckCircleIcon, EmptyCheckCircleIcon } from "@/assets/icon";
-import { Press } from "@/components/common/motion";
+import { IconSwap, NumberPopIn, Press } from "@/components/common/motion";
 
 type BaseImageCardProps = {
   src: string;
@@ -62,27 +62,33 @@ export function ImageCard({
       {/* 우측 상단 1/4 토글 영역: 해당 영역 클릭시 사진 선택 및 해제 (그 외 영역은 확대 페이지로 이동) */}
       <div data-toggle-area className="absolute top-0 right-0 h-1/2 w-1/2" />
 
-      {/* 선택된 경우: 테두리(주황) */}
-      {isSelected && (
-        <div className="pointer-events-none absolute inset-0 border-4 border-orange-500" />
-      )}
+      {/* 선택된 경우: 테두리(주황) — 상시 마운트 + opacity 전환 */}
+      <div
+        className={`ease-smooth-out pointer-events-none absolute inset-0 border-4 border-orange-500 transition-opacity duration-[var(--duration-quick)] motion-reduce:transition-none ${
+          isSelected ? "opacity-100" : "opacity-0"
+        }`}
+      />
 
       {/* 우측 상단 배지: 선택된 경우, multi면 숫자 / single이면 체크 선택되지 않은 경우, 빈 체크*/}
-      {isSelected ? (
-        <div className="pointer-events-none absolute top-[0.4375rem] right-[0.4375rem]">
-          {mode === "multi" ? (
+      <div className="pointer-events-none absolute top-[0.4375rem] right-[0.4375rem]">
+        {mode === "multi" ? (
+          isSelected ? (
             <div className="flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-orange-500 text-base font-bold text-white">
-              {badgeText}
+              {badgeText && <NumberPopIn value={badgeText} />}
             </div>
           ) : (
-            <CheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
-          )}
-        </div>
-      ) : (
-        <div className="pointer-events-none absolute top-[0.4375rem] right-[0.4375rem]">
-          <EmptyCheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
-        </div>
-      )}
+            <EmptyCheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
+          )
+        ) : (
+          <IconSwap
+            active={isSelected}
+            iconA={
+              <EmptyCheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />
+            }
+            iconB={<CheckCircleIcon className="h-[1.375rem] w-[1.375rem]" />}
+          />
+        )}
+      </div>
     </Press>
   );
 }

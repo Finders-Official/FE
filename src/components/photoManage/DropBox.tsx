@@ -26,13 +26,14 @@ export function DropBox({
   const rightText = value ? value.priceText : category.placeholder;
 
   return (
-    <button
-      type="button"
-      onClick={() => onToggle(category.key)}
-      aria-expanded={isOpen}
-      className="w-full"
-    >
-      <div className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3">
+    <div className="w-full">
+      {/* 토글 버튼 — 옵션(Press)까지 감싸는 중첩 버튼이 되지 않게 헤더 행만 버튼으로 둔다 */}
+      <Press
+        type="button"
+        onClick={() => onToggle(category.key)}
+        aria-expanded={isOpen}
+        className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3"
+      >
         <div className="flex flex-1 justify-between">
           <p className={leftTextClass}>{leftText}</p>
           <p className="text-neutral-400">{rightText}</p>
@@ -45,7 +46,7 @@ export function DropBox({
             }`}
           />
         </div>
-      </div>
+      </Press>
 
       <Collapse open={isOpen}>
         <div className="border-neutral-850 mt-2 overflow-hidden rounded-[0.625rem] border">
@@ -75,6 +76,6 @@ export function DropBox({
           </ul>
         </div>
       </Collapse>
-    </button>
+    </div>
   );
 }

@@ -431,14 +431,15 @@ export default function PhotoDownload() {
                     ref={(el) => {
                       if (el) previewRefs.current.set(id, el);
                     }}
-                    onClick={() => setCurrentPhotoId(id)}
                     className="shrink-0"
                   >
-                    <PhotoCardPreview
-                      src={photo.signedUrl}
-                      showClose={false}
-                      className={id === currentPhotoId ? "scale-110" : ""}
-                    />
+                    <Press as="div" onClick={() => setCurrentPhotoId(id)}>
+                      <PhotoCardPreview
+                        src={photo.signedUrl}
+                        showClose={false}
+                        className={id === currentPhotoId ? "scale-110" : ""}
+                      />
+                    </Press>
                   </div>
                 );
               })}

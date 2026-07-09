@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import type { AgreementGroup } from "@/types/auth";
 import { TermsContent } from "./TermsContent";
-import { Collapse } from "@/components/common";
+import { Collapse, Press } from "@/components/common";
 
 type Props = {
   leading: ReactNode;
@@ -25,7 +25,7 @@ export function TermsAccordionRow({
     <div id={id} className="border-neutral-850 flex flex-col border-b py-2">
       <div className="flex items-center justify-between">
         {leading}
-        <button
+        <Press
           type="button"
           aria-label={expanded ? "약관 접기" : "약관 펼치기"}
           aria-expanded={expanded}
@@ -37,7 +37,7 @@ export function TermsAccordionRow({
               expanded ? "rotate-90" : "-rotate-90"
             }`}
           />
-        </button>
+        </Press>
       </div>
       <Collapse open={expanded}>
         <div className="pt-2">

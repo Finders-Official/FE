@@ -329,7 +329,11 @@ export default function PhotoFeedSearchPage() {
             className="flex items-center gap-[6px] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
           >
             <span>{FILTER_LABEL[filter]}</span>
-            <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
+            <ChevronLeftIcon
+              className={`ease-smooth-out h-4 w-4 text-neutral-200 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
+                bottomSheetOpen ? "rotate-90" : "-rotate-90"
+              }`}
+            />
           </Press>
         </div>
         {previewList.length === 0 && <EmptyView />}

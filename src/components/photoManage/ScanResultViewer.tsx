@@ -160,7 +160,7 @@ const ScanResultViewer = ({
       <div className="from-neutral-1000/80 absolute right-0 bottom-0 left-0 z-30 w-full bg-linear-to-t to-transparent pt-4 pb-10">
         <div className="scrollbar-hide flex gap-2.75 overflow-x-auto px-5">
           {images.map((img, idx) => (
-            <button
+            <Press
               key={img}
               onClick={() => setCurrentIndex(idx)}
               className={`ease-smooth-out relative h-15 w-15 shrink-0 overflow-hidden rounded-[0.625rem] border transition-[opacity,border-color] duration-[var(--duration-quick)] ${
@@ -175,7 +175,7 @@ const ScanResultViewer = ({
                 className="h-full w-full object-cover"
                 draggable={false}
               />
-            </button>
+            </Press>
           ))}
         </div>
       </div>
