@@ -248,6 +248,7 @@ export default function FindPhotoLabPage() {
 
       {/* 검색모드일 때: 화면 전체 클릭을 감지하는 투명 오버레이 */}
       {labReviewStep === "search" && (
+        // eslint-disable-next-line no-restricted-syntax -- 보이지 않는 tap-to-dismiss 레이어(스크림과 동일 성격)
         <button
           type="button"
           className="fixed inset-0 z-10 cursor-default"

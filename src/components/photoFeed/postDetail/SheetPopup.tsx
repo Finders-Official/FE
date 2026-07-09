@@ -40,6 +40,7 @@ export default function SheetPopup({
   return createPortal(
     <div className="fixed inset-0 z-500">
       {/* backdrop */}
+      {/* eslint-disable-next-line no-restricted-syntax -- 스크림(백드롭) 닫기 버튼은 눌림 피드백 미적용 확정 */}
       <button
         type="button"
         aria-label="닫기"

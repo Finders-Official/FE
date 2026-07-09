@@ -32,23 +32,6 @@ export {
 export { default as UnderlineTabs } from "./UnderlineTabs";
 export type { UnderlineTabsProps, TabItem } from "./UnderlineTabs";
 
-export { default as FilterContainer } from "./FilterContainer";
-export type { FilterContainerProps } from "./FilterContainer";
-
 // Chips
-export {
-  FilterChip,
-  LocationChip,
-  DateChip,
-  TimeSlotChip,
-  TimeFilterChip,
-  ActionChip,
-} from "./chips";
-export type {
-  FilterChipProps,
-  LocationChipProps,
-  DateChipProps,
-  TimeSlotChipProps,
-  TimeFilterChipProps,
-  ActionChipProps,
-} from "./chips";
+export { LocationChip } from "./chips";
+export type { LocationChipProps } from "./chips";

@@ -584,36 +584,8 @@
   --shake-dur-a: var(--duration-micro);
   --shake-dur-b: 60ms;
   --shake-ease: var(--ease-smooth-out);
-  --revert-hold: 3000ms;
-  --revert-dur: 280ms;
 }
 
-.t-input {
-  transition: border-color 150ms ease-out;
-}
-.t-input.is-error {
-  transition: border-color var(--revert-dur, 280ms) ease-out;
-}
-
-.t-error-msg {
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity var(--revert-dur, 280ms) ease-out,
-    visibility 0s linear var(--revert-dur, 280ms);
-}
-.t-input-wrap.is-error .t-error-msg {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity var(--revert-dur, 280ms) ease-out,
-    visibility 0s linear 0s;
-}
-
-.t-input.is-shaking {
-  animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2)
-    linear;
-}
 @keyframes t-input-shake {
   0% {
     transform: translateX(0);
@@ -643,81 +615,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .t-input,
   .t-shake {
     animation: none !important;
     transform: none !important;
-  }
-}
-
-:root {
-  --pulse-dur: 1000ms;
-  --pulse-count: 1;
-  --pulse-min: 0.5;
-  --reveal-dur: var(--duration-slow);
-  --reveal-blur: var(--blur-small);
-  --reveal-ease: var(--ease-in-out);
-}
-
-.t-skel {
-  position: relative;
-}
-.t-skel-skeleton,
-.t-skel-content {
-  position: absolute;
-  inset: 0;
-}
-
-.t-skel-skeleton {
-  z-index: 1;
-  opacity: 1;
-  filter: blur(0);
-  transition:
-    opacity var(--reveal-dur) var(--reveal-ease),
-    filter var(--reveal-dur) var(--reveal-ease);
-}
-.t-skel-content {
-  z-index: 2;
-  opacity: 0;
-  filter: blur(var(--reveal-blur));
-  transition:
-    opacity var(--reveal-dur) var(--reveal-ease),
-    filter var(--reveal-dur) var(--reveal-ease);
-}
-.t-skel.is-revealed .t-skel-skeleton {
-  opacity: 0;
-  filter: blur(var(--reveal-blur));
-}
-.t-skel.is-revealed .t-skel-content {
-  opacity: 1;
-  filter: blur(0);
-}
-
-.t-skel.is-resetting .t-skel-skeleton,
-.t-skel.is-resetting .t-skel-content {
-  transition: none !important;
-}
-
-.t-skel-skeleton.is-pulsing > * {
-  animation: t-skel-pulse var(--pulse-dur) ease-in-out var(--pulse-count);
-}
-@keyframes t-skel-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: var(--pulse-min);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .t-skel-skeleton,
-  .t-skel-content {
-    transition: none !important;
-  }
-  .t-skel-skeleton.is-pulsing > * {
-    animation: none !important;
   }
 }
 

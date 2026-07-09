@@ -72,6 +72,7 @@ export default function PhotoCard({
         </Press>
 
         {isShowLiked ? (
+          // eslint-disable-next-line no-restricted-syntax -- 좋아요 토글은 IconSwap 바운스가 탭 피드백을 담당(Press 미적용 확정)
           <button
             type="button"
             className="absolute right-2 bottom-7"
