@@ -230,6 +230,7 @@ export default function PhotoLabSearchPage() {
           {/* 검색 결과 목록 */}
           <LabList
             labs={labs}
+            staggerResetKey={searchQuery}
             isLoading={isLoading || isLocationLoading}
             isFetchingNextPage={isFetchingNextPage}
             hasNextPage={hasNextPage ?? false}

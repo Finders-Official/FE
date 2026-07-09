@@ -105,6 +105,7 @@ export default function PhotoLabPage() {
       <LabList
         labs={labs}
         reorderByFavorite
+        staggerResetKey={filter.regionIds?.join(",") ?? ""}
         isLoading={isLoading || isLocationLoading}
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage ?? false}

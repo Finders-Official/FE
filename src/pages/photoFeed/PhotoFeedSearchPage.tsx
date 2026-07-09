@@ -112,9 +112,10 @@ export default function PhotoFeedSearchPage() {
 
   const previewList = searchData?.pages.flatMap((p) => p.previewList) ?? [];
   const totalCount = searchData?.pages[0]?.totalCount ?? 0;
+  // 검색어뿐 아니라 필터 변경도 새 데이터셋
   const staggerIndexFor = useFirstPageStagger(
     previewList.length,
-    searchTrimmed,
+    `${searchTrimmed}|${filter}`,
   );
 
   /** 화면 모드: 최근/연관/결과 */

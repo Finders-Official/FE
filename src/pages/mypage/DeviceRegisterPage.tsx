@@ -12,6 +12,7 @@ import {
   PageSlide,
   Press,
   SearchBar,
+  StaggerItem,
   Toast,
 } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
@@ -20,6 +21,7 @@ import { EmptyOrderState } from "@/components/mypage";
 import { DeviceItem, SpecButton } from "@/components/mypage";
 
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import type { EquipmentItem } from "@/types/mypage/device";
 import {
   useCamerasInfinite,
@@ -147,6 +149,7 @@ function ListView({ onGoToRegister, onGoToEdit }: ListViewProps) {
 
   const equipmentList = data?.pages.flatMap((page) => page.data.items) ?? [];
   const hasEquipments = equipmentList.length > 0;
+  const staggerIndexFor = useFirstPageStagger(equipmentList.length);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const onIntersect = useCallback(() => {
@@ -194,16 +197,20 @@ function ListView({ onGoToRegister, onGoToEdit }: ListViewProps) {
           </div>
         ) : hasEquipments ? (
           <div className="flex flex-col gap-4">
-            {equipmentList.map((item) => (
-              <DeviceItem
+            {equipmentList.map((item, index) => (
+              <StaggerItem
                 key={item.combinationId}
-                title={item.nickname}
-                isDefault={item.isDefault}
-                cameraName={item.camera.name}
-                filmName={item.film.name}
-                onEdit={() => onGoToEdit(item)}
-                onDelete={() => handleDeleteClick(item.combinationId)}
-              />
+                index={staggerIndexFor(index)}
+              >
+                <DeviceItem
+                  title={item.nickname}
+                  isDefault={item.isDefault}
+                  cameraName={item.camera.name}
+                  filmName={item.film.name}
+                  onEdit={() => onGoToEdit(item)}
+                  onDelete={() => handleDeleteClick(item.combinationId)}
+                />
+              </StaggerItem>
             ))}
           </div>
         ) : (

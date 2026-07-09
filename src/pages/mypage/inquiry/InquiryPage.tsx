@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CTA_Button, PageSlide, TextArea, Toast } from "@/components/common";
+import {
+  CTA_Button,
+  PageSlide,
+  StaggerItem,
+  TextArea,
+  Toast,
+} from "@/components/common";
 import {
   EmptyOrderState,
   InquiryDropBox,
@@ -15,6 +21,7 @@ import { useCreateInquiry } from "@/hooks/my/inquiries/useCreateInquiry";
 import { useOutletContext } from "react-router";
 import type { MyPageOutletContext } from "@/layouts/MyPageLayout";
 import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 
 // 스텝 타입 정의
 type Step = "LIST" | "CREATE";
@@ -73,6 +80,7 @@ function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
   // 2차원 배열을 1차원 배열로 평탄화
   const inquiryList = data?.pages.flatMap((page) => page.data.inquiries) ?? [];
   const hasInquiries = inquiryList.length > 0;
+  const staggerIndexFor = useFirstPageStagger(inquiryList.length);
 
   // --- 무한 스크롤 옵저버 로직 ---
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -107,10 +115,12 @@ function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
             <div className="text-center text-neutral-400">
               {/* 리스트 렌더링 */}
               {inquiryList.map((inquiry, index) => (
-                <InquiryListItem
+                <StaggerItem
                   key={inquiry.id ?? `fallback-key-${index}`}
-                  item={inquiry}
-                />
+                  index={staggerIndexFor(index)}
+                >
+                  <InquiryListItem item={inquiry} />
+                </StaggerItem>
               ))}
 
               {/* 추가 데이터 로딩 인디케이터 */}
