@@ -31,13 +31,12 @@ export const InputForm = ({
   shakeKey,
 }: InputFormProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const didShakeMount = useRef(false);
+  // 마운트 시점의 키를 기억해 "값이 바뀐 경우"에만 재생
+  const lastShakeKey = useRef(shakeKey);
 
   useEffect(() => {
-    if (!didShakeMount.current) {
-      didShakeMount.current = true;
-      return;
-    }
+    if (shakeKey === undefined || shakeKey === lastShakeKey.current) return;
+    lastShakeKey.current = shakeKey;
     const el = inputRef.current;
     if (!el) return;
     el.classList.remove("t-shake");
@@ -82,7 +81,9 @@ export const InputForm = ({
       </div>
 
       {invalidText && (
-        <p className={`mb-[2.45rem] p-[0.625rem] text-sm ${textClass ?? ""}`}>
+        <p
+          className={`t-error-in mb-[2.45rem] p-[0.625rem] text-sm ${textClass ?? ""}`}
+        >
           {invalidText}
         </p>
       )}

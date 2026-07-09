@@ -175,11 +175,11 @@ export default function NewPostPage() {
             shakeKey={titleShake.shakeKey}
           />
           {titleText.length > LIMITS.titleMax ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {LIMITS.titleMax}자까지 입력 가능합니다.
             </p>
           ) : titleError ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최소 2글자 이상 입력해주세요.
             </p>
           ) : null}
@@ -208,11 +208,11 @@ export default function NewPostPage() {
             shakeKey={contentShake.shakeKey}
           />
           {contentText.length > LIMITS.contentMax ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {LIMITS.contentMax}자까지 입력 가능합니다.
             </p>
           ) : contentError ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최소 20글자 이상 입력해주세요.
             </p>
           ) : null}

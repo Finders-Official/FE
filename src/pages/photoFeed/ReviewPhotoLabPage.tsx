@@ -141,12 +141,12 @@ export default function ReviewPhotoLabPage() {
             shakeKey={reviewShake.shakeKey}
           />
           {reviewText.length > MAX ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {MAX}자까지 입력 가능합니다.
             </p>
           ) : reviewTextError ? (
             <p
-              className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
+              className={`t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
             >
               최소 20글자 이상 입력해주세요.
             </p>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "@/components/common/Header";
+import { Toast } from "@/components/common";
 import { shareImageFromUrl } from "@/utils/photoRestoration/shareImage";
 import { ShareIcon } from "@/assets/icon";
 import { useReveal } from "@/transitions";
@@ -22,6 +23,8 @@ export default function RestorationSavedOverlay({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  // 공유 실패 토스트 메시지
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // 이미지 비율을 동적으로 적용
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
@@ -72,8 +75,8 @@ export default function RestorationSavedOverlay({
     try {
       await shareImageFromUrl(imageUrl, { title: "복원한 사진" });
     } catch (e) {
-      if (e instanceof Error) alert(e.message);
-      else alert("공유하기를 사용할 수 없습니다.");
+      if (e instanceof Error) setToastMessage(e.message);
+      else setToastMessage("공유하기를 사용할 수 없습니다.");
     }
   };
 
@@ -143,6 +146,14 @@ export default function RestorationSavedOverlay({
           </div>
         </div>
       </main>
+
+      {/* 공유 실패 토스트 */}
+      <Toast
+        open={!!toastMessage}
+        onClose={() => setToastMessage(null)}
+        duration={3000}
+        message={toastMessage ?? ""}
+      />
     </div>
   );
 }

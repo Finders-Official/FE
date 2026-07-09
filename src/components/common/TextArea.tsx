@@ -58,7 +58,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ) => {
     const innerRef = useRef<HTMLTextAreaElement | null>(null);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const didShakeMount = useRef(false);
+    // 마운트 시점의 키를 기억해 "값이 바뀐 경우"에만 재생
+    const lastShakeKey = useRef(shakeKey);
 
     // forwardedRef + innerRef 같이 연결
     const setRefs = (el: HTMLTextAreaElement | null) => {
@@ -93,10 +94,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     }, [value]);
 
     useEffect(() => {
-      if (!didShakeMount.current) {
-        didShakeMount.current = true;
-        return;
-      }
+      if (shakeKey === undefined || shakeKey === lastShakeKey.current) return;
+      lastShakeKey.current = shakeKey;
       const el = wrapperRef.current;
       if (!el) return;
       el.classList.remove("t-shake");

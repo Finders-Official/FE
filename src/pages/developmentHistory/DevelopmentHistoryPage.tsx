@@ -112,7 +112,7 @@ const DevelopmentHistoryPage = () => {
           </header>
 
           {isError ? (
-            <div className="rounded-xl border border-neutral-800 p-4 text-sm text-neutral-300">
+            <div className="t-fade-in rounded-xl border border-neutral-800 p-4 text-sm text-neutral-300">
               현상 내역을 불러오는데 실패했습니다.
             </div>
           ) : (

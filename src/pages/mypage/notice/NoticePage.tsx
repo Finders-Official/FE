@@ -69,7 +69,7 @@ export function NoticePage() {
         {isLoading ? (
           <LoadingSpinner open={isLoading} />
         ) : isError ? (
-          <div className="flex flex-1 items-center justify-center text-neutral-400">
+          <div className="t-fade-in flex flex-1 items-center justify-center text-neutral-400">
             공지사항을 불러오는 중 오류가 발생했습니다.
           </div>
         ) : noticeList.length > 0 ? (

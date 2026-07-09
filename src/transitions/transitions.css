@@ -389,6 +389,28 @@
   }
 }
 
+/* 폼 에러 텍스트 등장 — 조건부 마운트되는 메시지에 붙인다 (입력창 아래로 살짝 내려앉음) */
+.t-error-in {
+  animation: t-error-in var(--duration-fast) var(--ease-smooth-out);
+}
+@keyframes t-error-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--distance-micro) * -1));
+    filter: blur(var(--blur-small));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-error-in {
+    animation: none;
+  }
+}
+
 :root {
   --digit-dur: var(--duration-fast);
   --digit-distance: var(--distance-base);

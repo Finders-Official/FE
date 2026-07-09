@@ -192,7 +192,7 @@ function ListView({ onGoToRegister, onGoToEdit }: ListViewProps) {
         {isLoading ? (
           <LoadingSpinner open={isLoading} />
         ) : isError ? (
-          <div className="flex flex-1 items-center justify-center text-neutral-400">
+          <div className="t-fade-in flex flex-1 items-center justify-center text-neutral-400">
             장비 목록을 불러오지 못했습니다.
           </div>
         ) : hasEquipments ? (
@@ -272,6 +272,11 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
 
   const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
 
+  // 처리 실패 토스트 메시지
+  const [errorToastMessage, setErrorToastMessage] = useState<string | null>(
+    null,
+  );
+
   // 바텀시트 제어 상태
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [bottomSheetType, setBottomSheetType] = useState<
@@ -348,7 +353,9 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
     }
 
     // 그 외 알 수 없는 에러
-    alert("장비 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    setErrorToastMessage(
+      "장비 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    );
   };
 
   // 유효성 검사: 카메라, 필름 선택 완료 및 글자수가 입력되었을 때 주황색 활성화
@@ -451,6 +458,15 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
         confirmText="확인"
         confirmButtonStyle="text"
         onConfirm={() => setIsDuplicateDialogOpen(false)}
+      />
+
+      {/* 처리 실패 토스트 */}
+      <Toast
+        open={!!errorToastMessage}
+        onClose={() => setErrorToastMessage(null)}
+        duration={3000}
+        placement="above-tab"
+        message={errorToastMessage ?? ""}
       />
 
       <BottomSheet

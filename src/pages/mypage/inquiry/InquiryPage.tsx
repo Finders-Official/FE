@@ -107,7 +107,7 @@ function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
         {isLoading ? (
           <LoadingSpinner open={isLoading} />
         ) : isError ? (
-          <div className="flex flex-1 items-center justify-center text-neutral-400">
+          <div className="t-fade-in flex flex-1 items-center justify-center text-neutral-400">
             <p>문의 내역을 불러오지 못했습니다.</p>
           </div>
         ) : hasInquiries ? (

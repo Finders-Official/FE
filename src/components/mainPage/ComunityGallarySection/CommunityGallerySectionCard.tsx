@@ -60,16 +60,11 @@ export default function CommunityGallerySectionCard({
       return { previous };
     },
 
-    onError: (err, _vars, ctx) => {
+    // 실패 시 조용한 롤백 — useLikePost/useUnlikePost와 동일한 처리
+    onError: (_err, _vars, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(COMMUNITY_PREVIEW_QK, ctx.previous);
       }
-
-      const message =
-        err instanceof Error
-          ? err.message
-          : "좋아요 처리에 실패했어요. 잠시 후 다시 시도해주세요.";
-      alert(message);
     },
 
     onSettled: () => {

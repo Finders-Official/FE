@@ -1,4 +1,5 @@
 import BottomSheet from "@/components/common/BottomSheet";
+import { ErrorState } from "@/components/common";
 import Profile from "./Profile";
 import CommentInput from "./CommentInput";
 import { useRef, useState } from "react";
@@ -65,9 +66,10 @@ export default function CommentSheet({
               불러오는 중...
             </div>
           ) : isCommentError ? (
-            <div className="flex items-center justify-center py-6 text-red-400">
-              데이터 불러오기에 실패했어요.
-            </div>
+            <ErrorState
+              message="데이터 불러오기에 실패했어요."
+              className="flex items-center justify-center py-6"
+            />
           ) : (
             <div className="flex flex-col gap-5 pb-7">
               {comments.map(

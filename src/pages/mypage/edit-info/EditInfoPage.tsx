@@ -263,7 +263,7 @@ export function EditInfoPage() {
         </Press>
 
         {error ? (
-          <p className="mt-2 text-sm text-orange-600" role="alert">
+          <p className="t-error-in mt-2 text-sm text-orange-600" role="alert">
             {error}
           </p>
         ) : null}

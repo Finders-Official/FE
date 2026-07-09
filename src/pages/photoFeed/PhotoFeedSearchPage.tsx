@@ -1,6 +1,12 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { CTA_Button, NumberPopIn, Press, SearchBar } from "@/components/common";
+import {
+  CTA_Button,
+  ErrorState,
+  NumberPopIn,
+  Press,
+  SearchBar,
+} from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
 import { ChevronLeftIcon } from "@/assets/icon";
@@ -184,9 +190,10 @@ export default function PhotoFeedSearchPage() {
   /** API 요청 실패 */
   const errorResponse = () => {
     return (
-      <div className="flex items-center justify-center py-6 text-red-400">
-        데이터 불러오기에 실패했어요.
-      </div>
+      <ErrorState
+        message="데이터 불러오기에 실패했어요."
+        className="flex items-center justify-center py-6"
+      />
     );
   };
 
