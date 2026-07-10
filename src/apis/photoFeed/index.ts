@@ -4,6 +4,13 @@ export { getPosts, createPost, getPostDetail, deletePost } from "./post.api";
 
 export { postLike, deleteLike } from "./reactions.api";
 
+export { reportContent } from "./report.api";
+export type {
+  ReportTargetType,
+  ReportReason,
+  ReportRequest,
+} from "./report.api";
+
 export {
   getPostSearches,
   getRecentSearches,

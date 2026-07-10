@@ -2,6 +2,11 @@ import { postLike } from "@/apis/photoFeed";
 import type { PostDetailResponse } from "@/types/photoFeed/postDetail";
 import type { CommunityPost } from "@/apis/mainPage/mainPage.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  PHOTO_FEED_QK,
+  patchPostInFeed,
+  restoreFeedCache,
+} from "@/hooks/photoFeed/updateFeedCache";
 
 const COMMUNITY_PREVIEW_QK = ["community", "posts", "preview"] as const;
 const POST_DETAIL_QK = (postId: string) => ["postDetail", postId] as const;
@@ -17,6 +22,7 @@ export function useLikePost() {
       await Promise.all([
         queryClient.cancelQueries({ queryKey: POST_DETAIL_QK(postId) }),
         queryClient.cancelQueries({ queryKey: COMMUNITY_PREVIEW_QK }),
+        queryClient.cancelQueries({ queryKey: PHOTO_FEED_QK }),
       ]);
 
       const prevDetail = queryClient.getQueryData<PostDetailResponse>(
@@ -24,6 +30,13 @@ export function useLikePost() {
       );
       const prevPreview =
         queryClient.getQueryData<CommunityPost[]>(COMMUNITY_PREVIEW_QK);
+
+      // 피드 카드의 좋아요 수/여부도 즉시 반영 (전체 리페치 없이)
+      const prevFeed = patchPostInFeed(queryClient, postId, (p) => ({
+        ...p,
+        isLiked: true,
+        likeCount: p.likeCount + 1,
+      }));
 
       queryClient.setQueryData(
         POST_DETAIL_QK(postId),
@@ -49,7 +62,7 @@ export function useLikePost() {
         ),
       );
 
-      return { prevDetail, prevPreview };
+      return { prevDetail, prevPreview, prevFeed };
     },
 
     onError: (_err, postId, context) => {
@@ -59,6 +72,7 @@ export function useLikePost() {
       if (context?.prevPreview) {
         queryClient.setQueryData(COMMUNITY_PREVIEW_QK, context.prevPreview);
       }
+      restoreFeedCache(queryClient, context?.prevFeed);
     },
 
     onSuccess: (_data, postId) => {
