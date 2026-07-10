@@ -26,7 +26,7 @@ export function NumberPopIn({ value, className = "" }: NumberPopInProps) {
         <span
           key={`${animKey}-${i}`}
           className="t-digit"
-          data-stagger={i > 0 ? i : undefined}
+          data-stagger={i > 0 ? Math.min(i, 2) : undefined}
         >
           {ch}
         </span>
