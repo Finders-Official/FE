@@ -659,7 +659,8 @@
     border-color var(--duration-quick) var(--ease-smooth-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .t-press:active {
+  /* :active는 조상에도 걸리므로, 중첩 Press에서는 가장 안쪽만 축소한다 */
+  .t-press:active:not(:has(.t-press:active)) {
     transform: scale(0.97);
     transition-duration: var(--duration-micro);
   }
