@@ -24,10 +24,7 @@ export type RevealVariant =
   | "ios-zoom"
   | "ios-sheet"
   | "push-ios"
-  | "toast"
-  | "banner-roll"
-  | "intro-fade"
-  | "carousel";
+  | "toast";
 
 export function cssMs(
   name: string,

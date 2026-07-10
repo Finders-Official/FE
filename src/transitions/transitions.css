@@ -296,52 +296,9 @@
 
 :root {
   --page-slide-dur: var(--duration-fast);
-  --page-fade-dur: var(--duration-fast);
   --page-slide-distance: var(--distance-base);
   --page-blur: var(--blur-medium);
-  --page-stagger: 0ms;
-  --page-exit-enabled: 1;
   --page-slide-ease: var(--ease-smooth-out);
-  --page-fade-ease: var(--ease-smooth-out);
-}
-
-.t-page-slide {
-  position: relative;
-}
-.t-page-slide .t-page[data-page-id="1"] {
-  --t-page-from-x: calc(var(--page-slide-distance) * -1);
-}
-.t-page-slide .t-page[data-page-id="2"] {
-  --t-page-from-x: var(--page-slide-distance);
-}
-.t-page-slide .t-page {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(
-    calc(var(--t-page-from-x, 0px) * var(--page-exit-enabled))
-  );
-  filter: blur(calc(var(--page-blur) * var(--page-exit-enabled)));
-  transition:
-    opacity var(--page-fade-dur) var(--page-fade-ease),
-    transform var(--page-slide-dur) var(--page-slide-ease),
-    filter var(--page-slide-dur) var(--page-slide-ease);
-  will-change: opacity, transform, filter;
-}
-.t-page-slide[data-page="1"] .t-page[data-page-id="1"],
-.t-page-slide[data-page="2"] .t-page[data-page-id="2"] {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(0);
-  filter: blur(0);
-  transition-delay: var(--page-stagger);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .t-page-slide .t-page {
-    transition: none !important;
-  }
 }
 
 .t-page-enter {
