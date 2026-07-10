@@ -46,7 +46,10 @@ export default function LabList({
         : labs,
     [labs, reorderByFavorite],
   );
-  const orderKey = orderedLabs.map((lab) => lab.photoLabId).join(",");
+  const orderKey = useMemo(
+    () => orderedLabs.map((lab) => lab.photoLabId).join(","),
+    [orderedLabs],
+  );
   const listRef = useFlipReorder<HTMLDivElement>(orderKey);
 
   const handleIntersect = useCallback(() => {
