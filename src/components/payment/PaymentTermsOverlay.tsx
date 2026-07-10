@@ -42,7 +42,7 @@ export function PaymentTermsOverlay({
 
   return (
     <div
-      className={`ease-smooth-out fixed inset-0 z-[60] flex justify-center bg-black/80 transition-opacity ${
+      className={`ease-smooth-out fixed inset-0 z-[60] flex justify-center bg-black/80 transition-opacity motion-reduce:transition-none ${
         state === "closing"
           ? "duration-[var(--duration-medium)]"
           : "duration-[var(--duration-slow)]"

@@ -43,7 +43,7 @@ export const DialogBox = ({
 
   const modalContent = (
     <div
-      className={`ease-smooth-out fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem] transition-opacity ${
+      className={`ease-smooth-out fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-[0.125rem] transition-opacity motion-reduce:transition-none ${
         state === "closing"
           ? "duration-[var(--duration-quick)]"
           : "duration-[var(--duration-fast)]"

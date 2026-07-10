@@ -45,7 +45,7 @@ export default function SheetPopup({
         type="button"
         aria-label="닫기"
         onClick={onClose}
-        className={`ease-smooth-out absolute inset-0 bg-black/60 transition-opacity ${
+        className={`ease-smooth-out absolute inset-0 bg-black/60 transition-opacity motion-reduce:transition-none ${
           state === "closing"
             ? "duration-[var(--duration-medium)]"
             : "duration-[var(--duration-slow)]"

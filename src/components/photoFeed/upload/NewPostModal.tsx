@@ -23,7 +23,7 @@ export default function NewPostModal({ isOpen, onClose }: ModalProps) {
 
   return (
     <div
-      className={`ease-smooth-out fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity ${
+      className={`ease-smooth-out fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity motion-reduce:transition-none ${
         state === "closing"
           ? "duration-[var(--duration-quick)]"
           : "duration-[var(--duration-fast)]"

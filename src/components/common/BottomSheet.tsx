@@ -208,7 +208,7 @@ export default function BottomSheet({
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          className={`ease-smooth-out fixed inset-0 bg-black/80 transition-opacity ${
+          className={`ease-smooth-out fixed inset-0 bg-black/80 transition-opacity motion-reduce:transition-none ${
             overlay ? "z-[60]" : "z-40"
           } ${
             state === "closing"

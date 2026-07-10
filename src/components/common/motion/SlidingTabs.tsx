@@ -53,7 +53,7 @@ export function SlidingTabs({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(index)}
-            className={`ease-smooth-out flex items-center justify-center transition-colors duration-[var(--duration-quick)] ${tabClassName} ${
+            className={`ease-smooth-out flex items-center justify-center transition-colors duration-[var(--duration-quick)] motion-reduce:transition-none ${tabClassName} ${
               isActive ? activeClassName : inactiveClassName
             }`}
           >
@@ -63,7 +63,7 @@ export function SlidingTabs({
       })}
       <span
         aria-hidden="true"
-        className="ease-smooth-out absolute bottom-0 h-[0.125rem] rounded-full bg-orange-500 transition-[transform,width] duration-[var(--duration-fast)]"
+        className="ease-smooth-out absolute bottom-0 h-[0.125rem] rounded-full bg-orange-500 transition-[transform,width] duration-[var(--duration-fast)] motion-reduce:transition-none"
         style={{
           transform: `translateX(${indicator.left}px)`,
           width: indicator.width,
