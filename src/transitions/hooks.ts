@@ -66,6 +66,9 @@ export function useExitTransition(
   useEffect(() => {
     if (open) {
       setMounted(true);
+      // exit 진행 중 재오픈되면 cleanup이 closed 전이 타이머를 지워버리므로,
+      // 여기서 복귀시키지 않으면 closing에 영구 고착된다(보이지 않는 열림 상태).
+      setState((s) => (s === "closing" ? "open" : s));
       return;
     }
     if (!mounted) return;
