@@ -292,6 +292,7 @@ export default function Profile({
         <Toast
           open={Boolean(toastMessage)}
           onClose={() => setToastMessage(null)}
+          duration={3000}
           message={toastMessage ?? ""}
           icon={<CheckCircleIcon className="h-5 w-5" />}
         />,

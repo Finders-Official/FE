@@ -97,6 +97,7 @@ export default function PhotoFeedPage() {
       <Toast
         open={toastOpen}
         onClose={() => setToastOpen(false)}
+        duration={3000}
         message="게시글이 삭제되었습니다"
         icon={<CheckCircleIcon className="h-5 w-5" />}
       />

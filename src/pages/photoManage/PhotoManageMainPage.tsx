@@ -120,6 +120,7 @@ export default function PhotoManageMainPage() {
       <Toast
         open={toastOpen}
         onClose={() => setToastOpen(false)}
+        duration={3000}
         message="사진이 다운로드 되었습니다"
         icon={<CheckCircleIcon className="h-5 w-5" />}
       />
