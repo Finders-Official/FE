@@ -36,6 +36,13 @@ coverage
 ios/App/App/public/
 ios/App/Pods/
 
+# Claude Code — 팀 공유 대상은 CLAUDE.md + .claude/skills/tdd-clean-arch 만.
+# 나머지 .claude/* (settings.local.json, plans/, 개인 스킬 등)는 로컬 전용.
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/tdd-clean-arch/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
