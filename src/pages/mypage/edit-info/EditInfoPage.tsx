@@ -7,7 +7,9 @@ import { FALLBACK_PROFILE_SRC } from "@/constants/gcsUrl";
 import { useLogout } from "@/hooks/auth/login";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useMe, useEditMe } from "@/hooks/member";
+import { useUnregisterDeviceToken } from "@/hooks/notifications";
 import { useAuthStore } from "@/store/useAuth.store";
+import { usePushTokenStore } from "@/store/usePushToken.store";
 import { formatPhoneKorea } from "@/utils/formatPhoneKorea";
 import {
   pickPresignedPutUrl,
@@ -97,10 +99,24 @@ export function EditInfoPage() {
   // 완전 로그아웃
   const clearUser = useAuthStore((s) => s.clearUser);
 
+  const { mutate: unregisterDeviceToken } = useUnregisterDeviceToken({
+    // 해제 API가 실제로 성공했을 때만 로컬 참조를 비운다
+    // (실패 시 토큰 값을 남겨둬야 추후 재시도할 여지가 있음)
+    onSuccess: () => {
+      usePushTokenStore.getState().setToken(null);
+    },
+  });
+
   const { mutate: doLogout, isPending: isLogoutPending } = useLogout({
     onSettled: async () => {
       // API 통신 원천 차단
       queryClient.clear();
+
+      // 기기 토큰 해제 (accessToken이 살아있는 동안 먼저 요청)
+      const pushToken = usePushTokenStore.getState().token;
+      if (pushToken) {
+        unregisterDeviceToken(pushToken);
+      }
 
       // 기기 내장 토큰 삭제 (비동기)
       // (이때까지는 Zustand에 user 상태가 살아있어서 가드가 발동하지 않음)

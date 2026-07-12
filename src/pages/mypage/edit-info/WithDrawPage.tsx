@@ -8,6 +8,8 @@ import {
   type WithdrawBlockMessage,
 } from "@/constants/mypage/withdrawErrorMessage.constant";
 import { useWithDrawMe } from "@/hooks/member";
+import { useUnregisterDeviceToken } from "@/hooks/notifications";
+import { usePushTokenStore } from "@/store/usePushToken.store";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useQueryClient } from "@tanstack/react-query";
@@ -41,8 +43,22 @@ export function WithDrawPage() {
     message: { title: "", description: "" },
   });
 
+  const { mutate: unregisterDeviceToken } = useUnregisterDeviceToken({
+    // 해제 API가 실제로 성공했을 때만 로컬 참조를 비운다
+    // (실패 시 토큰 값을 남겨둬야 추후 재시도할 여지가 있음)
+    onSuccess: () => {
+      usePushTokenStore.getState().setToken(null);
+    },
+  });
+
   const { mutate: withdraw, isPending } = useWithDrawMe({
     onSuccess: () => {
+      // 기기 토큰 해제 (accessToken이 살아있는 동안 먼저 요청)
+      const pushToken = usePushTokenStore.getState().token;
+      if (pushToken) {
+        unregisterDeviceToken(pushToken);
+      }
+
       tokenStorage.clear();
       qc.clear();
       navigate("/auth/login", { replace: true });
