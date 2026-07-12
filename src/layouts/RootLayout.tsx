@@ -4,9 +4,16 @@ import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import GlobalLoginDialog from "@/components/common/GlobalLoginDialog";
 import { useNewPostState } from "@/store/useNewPostState.store";
+import { useAuthStore } from "@/store/useAuth.store";
+import { usePushNotifications } from "@/hooks/notifications";
 
 export default function RootLayout() {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+
+  // 로그인 상태일 때만 푸시 토큰 등록/리스너 활성화
+  // (로그인 순간뿐 아니라 이미 로그인된 세션으로 앱을 재실행한 경우도 커버)
+  usePushNotifications(!!user, navigate);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;

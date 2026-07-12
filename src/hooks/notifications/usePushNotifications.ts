@@ -1,0 +1,78 @@
+import { useEffect } from "react";
+import type { NavigateFunction } from "react-router";
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications } from "@capacitor/push-notifications";
+import { useRegisterDeviceToken } from "./useRegisterDeviceToken";
+import { usePushTokenStore } from "@/store/usePushToken.store";
+import type { DevicePlatform } from "@/types/notification/deviceToken";
+
+function toDevicePlatform(platform: string): DevicePlatform | null {
+  if (platform === "android") return "ANDROID";
+  if (platform === "ios") return "IOS";
+  return null;
+}
+
+// FCM 기기 토큰 획득/등록 및 푸시 수신 리스너 등록
+// enabled(로그인 상태)일 때만 활성화되며, 네이티브 앱이 아니면 아무 것도 하지 않는다
+export function usePushNotifications(
+  enabled: boolean,
+  navigate: NavigateFunction,
+) {
+  const { mutate: registerDeviceToken } = useRegisterDeviceToken();
+  const setPushToken = usePushTokenStore((s) => s.setToken);
+
+  useEffect(() => {
+    if (!enabled || !Capacitor.isNativePlatform()) return;
+
+    const platform = toDevicePlatform(Capacitor.getPlatform());
+    if (!platform) return;
+
+    const registrationHandle = PushNotifications.addListener(
+      "registration",
+      (token) => {
+        setPushToken(token.value);
+        registerDeviceToken({ token: token.value, platform });
+      },
+    );
+
+    const registrationErrorHandle = PushNotifications.addListener(
+      "registrationError",
+      (error) => {
+        console.error("FCM 기기 토큰 등록 실패", error);
+      },
+    );
+
+    const pushReceivedHandle = PushNotifications.addListener(
+      "pushNotificationReceived",
+      (notification) => {
+        console.info("포그라운드 푸시 수신", notification);
+      },
+    );
+
+    const pushActionHandle = PushNotifications.addListener(
+      "pushNotificationActionPerformed",
+      (action) => {
+        // 백엔드가 AdminPushRequest.data에 실어 보낸 딥링크 경로로 이동
+        // (예: { "route": "/home" }) — 앱이 종료된 상태에서 탭해도
+        // 콜드 스타트 후 리스너가 등록되는 시점에 버퍼링된 이벤트가 발생함
+        const route = action.notification.data?.route;
+        if (typeof route === "string" && route.length > 0) {
+          navigate(route);
+        }
+      },
+    );
+
+    PushNotifications.requestPermissions().then((result) => {
+      if (result.receive === "granted") {
+        PushNotifications.register();
+      }
+    });
+
+    return () => {
+      registrationHandle.then((handle) => handle.remove());
+      registrationErrorHandle.then((handle) => handle.remove());
+      pushReceivedHandle.then((handle) => handle.remove());
+      pushActionHandle.then((handle) => handle.remove());
+    };
+  }, [enabled, navigate, registerDeviceToken, setPushToken]);
+}
