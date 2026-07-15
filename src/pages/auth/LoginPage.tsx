@@ -268,7 +268,7 @@ export function LoginPage() {
             key={ui.footerKey}
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               {recentLoginProvider === "APPLE" && !isAndroidApp() && (
                 <RecentLoginDialog />
               )}
