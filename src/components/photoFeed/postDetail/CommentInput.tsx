@@ -1,5 +1,4 @@
 import type { RefObject } from "react";
-import { createPortal } from "react-dom";
 import { PaperAirplaneFillIcon } from "@/assets/icon";
 import Icon from "@/components/common/Icon";
 import { Press } from "@/components/common/motion";
@@ -23,10 +22,10 @@ export default function CommentInput({
 }: CommentInputProps) {
   const canSubmit = value.trim().length > 0 && !disabled;
 
-  // 하단 고정 UI
-  const ui = (
-    <div className="bg-neutral-875 pointer-events-none fixed inset-x-0 bottom-0 z-[50] px-4 pt-3 pb-7">
-      <div className="bg-neutral-875 pointer-events-auto flex items-center rounded-[3.125rem] border border-neutral-600 px-4 py-3">
+  // 시트 flex column의 하단 footer — 시트와 함께 슬라이드/드래그
+  return (
+    <div className="bg-neutral-875 shrink-0 px-4 pt-3 pb-7">
+      <div className="bg-neutral-875 flex items-center rounded-[3.125rem] border border-neutral-600 px-4 py-3">
         <input
           type="text"
           ref={inputRef}
@@ -53,6 +52,4 @@ export default function CommentInput({
       </div>
     </div>
   );
-
-  return createPortal(ui, document.body);
 }

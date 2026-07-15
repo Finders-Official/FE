@@ -99,14 +99,12 @@ export default function CommentSheet({
           <div ref={sentinelRef} style={{ height: 1 }} />
         </div>
 
-        <div className="bg-neutral-875 h-10 shrink-0">
-          <CommentInput
-            value={comment}
-            onChange={setComment}
-            onSubmit={handleSubmit}
-            placeholder="이 현상에 대한 이야기를 남겨보세요!"
-          />
-        </div>
+        <CommentInput
+          value={comment}
+          onChange={setComment}
+          onSubmit={handleSubmit}
+          placeholder="이 현상에 대한 이야기를 남겨보세요!"
+        />
       </div>
     </BottomSheet>
   );
