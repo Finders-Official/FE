@@ -267,7 +267,7 @@ const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
-      { index: true, element: <Navigate to="/auth/login" /> },
+      { index: true, element: <Navigate to="/auth/login" replace /> },
 
       // auth prefix를 한 번만
       { path: "auth", children: authRoutes },

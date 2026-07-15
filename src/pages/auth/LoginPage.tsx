@@ -249,7 +249,7 @@ export function LoginPage() {
           >
             <CTA_Button
               text="홈으로"
-              link="/mainpage"
+              onClick={() => navigate("/mainpage", { replace: true })}
               color="orange"
               size="compact"
             />
