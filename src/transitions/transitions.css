@@ -618,12 +618,12 @@
 @media (hover: hover) and (pointer: fine) {
   /* :active는 조상에도 걸리므로, 중첩 Press에서는 가장 안쪽만 축소한다 */
   .t-press:active:not(:has(.t-press:active)) {
-    transform: scale(0.97);
+    transform: scale(var(--press-scale, var(--scale-medium)));
     transition-duration: var(--duration-micro);
   }
 }
 .t-press[data-pressed="true"] {
-  transform: scale(0.97);
+  transform: scale(var(--press-scale, var(--scale-medium)));
   transition-duration: var(--duration-micro);
 }
 @media (prefers-reduced-motion: reduce) {
