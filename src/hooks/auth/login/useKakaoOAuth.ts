@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { consumeAndValidateKakaoState } from "@/utils/auth/kakaoOauth";
+import { setRecentLoginProvider } from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -27,6 +28,8 @@ export function useKakaoOauth({
   const { mutate, isPending } = useOauth({
     onSuccess: (res) => {
       const data = res.data;
+
+      setRecentLoginProvider("KAKAO");
 
       if ("accessToken" in data) {
         // 기존 회원: accessToken 저장 후 메인으로 (refreshToken은 httpOnly 쿠키)

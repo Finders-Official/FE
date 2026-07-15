@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { loginWithApple } from "@/utils/auth/appleSdk";
+import { setRecentLoginProvider } from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -24,6 +25,8 @@ export function useAppleLogin({
   const { mutate, isPending: isMutating } = useOauth({
     onSuccess: (res) => {
       const data = res.data;
+
+      setRecentLoginProvider("APPLE");
 
       if ("accessToken" in data) {
         tokenStorage.setTokens({

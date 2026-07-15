@@ -54,6 +54,7 @@ export { default as RestoraionSparkleIcon } from "./restoration-sparkle.svg?reac
 export { default as TooltipXIcon } from "./tooltip-x.svg?react";
 export { default as AiRestoreIcon } from "./ai-restore.svg?react";
 export { default as FindersLogoFooterIcon } from "./finders-logo-footer.svg?react";
+export { default as PolygonIcon } from "./polygon.svg?react";
 
 // 소셜 / 브랜드
 export { default as AppleIcon } from "./apple.svg?react";
