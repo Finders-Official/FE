@@ -272,10 +272,26 @@ export function LoginPage() {
               {recentLoginProvider === "APPLE" && !isAndroidApp() && (
                 <RecentLoginDialog />
               )}
-              {!isAndroidApp() && (
-                <AppleButton onClick={apple.login} disabled={apple.isPending} />
+              <div
+                className={
+                  recentLoginProvider === "KAKAO" && !isAndroidApp()
+                    ? "relative"
+                    : undefined
+                }
+              >
+                {!isAndroidApp() && (
+                  <AppleButton
+                    onClick={apple.login}
+                    disabled={apple.isPending}
+                  />
+                )}
+                {recentLoginProvider === "KAKAO" && !isAndroidApp() && (
+                  <RecentLoginDialog className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/4" />
+                )}
+              </div>
+              {recentLoginProvider === "KAKAO" && isAndroidApp() && (
+                <RecentLoginDialog />
               )}
-              {recentLoginProvider === "KAKAO" && <RecentLoginDialog />}
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
 
