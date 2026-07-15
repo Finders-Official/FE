@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { formatMMSS } from "@/utils/time";
 import { ActionButton, InputForm } from "@/components/auth";
 import { CTA_Button } from "@/components/common";
+import { DialogBox } from "@/components/common/DialogBox";
 import { useOnBoardingForm } from "@/hooks/auth/onBoarding";
 import type { TermsType } from "@/types/auth";
 
@@ -121,6 +122,15 @@ export function OnBoardingPage() {
           onClick={f.handleSubmit}
         />
       </footer>
+
+      <DialogBox
+        isOpen={f.isDuplicatePhone}
+        title="이미 가입한 회원입니다"
+        description="이전에 가입한 계정으로 로그인해주세요."
+        confirmText="확인"
+        onConfirm={() => navigate("/auth/login", { replace: true })}
+        onCancel={f.closeDuplicatePhoneDialog}
+      />
     </div>
   );
 }
