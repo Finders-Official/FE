@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useReveal } from "@/transitions";
 
 interface SheetPopupProps {
   open: boolean;
@@ -20,6 +21,10 @@ export default function SheetPopup({
   children,
   footer,
 }: SheetPopupProps) {
+  const { mounted, state, getRevealProps } = useReveal(open, {
+    variant: "sheet-bottom",
+  });
+
   // ESC 닫기
   useEffect(() => {
     if (!open) return;
@@ -30,20 +35,30 @@ export default function SheetPopup({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-500">
       {/* backdrop */}
+      {/* eslint-disable-next-line no-restricted-syntax -- 스크림(백드롭) 닫기 버튼은 눌림 피드백 미적용 확정 */}
       <button
         type="button"
         aria-label="닫기"
         onClick={onClose}
-        className="absolute inset-0 bg-black/60"
+        className={`ease-smooth-out absolute inset-0 bg-black/60 transition-opacity motion-reduce:transition-none ${
+          state === "closing"
+            ? "duration-[var(--duration-medium)]"
+            : "duration-[var(--duration-slow)]"
+        }`}
+        style={{ opacity: state === "open" ? 1 : 0 }}
       />
 
       {/* sheet */}
-      <div className="absolute inset-x-0 bottom-0 gap-4 px-4">
+      <div
+        {...getRevealProps({
+          className: "absolute inset-x-0 bottom-0 gap-4 px-4",
+        })}
+      >
         <div className="bg-neutral-875 overflow-hidden rounded-3xl border border-neutral-800">
           <div className="divide-y divide-white/10">{children}</div>
         </div>

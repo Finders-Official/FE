@@ -1,4 +1,5 @@
 import { EmptyCheckCircleIcon, MinusIcon, PlusIcon } from "@/assets/icon";
+import { Press, NumberPopIn } from "@/components/common";
 
 type Props = {
   qty: number;
@@ -24,7 +25,7 @@ export function PhotoQuantityStepper({
     <section
       className={`mt-3 flex items-center justify-center gap-6 ${className ?? ""}`}
     >
-      <button
+      <Press
         type="button"
         onClick={onDec}
         disabled={!canDec}
@@ -33,11 +34,13 @@ export function PhotoQuantityStepper({
       >
         <EmptyCheckCircleIcon className="absolute inset-0 h-5 w-5 fill-neutral-900" />
         <MinusIcon className="fill-neutral-750 relative h-2 w-2" />
-      </button>
+      </Press>
 
-      <p className="min-w-4 text-center text-neutral-100">{qty}</p>
+      <p className="min-w-4 text-center text-neutral-100">
+        <NumberPopIn value={qty} />
+      </p>
 
-      <button
+      <Press
         type="button"
         onClick={onInc}
         disabled={!canInc}
@@ -46,7 +49,7 @@ export function PhotoQuantityStepper({
       >
         <EmptyCheckCircleIcon className="absolute inset-0 h-5 w-5 fill-neutral-900" />
         <PlusIcon className="relative h-2 w-2 fill-neutral-100" />
-      </button>
+      </Press>
     </section>
   );
 }

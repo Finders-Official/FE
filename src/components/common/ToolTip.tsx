@@ -1,5 +1,6 @@
 import React from "react";
 import { TooltipXIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 interface TooltipProps {
   used: number;
@@ -23,14 +24,14 @@ export const Tooltip: React.FC<TooltipProps> = ({ used, total, onClose }) => {
           무료 크레딧 {used}/{total} 사용
         </span>
 
-        <button
+        <Press
           type="button"
           onClick={onClose}
           className="inline-flex h-6 w-6 items-center justify-center rounded-full"
           aria-label="툴팁 닫기"
         >
           <TooltipXIcon className="h-4 w-4" />
-        </button>
+        </Press>
       </div>
 
       {/* 꼬리: 8x6 중앙 */}

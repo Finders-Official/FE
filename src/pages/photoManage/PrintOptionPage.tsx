@@ -1,4 +1,4 @@
-import { CTA_Button } from "@/components/common";
+import { CTA_Button, NumberPopIn } from "@/components/common";
 import { DropBox } from "@/components/photoManage/DropBox";
 import { DELIVERY_FEE_WON } from "@/constants/photomanage/category.constant";
 import { usePrintOptions, useCreatePrintOrder } from "@/hooks/photoManage";
@@ -303,9 +303,11 @@ export function PrintOptionPage() {
           <div className="mt-4 mb-4 flex justify-between text-[1.1875rem]">
             <p>총 금액</p>
             <p className="text-orange-500">
-              {isQuoting && hasRequired
-                ? "계산 중..."
-                : formatWon(displayedTotal)}
+              {isQuoting && hasRequired ? (
+                "계산 중..."
+              ) : (
+                <NumberPopIn value={formatWon(displayedTotal)} />
+              )}
             </p>
           </div>
         </section>

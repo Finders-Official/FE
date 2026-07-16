@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CTA_Button } from "@/components/common";
+import { CTA_Button, NumberPopIn } from "@/components/common";
 import { useNavigate } from "react-router";
 import { PhotoQuantityStepper } from "@/components/photoManage/PhotoQuantityStepper";
 import { usePrintOrderStore } from "@/store/usePrintOrder.store";
@@ -93,7 +93,7 @@ export function PrintRequestPage() {
           총 인화 매수
         </p>
         <p className="text-[1.0625rem] font-normal text-orange-500">
-          {totalQty}장
+          <NumberPopIn value={totalQty} />장
         </p>
       </section>
 

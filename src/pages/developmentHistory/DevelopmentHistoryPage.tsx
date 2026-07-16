@@ -9,6 +9,8 @@ import ScanResultViewer from "@/components/photoManage/ScanResultViewer";
 import DevelopmentOrderCard from "@/components/developmentHistory/DevelopmentOrderCard";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
 import EmptyView from "@/components/common/EmptyView";
+import { Press, StaggerItem } from "@/components/common";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 
 interface FormattedDevelopmentOrder {
   id: number;
@@ -64,6 +66,8 @@ const DevelopmentHistoryPage = () => {
     return data?.pages.flatMap((p) => p.items) ?? [];
   }, [data]);
 
+  const staggerIndexFor = useFirstPageStagger(orders.length);
+
   const hasData = orders.length > 0;
 
   const handleOpenViewer = (images: string[]) => {
@@ -97,28 +101,29 @@ const DevelopmentHistoryPage = () => {
               지난 작업
             </h2>
             {isMenu && (
-              <button
+              <Press
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex h-9 w-9 items-center justify-center text-neutral-200 active:opacity-70"
+                className="flex h-9 w-9 items-center justify-center text-neutral-200"
               >
                 <CloseIcon className="h-3 w-3 text-neutral-200" />
-              </button>
+              </Press>
             )}
           </header>
 
           {isError ? (
-            <div className="rounded-xl border border-neutral-800 p-4 text-sm text-neutral-300">
+            <div className="t-fade-in rounded-xl border border-neutral-800 p-4 text-sm text-neutral-300">
               현상 내역을 불러오는데 실패했습니다.
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {orders.map((item) => (
-                <DevelopmentOrderCard
-                  key={item.id}
-                  item={item}
-                  onOpenViewer={handleOpenViewer}
-                />
+              {orders.map((item, index) => (
+                <StaggerItem key={item.id} index={staggerIndexFor(index)}>
+                  <DevelopmentOrderCard
+                    item={item}
+                    onOpenViewer={handleOpenViewer}
+                  />
+                </StaggerItem>
               ))}
 
               {hasNextPage && <div ref={loadMoreRef} className="h-10" />}

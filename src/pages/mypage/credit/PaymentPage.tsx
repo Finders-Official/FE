@@ -163,6 +163,7 @@ export function PaymentPage() {
               <CardSelectButton
                 selectedName={selectedCardName}
                 onClick={() => setIsCardSheetOpen(true)}
+                isOpen={isCardSheetOpen}
               />
             )}
             {method === "EASY_PAY" && (

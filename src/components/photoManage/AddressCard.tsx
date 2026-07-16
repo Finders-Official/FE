@@ -1,4 +1,5 @@
 import { MapPinIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 import type { Address } from "@/types/photomanage/address";
 
 interface AddressCardProps {
@@ -13,12 +14,12 @@ export function AddressCard({
   address,
 }: AddressCardProps) {
   return (
-    <button
+    <Press
       type="button"
       onClick={onClick}
       className={[
         "w-full rounded-2xl p-6 text-left",
-        "border transition",
+        "border",
         isSelected ? "border-orange-500" : "border-neutral-800",
       ].join(" ")}
     >
@@ -32,6 +33,6 @@ export function AddressCard({
       {address.addressDetail && (
         <p className="text-sm text-neutral-400">{address.addressDetail}</p>
       )}
-    </button>
+    </Press>
   );
 }

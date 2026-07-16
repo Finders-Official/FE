@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 type LeftAction =
   | { type: "icon"; icon: ReactNode; onClick: () => void }
@@ -43,19 +44,19 @@ export default function Header({
       if (leftAction) {
         if (leftAction.type === "icon") {
           return (
-            <button
+            <Press
               type="button"
               onClick={leftAction.onClick}
               className="flex h-6 w-6 items-center justify-center"
             >
               {leftAction.icon}
-            </button>
+            </Press>
           );
         }
 
         const isDisabled = leftAction.disabled || leftAction.loading;
         return (
-          <button
+          <Press
             type="button"
             onClick={leftAction.onClick}
             disabled={isDisabled}
@@ -64,20 +65,20 @@ export default function Header({
             }`}
           >
             {leftAction.loading ? "..." : leftAction.text}
-          </button>
+          </Press>
         );
       }
       return <div className="h-6 w-6" />;
     }
     return (
-      <button
+      <Press
         type="button"
         onClick={onBack}
         className="flex h-6 w-6 items-center justify-center"
         aria-label="뒤로 가기"
       >
         <ChevronLeftIcon className="h-6 w-6 text-neutral-200" />
-      </button>
+      </Press>
     );
   };
 
@@ -88,19 +89,19 @@ export default function Header({
 
     if (rightAction.type === "icon") {
       return (
-        <button
+        <Press
           type="button"
           onClick={rightAction.onClick}
           className="flex h-6 w-6 items-center justify-center"
         >
           {rightAction.icon}
-        </button>
+        </Press>
       );
     }
 
     const isDisabled = rightAction.disabled || rightAction.loading;
     return (
-      <button
+      <Press
         type="button"
         onClick={rightAction.onClick}
         disabled={isDisabled}
@@ -109,7 +110,7 @@ export default function Header({
         }`}
       >
         {rightAction.loading ? "..." : rightAction.text}
-      </button>
+      </Press>
     );
   };
 

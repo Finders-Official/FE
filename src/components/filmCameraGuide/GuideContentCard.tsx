@@ -1,4 +1,5 @@
 import type { FilmCameraGuide } from "@/types/filmCameraGuide";
+import { Press } from "@/components/common/motion";
 
 interface Props {
   content: FilmCameraGuide;
@@ -7,7 +8,8 @@ interface Props {
 
 export const GuideContentCard = ({ content, onClick }: Props) => {
   return (
-    <div
+    <Press
+      as="div"
       onClick={() => onClick(content.id)}
       className="group relative isolate h-57.5 w-full cursor-pointer overflow-hidden rounded-[10px]"
     >
@@ -16,6 +18,6 @@ export const GuideContentCard = ({ content, onClick }: Props) => {
         className="h-full w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${content.thumbnailUrl})` }}
       />
-    </div>
+    </Press>
   );
 };

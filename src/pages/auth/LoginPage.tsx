@@ -1,5 +1,5 @@
 import { AppleButton, KakaoButton } from "@/components/auth";
-import { CTA_Button } from "@/components/common";
+import { CTA_Button, Press } from "@/components/common";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
@@ -266,12 +266,13 @@ export function LoginPage() {
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
 
-            <Link
+            <Press
+              as={Link}
               to="/mainpage"
-              className="mt-3 flex flex-col text-center text-sm font-medium text-neutral-200 underline underline-offset-2 active:scale-[0.99]"
+              className="mt-3 flex flex-col text-center text-sm font-medium text-neutral-200 underline underline-offset-2"
             >
               로그인 없이 둘러보기
-            </Link>
+            </Press>
           </section>
         ) : null}
       </footer>

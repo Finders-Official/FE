@@ -1,12 +1,17 @@
+import { useReveal } from "@/transitions";
+
 type LoadingProps = {
   open: boolean;
 };
 
 export function LoadingSpinner({ open }: LoadingProps) {
-  if (!open) return null;
+  const { mounted, getRevealProps } = useReveal(open, { variant: "fade" });
+  if (!mounted) return null;
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-center justify-center"
+      {...getRevealProps({
+        className: "fixed inset-0 z-[80] flex items-center justify-center",
+      })}
       role="alert"
       aria-live="polite"
       aria-busy="true"

@@ -1,4 +1,5 @@
 import { ClockIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
+import { Press } from "@/components/common/motion";
 
 type SearchItemType = "recent" | "search";
 
@@ -49,7 +50,8 @@ export default function SearchItem({
   };
 
   return (
-    <div
+    <Press
+      as="div"
       className={`flex items-center justify-between ${onClick ? "cursor-pointer" : ""} ${className}`}
       onClick={onClick}
     >
@@ -65,15 +67,15 @@ export default function SearchItem({
 
       {/* X 버튼 */}
       {onDelete && (
-        <button
+        <Press
           type="button"
           onClick={handleDelete}
           className="flex h-6 w-6 items-center justify-center"
         >
           <XMarkIcon className="h-3 w-3 text-neutral-400" />
-        </button>
+        </Press>
       )}
-    </div>
+    </Press>
   );
 }
 

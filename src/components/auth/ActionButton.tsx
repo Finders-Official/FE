@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from "react";
+import { Press } from "@/components/common";
 type ActionButtonProps = {
   text: string;
   disabled: boolean;
@@ -11,12 +12,12 @@ export const ActionButton = ({
 }: ActionButtonProps) => {
   const bgClass = !disabled ? "bg-orange-500" : "bg-neutral-850";
   return (
-    <button
+    <Press
       {...rest}
-      className={`mt-auto h-[3.25rem] w-[5.25rem] rounded-lg active:scale-[0.99] ${bgClass}`}
+      className={`mt-auto h-[3.25rem] w-[5.25rem] rounded-lg ${bgClass}`}
       disabled={disabled}
     >
       {text}
-    </button>
+    </Press>
   );
 };

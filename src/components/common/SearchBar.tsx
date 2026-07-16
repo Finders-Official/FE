@@ -1,6 +1,7 @@
 import { useState, useEffect, type RefObject } from "react";
 import { ChevronLeftIcon, XMarkIcon, MagnifyingGlassIcon } from "@/assets/icon";
 import Icon from "./Icon";
+import { Press } from "@/components/common/motion";
 
 type RightIconType = "clear" | "search" | "none";
 
@@ -72,14 +73,14 @@ export default function SearchBar({
     >
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         {showBack && (
-          <button
+          <Press
             type="button"
             onClick={onBack}
             className="flex h-6 w-6 items-center justify-center"
             aria-label="뒤로 가기"
           >
             <ChevronLeftIcon className="h-6 w-6 text-neutral-500" />
-          </button>
+          </Press>
         )}
         <input
           ref={inputRef}
@@ -99,7 +100,7 @@ export default function SearchBar({
         />
       </div>
       {rightIcon === "clear" && localValue && (
-        <button
+        <Press
           type="button"
           onClick={handleClear}
           className="flex h-6 w-6 items-center justify-center"
@@ -108,10 +109,10 @@ export default function SearchBar({
           <Icon className="text-neutral-500">
             <XMarkIcon />
           </Icon>
-        </button>
+        </Press>
       )}
       {rightIcon === "search" && onSearch && (
-        <button
+        <Press
           type="button"
           onClick={() => onSearch(localValue)}
           className="flex h-6 w-6 items-center justify-center"
@@ -120,7 +121,7 @@ export default function SearchBar({
           <Icon className="text-neutral-500">
             <MagnifyingGlassIcon />
           </Icon>
-        </button>
+        </Press>
       )}
     </div>
   );

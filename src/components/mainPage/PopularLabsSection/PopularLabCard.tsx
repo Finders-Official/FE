@@ -1,5 +1,6 @@
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 import type { Lab } from "@/apis/mainPage/mainPage.api";
+import { Press } from "@/components/common";
 
 interface PopularLabCardProps {
   lab: Lab;
@@ -20,7 +21,8 @@ export default function PopularLabCard({ lab }: PopularLabCardProps) {
     "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80";
 
   return (
-    <div
+    <Press
+      as="div"
       onClick={() => requireAuthNavigate(`/photolab/${lab.photoLabId}`)}
       className="relative block aspect-163/230 w-full cursor-pointer overflow-hidden rounded-[0.625rem] border border-neutral-800"
     >
@@ -46,6 +48,6 @@ export default function PopularLabCard({ lab }: PopularLabCardProps) {
           {lab.name}
         </h3>
       </div>
-    </div>
+    </Press>
   );
 }

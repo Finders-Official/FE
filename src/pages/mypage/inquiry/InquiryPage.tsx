@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CTA_Button, TextArea, ToastItem } from "@/components/common";
+import {
+  CTA_Button,
+  PageSlide,
+  StaggerItem,
+  TextArea,
+  Toast,
+} from "@/components/common";
 import {
   EmptyOrderState,
   InquiryDropBox,
@@ -14,6 +20,8 @@ import { useInquiriesInfinite } from "@/hooks/my";
 import { useCreateInquiry } from "@/hooks/my/inquiries/useCreateInquiry";
 import { useOutletContext } from "react-router";
 import type { MyPageOutletContext } from "@/layouts/MyPageLayout";
+import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 
 // 스텝 타입 정의
 type Step = "LIST" | "CREATE";
@@ -40,11 +48,17 @@ export function InquiryPage() {
 
   return (
     <div className="flex h-full flex-1 flex-col">
-      {step === "LIST" ? (
-        <InquiryListView onGoToCreate={() => setStep("CREATE")} />
-      ) : (
-        <InquiryCreateView onSuccess={() => setStep("LIST")} />
-      )}
+      <PageSlide
+        step={step}
+        direction={step === "CREATE" ? "forward" : "back"}
+        className="flex flex-1 flex-col"
+      >
+        {step === "LIST" ? (
+          <InquiryListView onGoToCreate={() => setStep("CREATE")} />
+        ) : (
+          <InquiryCreateView onSuccess={() => setStep("LIST")} />
+        )}
+      </PageSlide>
     </div>
   );
 }
@@ -66,6 +80,7 @@ function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
   // 2차원 배열을 1차원 배열로 평탄화
   const inquiryList = data?.pages.flatMap((page) => page.data.inquiries) ?? [];
   const hasInquiries = inquiryList.length > 0;
+  const staggerIndexFor = useFirstPageStagger(inquiryList.length);
 
   // --- 무한 스크롤 옵저버 로직 ---
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -92,7 +107,7 @@ function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
         {isLoading ? (
           <LoadingSpinner open={isLoading} />
         ) : isError ? (
-          <div className="flex flex-1 items-center justify-center text-neutral-400">
+          <div className="t-fade-in flex flex-1 items-center justify-center text-neutral-400">
             <p>문의 내역을 불러오지 못했습니다.</p>
           </div>
         ) : hasInquiries ? (
@@ -100,10 +115,12 @@ function InquiryListView({ onGoToCreate }: { onGoToCreate: () => void }) {
             <div className="text-center text-neutral-400">
               {/* 리스트 렌더링 */}
               {inquiryList.map((inquiry, index) => (
-                <InquiryListItem
+                <StaggerItem
                   key={inquiry.id ?? `fallback-key-${index}`}
-                  item={inquiry}
-                />
+                  index={staggerIndexFor(index)}
+                >
+                  <InquiryListItem item={inquiry} />
+                </StaggerItem>
               ))}
 
               {/* 추가 데이터 로딩 인디케이터 */}
@@ -148,25 +165,23 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
     null,
   );
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const typeShake = useShakeTrigger();
+  const contentShake = useShakeTrigger();
 
   const isContentValid = content.length >= 20;
 
   // Mutation 훅 호출
   const { mutate: createInquiry, isPending } = useCreateInquiry();
 
-  useEffect(() => {
-    if (!toastMessage) return;
-    const timer = setTimeout(() => setToastMessage(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toastMessage]);
-
   const handleSubmitClick = () => {
     if (!selectedInquiry) {
       setToastMessage("문의 유형을 선택해 주세요.");
+      typeShake.shake();
       return;
     }
     if (!isContentValid) {
       setToastMessage("문의 내용을 20자 이상 입력해 주세요.");
+      contentShake.shake();
       return;
     }
 
@@ -208,6 +223,7 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
 
               setIsOpen(false);
             }}
+            shakeKey={typeShake.shakeKey}
           />
         </section>
 
@@ -223,6 +239,7 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
             placeholder="문의하실 내용이나 오류 내용을 입력해주세요"
             minLength={20}
             emptyHint="min"
+            shakeKey={contentShake.shakeKey}
           />
         </section>
 
@@ -230,11 +247,13 @@ export function InquiryCreateView({ onSuccess }: { onSuccess: () => void }) {
           <InquiryNoticeCard />
         </section>
 
-        {toastMessage && (
-          <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-            <ToastItem message={toastMessage} />
-          </div>
-        )}
+        <Toast
+          open={!!toastMessage}
+          onClose={() => setToastMessage(null)}
+          duration={3000}
+          placement="above-tab"
+          message={toastMessage ?? ""}
+        />
       </main>
 
       <footer className="border-neutral-850 mt-auto border-t py-5">

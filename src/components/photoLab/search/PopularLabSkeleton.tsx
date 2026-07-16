@@ -9,7 +9,7 @@ export default function PopularLabSkeleton() {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={`popular-skeleton-${i}`}
-            className="flex h-6 w-full animate-pulse items-center gap-4"
+            className="t-skel-sheen flex h-6 w-full items-center gap-4"
           >
             <div className="h-[0.875rem] w-3 rounded bg-neutral-800" />
             <div className="h-[0.875rem] w-40 rounded-md bg-neutral-800" />

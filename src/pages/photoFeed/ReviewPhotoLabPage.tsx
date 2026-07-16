@@ -9,6 +9,7 @@ import { useNewPostState } from "@/store/useNewPostState.store";
 import { useAuthStore } from "@/store/useAuth.store";
 import { useCreatePostWithUpload } from "@/hooks/photoFeed";
 import { scrollToCenter } from "@/utils/scrollToCenter";
+import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
 
 const MIN = 20;
 const MAX = 300;
@@ -18,6 +19,7 @@ export default function ReviewPhotoLabPage() {
 
   const [reviewTextError, setReviewTextError] = useState(false);
   const reviewTextRef = useRef<HTMLTextAreaElement | null>(null);
+  const reviewShake = useShakeTrigger();
 
   const [reviewText, setReviewText] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -61,6 +63,7 @@ export default function ReviewPhotoLabPage() {
   const handleTextArea = () => {
     if (!canSave) {
       setReviewTextError(true);
+      reviewShake.shake();
 
       // 스크롤 + 포커스
       const el = reviewTextRef.current;
@@ -135,14 +138,15 @@ export default function ReviewPhotoLabPage() {
             enforceMaxLength={false}
             emptyHint={"max"}
             isError={reviewTextError}
+            shakeKey={reviewShake.shakeKey}
           />
           {reviewText.length > MAX ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {MAX}자까지 입력 가능합니다.
             </p>
           ) : reviewTextError ? (
             <p
-              className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
+              className={`t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
             >
               최소 20글자 이상 입력해주세요.
             </p>
@@ -167,20 +171,18 @@ export default function ReviewPhotoLabPage() {
           />
         </div>
 
-        {isDialogOpen && (
-          <DialogBox
-            isOpen={isDialogOpen}
-            title="이 리뷰를 등록할까요?"
-            description="등록하면 이 리뷰가 사진수다에 공유돼요"
-            confirmText="네"
-            onConfirm={() => {
-              setIsDialogOpen(false);
-              handleSubmit();
-            }}
-            cancelText="아니오"
-            onCancel={() => setIsDialogOpen(false)}
-          />
-        )}
+        <DialogBox
+          isOpen={isDialogOpen}
+          title="이 리뷰를 등록할까요?"
+          description="등록하면 이 리뷰가 사진수다에 공유돼요"
+          confirmText="네"
+          onConfirm={() => {
+            setIsDialogOpen(false);
+            handleSubmit();
+          }}
+          cancelText="아니오"
+          onCancel={() => setIsDialogOpen(false)}
+        />
       </section>
     </div>
   );

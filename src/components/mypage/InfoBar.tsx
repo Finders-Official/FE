@@ -1,5 +1,6 @@
 import { ChevronLeftIcon } from "@/assets/icon";
 import { NavLink } from "react-router";
+import { Press } from "@/components/common";
 import { resolveProfileSrc } from "@/utils/resolveProfileSrc";
 import { FALLBACK_PROFILE_SRC } from "@/constants/gcsUrl";
 
@@ -36,9 +37,9 @@ export const InfoBar = ({ name, nickname, profile }: InfoBarProps) => {
         <p className="font-normal">{nickname}</p>
       </div>
 
-      <NavLink to="./edit-info">
+      <Press as={NavLink} to="./edit-info">
         <ChevronLeftIcon className="h-[2rem] w-[1.5rem] rotate-180" />
-      </NavLink>
+      </Press>
     </div>
   );
 };

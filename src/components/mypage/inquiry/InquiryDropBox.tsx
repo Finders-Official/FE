@@ -1,11 +1,14 @@
+import { useEffect, useRef } from "react";
 import { ChevronLeftIcon } from "@/assets/icon";
 import { INQUIRY_OPTIONS, type InquiryOption } from "@/types/mypage/inquiry";
+import { Collapse, Press } from "@/components/common";
 
 type InquiryDropBoxProps = {
   value: InquiryOption | null;
   isOpen: boolean;
   onToggle: () => void;
   onSelect: (option: InquiryOption) => void;
+  shakeKey?: number;
 };
 
 export function InquiryDropBox({
@@ -13,7 +16,22 @@ export function InquiryDropBox({
   isOpen,
   onToggle,
   onSelect,
+  shakeKey,
 }: InquiryDropBoxProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  // 마운트 시점의 키를 기억해 "값이 바뀐 경우"에만 재생
+  const lastShakeKey = useRef(shakeKey);
+
+  useEffect(() => {
+    if (shakeKey === undefined || shakeKey === lastShakeKey.current) return;
+    lastShakeKey.current = shakeKey;
+    const el = rootRef.current;
+    if (!el) return;
+    el.classList.remove("t-shake");
+    void el.offsetWidth;
+    el.classList.add("t-shake");
+  }, [shakeKey]);
+
   // 선택된 값이 없으면 기본 텍스트인 '문의 유형' 표시
   const leftText = value ? value.label : "문의 유형";
   const leftTextClass = value
@@ -21,9 +39,9 @@ export function InquiryDropBox({
     : "text-neutral-600 text-[1rem]";
 
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative w-full">
       {/* 토글 버튼 */}
-      <button
+      <Press
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
@@ -33,15 +51,15 @@ export function InquiryDropBox({
 
         <div className="shrink-0">
           <ChevronLeftIcon
-            className={`h-4 w-4 text-neutral-200 transition-transform ${
+            className={`ease-smooth-out h-4 w-4 text-neutral-200 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
               isOpen ? "rotate-90" : "rotate-270"
             }`}
           />
         </div>
-      </button>
+      </Press>
 
       {/* 드롭다운 메뉴 */}
-      {isOpen && (
+      <Collapse open={isOpen}>
         <div className="border-neutral-850 mt-2 overflow-hidden rounded-[0.625rem] border">
           <ul>
             {INQUIRY_OPTIONS.map((opt) => {
@@ -49,7 +67,7 @@ export function InquiryDropBox({
 
               return (
                 <li key={opt.value}>
-                  <button
+                  <Press
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
@@ -63,13 +81,13 @@ export function InquiryDropBox({
                     <span className="text-[1rem] text-neutral-100">
                       {opt.label}
                     </span>
-                  </button>
+                  </Press>
                 </li>
               );
             })}
           </ul>
         </div>
-      )}
+      </Collapse>
     </div>
   );
 }

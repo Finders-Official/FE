@@ -5,7 +5,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router";
-import { ConfirmationIcon } from "@/components/common";
+import { ConfirmationIcon, Press } from "@/components/common";
 import Header from "@/components/common/Header";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { PAYMENT_ALREADY_PROCESSED_CODE } from "@/constants/payment/payment.constant";
@@ -153,6 +153,7 @@ export function PaymentResultPage() {
           <ResultHero
             title="크레딧 결제가 완료되었어요"
             subtitle="크레딧으로 타거나 망가진 사진을 복원해보세요."
+            animateIcon
           />
 
           <section className="bg-neutral-875 flex w-full flex-col gap-2.5 rounded-[0.75rem] p-5">
@@ -226,10 +227,18 @@ function ResultLayout({ header, footer, children }: ResultLayoutProps) {
   );
 }
 
-function ResultHero({ title, subtitle }: { title: string; subtitle: string }) {
+function ResultHero({
+  title,
+  subtitle,
+  animateIcon = false,
+}: {
+  title: string;
+  subtitle: string;
+  animateIcon?: boolean;
+}) {
   return (
     <div className="flex w-full flex-col items-center gap-[1.375rem]">
-      <ConfirmationIcon className="h-12 w-12" />
+      <ConfirmationIcon className="h-12 w-12" animate={animateIcon} />
       <div className="flex w-full flex-col gap-0.5 text-center">
         <h1 className="text-neutral-0 text-[1.25rem] leading-[1.28] font-semibold tracking-[-0.02em] break-keep">
           {title}
@@ -274,20 +283,20 @@ function ResultActions({
 }: ResultActionsProps) {
   return (
     <div className="flex items-center gap-3">
-      <button
+      <Press
         type="button"
         onClick={onLeftClick}
         className="flex h-14 flex-1 items-center justify-center rounded-[1.125rem] border border-neutral-700 text-[1rem] leading-[1.55] font-semibold tracking-[-0.02em] text-neutral-200"
       >
         {leftLabel}
-      </button>
-      <button
+      </Press>
+      <Press
         type="button"
         onClick={onRightClick}
         className="flex h-14 flex-1 items-center justify-center rounded-[1.125rem] bg-orange-500 text-[1rem] leading-[1.55] font-semibold tracking-[-0.02em] text-neutral-100"
       >
         {rightLabel}
-      </button>
+      </Press>
     </div>
   );
 }

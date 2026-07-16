@@ -1,4 +1,5 @@
 import { useCarousel } from "@/hooks/common/useCarousel";
+import { NumberPopIn } from "@/components/common";
 
 type Props = {
   images: string[];
@@ -42,7 +43,7 @@ export default function LabImageCarousel({
       {images.length > 1 && (
         <div className="absolute top-4 right-4 flex items-center justify-center rounded-[3.125rem] bg-black/60 px-2 py-1">
           <span className="text-xs leading-[1.26] font-semibold tracking-[-0.02em] text-neutral-100">
-            {index + 1}
+            <NumberPopIn value={index + 1} />
           </span>
           <span className="text-xs leading-[1.26] font-normal tracking-[-0.02em] text-neutral-100">
             /{images.length}
