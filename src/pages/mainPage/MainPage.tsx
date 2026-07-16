@@ -55,7 +55,7 @@ export default function MainPage() {
       <Header />
       <div
         ref={scrollRef}
-        className="scrollbar-hide ml-[calc(50%-50vw)] w-screen flex-1 overflow-x-hidden overflow-y-auto pb-(--tabbar-height)"
+        className="scrollbar-hide relative ml-[calc(50%-50vw)] w-screen flex-1 overflow-x-hidden overflow-y-auto pb-(--tabbar-height)"
       >
         <SectionWrapper id="promotion">
           <PromotionBanner />
