@@ -14,7 +14,11 @@ const SectionWrapper = ({
 }: {
   id: string;
   children: React.ReactNode;
-}) => <div data-anchor={id}>{children}</div>;
+}) => (
+  <div data-anchor={id} className="mx-auto w-full max-w-sm">
+    {children}
+  </div>
+);
 
 export default function MainPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -51,7 +55,7 @@ export default function MainPage() {
       <Header />
       <div
         ref={scrollRef}
-        className="scrollbar-hide flex-1 overflow-y-auto pb-(--tabbar-height)"
+        className="scrollbar-hide relative ml-[calc(50%-50vw)] w-screen flex-1 overflow-x-hidden overflow-y-auto pb-(--tabbar-height)"
       >
         <SectionWrapper id="promotion">
           <PromotionBanner />
@@ -65,7 +69,9 @@ export default function MainPage() {
         <SectionWrapper id="community">
           <CommunityGallerySection />
         </SectionWrapper>
-        <Footer />
+        <div className="mx-auto w-full max-w-sm">
+          <Footer />
+        </div>
       </div>
     </div>
   );
