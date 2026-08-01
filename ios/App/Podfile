@@ -16,6 +16,7 @@ def capacitor_pods
   pod 'CapacitorFileTransfer', :path => '../../node_modules/@capacitor/file-transfer'
   pod 'CapacitorFilesystem', :path => '../../node_modules/@capacitor/filesystem'
   pod 'CapacitorGeolocation', :path => '../../node_modules/@capacitor/geolocation'
+  pod 'CapacitorPushNotifications', :path => '../../node_modules/@capacitor/push-notifications'
   pod 'CapacitorShare', :path => '../../node_modules/@capacitor/share'
   pod 'CapacitorSplashScreen', :path => '../../node_modules/@capacitor/splash-screen'
   pod 'CapacitorSecureStoragePlugin', :path => '../../node_modules/capacitor-secure-storage-plugin'
@@ -24,6 +25,8 @@ end
 
 target 'App' do
   capacitor_pods
+  # FCM 등록 토큰 발급용. capacitor_pods 밖에 둬야 cap sync가 덮어쓰지 않는다.
+  pod 'FirebaseMessaging'
 end
 
 post_install do |installer|
