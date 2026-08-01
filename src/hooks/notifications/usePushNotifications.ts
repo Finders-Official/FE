@@ -3,6 +3,7 @@ import type { NavigateFunction } from "react-router";
 import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { useRegisterDeviceToken } from "./useRegisterDeviceToken";
+import { FindersFcm } from "@/lib/notifications/finders-fcm";
 import { usePushTokenStore } from "@/store/usePushToken.store";
 import type { DevicePlatform } from "@/types/notification/deviceToken";
 
@@ -29,9 +30,20 @@ export function usePushNotifications(
 
     const registrationHandle = PushNotifications.addListener(
       "registration",
-      (token) => {
-        setPushToken(token.value);
-        registerDeviceToken({ token: token.value, platform });
+      async (token) => {
+        // iOS의 registration 값은 APNs 디바이스 토큰이라 FCM 발송에 쓸 수 없다.
+        // 네이티브 브릿지로 FCM 등록 토큰을 따로 받아온다 (Android는 이 값이 이미 FCM 토큰)
+        try {
+          const fcmToken =
+            platform === "IOS"
+              ? (await FindersFcm.getToken()).token
+              : token.value;
+
+          setPushToken(fcmToken);
+          registerDeviceToken({ token: fcmToken, platform });
+        } catch (error) {
+          console.error("FCM 기기 토큰 조회 실패", error);
+        }
       },
     );
 
