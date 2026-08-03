@@ -9,6 +9,8 @@ import { useGeolocation } from "@/hooks/common/useGeolocation";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { useLikedPhotoLabsInfinite } from "@/hooks/my";
 import { useFavoriteToggle } from "@/hooks/photoLab";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
+import { ErrorState, StaggerItem } from "@/components/common";
 
 const SKELETON_COUNT = 5;
 
@@ -77,6 +79,8 @@ export function LikedPhotoLabPage() {
 
   const isEmpty = !isInitialLoading && !isFetchingNextPage && labs.length === 0;
 
+  const staggerIndexFor = useFirstPageStagger(labs.length);
+
   const handleFavoriteToggle = useCallback(
     (photoLabId: string, prevIsFavoriteFromCard: boolean) => {
       toggleFavorite({ photoLabId, isFavorite: prevIsFavoriteFromCard });
@@ -85,18 +89,7 @@ export function LikedPhotoLabPage() {
   );
 
   if (isError) {
-    return (
-      <div className="p-4 text-neutral-100">
-        <p className="text-red-400">불러오기 실패</p>
-        <button
-          type="button"
-          className="mt-3 rounded-md border border-neutral-700 px-3 py-2 text-sm"
-          onClick={() => refetch()}
-        >
-          다시 시도
-        </button>
-      </div>
-    );
+    return <ErrorState message="불러오기 실패" onRetry={() => refetch()} />;
   }
 
   return (
@@ -120,12 +113,13 @@ export function LikedPhotoLabPage() {
           </div>
         ) : (
           <>
-            {labs.map((photolab) => (
-              <PhotoLabCard
-                key={photolab.id}
-                photoLab={photolab}
-                onToggleLike={handleFavoriteToggle}
-              />
+            {labs.map((photolab, index) => (
+              <StaggerItem key={photolab.id} index={staggerIndexFor(index)}>
+                <PhotoLabCard
+                  photoLab={photolab}
+                  onToggleLike={handleFavoriteToggle}
+                />
+              </StaggerItem>
             ))}
 
             {isFetchingNextPage && (

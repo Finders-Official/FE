@@ -1,4 +1,5 @@
 import { CircleGlareFillIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 import type { IconComponent } from "@/types/icon";
 
 interface BigButtonProps {
@@ -17,12 +18,12 @@ export const BigButton = ({
   onClick,
 }: BigButtonProps) => {
   return (
-    <button
+    <Press
       type="button"
       onClick={onClick}
       className={[
-        "bg-neutral-875 flex h-48 w-full flex-col items-center justify-center rounded-[1rem] active:scale-[0.99]",
-        "border transition",
+        "bg-neutral-875 flex h-48 w-full flex-col items-center justify-center rounded-[1rem]",
+        "border",
         isSelected ? "border-orange-500" : "border-transparent",
       ].join(" ")}
     >
@@ -34,6 +35,6 @@ export const BigButton = ({
 
       <p className="mt-3 text-[1rem]">{title}</p>
       <p className="text-[0.8125rem]">{description}</p>
-    </button>
+    </Press>
   );
 };

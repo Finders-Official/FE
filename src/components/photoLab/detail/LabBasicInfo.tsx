@@ -1,6 +1,5 @@
-import { useState } from "react";
 import type { PhotoLabDetail } from "@/types/photoLab";
-import { StarIcon, StarFillIcon } from "@/assets/icon";
+import { FavoriteStar } from "../FavoriteStar";
 
 interface LabBasicInfoProps {
   lab: PhotoLabDetail;
@@ -13,20 +12,6 @@ export default function LabBasicInfo({
   onFavoriteToggle,
   className = "",
 }: LabBasicInfoProps) {
-  const [prevFavorite, setPrevFavorite] = useState(lab.isFavorite);
-  const [isFavorite, setIsFavorite] = useState(lab.isFavorite);
-
-  if (lab.isFavorite !== prevFavorite) {
-    setPrevFavorite(lab.isFavorite);
-    setIsFavorite(lab.isFavorite);
-  }
-
-  const handleFavoriteClick = () => {
-    const currentState = isFavorite;
-    setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId, currentState);
-  };
-
   return (
     <div className={className}>
       <div className="flex justify-between py-7.5">
@@ -48,23 +33,13 @@ export default function LabBasicInfo({
         </div>
 
         {/* 즐겨찾기 */}
-        <div className="flex flex-col items-center gap-0.5">
-          <button
-            type="button"
-            onClick={handleFavoriteClick}
-            className="flex h-6 w-6 shrink-0 items-center justify-center"
-            aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
-          >
-            {isFavorite ? (
-              <StarFillIcon className="h-6 w-6" />
-            ) : (
-              <StarIcon className="h-[1.125rem] w-[1.125rem] text-neutral-300" />
-            )}
-          </button>
-          <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
-            {lab.favoriteCount}
-          </p>
-        </div>
+        <FavoriteStar
+          photoLabId={lab.photoLabId}
+          isFavorite={lab.isFavorite}
+          favoriteCount={lab.favoriteCount}
+          onToggle={onFavoriteToggle}
+          className="gap-0.5"
+        />
       </div>
       <div className="-mx-4 h-px bg-neutral-800" />
     </div>

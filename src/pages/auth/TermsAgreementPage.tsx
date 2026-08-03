@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { CTA_Button, Checkbox, Header } from "@/components/common";
+import { CTA_Button, Checkbox, Header, Press } from "@/components/common";
 import { TermsAgreementItem } from "@/components/auth";
 import { AGREEMENT_TERMS } from "@/constants/auth/agreementTerms";
 import { useTermsAgreement } from "@/hooks/auth/onBoarding";
@@ -40,13 +40,13 @@ export function TermsAgreementPage() {
           onChange={toggleAll}
           ariaLabel="전체 동의"
         />
-        <button
+        <Press
           type="button"
           onClick={toggleAll}
           className="text-neutral-0 text-base font-semibold tracking-[-0.02em]"
         >
           전체 동의
-        </button>
+        </Press>
       </div>
 
       {/* 약관 목록 */}

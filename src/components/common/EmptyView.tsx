@@ -8,7 +8,7 @@ type EmptyViewProps = {
 
 export default function EmptyView({ icon, content }: EmptyViewProps) {
   return (
-    <div className="pointer-events-none absolute inset-0 flex h-full flex-col items-center justify-center gap-4">
+    <div className="t-fade-in pointer-events-none absolute inset-0 flex h-full flex-col items-center justify-center gap-4">
       {icon ?? <LogoIcon className="h-23.5 w-23.5" />}
 
       <div className="flex flex-col items-center justify-center text-center">

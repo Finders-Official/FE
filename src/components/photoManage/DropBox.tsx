@@ -4,6 +4,7 @@ import type {
   DropDownCategory,
   DropDownOption,
 } from "@/types/photomanage/category";
+import { Collapse, Press } from "@/components/common";
 
 type DropBoxProps = {
   category: DropDownCategory;
@@ -25,13 +26,14 @@ export function DropBox({
   const rightText = value ? value.priceText : category.placeholder;
 
   return (
-    <button
-      type="button"
-      onClick={() => onToggle(category.key)}
-      aria-expanded={isOpen}
-      className="w-full"
-    >
-      <div className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3">
+    <div className="w-full">
+      {/* 토글 버튼 — 옵션(Press)까지 감싸는 중첩 버튼이 되지 않게 헤더 행만 버튼으로 둔다 */}
+      <Press
+        type="button"
+        onClick={() => onToggle(category.key)}
+        aria-expanded={isOpen}
+        className="border-neutral-850 flex h-12.75 w-full items-center justify-between gap-2.5 rounded-[0.625rem] border px-4 py-3"
+      >
         <div className="flex flex-1 justify-between">
           <p className={leftTextClass}>{leftText}</p>
           <p className="text-neutral-400">{rightText}</p>
@@ -39,14 +41,14 @@ export function DropBox({
 
         <div className="shrink-0">
           <ChevronLeftIcon
-            className={`h-4 w-4 text-neutral-200 transition-transform ${
+            className={`ease-smooth-out h-4 w-4 text-neutral-200 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
               isOpen ? "rotate-90" : "rotate-270"
             }`}
           />
         </div>
-      </div>
+      </Press>
 
-      {isOpen && (
+      <Collapse open={isOpen}>
         <div className="border-neutral-850 mt-2 overflow-hidden rounded-[0.625rem] border">
           <ul>
             {category.options.map((opt) => {
@@ -54,7 +56,7 @@ export function DropBox({
 
               return (
                 <li key={opt.value}>
-                  <button
+                  <Press
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
@@ -67,13 +69,13 @@ export function DropBox({
                   >
                     <span className="text-neutral-100">{opt.label}</span>
                     <span className="text-neutral-400">{opt.priceText}</span>
-                  </button>
+                  </Press>
                 </li>
               );
             })}
           </ul>
         </div>
-      )}
-    </button>
+      </Collapse>
+    </div>
   );
 }

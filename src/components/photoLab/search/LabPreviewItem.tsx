@@ -1,5 +1,6 @@
 import type { LabPreview } from "@/types/photoLabSearch";
 import { photoLabPlaceholder } from "@/assets/images";
+import { Press } from "@/components/common";
 
 interface LabPreviewItemProps {
   lab: LabPreview;
@@ -8,7 +9,8 @@ interface LabPreviewItemProps {
 
 export default function LabPreviewItem({ lab, onClick }: LabPreviewItemProps) {
   return (
-    <div
+    <Press
+      as="div"
       role="button"
       tabIndex={0}
       onClick={onClick}
@@ -43,6 +45,6 @@ export default function LabPreviewItem({ lab, onClick }: LabPreviewItemProps) {
           )}
         </div>
       </div>
-    </div>
+    </Press>
   );
 }

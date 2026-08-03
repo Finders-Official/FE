@@ -1,4 +1,13 @@
-import { CTA_Button, Header, ImageCard } from "@/components/common";
+import {
+  CTA_Button,
+  ErrorState,
+  Header,
+  ImageCard,
+  PageSlide,
+  Press,
+  StaggerItem,
+} from "@/components/common";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { PhotoCardPreview } from "@/components/photoManage/PhotoCardPreview";
@@ -62,6 +71,14 @@ export default function PhotoDownload() {
     () => data?.pages.flatMap((page) => page.data) ?? [],
     [data],
   );
+
+  const staggerIndexFor = useFirstPageStagger(results.length);
+
+  // 그리드 stagger는 최초 1회만 — DETAIL에서 돌아올 때 리스트가 리마운트
+  const gridStaggeredRef = useRef(false);
+  useEffect(() => {
+    if (step === "GRID" && results.length > 0) gridStaggeredRef.current = true;
+  });
 
   const onIntersect = useCallback(() => {
     fetchNextPage();
@@ -269,38 +286,36 @@ export default function PhotoDownload() {
               ? Array.from({ length: SKELETON_COUNT }).map((_, idx) => (
                   <ImageCardSkeleton key={`skeleton-${idx}`} />
                 ))
-              : results.map((p) => {
+              : results.map((p, index) => {
                   const isSelected = selectedSet.has(p.scannedPhotoId);
                   const selectionIndex = isSelected
                     ? selectedIndexMap.get(p.scannedPhotoId)
                     : undefined;
 
                   return (
-                    <ImageCard
+                    <StaggerItem
                       key={p.scannedPhotoId}
-                      src={p.signedUrl}
-                      mode="multi"
-                      isSelected={isSelected}
-                      selectionIndex={selectionIndex}
-                      onToggle={() => toggle(p.scannedPhotoId)}
-                      onOpen={() => setCurrentPhotoId(p.scannedPhotoId)}
-                      className="mx-auto"
-                    />
+                      index={
+                        gridStaggeredRef.current
+                          ? undefined
+                          : staggerIndexFor(index)
+                      }
+                    >
+                      <ImageCard
+                        src={p.signedUrl}
+                        mode="multi"
+                        isSelected={isSelected}
+                        selectionIndex={selectionIndex}
+                        onToggle={() => toggle(p.scannedPhotoId)}
+                        onOpen={() => setCurrentPhotoId(p.scannedPhotoId)}
+                        className="mx-auto"
+                      />
+                    </StaggerItem>
                   );
                 })}
 
             {/* 센티널은 로딩이 끝났을 때만(또는 항상) */}
             {!isLoading && <div ref={sentinelRef} style={{ height: 1 }} />}
-          </div>
-          {/** 다음 버튼 */}
-          <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5">
-            <CTA_Button
-              text="다운로드"
-              size="xlarge"
-              disabled={!checked}
-              color={checked ? "orange" : "black"}
-              onClick={handleDownloadAction}
-            />
           </div>
         </section>
       </div>
@@ -321,7 +336,7 @@ export default function PhotoDownload() {
 
         {/** 선택 영역 */}
         <div className="mb-5 flex h-[3.4375rem] w-full justify-end">
-          <button
+          <Press
             type="button"
             onClick={() => {
               if (currentPhotoId !== null) {
@@ -336,7 +351,7 @@ export default function PhotoDownload() {
             ) : (
               <EmptyCheckCircleIcon className="h-10 w-10" />
             )}
-          </button>
+          </Press>
         </div>
 
         {/** 확대한 사진 노출 영역 */}
@@ -363,40 +378,6 @@ export default function PhotoDownload() {
             );
           })()}
         </div>
-
-        {/** 선택된 사진 그리드 영역 */}
-        <div
-          className="fixed right-0 bottom-0 left-0 flex h-[5.625rem] w-full min-w-0 gap-2 overflow-x-auto"
-          style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
-        >
-          {/* 왼쪽 스페이서 */}
-          <div className="w-[calc(50vw-2.5rem)] shrink-0" />
-
-          {selectedIds.map((id) => {
-            const photo = photoById.get(id);
-            if (!photo) return null;
-
-            return (
-              <div
-                key={id}
-                ref={(el) => {
-                  if (el) previewRefs.current.set(id, el);
-                }}
-                onClick={() => setCurrentPhotoId(id)}
-                className="shrink-0"
-              >
-                <PhotoCardPreview
-                  src={photo.signedUrl}
-                  showClose={false}
-                  className={id === currentPhotoId ? "scale-110" : ""}
-                />
-              </div>
-            );
-          })}
-
-          {/* 오른쪽 스페이서 */}
-          <div className="w-[calc(50vw-2.5rem)] shrink-0" />
-        </div>
       </div>
     );
   };
@@ -404,15 +385,70 @@ export default function PhotoDownload() {
   return (
     <main className="mx-auto w-full max-w-6xl overflow-x-hidden">
       {isError ? (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
-        </div>
+        <ErrorState />
       ) : !isLoading && results.length === 0 ? (
         <EmptyView content={"스캔한 사진이 없습니다."} />
-      ) : step === "GRID" ? (
-        renderGrid()
       ) : (
-        renderDetail()
+        <>
+          <PageSlide
+            step={step}
+            direction={step === "DETAIL" ? "forward" : "back"}
+          >
+            {step === "GRID" ? renderGrid() : renderDetail()}
+          </PageSlide>
+
+          {/* fixed 요소는 PageSlide(transform 조상) 밖에 두어야 뷰포트 기준을 유지한다 */}
+          {step === "GRID" ? (
+            /** 다음 버튼 */
+            <div className="fixed right-0 bottom-0 left-0 flex justify-center px-5 py-5">
+              <CTA_Button
+                text="다운로드"
+                size="xlarge"
+                disabled={!checked}
+                color={checked ? "orange" : "black"}
+                onClick={handleDownloadAction}
+              />
+            </div>
+          ) : (
+            /** 선택된 사진 그리드 영역 */
+            <div
+              className="fixed right-0 bottom-0 left-0 flex h-[5.625rem] w-full min-w-0 gap-2 overflow-x-auto"
+              style={{
+                scrollbarWidth: "none",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              {/* 왼쪽 스페이서 */}
+              <div className="w-[calc(50vw-2.5rem)] shrink-0" />
+
+              {selectedIds.map((id) => {
+                const photo = photoById.get(id);
+                if (!photo) return null;
+
+                return (
+                  <div
+                    key={id}
+                    ref={(el) => {
+                      if (el) previewRefs.current.set(id, el);
+                    }}
+                    className="shrink-0"
+                  >
+                    <Press as="div" onClick={() => setCurrentPhotoId(id)}>
+                      <PhotoCardPreview
+                        src={photo.signedUrl}
+                        showClose={false}
+                        className={id === currentPhotoId ? "scale-110" : ""}
+                      />
+                    </Press>
+                  </div>
+                );
+              })}
+
+              {/* 오른쪽 스페이서 */}
+              <div className="w-[calc(50vw-2.5rem)] shrink-0" />
+            </div>
+          )}
+        </>
       )}
     </main>
   );

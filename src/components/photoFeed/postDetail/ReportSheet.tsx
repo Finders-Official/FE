@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import SheetPopup from "./SheetPopup";
+import { Press } from "@/components/common";
 import type { ReportReason } from "@/apis/photoFeed/report.api";
 
 /** 신고 사유 옵션 (피그마 기획 순서) */
@@ -36,7 +37,7 @@ export default function ReportSheet({
       open={open}
       onClose={onClose}
       footer={
-        <button
+        <Press
           type="button"
           disabled={!selected || isSubmitting}
           onClick={() => {
@@ -47,11 +48,11 @@ export default function ReportSheet({
           }`}
         >
           신고하기
-        </button>
+        </Press>
       }
     >
       {REPORT_REASONS.map((r) => (
-        <button
+        <Press
           key={r.value}
           type="button"
           onClick={() => setSelected(r.value)}
@@ -60,7 +61,7 @@ export default function ReportSheet({
           }`}
         >
           {r.label}
-        </button>
+        </Press>
       ))}
     </SheetPopup>
   );

@@ -1,4 +1,5 @@
 import BottomSheet from "@/components/common/BottomSheet";
+import { Press } from "@/components/common/motion";
 import { CREDIT_CARD_OPTIONS } from "@/constants/payment/payment.constant";
 
 interface CardSelectBottomSheetProps {
@@ -26,7 +27,7 @@ export function CardSelectBottomSheet({
               const active = card.id === selectedCardId;
               return (
                 <li key={card.id}>
-                  <button
+                  <Press
                     type="button"
                     onClick={() => {
                       onSelect(card.id);
@@ -39,7 +40,7 @@ export function CardSelectBottomSheet({
                     }`}
                   >
                     {card.name}
-                  </button>
+                  </Press>
                 </li>
               );
             })}

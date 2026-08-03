@@ -4,6 +4,7 @@ import { useNewPostState } from "@/store/useNewPostState.store";
 import { TextArea } from "@/components/common/TextArea";
 import { isValidText } from "@/utils/isValidText";
 import { CTA_Button, Header } from "@/components/common";
+import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
 import { scrollToCenter } from "@/utils/scrollToCenter";
 
 const LIMITS = {
@@ -18,6 +19,8 @@ export default function NewPostPage() {
   const navigate = useNavigate();
   const [titleError, setTitleError] = useState(false);
   const [contentError, setContentError] = useState(false);
+  const titleShake = useShakeTrigger();
+  const contentShake = useShakeTrigger();
   const titleRef = useRef<HTMLTextAreaElement | null>(null);
   const contentRef = useRef<HTMLTextAreaElement | null>(null);
   const galleryInputRef = useRef<HTMLInputElement | null>(null);
@@ -71,6 +74,7 @@ export default function NewPostPage() {
     if (!isTitleValid) {
       setTitleError(true);
       setContentError(false); // 첫 에러만 강조
+      titleShake.shake();
 
       const el = titleRef.current;
       if (el) {
@@ -84,6 +88,7 @@ export default function NewPostPage() {
     if (!isContentValid) {
       setContentError(true);
       setTitleError(false);
+      contentShake.shake();
 
       const el = contentRef.current;
       if (el) {
@@ -167,13 +172,14 @@ export default function NewPostPage() {
             maxLength={LIMITS.titleMax}
             enforceMaxLength={false}
             isError={titleError}
+            shakeKey={titleShake.shakeKey}
           />
           {titleText.length > LIMITS.titleMax ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {LIMITS.titleMax}자까지 입력 가능합니다.
             </p>
           ) : titleError ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최소 2글자 이상 입력해주세요.
             </p>
           ) : null}
@@ -199,13 +205,14 @@ export default function NewPostPage() {
             maxLength={LIMITS.contentMax}
             enforceMaxLength={false}
             isError={contentError}
+            shakeKey={contentShake.shakeKey}
           />
           {contentText.length > LIMITS.contentMax ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최대 {LIMITS.contentMax}자까지 입력 가능합니다.
             </p>
           ) : contentError ? (
-            <p className="px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최소 20글자 이상 입력해주세요.
             </p>
           ) : null}

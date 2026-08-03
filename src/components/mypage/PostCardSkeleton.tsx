@@ -1,7 +1,7 @@
 export function PostCardSkeleton() {
   return (
     <div>
-      <div className="animate-pulse">
+      <div className="t-skel-sheen">
         {/* 이미지 */}
         <div className="h-[14.25rem] rounded-md bg-neutral-700" />
 

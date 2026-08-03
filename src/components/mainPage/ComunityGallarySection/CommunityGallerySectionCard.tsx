@@ -6,12 +6,16 @@ import {
   type CommunityPost,
 } from "@/apis/mainPage/mainPage.api";
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
+import { IconSwap, NumberPopIn, Press } from "@/components/common";
 
 interface CommunityGallerySectionCardProps {
   post: CommunityPost;
 }
 
 const COMMUNITY_PREVIEW_QK = ["community", "posts", "preview"] as const;
+
+const HEART_PATH =
+  "M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.68998C2 5.59998 4.49 3.09998 7.56 3.09998C9.38 3.09998 10.99 3.97998 12 5.33998C13.01 3.97998 14.63 3.09998 16.44 3.09998C19.51 3.09998 22 5.59998 22 8.68998C22 15.69 15.52 19.82 12.62 20.81Z";
 
 type LikeVars = { postId: string; nextLiked: boolean };
 type LikeCtx = { previous?: CommunityPost[] };
@@ -56,16 +60,11 @@ export default function CommunityGallerySectionCard({
       return { previous };
     },
 
-    onError: (err, _vars, ctx) => {
+    // 실패 시 조용한 롤백 — useLikePost/useUnlikePost와 동일한 처리
+    onError: (_err, _vars, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(COMMUNITY_PREVIEW_QK, ctx.previous);
       }
-
-      const message =
-        err instanceof Error
-          ? err.message
-          : "좋아요 처리에 실패했어요. 잠시 후 다시 시도해주세요.";
-      alert(message);
     },
 
     onSettled: () => {
@@ -98,16 +97,17 @@ export default function CommunityGallerySectionCard({
   };
 
   return (
-    <div
+    <Press
+      as="div"
       onClick={handleCardClick}
-      className="group bg-neutral-875 flex w-66.25 cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800"
+      className="bg-neutral-875 flex w-66.25 cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800"
     >
       {/* 썸네일 이미지 */}
       <div className="relative aspect-square w-full overflow-hidden bg-neutral-800">
         <img
           src={imageUrl}
           alt={post.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover"
           onError={(e) => {
             (e.target as HTMLImageElement).src = fallbackImage;
           }}
@@ -118,40 +118,61 @@ export default function CommunityGallerySectionCard({
       <div className="flex flex-col gap-3 p-4">
         <div className="flex items-center gap-3">
           {/* 좋아요 */}
-          <button
+          <Press
             onClick={handleLikeClick}
             disabled={likeMutation.isPending}
-            className="flex items-center justify-center transition-transform active:scale-90 disabled:opacity-60"
+            className="flex items-center justify-center disabled:opacity-60"
             aria-pressed={post.isLiked}
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.68998C2 5.59998 4.49 3.09998 7.56 3.09998C9.38 3.09998 10.99 3.97998 12 5.33998C13.01 3.97998 14.63 3.09998 16.44 3.09998C19.51 3.09998 22 5.59998 22 8.68998C22 15.69 15.52 19.82 12.62 20.81Z"
-                className={`transition-colors duration-200 ${
-                  post.isLiked
-                    ? "fill-orange-500 stroke-orange-500"
-                    : "fill-none stroke-neutral-200"
-                }`}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="ml-1 text-xs text-neutral-400">
-              {post.likeCount}
-            </span>
-          </button>
+            <IconSwap
+              active={post.isLiked}
+              bounce
+              className="h-6 w-6"
+              iconA={
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d={HEART_PATH}
+                    className="fill-none stroke-neutral-200"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconB={
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d={HEART_PATH}
+                    className="fill-orange-500 stroke-orange-500"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+            />
+            <NumberPopIn
+              value={post.likeCount}
+              className="ml-1 text-xs text-neutral-400"
+            />
+          </Press>
 
           {/* 댓글 */}
-          <button
+          <Press
             onClick={handleCommentClick}
-            className="flex items-center justify-center transition-transform active:scale-90"
+            className="flex items-center justify-center"
           >
             <svg
               width="24"
@@ -168,16 +189,17 @@ export default function CommunityGallerySectionCard({
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="ml-1 text-xs text-neutral-400">
-              {post.commentCount}
-            </span>
-          </button>
+            <NumberPopIn
+              value={post.commentCount}
+              className="ml-1 text-xs text-neutral-400"
+            />
+          </Press>
         </div>
 
         <p className="font-regular line-clamp-2 min-h-7.5 text-[0.75rem] leading-[126%] tracking-[-0.02em] text-neutral-100">
           {post.title}
         </p>
       </div>
-    </div>
+    </Press>
   );
 }

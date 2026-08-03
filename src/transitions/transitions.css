@@ -1,0 +1,637 @@
+/* transitions-dev 모션 엔진 — 토큰 + .t-reveal variant 시스템 + t-* 클래스. src/index.css에서 1회 @import. */
+:root {
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --duration-very-slow: 500ms;
+
+  --ease-in-out: ease-in-out;
+  --ease-out: ease-out;
+  --ease-linear: linear;
+
+  --distance-micro: 4px;
+  --distance-small: 6px;
+  --distance-base: 8px;
+  --distance-medium: 12px;
+  --distance-large: 30px;
+
+  --scale-large: 0.96;
+  --scale-medium: 0.97;
+  --scale-small: 0.98;
+  --scale-tiny: 0.99;
+
+  --blur-small: 2px;
+  --blur-medium: 3px;
+  --blur-large: 8px;
+}
+
+.t-reveal {
+  --reveal-enter: var(--duration-fast);
+  --reveal-exit: var(--duration-quick);
+  --reveal-ease: var(--ease-smooth-out);
+  --reveal-scale: var(--scale-large);
+  --reveal-scale-exit: var(--reveal-scale);
+  --reveal-x: 0px;
+  --reveal-y: 0px;
+  --reveal-blur: 0px;
+  --reveal-origin: center;
+  --reveal-delay: 0ms;
+
+  transform-origin: var(--reveal-origin);
+  transform: translate3d(var(--reveal-x), var(--reveal-y), 0)
+    scale(var(--reveal-scale));
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  pointer-events: none;
+  transition:
+    transform var(--reveal-exit) var(--reveal-ease),
+    opacity var(--reveal-exit) var(--reveal-ease),
+    filter var(--reveal-exit) var(--reveal-ease);
+  will-change: transform, opacity, filter;
+}
+.t-reveal[data-state="open"] {
+  transform: translate3d(0, 0, 0) scale(1);
+  opacity: 1;
+  filter: blur(0);
+  pointer-events: auto;
+  transition:
+    transform var(--reveal-enter) var(--reveal-ease) var(--reveal-delay),
+    opacity var(--reveal-enter) var(--reveal-ease) var(--reveal-delay),
+    filter var(--reveal-enter) var(--reveal-ease) var(--reveal-delay);
+}
+.t-reveal[data-state="closing"] {
+  transform: translate3d(var(--reveal-x), var(--reveal-y), 0)
+    scale(var(--reveal-scale-exit));
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  pointer-events: none;
+}
+
+.t-reveal[data-variant="fade"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+}
+.t-reveal[data-variant="scale"] {
+  --reveal-scale: var(--scale-large);
+}
+
+.t-reveal[data-variant="modal"] {
+  --reveal-scale: var(--scale-large);
+  --reveal-scale-exit: var(--scale-large);
+  --reveal-origin: center;
+  --reveal-enter: var(--duration-fast);
+  --reveal-exit: var(--duration-quick);
+}
+.t-reveal[data-variant="dropdown"] {
+  --reveal-scale: var(--scale-medium);
+  --reveal-scale-exit: var(--scale-tiny);
+  --reveal-origin: top left;
+  --reveal-enter: var(--duration-fast);
+  --reveal-exit: var(--duration-quick);
+}
+.t-reveal[data-variant="popover"] {
+  --reveal-scale: var(--scale-medium);
+  --reveal-scale-exit: var(--scale-tiny);
+  --reveal-origin: top center;
+  --reveal-enter: var(--duration-fast);
+  --reveal-exit: var(--duration-quick);
+}
+.t-reveal[data-variant="tooltip"] {
+  --reveal-scale: var(--scale-small);
+  --reveal-scale-exit: var(--scale-small);
+  --reveal-origin: 50% 100%;
+  --reveal-enter: var(--duration-quick);
+  --reveal-exit: 50ms;
+  --reveal-delay: var(--duration-micro);
+  --reveal-ease: var(--ease-out);
+}
+.t-reveal[data-variant="panel"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: var(--distance-medium);
+  --reveal-blur: var(--blur-small);
+  --reveal-enter: var(--duration-slow);
+  --reveal-exit: var(--duration-medium);
+}
+
+.t-reveal[data-variant="slide-up"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: var(--distance-medium);
+  --reveal-blur: var(--blur-medium);
+}
+.t-reveal[data-variant="slide-down"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: calc(-1 * var(--distance-medium));
+  --reveal-blur: var(--blur-medium);
+}
+.t-reveal[data-variant="slide-left"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-x: var(--distance-medium);
+  --reveal-blur: var(--blur-medium);
+}
+.t-reveal[data-variant="slide-right"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-x: calc(-1 * var(--distance-medium));
+  --reveal-blur: var(--blur-medium);
+}
+
+.t-reveal[data-variant="toast"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: var(--distance-base);
+  --reveal-blur: var(--blur-small);
+  --reveal-enter: var(--duration-fast);
+  --reveal-exit: var(--duration-quick);
+}
+
+.t-reveal[data-variant="sheet-bottom"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: 100%;
+  --reveal-enter: var(--duration-slow);
+  --reveal-exit: var(--duration-medium);
+}
+.t-reveal[data-variant="sheet-top"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: -100%;
+  --reveal-enter: var(--duration-slow);
+  --reveal-exit: var(--duration-medium);
+}
+.t-reveal[data-variant="sheet-left"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-x: -100%;
+  --reveal-enter: var(--duration-slow);
+  --reveal-exit: var(--duration-medium);
+}
+.t-reveal[data-variant="sheet-right"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-x: 100%;
+  --reveal-enter: var(--duration-slow);
+  --reveal-exit: var(--duration-medium);
+}
+
+.t-reveal[data-variant="ios-snappy"] {
+  --reveal-scale: var(--scale-medium);
+  --reveal-scale-exit: var(--scale-medium);
+  --reveal-y: var(--distance-small);
+  --reveal-blur: var(--blur-small);
+  --reveal-enter: var(--duration-fast);
+  --reveal-exit: var(--duration-quick);
+  --reveal-ease: var(--ease-ios-snappy);
+}
+.t-reveal[data-variant="ios-bouncy"] {
+  --reveal-scale: var(--scale-large);
+  --reveal-scale-exit: var(--scale-large);
+  --reveal-y: var(--distance-base);
+  --reveal-blur: var(--blur-small);
+  --reveal-enter: var(--duration-slow);
+  --reveal-exit: var(--duration-quick);
+  --reveal-ease: var(--ease-ios-bouncy);
+}
+.t-reveal[data-variant="ios-zoom"] {
+  --reveal-scale: 0.8;
+  --reveal-scale-exit: 0.92;
+  --reveal-origin: var(--zoom-origin, center);
+  --reveal-enter: var(--duration-medium);
+  --reveal-exit: var(--duration-fast);
+  --reveal-ease: var(--ease-ios-snappy);
+}
+
+.t-reveal[data-variant="ios-sheet"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-y: 100%;
+  --reveal-origin: bottom center;
+  --reveal-enter: var(--duration-medium);
+  --reveal-exit: var(--duration-fast);
+  --reveal-ease: var(--ease-ios-smooth);
+}
+
+.t-reveal[data-variant="push-ios"] {
+  --reveal-scale: 1;
+  --reveal-scale-exit: 1;
+  --reveal-x: 100%;
+  --reveal-blur: 0px;
+  --reveal-enter: var(--duration-medium);
+  --reveal-exit: var(--duration-medium);
+  --reveal-ease: var(--ease-ios-smooth);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-reveal {
+    transition: none !important;
+  }
+}
+
+.t-stagger-item {
+  --stagger-step: var(--duration-stagger);
+  transform: translateY(var(--distance-medium));
+  opacity: 0;
+  filter: blur(var(--blur-small));
+  transition:
+    transform var(--duration-slow) var(--ease-smooth-out),
+    opacity var(--duration-slow) var(--ease-smooth-out),
+    filter var(--duration-slow) var(--ease-smooth-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger-step));
+}
+.t-reveal[data-state="open"] .t-stagger-item,
+.is-in > .t-stagger-item,
+.t-stagger-item.is-in {
+  transform: translateY(0);
+  opacity: 1;
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-stagger-item {
+    transition: none !important;
+  }
+}
+
+:root {
+  --icon-swap-dur: var(--duration-fast);
+  --icon-swap-blur: var(--blur-small);
+  --icon-swap-start-scale: 0.25;
+  --icon-swap-ease: var(--ease-in-out);
+}
+
+.t-icon-swap {
+  position: relative;
+  display: inline-grid;
+}
+.t-icon-swap .t-icon {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--icon-swap-dur) var(--icon-swap-ease),
+    filter var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="b"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="b"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="a"] {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-icon-swap .t-icon {
+    transition: none !important;
+  }
+}
+
+:root {
+  --page-slide-dur: var(--duration-fast);
+  --page-slide-distance: var(--distance-base);
+  --page-blur: var(--blur-medium);
+  --page-slide-ease: var(--ease-smooth-out);
+}
+
+.t-page-enter {
+  animation: t-page-enter var(--page-slide-dur) var(--page-slide-ease);
+}
+.t-page-enter[data-dir="back"] {
+  --t-page-enter-x: calc(var(--page-slide-distance) * -1);
+}
+@keyframes t-page-enter {
+  from {
+    opacity: 0;
+    transform: translateX(var(--t-page-enter-x, var(--page-slide-distance)));
+    filter: blur(var(--page-blur));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-page-enter {
+    animation: none;
+  }
+}
+
+.t-fade-in {
+  animation: t-fade-in var(--duration-slow) var(--ease-smooth-out);
+}
+@keyframes t-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--distance-base));
+    filter: blur(var(--blur-small));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-fade-in {
+    animation: none;
+  }
+}
+
+/* 폼 에러 텍스트 등장 — 조건부 마운트되는 메시지에 붙인다 (입력창 아래로 살짝 내려앉음) */
+.t-error-in {
+  animation: t-error-in var(--duration-fast) var(--ease-smooth-out);
+}
+@keyframes t-error-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--distance-micro) * -1));
+    filter: blur(var(--blur-small));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-error-in {
+    animation: none;
+  }
+}
+
+:root {
+  --digit-dur: var(--duration-fast);
+  --digit-distance: var(--distance-base);
+  --digit-stagger: 70ms;
+  --digit-blur: var(--blur-small);
+  --digit-ease: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --digit-dir-x: 0;
+  --digit-dir-y: 1;
+}
+
+@keyframes t-digit-pop-in {
+  0% {
+    transform: translate(
+      calc(var(--digit-distance) * var(--digit-dir-x)),
+      calc(var(--digit-distance) * var(--digit-dir-y))
+    );
+    opacity: 0;
+    filter: blur(var(--digit-blur));
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.t-digit-group {
+  display: inline-flex;
+  align-items: baseline;
+}
+.t-digit {
+  display: inline-block;
+}
+.t-digit-group.is-animating .t-digit {
+  animation: t-digit-pop-in var(--digit-dur) var(--digit-ease) both;
+}
+.t-digit-group.is-animating .t-digit[data-stagger="1"] {
+  animation-delay: var(--digit-stagger);
+}
+.t-digit-group.is-animating .t-digit[data-stagger="2"] {
+  animation-delay: calc(var(--digit-stagger) * 2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-digit-group .t-digit {
+    animation: none !important;
+  }
+}
+
+/* 선택 칩 등장 팝인. 제거로 인한 남은 칩 이동은 useFlipReorder(transform FLIP)가 담당 —
+   폭(grid-template-columns) 트랜지션은 매 프레임 레이아웃을 유발해 WebView에서 프레임 드랍. */
+.t-chip-in {
+  animation: t-chip-in var(--duration-fast) var(--ease-smooth-out);
+}
+@keyframes t-chip-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--scale-large));
+    filter: blur(var(--blur-small));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-chip-in {
+    animation: none;
+  }
+}
+
+:root {
+  --check-opacity-dur: var(--duration-very-slow);
+  --check-rotate-dur: var(--duration-very-slow);
+  --check-rotate-from: 80deg;
+  --check-bob-dur: var(--duration-very-slow);
+  --check-y-amount: 40px;
+  --check-blur-dur: var(--duration-very-slow);
+  --check-blur-from: 10px;
+  --check-path-dur: var(--duration-very-slow);
+  --check-path-delay: var(--duration-micro);
+  --check-ease-out: var(--ease-smooth-out);
+  --check-ease-opacity: var(--ease-smooth-out);
+  --check-ease-rotate: var(--ease-smooth-out);
+  --check-ease-bob: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --check-ease-path: var(--ease-smooth-out);
+}
+
+.t-success-check {
+  display: inline-block;
+  transform-origin: center;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+.t-success-check svg {
+  display: block;
+  overflow: visible;
+}
+
+.t-success-check svg path {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+}
+
+.t-success-check[data-state="in"] {
+  animation:
+    t-check-fade var(--check-opacity-dur) var(--check-ease-opacity) forwards,
+    t-check-rotate var(--check-rotate-dur) var(--check-ease-rotate) forwards,
+    t-check-blur var(--check-blur-dur) var(--check-ease-out) forwards,
+    t-check-bob var(--check-bob-dur) var(--check-ease-bob) forwards;
+}
+.t-success-check[data-state="in"] svg path {
+  animation: t-check-draw var(--check-path-dur) var(--check-ease-path)
+    var(--check-path-delay, 0ms) forwards;
+}
+
+@keyframes t-check-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes t-check-rotate {
+  from {
+    transform: rotate(var(--check-rotate-from));
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+@keyframes t-check-blur {
+  from {
+    filter: blur(var(--check-blur-from));
+  }
+  to {
+    filter: blur(0);
+  }
+}
+@keyframes t-check-bob {
+  from {
+    translate: 0 var(--check-y-amount);
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes t-check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-success-check {
+    animation: none !important;
+    opacity: 1;
+  }
+  .t-success-check svg path {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+:root {
+  --shake-distance: var(--distance-small);
+  --shake-overshoot: 4px;
+  --shake-dur-a: var(--duration-micro);
+  --shake-dur-b: 60ms;
+  --shake-ease: var(--ease-smooth-out);
+}
+
+@keyframes t-input-shake {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: var(--shake-ease);
+  }
+  28.57% {
+    transform: translateX(var(--shake-distance));
+    animation-timing-function: var(--shake-ease);
+  }
+  57.14% {
+    transform: translateX(calc(var(--shake-distance) * -1));
+    animation-timing-function: var(--shake-ease);
+  }
+  78.57% {
+    transform: translateX(var(--shake-overshoot));
+    animation-timing-function: var(--shake-ease);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.t-shake {
+  animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2)
+    linear;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-shake {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+.t-skel-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.t-skel-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: t-skel-sheen 1.5s var(--ease-linear) infinite;
+  pointer-events: none;
+}
+@keyframes t-skel-sheen {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-skel-sheen::after {
+    animation: none;
+  }
+}
+
+.t-press {
+  transition:
+    transform var(--duration-quick) var(--ease-ios-out),
+    filter var(--duration-quick) var(--ease-ios-out),
+    color var(--duration-quick) var(--ease-smooth-out),
+    background-color var(--duration-quick) var(--ease-smooth-out),
+    border-color var(--duration-quick) var(--ease-smooth-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  /* :active는 조상에도 걸리므로, 중첩 Press에서는 가장 안쪽만 축소한다 */
+  .t-press:active:not(:has(.t-press:active)) {
+    transform: scale(var(--press-scale, var(--scale-medium)));
+    transition-duration: var(--duration-micro);
+  }
+}
+.t-press[data-pressed="true"] {
+  transform: scale(var(--press-scale, var(--scale-medium)));
+  transition-duration: var(--duration-micro);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-press {
+    transition: none !important;
+  }
+  .t-press:active,
+  .t-press[data-pressed="true"] {
+    transform: none;
+  }
+}
