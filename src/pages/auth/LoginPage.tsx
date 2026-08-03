@@ -162,8 +162,6 @@ export function LoginPage() {
 
         const data = response.data;
 
-        setRecentLoginProvider("KAKAO");
-
         if ("isNewMember" in data && data.isNewMember === true) {
           await tokenStorage.setTokens({
             accessToken: null,
@@ -171,6 +169,8 @@ export function LoginPage() {
           });
           navigate("/auth/onboarding", { replace: true });
         } else if ("member" in data) {
+          // 가입이 끝난 계정만 "최근 로그인"으로 기록 (신규 회원은 아직 계정이 없음)
+          setRecentLoginProvider("KAKAO");
           await tokenStorage.setTokens({
             accessToken: data.accessToken,
             signupToken: null,
