@@ -28,6 +28,11 @@ export function usePushNotifications(
     const platform = toDevicePlatform(Capacitor.getPlatform());
     if (!platform) return;
 
+    // requestPermissions가 비동기라, 그 사이 effect가 재실행되면
+    // 리스너가 제거된 뒤에 register()가 호출되어 registration 이벤트가 유실된다
+    // (Capacitor는 이 이벤트를 버퍼링하지 않음)
+    let cancelled = false;
+
     const registrationHandle = PushNotifications.addListener(
       "registration",
       async (token) => {
@@ -75,12 +80,14 @@ export function usePushNotifications(
     );
 
     PushNotifications.requestPermissions().then((result) => {
+      if (cancelled) return;
       if (result.receive === "granted") {
         PushNotifications.register();
       }
     });
 
     return () => {
+      cancelled = true;
       registrationHandle.then((handle) => handle.remove());
       registrationErrorHandle.then((handle) => handle.remove());
       pushReceivedHandle.then((handle) => handle.remove());
