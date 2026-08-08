@@ -3,6 +3,7 @@ import { XMarkIcon } from "@/assets/icon";
 import { CTA_Button, Header } from "@/components/common";
 import { PAYMENT_TERMS_SECTIONS } from "@/constants/payment/paymentTerms.constant";
 import type { PaymentTermsSection } from "@/types/payment";
+import { useReveal } from "@/transitions";
 
 interface PaymentTermsOverlayProps {
   open: boolean;
@@ -15,6 +16,10 @@ export function PaymentTermsOverlay({
   initialSectionId,
   onClose,
 }: PaymentTermsOverlayProps) {
+  const { mounted, state, getRevealProps } = useReveal(open, {
+    variant: "sheet-bottom",
+  });
+
   // 오버레이가 열린 동안 뒤 페이지 스크롤 잠금 (BottomSheet와 동일 패턴)
   useEffect(() => {
     if (!open) return;
@@ -33,11 +38,23 @@ export function PaymentTermsOverlay({
       ?.scrollIntoView({ block: "start" });
   }, [open, initialSectionId]);
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex justify-center bg-black/80">
-      <div className="flex h-full w-full max-w-120 flex-col bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+    <div
+      className={`ease-smooth-out fixed inset-0 z-[60] flex justify-center bg-black/80 transition-opacity motion-reduce:transition-none ${
+        state === "closing"
+          ? "duration-[var(--duration-medium)]"
+          : "duration-[var(--duration-slow)]"
+      }`}
+      style={{ opacity: state === "open" ? 1 : 0 }}
+    >
+      <div
+        {...getRevealProps({
+          className:
+            "flex h-full w-full max-w-120 flex-col bg-neutral-900 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]",
+        })}
+      >
         <Header
           title="약관 동의"
           className="px-4"

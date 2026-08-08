@@ -19,7 +19,7 @@ export const getNoticeList = async (type: NoticeType, page = 0, size = 10) => {
 };
 
 // Path Variable로 noticeId를 전달받아 요청
-export const getNoticeDetail = async (noticeId: number) => {
+export const getNoticeDetail = async (noticeId: string) => {
   const { data } = await axiosInstance.get<NoticeDetailResponse>(
     `/notices/${noticeId}`,
   );

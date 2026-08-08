@@ -1,42 +1,33 @@
-import { useState } from "react";
+import { memo } from "react";
 import type { SimplePhotoLabItem } from "@/types/photoLab";
-import { StarIcon, StarFillIcon } from "@/assets/icon";
 import { photoLabPlaceholder } from "@/assets/images";
+import { FavoriteStar } from "./FavoriteStar";
+import { Press } from "@/components/common/motion";
 
 interface LabCardProps {
   lab: SimplePhotoLabItem;
   onFavoriteToggle?: (photoLabId: string, isFavorite: boolean) => void;
   onCardClick?: (photoLabId: string) => void;
   className?: string;
+  // FLIP 재정렬용 고정 식별자 (useFlipReorder)
+  flipKey?: string;
 }
 
-export default function SimpleLabCard({
+function SimpleLabCard({
   lab,
   onFavoriteToggle,
   onCardClick,
   className = "",
+  flipKey,
 }: LabCardProps) {
-  // Optimistic
-  const [prevFavorite, setPrevFavorite] = useState(lab.isFavorite);
-  const [isFavorite, setIsFavorite] = useState(lab.isFavorite);
-
-  if (lab.isFavorite !== prevFavorite) {
-    setPrevFavorite(lab.isFavorite);
-    setIsFavorite(lab.isFavorite);
-  }
-
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsFavorite((prev) => !prev);
-    onFavoriteToggle?.(lab.photoLabId, isFavorite);
-  };
-
   const handleCardClick = () => {
     onCardClick?.(lab.photoLabId);
   };
 
   return (
-    <div
+    <Press
+      as="div"
+      data-flip-key={flipKey}
       role={onCardClick ? "button" : undefined}
       tabIndex={onCardClick ? 0 : undefined}
       onClick={handleCardClick}
@@ -79,27 +70,20 @@ export default function SimpleLabCard({
           </div>
 
           {/* 즐겨찾기 */}
-          <div className="flex flex-col items-center justify-center gap-1">
-            <button
-              type="button"
-              onClick={handleFavoriteClick}
-              className="flex h-6 w-6 shrink-0 items-center justify-center"
-              aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
-            >
-              {isFavorite ? (
-                <StarFillIcon className="h-6 w-6" />
-              ) : (
-                <StarIcon className="h-[1.125rem] w-[1.125rem] text-neutral-300" />
-              )}
-            </button>
-            <p className="text-[0.625rem] leading-[128%] font-thin tracking-[-0.02em] text-neutral-400">
-              {lab.favoriteCount}
-            </p>
-          </div>
+          <FavoriteStar
+            photoLabId={lab.photoLabId}
+            isFavorite={lab.isFavorite}
+            favoriteCount={lab.favoriteCount}
+            onToggle={onFavoriteToggle}
+            className="justify-center gap-1"
+          />
         </div>
       </div>
-    </div>
+    </Press>
   );
 }
+
+// memo로 토글된 카드 1장만 리렌더
+export default memo(SimpleLabCard);
 
 export type { LabCardProps };

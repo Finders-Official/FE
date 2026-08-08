@@ -1,4 +1,5 @@
 import BottomSheet from "@/components/common/BottomSheet";
+import { ErrorState } from "@/components/common";
 import Profile from "./Profile";
 import CommentInput from "./CommentInput";
 import { useRef, useState } from "react";
@@ -65,9 +66,10 @@ export default function CommentSheet({
               불러오는 중...
             </div>
           ) : isCommentError ? (
-            <div className="flex items-center justify-center py-6 text-red-400">
-              데이터 불러오기에 실패했어요.
-            </div>
+            <ErrorState
+              message="데이터 불러오기에 실패했어요."
+              className="flex items-center justify-center py-6"
+            />
           ) : (
             <div className="flex flex-col gap-5 pb-7">
               {comments.map(
@@ -97,14 +99,12 @@ export default function CommentSheet({
           <div ref={sentinelRef} style={{ height: 1 }} />
         </div>
 
-        <div className="bg-neutral-875 h-10 shrink-0">
-          <CommentInput
-            value={comment}
-            onChange={setComment}
-            onSubmit={handleSubmit}
-            placeholder="이 현상에 대한 이야기를 남겨보세요!"
-          />
-        </div>
+        <CommentInput
+          value={comment}
+          onChange={setComment}
+          onSubmit={handleSubmit}
+          placeholder="이 현상에 대한 이야기를 남겨보세요!"
+        />
       </div>
     </BottomSheet>
   );

@@ -4,6 +4,7 @@ import { useNewPostState } from "@/store/useNewPostState.store";
 import { TextArea } from "@/components/common/TextArea";
 import { isValidText } from "@/utils/isValidText";
 import { CTA_Button, Header } from "@/components/common";
+import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
 import { scrollToCenter } from "@/utils/scrollToCenter";
 
 const LIMITS = {
@@ -18,12 +19,14 @@ export default function NewPostPage() {
   const navigate = useNavigate();
   const [titleError, setTitleError] = useState(false);
   const [contentError, setContentError] = useState(false);
+  const titleShake = useShakeTrigger();
+  const contentShake = useShakeTrigger();
   const titleRef = useRef<HTMLTextAreaElement | null>(null);
   const contentRef = useRef<HTMLTextAreaElement | null>(null);
+  const galleryInputRef = useRef<HTMLInputElement | null>(null);
 
   const files = useNewPostState((s) => s.files);
   const setPostInfo = useNewPostState((s) => s.setPostInfo);
-  const reset = useNewPostState((s) => s.reset);
 
   const title = useNewPostState((s) => s.title);
   const content = useNewPostState((s) => s.content);
@@ -40,6 +43,19 @@ export default function NewPostPage() {
       navigate("/photoFeed", { replace: true });
     }
   }, [files.length, navigate]);
+
+  // 뒤로가기로 연 갤러리를 취소(사진 미선택)하면 작성 플로우를 벗어나 피드로.
+  // (취소 시 그냥 두면 페이지에 갇히므로 cancel 이벤트를 탈출 경로로 사용)
+  useEffect(() => {
+    const el = galleryInputRef.current;
+    if (!el) return;
+    const handleCancel = () => {
+      useNewPostState.getState().reset();
+      navigate("/photoFeed", { replace: true });
+    };
+    el.addEventListener("cancel", handleCancel);
+    return () => el.removeEventListener("cancel", handleCancel);
+  }, [navigate]);
 
   const limitedFiles = useMemo(() => files.slice(0, LIMITS.maxPhotos), [files]);
 
@@ -58,6 +74,7 @@ export default function NewPostPage() {
     if (!isTitleValid) {
       setTitleError(true);
       setContentError(false); // 첫 에러만 강조
+      titleShake.shake();
 
       const el = titleRef.current;
       if (el) {
@@ -71,6 +88,7 @@ export default function NewPostPage() {
     if (!isContentValid) {
       setContentError(true);
       setTitleError(false);
+      contentShake.shake();
 
       const el = contentRef.current;
       if (el) {
@@ -88,14 +106,29 @@ export default function NewPostPage() {
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
+      {/* 뒤로가기 시 다시 여는 네이티브 갤러리(파일 선택) */}
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        hidden
+        onChange={async (e) => {
+          const picked = Array.from(e.target.files ?? []);
+          e.currentTarget.value = ""; // 같은 파일 재선택 대비
+          if (picked.length === 0) return; // 갤러리 취소 시 현재 화면 유지
+          await useNewPostState.getState().setFiles(picked);
+        }}
+      />
       <Header
         title="글 작성하기"
         showBack
         onBack={() => {
-          reset();
-          navigate(-1);
+          // 헤더 뒤로가기 → 네이티브 갤러리를 다시 연다.
+          galleryInputRef.current?.click();
         }}
+        className="sticky top-0 z-50 bg-neutral-900"
       />
       {/* 선택된 사진 슬라이딩 */}
       <div
@@ -137,15 +170,19 @@ export default function NewPostPage() {
             placeholder="제목을 입력해주세요."
             minLength={LIMITS.titleMin}
             maxLength={LIMITS.titleMax}
+            enforceMaxLength={false}
             isError={titleError}
+            shakeKey={titleShake.shakeKey}
           />
-          {titleError && (
-            <p
-              className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
-            >
+          {titleText.length > LIMITS.titleMax ? (
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+              최대 {LIMITS.titleMax}자까지 입력 가능합니다.
+            </p>
+          ) : titleError ? (
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최소 2글자 이상 입력해주세요.
             </p>
-          )}
+          ) : null}
         </section>
 
         <section className="flex flex-col gap-[0.5rem]">
@@ -166,15 +203,19 @@ export default function NewPostPage() {
             placeholder="나만의 필름 사진 이야기를 공유해주세요."
             minLength={LIMITS.contentMin}
             maxLength={LIMITS.contentMax}
+            enforceMaxLength={false}
             isError={contentError}
+            shakeKey={contentShake.shakeKey}
           />
-          {contentError && (
-            <p
-              className={`px-[0.625rem] text-[0.875rem] font-normal text-orange-500`}
-            >
+          {contentText.length > LIMITS.contentMax ? (
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
+              최대 {LIMITS.contentMax}자까지 입력 가능합니다.
+            </p>
+          ) : contentError ? (
+            <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
               최소 20글자 이상 입력해주세요.
             </p>
-          )}
+          ) : null}
         </section>
 
         <hr className="border-neutral-800" />

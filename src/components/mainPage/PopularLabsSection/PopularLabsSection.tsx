@@ -3,6 +3,7 @@ import { SectionHeader } from "@/components/common/SectionHeader";
 import PopularLabCard from "./PopularLabCard";
 import type { Lab } from "@/apis/mainPage/mainPage.api";
 import { usePopularLabsQuery } from "@/hooks/mainPage/useMainPageQueries";
+import { PageDots } from "../PageDots";
 
 export default function PopularLabsSection() {
   const { data: labs = [], isLoading } = usePopularLabsQuery();
@@ -49,7 +50,7 @@ export default function PopularLabsSection() {
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="aspect-163/230 animate-pulse rounded-[1.25rem] bg-neutral-800"
+              className="t-skel-sheen aspect-163/230 rounded-[1.25rem] bg-neutral-800"
             />
           ))}
         </div>
@@ -97,18 +98,11 @@ export default function PopularLabsSection() {
 
         {/* 페이지네이션 도트 */}
         {chunkedLabs.length > 1 && (
-          <div className="pointer-events-none absolute right-0 bottom-0 left-0 flex justify-center gap-1">
-            {chunkedLabs.map((_, index) => (
-              <div
-                key={index}
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  currentPageIndex === index
-                    ? "w-1 bg-orange-500"
-                    : "w-1 bg-neutral-400"
-                } `}
-              />
-            ))}
-          </div>
+          <PageDots
+            count={chunkedLabs.length}
+            activeIndex={currentPageIndex}
+            className="pointer-events-none absolute right-0 bottom-0 left-0 gap-1"
+          />
         )}
       </div>
     </section>

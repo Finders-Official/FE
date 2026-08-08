@@ -1,5 +1,6 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import { useAuthStore } from "@/store/useAuth.store";
+import { tokenStorage } from "@/utils/tokenStorage";
 import { jwtDecode } from "jwt-decode";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import { issuePresignedUrl } from "@/apis/file/presignedUrl.api";
@@ -9,20 +10,20 @@ import type { PresignedUrlIssueResDto } from "@/types/file/presignedUrl";
 export type PresignedUrlResponse = ApiResponse<PresignedUrlIssueResDto>;
 
 type JwtPayload = {
-  id?: number;
-  memberId?: number;
-  sub?: string | number;
+  id?: string;
+  memberId?: string;
+  sub?: string;
 };
 
-export function getMemberIdFromToken(token: string): number {
+export function getMemberIdFromToken(token: string): string {
   const decoded = jwtDecode<JwtPayload>(token);
-  const memberId = Number(decoded.id ?? decoded.memberId ?? decoded.sub);
+  const rawMemberId = decoded.id ?? decoded.memberId ?? decoded.sub;
 
-  if (!Number.isInteger(memberId) || memberId <= 0) {
+  if (!rawMemberId) {
     throw new Error("No valid memberId found in token");
   }
 
-  return memberId;
+  return String(rawMemberId);
 }
 
 // 1. Presigned URL 발급 요청
@@ -30,7 +31,7 @@ export async function getPresignedUrl(
   category: "RESTORATION_ORIGINAL" | "RESTORATION_MASK",
   fileName: string,
 ): Promise<PresignedUrlResponse> {
-  const token = localStorage.getItem("accessToken");
+  const token = await tokenStorage.getAccessToken();
   if (!token) throw new Error("로그인이 필요합니다.");
 
   const storeMemberId = useAuthStore.getState().user?.memberId;
@@ -84,7 +85,7 @@ export async function uploadToGCS(
 }
 
 export interface RequestRestorationResponseData {
-  id: number;
+  id: string;
 }
 
 export type RestorationStatus =
@@ -94,7 +95,7 @@ export type RestorationStatus =
   | "FAILED";
 
 export interface RestorationStatusData {
-  id: number;
+  id: string;
   originalUrl: string;
   restoredUrl: string | null;
   restoredWidth: number | null;
@@ -139,7 +140,7 @@ export async function requestRestoration(
 
 // 4. 상태 조회 (GET) - creditUsed 포함
 export async function getRestorationStatus(
-  id: number,
+  id: string,
 ): Promise<ApiResponse<RestorationStatusData>> {
   const response = await axiosInstance.get<ApiResponse<RestorationStatusData>>(
     `/restorations/${id}`,

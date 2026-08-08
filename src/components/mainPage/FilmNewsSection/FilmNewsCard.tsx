@@ -1,4 +1,5 @@
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
+import { Press } from "@/components/common";
 
 export interface NewsData {
   id: number;
@@ -14,9 +15,10 @@ export default function FilmNewsCard({ news }: FilmNewsCardProps) {
   const { requireAuthNavigate } = useRequireAuth();
 
   return (
-    <div
+    <Press
+      as="div"
       onClick={() => requireAuthNavigate(news.link)}
-      className="group relative block h-57.5 w-full cursor-pointer overflow-hidden rounded-[0.625rem]"
+      className="relative block h-57.5 w-full cursor-pointer overflow-hidden rounded-[0.625rem]"
     >
       {/* 배경 이미지 */}
       <img
@@ -24,6 +26,6 @@ export default function FilmNewsCard({ news }: FilmNewsCardProps) {
         alt="필름 소식 썸네일"
         className="absolute inset-0 h-57.5 w-full object-cover"
       />
-    </div>
+    </Press>
   );
 }

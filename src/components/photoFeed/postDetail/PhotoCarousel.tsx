@@ -1,4 +1,5 @@
 import { useCarousel } from "@/hooks/common/useCarousel";
+import { NumberPopIn } from "@/components/common";
 import type { PostImage } from "@/types/photoFeed/postPreview";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -82,6 +83,7 @@ export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
       {images.length > 1 && (
         <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
           {images.map((_, i) => (
+            // eslint-disable-next-line no-restricted-syntax -- 페이지네이션 도트는 눌림 피드백 미적용 확정
             <button
               key={i}
               type="button"
@@ -98,7 +100,7 @@ export default function PhotoCarousel({ images, altPrefix = "photo" }: Props) {
       {/* 우상단 "1/3" 카운터 */}
       {images.length > 1 && (
         <div className="absolute top-3 right-3 rounded-full bg-black/50 px-2 py-1 text-xs text-white">
-          {index + 1}/{images.length}
+          <NumberPopIn value={index + 1} />/{images.length}
         </div>
       )}
     </div>

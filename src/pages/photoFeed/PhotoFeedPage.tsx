@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
+import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
-import { CheckCircleIcon, FloatingIcon, SearchIcon } from "@/assets/icon";
-import { Header, ToastItem } from "@/components/common";
+import { CheckCircleIcon, SearchIcon } from "@/assets/icon";
+import { ErrorState, Header, Toast } from "@/components/common";
 import { useLocation, useNavigate } from "react-router";
 import { useInfinitePosts } from "@/hooks/photoFeed";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import Masonry from "react-masonry-css";
 
@@ -25,9 +27,6 @@ const breakpointColumnsObj = {
   1024: 2,
 };
 
-export const TOAST_FADE_START_DELAY = 1600;
-export const TOAST_UNMOUNT_DELAY = 3000;
-
 export default function PhotoFeedPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -35,29 +34,28 @@ export default function PhotoFeedPage() {
   // 게시글 삭제 여부 정보
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDeleted } = location.state ?? {};
+
+  // 최초 진입 시점의 삭제 여부를 로컬로 "고정"한다.
+  // (라우터 state를 직접 읽으면, 아래에서 state를 비운 뒤 뒤로가기로 재진입 시 값이 흔들림)
+  const [isDeleted] = useState(
+    () => !!(location.state as { isDeleted?: boolean } | null)?.isDeleted,
+  );
 
   // 토스트 메세지 관련 상태
-  const [toastVisible, setToastVisible] = useState(isDeleted);
-  const [mounted, setMounted] = useState(isDeleted);
+  const [toastOpen, setToastOpen] = useState(isDeleted);
 
+  // 라우터 state를 "즉시" 비운다.
+  // 토스트가 닫힐 때 지우면, 그 전에 다른 페이지로 이동할 경우 state가 남아
+  // 뒤로가기로 돌아왔을 때 토스트가 다시 뜨는 버그가 생긴다.
   useEffect(() => {
-    if (!isDeleted) return;
-
-    const fadeTimer = setTimeout(
-      () => setToastVisible(false),
-      TOAST_FADE_START_DELAY,
-    );
-    const removeTimer = setTimeout(() => {
-      setMounted(false);
-      navigate(location.pathname, { replace: true }); // 타이머 없앨 때 state도 같이 삭제
-    }, TOAST_UNMOUNT_DELAY);
-
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
-    };
-  }, [isDeleted, navigate, location.pathname]);
+    const state = location.state as { isDeleted?: boolean } | null;
+    if (state?.isDeleted) {
+      navigate(location.pathname + location.search, {
+        replace: true,
+        state: null,
+      });
+    }
+  }, [location, navigate]);
 
   const {
     data,
@@ -77,6 +75,7 @@ export default function PhotoFeedPage() {
   });
 
   const posts = data?.pages.flatMap((p) => p.previewList) ?? [];
+  const staggerIndexFor = useFirstPageStagger(posts.length);
 
   return (
     <main className="mx-auto w-full max-w-6xl pb-6">
@@ -93,27 +92,15 @@ export default function PhotoFeedPage() {
       />
 
       {/* 에러 처리 */}
-      {isError && (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
-        </div>
-      )}
+      {isError && <ErrorState />}
 
-      {/** toast 메세지 */}
-      {isDeleted && mounted && (
-        <div className="fixed right-0 bottom-0 left-0 z-100 flex justify-center px-5 py-5">
-          <div
-            className={`transition-opacity duration-300 ease-out ${
-              toastVisible ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <ToastItem
-              message="게시글이 삭제되었습니다"
-              icon={<CheckCircleIcon className="h-5 w-5" />}
-            />
-          </div>
-        </div>
-      )}
+      <Toast
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+        duration={3000}
+        message="게시글이 삭제되었습니다"
+        icon={<CheckCircleIcon className="h-5 w-5" />}
+      />
 
       {/* Masonry 레이아웃 */}
       <section className="mb-20">
@@ -134,32 +121,24 @@ export default function PhotoFeedPage() {
                   />
                 );
               })
-            : posts.map((postPreview) => (
+            : posts.map((postPreview, index) => (
                 <PhotoCard
                   key={postPreview.postId}
                   photo={postPreview}
-                  isLiked={false}
+                  isLiked={postPreview.isLiked}
+                  staggerIndex={staggerIndexFor(index)}
                 />
               ))}
         </Masonry>
       </section>
 
       {/* 새 게시물 작성 플로팅 버튼 */}
-      <button
-        type="button"
-        aria-label="새 게시물 작성"
-        onClick={() => setIsCreateModalOpen(true)}
-        className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
-      >
-        <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
-      </button>
+      <NewPostFab onClick={() => setIsCreateModalOpen(true)} />
 
-      {isCreateModalOpen && (
-        <NewPostModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-        />
-      )}
+      <NewPostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
 
       {/* 센티널 요소 */}
       <div ref={sentinelRef} style={{ height: 1 }} />

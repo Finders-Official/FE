@@ -24,9 +24,10 @@ export function useFavoriteToggle() {
     mutationFn: ({ photoLabId, isFavorite }: ToggleParams) =>
       isFavorite ? removeFavorite(photoLabId) : addFavorite(photoLabId),
 
-    // 낙관적 업데이트: 별(isFavorite)만 즉시 반영, 실패 시 롤백
+    // 낙관적 업데이트: 별(isFavorite)과 좋아요 수를 즉시 반영, 실패 시 롤백
     onMutate: async ({ photoLabId, isFavorite }) => {
       const nextFavorite = !isFavorite;
+      const countDelta = nextFavorite ? 1 : -1;
       const detailKey = ["photoLab", "detail", photoLabId];
 
       // 진행 중인 refetch가 낙관적 값을 덮어쓰지 않도록 취소
@@ -58,7 +59,11 @@ export function useFavoriteToggle() {
             ...page,
             data: page.data.map((lab) =>
               lab.photoLabId === photoLabId
-                ? { ...lab, isFavorite: nextFavorite }
+                ? {
+                    ...lab,
+                    isFavorite: nextFavorite,
+                    favoriteCount: Math.max(0, lab.favoriteCount + countDelta),
+                  }
                 : lab,
             ),
           })),
@@ -78,7 +83,14 @@ export function useFavoriteToggle() {
                 ...page.data,
                 photoLabs: page.data.photoLabs.map((lab) =>
                   lab.photoLabId === photoLabId
-                    ? { ...lab, isFavorite: nextFavorite }
+                    ? {
+                        ...lab,
+                        isFavorite: nextFavorite,
+                        favoriteCount: Math.max(
+                          0,
+                          lab.favoriteCount + countDelta,
+                        ),
+                      }
                     : lab,
                 ),
               },
@@ -92,7 +104,14 @@ export function useFavoriteToggle() {
         { queryKey: detailKey },
         (old) => {
           if (!old?.data || old.data.photoLabId !== photoLabId) return old;
-          return { ...old, data: { ...old.data, isFavorite: nextFavorite } };
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              isFavorite: nextFavorite,
+              favoriteCount: Math.max(0, old.data.favoriteCount + countDelta),
+            },
+          };
         },
       );
 
@@ -113,11 +132,18 @@ export function useFavoriteToggle() {
     },
 
     onSettled: (_data, _err, { photoLabId }) => {
-      queryClient.invalidateQueries({ queryKey: LIST_KEY });
-      queryClient.invalidateQueries({ queryKey: FAVORITES_KEY });
+      // 목록(LIST_KEY)은 정산 시 재검증하지 않는다 — 낙관적 캐시가 이 액션의 최종 상태와
+      // 같은데, refetch가 서버 순서로 재정렬을 한 번 더 일으켜 카드가 "올라가다 멈췄다
+      // 다시 이동"하는 이중 FLIP이 생긴다. 서버 동기화는 staleTime 경과 후 자연 갱신에 맡긴다.
+      // 화면에 떠 있는 동안 즉시 재조회되어 항목이 사라지지 않도록 stale 마킹만 수행 (진입 시 재조회)
+      queryClient.invalidateQueries({
+        queryKey: FAVORITES_KEY,
+        refetchType: "none",
+      });
       queryClient.invalidateQueries({
         queryKey: ["photoLab", "detail", photoLabId],
       });
     },
+    //
   });
 }

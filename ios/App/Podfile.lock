@@ -12,7 +12,31 @@ PODS:
     - KakaoSDKUser
   - CapacitorApp (8.1.0):
     - Capacitor
+  - CapacitorCommunityAppleSignIn (7.1.0):
+    - Capacitor
+  - CapacitorCommunityMedia (9.1.0):
+    - Capacitor
+    - SDWebImage
   - CapacitorCordova (8.3.4)
+  - CapacitorFilesystem (8.1.2):
+    - Capacitor
+    - IONFilesystemLib (~> 1.1.1)
+  - CapacitorFileTransfer (2.0.4):
+    - Capacitor
+    - IONFileTransferLib (~> 1.0.2)
+  - CapacitorGeolocation (8.2.0):
+    - Capacitor
+    - IONGeolocationLib (= 2.1.0)
+  - CapacitorSecureStoragePlugin (0.13.0):
+    - Capacitor
+    - SwiftKeychainWrapper
+  - CapacitorShare (8.0.1):
+    - Capacitor
+  - CapacitorSplashScreen (8.0.1):
+    - Capacitor
+  - IONFilesystemLib (1.1.2)
+  - IONFileTransferLib (1.0.3)
+  - IONGeolocationLib (2.1.0)
   - KakaoSDKAuth (2.22.7):
     - KakaoSDKCommon (= 2.22.7)
   - KakaoSDKCommon (2.22.7):
@@ -32,46 +56,92 @@ PODS:
     - KakaoSDKCommon/Common (= 2.22.7)
   - KakaoSDKUser (2.22.7):
     - KakaoSDKAuth (= 2.22.7)
+  - SDWebImage (5.21.7):
+    - SDWebImage/Core (= 5.21.7)
+  - SDWebImage/Core (5.21.7)
+  - SwiftKeychainWrapper (4.0.1)
 
 DEPENDENCIES:
-  - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios`)"
-  - "Capacitor3KakaoLogin (from `../../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.3.4/node_modules/capacitor3-kakao-login`)"
-  - "CapacitorApp (from `../../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.3.4/node_modules/@capacitor/app`)"
-  - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios`)"
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - Capacitor3KakaoLogin (from `../../node_modules/capacitor3-kakao-login`)
+  - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - "CapacitorCommunityAppleSignIn (from `../../node_modules/@capacitor-community/apple-sign-in`)"
+  - "CapacitorCommunityMedia (from `../../node_modules/@capacitor-community/media`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
+  - "CapacitorFileTransfer (from `../../node_modules/@capacitor/file-transfer`)"
+  - "CapacitorGeolocation (from `../../node_modules/@capacitor/geolocation`)"
+  - CapacitorSecureStoragePlugin (from `../../node_modules/capacitor-secure-storage-plugin`)
+  - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - IONFilesystemLib
+    - IONFileTransferLib
+    - IONGeolocationLib
     - KakaoSDKAuth
     - KakaoSDKCommon
     - KakaoSDKShare
     - KakaoSDKTalk
     - KakaoSDKTemplate
     - KakaoSDKUser
+    - SDWebImage
+    - SwiftKeychainWrapper
 
 EXTERNAL SOURCES:
   Capacitor:
-    :path: "../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios"
+    :path: "../../node_modules/@capacitor/ios"
   Capacitor3KakaoLogin:
-    :path: "../../node_modules/.pnpm/capacitor3-kakao-login@0.8.7_@capacitor+core@8.3.4/node_modules/capacitor3-kakao-login"
+    :path: "../../node_modules/capacitor3-kakao-login"
   CapacitorApp:
-    :path: "../../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.3.4/node_modules/@capacitor/app"
+    :path: "../../node_modules/@capacitor/app"
+  CapacitorCommunityAppleSignIn:
+    :path: "../../node_modules/@capacitor-community/apple-sign-in"
+  CapacitorCommunityMedia:
+    :path: "../../node_modules/@capacitor-community/media"
   CapacitorCordova:
-    :path: "../../node_modules/.pnpm/@capacitor+ios@8.3.4_@capacitor+core@8.3.4/node_modules/@capacitor/ios"
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorFilesystem:
+    :path: "../../node_modules/@capacitor/filesystem"
+  CapacitorFileTransfer:
+    :path: "../../node_modules/@capacitor/file-transfer"
+  CapacitorGeolocation:
+    :path: "../../node_modules/@capacitor/geolocation"
+  CapacitorSecureStoragePlugin:
+    :path: "../../node_modules/capacitor-secure-storage-plugin"
+  CapacitorShare:
+    :path: "../../node_modules/@capacitor/share"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
   Capacitor: d13cad5fa09155679672808cc4ca9fbc2997e1b4
   Capacitor3KakaoLogin: c48437e94bf1920730caeed35f35695fad783eb6
   CapacitorApp: 449ffe26375e96f8aaaee625ac6e01e5c57c8650
+  CapacitorCommunityAppleSignIn: 271cb2860576fd2961508bbfa7a82117d93eadca
+  CapacitorCommunityMedia: 862ba42957f75b74e403fc3a35bb1b286bfe9410
   CapacitorCordova: c07921bdcfec6f691bae22274446b4d606ebf6a4
+  CapacitorFilesystem: 2db285a1ac6e475cc27cae2e1bea999000f9e2be
+  CapacitorFileTransfer: 445b9dc69ea5a5e0e708e011a4848e63c471abee
+  CapacitorGeolocation: b36f6287bfc9f2eefa04dc900496f2c8ae666136
+  CapacitorSecureStoragePlugin: d083ff28d9ba5bc74924b9bcf9754ea605016b63
+  CapacitorShare: 0c58305114538568059bfc07111f22dcb9cb2a82
+  CapacitorSplashScreen: 4b46c72298db552b3c57ce021ef028b6dc7f1fa7
+  IONFilesystemLib: 21a63377696b2d8fab5632ecfb7d2ac67bddb68a
+  IONFileTransferLib: addbbf50405c163dcd74a7b1bd8c6f9302342be2
+  IONGeolocationLib: 6a7b6f76063fb1b01cfb14fae7d0f526e3c9b271
   KakaoSDKAuth: 45204252ff7c379c0f86c5573f97ec36885afca0
   KakaoSDKCommon: 132164a6bac8bcd3a4346d3bf777f34f8f39fdca
   KakaoSDKShare: 01c60c3d5394479429a51ef14ea78d3e72f48af0
   KakaoSDKTalk: a0c41d014cfda872ea9adae41bcaf7720a002785
   KakaoSDKTemplate: b11ecf08777198ffafd184201baf93de476ddb84
   KakaoSDKUser: 4c9cf1da78710d19d0b2c2dd32d1a44c544cdfa4
+  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
+  SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
 
-PODFILE CHECKSUM: afbadddb1aabd017c6807382986063d1d44d3a88
+PODFILE CHECKSUM: 78a963b8a3ef2797acf16ec406901ebab5375672
 
 COCOAPODS: 1.16.2

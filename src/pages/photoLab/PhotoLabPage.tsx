@@ -56,10 +56,13 @@ export default function PhotoLabPage() {
     [toggleFavorite],
   );
 
-  // 카드 클릭
-  const handleCardClick = (photoLabId: string) => {
-    navigate(`/photolab/${photoLabId}`);
-  };
+  // 카드 클릭 (참조 고정 — memo된 SimpleLabCard가 리렌더를 건너뛸 수 있게)
+  const handleCardClick = useCallback(
+    (photoLabId: string) => {
+      navigate(`/photolab/${photoLabId}`);
+    },
+    [navigate],
+  );
 
   // 검색 클릭
   const handleSearchClick = () => {
@@ -80,25 +83,29 @@ export default function PhotoLabPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 헤더 */}
-      <Header
-        title={"현상소 보기"}
-        showBack={false}
-        leftAction={{
-          type: "icon",
-          icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
-          onClick: handleSearchClick,
-        }}
-        rightAction={{
-          type: "icon",
-          icon: <FilterIcon className="h-6 w-6 text-neutral-200" />,
-          onClick: () => setIsFilterOpen(true),
-        }}
-      />
+      {/* 헤더 (스크롤 시에도 상단 고정) */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+        <Header
+          title={"현상소 보기"}
+          showBack={false}
+          leftAction={{
+            type: "icon",
+            icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
+            onClick: handleSearchClick,
+          }}
+          rightAction={{
+            type: "icon",
+            icon: <FilterIcon className="h-6 w-6 text-neutral-200" />,
+            onClick: () => setIsFilterOpen(true),
+          }}
+        />
+      </div>
 
       {/* 현상소 목록 */}
       <LabList
         labs={labs}
+        reorderByFavorite
+        staggerResetKey={filter.regionIds?.join(",") ?? ""}
         isLoading={isLoading || isLocationLoading}
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage ?? false}

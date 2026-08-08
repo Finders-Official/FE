@@ -6,6 +6,7 @@ import FilmNewsSection from "@/components/mainPage/FilmNewsSection/FilmNewsSecti
 import CommunityGallerySection from "@/components/mainPage/ComunityGallarySection/CommunityGallerySection";
 import Footer from "@/components/mainPage/Footer";
 import { useAnchorScroll } from "@/hooks/common";
+import { prefetchGeolocation } from "@/hooks/common/useGeolocation";
 
 const SectionWrapper = ({
   id,
@@ -13,10 +14,19 @@ const SectionWrapper = ({
 }: {
   id: string;
   children: React.ReactNode;
-}) => <div data-anchor={id}>{children}</div>;
+}) => (
+  <div data-anchor={id} className="mx-auto w-full max-w-sm">
+    {children}
+  </div>
+);
 
 export default function MainPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 로그인 직후 랜딩 시점에 위치 권한을 미리 요청
+  useEffect(() => {
+    prefetchGeolocation();
+  }, []);
 
   useEffect(() => {
     const resetScroll = () => {
@@ -41,11 +51,11 @@ export default function MainPage() {
   useAnchorScroll(scrollRef);
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-sm flex-col bg-neutral-900 text-white">
+    <div className="mx-auto flex h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full max-w-sm flex-col bg-neutral-900 text-white">
       <Header />
       <div
         ref={scrollRef}
-        className="scrollbar-hide flex-1 overflow-y-auto overscroll-y-none pb-(--tabbar-height)"
+        className="scrollbar-hide relative ml-[calc(50%-50vw)] w-screen flex-1 overflow-x-hidden overflow-y-auto pb-(--tabbar-height)"
       >
         <SectionWrapper id="promotion">
           <PromotionBanner />
@@ -59,7 +69,9 @@ export default function MainPage() {
         <SectionWrapper id="community">
           <CommunityGallerySection />
         </SectionWrapper>
-        <Footer />
+        <div className="mx-auto w-full max-w-sm">
+          <Footer />
+        </div>
       </div>
     </div>
   );

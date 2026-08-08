@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router";
 import type { ComponentType, SVGProps } from "react";
+import { Press } from "@/components/common/motion";
 
-type CapsuleSize = "small" | "medium";
+type CapsuleSize = "small" | "medium" | "large";
 
 interface CapsuleButtonProps {
   text: string;
@@ -28,11 +29,12 @@ export const CapsuleButton = ({
   const backgroundColor = "var(--color-neutral-900)";
 
   const baseClass =
-    "inline-flex items-center justify-center rounded-[3.125rem] border border-transparent text-white transition-all duration-200 active:scale-[0.98] hover:brightness-110 h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold";
+    "inline-flex items-center justify-center rounded-[3.125rem] border border-transparent text-white h-[3.5625rem] px-[1.75rem] py-[1rem] gap-[0.5rem] text-[1rem] font-semibold";
 
   const sizeClass: Record<CapsuleSize, string> = {
     small: "w-[8.8125rem]",
-    medium: "w-[13.25rem]",
+    medium: "w-[10.6875rem]",
+    large: "w-[13.25rem]",
   };
 
   const handleClick = () => {
@@ -41,7 +43,7 @@ export const CapsuleButton = ({
   };
 
   return (
-    <button
+    <Press
       type="button"
       className={`${baseClass} ${sizeClass[size]} ${className}`}
       onClick={handleClick}
@@ -55,6 +57,6 @@ export const CapsuleButton = ({
     >
       <Icon className="h-6 w-6" />
       <span className="whitespace-nowrap">{text}</span>
-    </button>
+    </Press>
   );
 };

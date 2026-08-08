@@ -1,7 +1,7 @@
 export default function SimpleLabCardSkeleton() {
   return (
     <div>
-      <div className="flex animate-pulse gap-4 border-b-[0.5px] border-neutral-800 py-4">
+      <div className="t-skel-sheen flex gap-4 border-b-[0.5px] border-neutral-800 py-4">
         {/* 썸네일 영역 */}
         <div className="h-15 w-15 rounded-[0.625rem] bg-neutral-800"></div>
 

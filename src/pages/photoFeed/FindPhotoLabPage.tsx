@@ -3,10 +3,11 @@ import { CTA_Button } from "@/components/common/CTA_Button";
 import { Checkbox } from "@/components/common/CheckBox";
 import { useRef, useState } from "react";
 import { HighlightText } from "@/components/photoFeed/upload/highlightText";
+import LabSearchResultSkeleton from "@/components/photoFeed/upload/LabSearchResultSkeleton";
 import type { LabSearchResponse } from "@/types/photoFeed/labSearch";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import { useNavigate } from "react-router";
-import { Header } from "@/components/common";
+import { ErrorState, Header, Press } from "@/components/common";
 import { useGeolocation } from "@/hooks/common/useGeolocation";
 import EmptyView from "@/components/common/EmptyView";
 import { useSearchLabs, useCreatePostWithUpload } from "@/hooks/photoFeed";
@@ -96,7 +97,10 @@ export default function FindPhotoLabPage() {
         isSelfDeveloped: isSelf,
       });
     } catch (e) {
-      console.error("게시글 업로드 실패", e);
+      // Android logcat은 객체를 그대로 넘기면 [object Object]로만 찍히므로 문자열화해서 남긴다.
+      console.error(
+        "게시글 업로드 실패: " + (e instanceof Error ? e.message : String(e)),
+      );
     }
   };
 
@@ -170,27 +174,12 @@ export default function FindPhotoLabPage() {
   /** 검색 결과 리스트 */
   const renderSearchList = () => {
     if (isLoading) {
-      return (
-        <ul className="flex flex-col gap-4 p-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <li key={i} className="list-none">
-              <div className="flex flex-col gap-2 py-4">
-                <div className="h-5 w-52 animate-pulse rounded-md bg-neutral-800/60" />
-                <div className="h-4 w-72 animate-pulse rounded-md bg-neutral-800/40" />
-              </div>
-            </li>
-          ))}
-        </ul>
-      );
+      return <LabSearchResultSkeleton />;
     }
     if (isError) {
-      return (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
-        </div>
-      );
+      return <ErrorState />;
     }
-    if (!data) {
+    if (!data || data.length === 0) {
       return <EmptyView />;
     }
     return (
@@ -198,19 +187,19 @@ export default function FindPhotoLabPage() {
         {data.map((r) => (
           <li
             key={r.labId}
-            className="py-4"
             onPointerDown={(e) => {
               e.preventDefault();
               inputRef.current?.blur();
             }}
-            onClick={() => handleLabSelect(r)}
           >
-            <p className="font-semibold">
-              <HighlightText text={r.name} keyword={keyword} />
-            </p>
-            <p className="text-sm text-neutral-400">
-              {r.address} ({r.distance})
-            </p>
+            <Press as="div" onClick={() => handleLabSelect(r)} className="py-4">
+              <p className="font-semibold">
+                <HighlightText text={r.name} keyword={keyword} />
+              </p>
+              <p className="text-sm text-neutral-400">
+                {r.address} ({r.distance})
+              </p>
+            </Press>
           </li>
         ))}
       </ul>
@@ -249,11 +238,17 @@ export default function FindPhotoLabPage() {
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] py-[1rem]">
-      <Header title="현상소 입력하기" showBack onBack={handleGoBack} />
+    <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
+      <Header
+        title="현상소 입력하기"
+        showBack
+        onBack={handleGoBack}
+        className="sticky top-0 z-50 bg-neutral-900"
+      />
 
       {/* 검색모드일 때: 화면 전체 클릭을 감지하는 투명 오버레이 */}
       {labReviewStep === "search" && (
+        // eslint-disable-next-line no-restricted-syntax -- 보이지 않는 tap-to-dismiss 레이어(스크림과 동일 성격)
         <button
           type="button"
           className="fixed inset-0 z-10 cursor-default"

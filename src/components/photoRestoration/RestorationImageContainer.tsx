@@ -8,6 +8,7 @@ interface RestorationImageContainerProps {
   isGenerating: boolean;
   canvasRef: RefObject<HTMLCanvasElement | null>;
   containerRef: RefObject<HTMLDivElement | null>;
+  imageRef: RefObject<HTMLImageElement | null>;
   startDrawing: (
     event:
       | React.MouseEvent<HTMLCanvasElement>
@@ -33,6 +34,7 @@ export const RestorationImageContainer: React.FC<
   isGenerating,
   canvasRef,
   containerRef,
+  imageRef,
   startDrawing,
   draw,
   stopDrawing,
@@ -54,6 +56,7 @@ export const RestorationImageContainer: React.FC<
       onTouchEnd={endCompare}
     >
       <img
+        ref={imageRef}
         src={currentImageSrc}
         alt="Target"
         className="block max-h-full max-w-full touch-none object-contain select-none"

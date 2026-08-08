@@ -10,7 +10,7 @@ export interface SocialSignupCompleteReq {
 export type SocialSignupCompleteData = {
   accessToken: string;
   member: {
-    memberId: number;
+    memberId: string;
     nickname: string;
   };
 };

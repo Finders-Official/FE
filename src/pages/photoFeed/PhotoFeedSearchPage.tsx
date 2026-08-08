@@ -1,8 +1,15 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { CTA_Button, SearchBar } from "@/components/common";
+import {
+  CTA_Button,
+  ErrorState,
+  NumberPopIn,
+  Press,
+  SearchBar,
+} from "@/components/common";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
-import { ChevronLeftIcon, FloatingIcon } from "@/assets/icon";
+import NewPostFab from "@/components/photoFeed/mainFeed/NewPostFab";
+import { ChevronLeftIcon } from "@/assets/icon";
 import NewPostModal from "@/components/photoFeed/upload/NewPostModal";
 import BottomSheet from "@/components/common/BottomSheet";
 import SelectFilter from "@/components/photoFeed/mainFeed/SelectFilter";
@@ -16,6 +23,7 @@ import { useSearchPosts } from "@/hooks/photoFeed/search/useSearchPosts";
 import { useDeleteRecentSearch } from "@/hooks/photoFeed/search/useDeleteRecentSearch";
 import { useDeleteRecentSearchesAll } from "@/hooks/photoFeed/search/useDeleteRecentSearchesAll";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import SearchItemSkeleton from "@/components/photoFeed/mainFeed/SearchItemSkeleton";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import SearchPostSkeleton from "@/components/photoFeed/mainFeed/SearchPostSkeleton";
@@ -110,6 +118,11 @@ export default function PhotoFeedSearchPage() {
 
   const previewList = searchData?.pages.flatMap((p) => p.previewList) ?? [];
   const totalCount = searchData?.pages[0]?.totalCount ?? 0;
+  // 검색어뿐 아니라 필터 변경도 새 데이터셋
+  const staggerIndexFor = useFirstPageStagger(
+    previewList.length,
+    `${searchTrimmed}|${filter}`,
+  );
 
   /** 화면 모드: 최근/연관/결과 */
   const mode = useMemo(() => {
@@ -177,9 +190,10 @@ export default function PhotoFeedSearchPage() {
   /** API 요청 실패 */
   const errorResponse = () => {
     return (
-      <div className="flex items-center justify-center py-6 text-red-400">
-        데이터 불러오기에 실패했어요.
-      </div>
+      <ErrorState
+        message="데이터 불러오기에 실패했어요."
+        className="flex items-center justify-center py-6"
+      />
     );
   };
 
@@ -208,14 +222,14 @@ export default function PhotoFeedSearchPage() {
             <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
               최근 검색어
             </h2>
-            <button
+            <Press
               type="button"
               onClick={() => deleteRecentAll()}
               disabled={isDeletingAll}
               className="text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
             >
               전체 삭제
-            </button>
+            </Press>
           </div>
 
           {/* 최근 검색어 리스트 */}
@@ -297,17 +311,17 @@ export default function PhotoFeedSearchPage() {
     if (isSearchError) return errorResponse();
 
     return (
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100">
               검색 결과
             </h2>
             <p className="text-[1rem] font-light text-neutral-100">
-              {totalCount}개
+              <NumberPopIn value={totalCount} />개
             </p>
           </div>
-          <button
+          <Press
             type="button"
             onClick={() => {
               setBottomSheetOpen(true);
@@ -315,8 +329,12 @@ export default function PhotoFeedSearchPage() {
             className="flex items-center gap-[6px] text-[0.875rem] leading-[155%] font-normal tracking-[-0.02em] text-neutral-400"
           >
             <span>{FILTER_LABEL[filter]}</span>
-            <ChevronLeftIcon className="h-4 w-4 rotate-[-90deg] text-neutral-200" />
-          </button>
+            <ChevronLeftIcon
+              className={`ease-smooth-out h-4 w-4 text-neutral-200 transition-transform duration-[var(--duration-fast)] motion-reduce:transition-none ${
+                bottomSheetOpen ? "rotate-90" : "-rotate-90"
+              }`}
+            />
+          </Press>
         </div>
         {previewList.length === 0 && <EmptyView />}
         {previewList.length > 0 && (
@@ -326,8 +344,12 @@ export default function PhotoFeedSearchPage() {
               className="my-masonry-grid"
               columnClassName="my-masonry-grid_column"
             >
-              {previewList.map((photo) => (
-                <PhotoCard key={photo.postId} photo={photo} />
+              {previewList.map((photo, index) => (
+                <PhotoCard
+                  key={photo.postId}
+                  photo={photo}
+                  staggerIndex={staggerIndexFor(index)}
+                />
               ))}
             </Masonry>
           </section>
@@ -343,7 +365,12 @@ export default function PhotoFeedSearchPage() {
     showBack: true,
     onBack: () => {
       if (mode === "recent" || mode === "related") navigate(-1);
-      else if (mode === "result") resetToRecent();
+      else if (mode === "result") {
+        // 검색 결과 → 검색어 입력 중(연관 검색어) 화면으로.
+        // inputText(검색어)는 유지하고, 제출된 검색어만 비워 related 모드로 전환한다.
+        setSearchText("");
+        setIsSearching(true);
+      }
     },
     onSearch: handleSearch,
     onFocus: () => setIsSearching(true),
@@ -354,7 +381,7 @@ export default function PhotoFeedSearchPage() {
   return (
     <div className="relative min-h-dvh w-full flex-col">
       {/* SearchBar */}
-      <div className="mt-3 mb-5">
+      <div className="sticky top-0 z-50 bg-neutral-900 pt-3 pb-5">
         <SearchBar {...searchBarProps} />
       </div>
 
@@ -365,22 +392,13 @@ export default function PhotoFeedSearchPage() {
 
       {/* 새 게시물 작성 플로팅 버튼 */}
       {mode === "result" && !bottomSheetOpen && (
-        <button
-          type="button"
-          aria-label="새 게시물 작성"
-          onClick={() => setIsCreateModalOpen(true)}
-          className="fixed right-6 bottom-[calc(var(--tabbar-height)+var(--fab-gap))] z-50 flex h-[3.5625rem] w-[3.5625rem]"
-        >
-          <FloatingIcon className="h-[3.5625rem] w-[3.5625rem]" />
-        </button>
+        <NewPostFab onClick={() => setIsCreateModalOpen(true)} />
       )}
 
-      {isCreateModalOpen && (
-        <NewPostModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-        />
-      )}
+      <NewPostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
 
       {/** 정렬 기준 선택 바텀시트 */}
       {bottomSheetOpen && (

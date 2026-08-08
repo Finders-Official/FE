@@ -1,5 +1,5 @@
 import { AppleButton, KakaoButton } from "@/components/auth";
-import { CTA_Button } from "@/components/common";
+import { CTA_Button, Press } from "@/components/common";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
@@ -7,6 +7,7 @@ import { useAppleLogin, useLoginIntroUi } from "@/hooks/auth/login";
 import { useAuthStore } from "@/store/useAuth.store";
 import { Capacitor3KakaoLogin } from "capacitor3-kakao-login";
 import { isNativeApp } from "@/utils/auth/envUtils";
+import { isAndroidApp } from "@/utils/platform";
 import { oauth } from "@/apis/auth";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { consumeRedirectAfterLogin } from "../demoDay/redirectAfterLogin";
@@ -259,16 +260,19 @@ export function LoginPage() {
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
             <div className="flex flex-col gap-2">
-              <AppleButton onClick={apple.login} disabled={apple.isPending} />
+              {!isAndroidApp() && (
+                <AppleButton onClick={apple.login} disabled={apple.isPending} />
+              )}
               <KakaoButton onClick={handleKakaoLogin} />
             </div>
 
-            <Link
+            <Press
+              as={Link}
               to="/mainpage"
-              className="mt-3 flex flex-col text-center text-sm font-medium text-neutral-200 underline underline-offset-2 active:scale-[0.99]"
+              className="mt-3 flex flex-col text-center text-sm font-medium text-neutral-200 underline underline-offset-2"
             >
               로그인 없이 둘러보기
-            </Link>
+            </Press>
           </section>
         ) : null}
       </footer>

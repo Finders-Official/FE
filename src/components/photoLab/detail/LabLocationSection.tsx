@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CopyIcon, MapPinIcon } from "@/assets/icon";
-import { CopyButton } from "@/components/common";
+import { CopyButton, Press } from "@/components/common";
 import customPinUrl from "@/assets/icon/custom-pin.svg";
 import type { PhotoLabLocation } from "@/types/photoLab";
 
@@ -146,7 +146,7 @@ export default function LabLocationSection({
       />
 
       {/* 가는 길 보기 버튼 */}
-      <button
+      <Press
         type="button"
         onClick={handleDirectionsClick}
         className="flex h-[3.5rem] w-full items-center justify-center gap-2 rounded-[0.625rem] border border-neutral-600"
@@ -155,7 +155,7 @@ export default function LabLocationSection({
         <span className="text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200">
           가는 길 보기
         </span>
-      </button>
+      </Press>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
   MyPageFillIcon,
 } from "@/assets/icon";
 import type { TabItem } from "@/types/tab";
+import { IconSwap, Press } from "@/components/common/motion";
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 import { useAuthStore } from "@/store/useAuth.store";
 
@@ -49,7 +50,7 @@ export const TabBar = () => {
 
   const { requireAuth, requireAuthNavigate } = useRequireAuth();
   const user = useAuthStore((s) => s.user);
-  const isAuthed = Boolean(user && user.memberId > 0);
+  const isAuthed = Boolean(user?.memberId);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -70,15 +71,22 @@ export const TabBar = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    const objectUrl = URL.createObjectURL(e.target.files[0]);
+    // Android WebView의 file input File은 content provider를 가리키는 지연 참조라
+    // 이후 fetch(blob:)로 다시 읽을 때 실패할 수 있다. 선택 즉시 바이트를
+    // 메모리로 복사한 Blob으로 URL을 만들어 참조가 끊기지 않게 한다.
+    const file = e.target.files[0];
+    const blob = new Blob([await file.arrayBuffer()], {
+      type: file.type || "image/*",
+    });
+    const objectUrl = URL.createObjectURL(blob);
     navigate("/restore/editor", { state: { imageUrl: objectUrl } });
     e.target.value = "";
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 h-[var(--tabbar-height)] w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 py-6">
+    <div className="fixed bottom-0 left-1/2 z-50 h-(--tabbar-height) w-full max-w-6xl -translate-x-1/2 bg-neutral-900 px-4 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
       <input
         type="file"
         ref={fileInputRef}
@@ -89,51 +97,63 @@ export const TabBar = () => {
       <nav className="grid h-full grid-cols-5">
         {tabs.slice(0, 3).map((tab) => {
           const isActive = isTabActive(tab);
-          const Icon = isActive ? tab.activeIcon : tab.icon;
+          const IconOutline = tab.icon;
+          const IconFill = tab.activeIcon;
           return (
-            <button
+            <Press
               key={tab.to}
               type="button"
               onClick={() => onClickTab(tab.to)}
               className={[
-                "flex flex-col items-center justify-center gap-1.5 active:scale-[0.99]",
+                "flex flex-col items-center justify-center gap-1.5",
                 isActive ? "text-orange-500" : "text-neutral-300",
               ].join(" ")}
               aria-label={tab.label}
             >
-              <Icon className="h-6 w-6" />
+              <IconSwap
+                active={isActive}
+                className="h-6 w-6"
+                iconA={<IconOutline className="h-6 w-6" />}
+                iconB={<IconFill className="h-6 w-6" />}
+              />
               <span className="text-center text-xs">{tab.label}</span>
-            </button>
+            </Press>
           );
         })}
 
-        <button
+        <Press
           type="button"
           onClick={handleRestoreClick}
-          className="flex flex-col items-center justify-center gap-1.5 text-neutral-300 active:scale-[0.99]"
+          className="flex flex-col items-center justify-center gap-1.5 text-neutral-300"
           aria-label="AI 사진복원"
         >
           <AiRestoreIcon className="h-6 w-6" />
           <span className="text-center text-xs">AI 사진복원</span>
-        </button>
+        </Press>
 
         {tabs.slice(3).map((tab) => {
           const isActive = isTabActive(tab);
-          const Icon = isActive ? tab.activeIcon : tab.icon;
+          const IconOutline = tab.icon;
+          const IconFill = tab.activeIcon;
           return (
-            <button
+            <Press
               key={tab.to}
               type="button"
               onClick={() => onClickTab(tab.to)}
               className={[
-                "flex flex-col items-center justify-center gap-1.5 active:scale-[0.99]",
+                "flex flex-col items-center justify-center gap-1.5",
                 isActive ? "text-orange-500" : "text-neutral-300",
               ].join(" ")}
               aria-label={tab.label}
             >
-              <Icon className="h-6 w-6" />
+              <IconSwap
+                active={isActive}
+                className="h-6 w-6"
+                iconA={<IconOutline className="h-6 w-6" />}
+                iconB={<IconFill className="h-6 w-6" />}
+              />
               <span className="text-center text-xs">{tab.label}</span>
-            </button>
+            </Press>
           );
         })}
       </nav>

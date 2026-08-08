@@ -1,10 +1,12 @@
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import { useLikedPostsInfinite } from "@/hooks/my";
 import { useCallback, useMemo, useRef, useState } from "react";
 import PhotoCard from "@/components/photoFeed/mainFeed/PhotoCard";
 import PhotoCardSkeleton from "@/components/photoFeed/mainFeed/PhotoCardSkeleton";
 import { useLikePost, useUnlikePost } from "@/hooks/photoFeed";
 import { EmptyOrderState } from "@/components/mypage";
+import { ErrorState } from "@/components/common";
 import Masonry from "react-masonry-css";
 
 const SKELETON_COUNT = 8;
@@ -53,6 +55,8 @@ export function LikedPostPage() {
       return { ...p, isLiked: nextIsLiked };
     });
   }, [items, likedOverrideById]);
+
+  const staggerIndexFor = useFirstPageStagger(viewItems.length);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -110,18 +114,7 @@ export function LikedPostPage() {
   );
 
   if (isError) {
-    return (
-      <div className="p-6 text-neutral-100">
-        <p className="text-red-400">불러오기 실패</p>
-        <button
-          type="button"
-          className="mt-3 rounded-md border border-neutral-700 px-3 py-2 text-sm"
-          onClick={() => refetch()}
-        >
-          다시 시도
-        </button>
-      </div>
-    );
+    return <ErrorState message="불러오기 실패" onRetry={() => refetch()} />;
   }
 
   return (
@@ -159,12 +152,13 @@ export function LikedPostPage() {
               className="my-masonry-grid"
               columnClassName="my-masonry-grid_column"
             >
-              {viewItems.map((photo) => (
+              {viewItems.map((photo, index) => (
                 <PhotoCard
                   key={photo.postId}
                   photo={photo}
                   isLiked={photo.isLiked}
                   isShowLiked={true}
+                  staggerIndex={staggerIndexFor(index)}
                   onToggleLike={() =>
                     handleToggleLike(photo.postId, photo.isLiked)
                   }

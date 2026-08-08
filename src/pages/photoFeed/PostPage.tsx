@@ -5,7 +5,14 @@ import {
   HeartFillIcon,
   ChatBubbleEmptyIcon,
 } from "@/assets/icon";
-import { Header, ToastItem } from "@/components/common";
+import {
+  ErrorState,
+  Header,
+  IconSwap,
+  NumberPopIn,
+  Press,
+  Toast,
+} from "@/components/common";
 import PhotoCarousel from "@/components/photoFeed/postDetail/PhotoCarousel";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
@@ -15,7 +22,6 @@ import EmptyView from "@/components/common/EmptyView";
 import CommentSheet from "@/components/photoFeed/postDetail/CommentSheet";
 import { useNewPostState } from "@/store/useNewPostState.store";
 import ProfileSkeleton from "@/components/photoFeed/postDetail/ProfileSkeleton";
-import { TOAST_FADE_START_DELAY, TOAST_UNMOUNT_DELAY } from "./PhotoFeedPage";
 
 export default function PostPage() {
   const [commentVisible, setCommentVisible] = useState(false);
@@ -51,36 +57,28 @@ export default function PostPage() {
 
   const isMutating = isLiking || isUnliking;
 
-  // 게시글 등록 직후인지 여부
-  const isNewPost = useNewPostState((s) => s.isNewPost);
-
-  const [toastVisible, setToastVisible] = useState(isNewPost);
-  const [mounted, setMounted] = useState(isNewPost);
-
-  // 게시글 등록한 직후인지에 대한 정보 저장
+  // 게시글 등록한 직후인지에 대한 정보 저장 setter
   const setIsNewPost = useNewPostState((s) => s.setIsNewPost);
 
+  // 최초 마운트 시점의 isNewPost를 로컬로 "고정"한다.
+  // 스토어를 구독/직접 읽으면, 아래 언마운트 리셋(setIsNewPost(false))이
+  // 개발모드 StrictMode의 팬텀 언마운트 때 실행되면서 false가 되어
+  // 토스트가 사라지고 뒤로가기가 피드가 아닌 이전 단계로 가버린다.
+  const [isNewPost] = useState(() => useNewPostState.getState().isNewPost);
+
+  const [toastOpen, setToastOpen] = useState(isNewPost);
+
+  // 페이지를 벗어날 때(언마운트) 등록 직후 상태를 초기화한다.
+  // 화면에 머무는 동안 isNewPost가 유지되므로 헤더/하드웨어 뒤로가기 모두 피드로 간다.
   useEffect(() => {
-    if (!isNewPost) return;
-
-    const fadeTimer = setTimeout(
-      () => setToastVisible(false),
-      TOAST_FADE_START_DELAY,
-    );
-    const removeTimer = setTimeout(() => {
-      setIsNewPost(false);
-      setMounted(false);
-    }, TOAST_UNMOUNT_DELAY);
-
     return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
+      setIsNewPost(false);
     };
-  }, [isNewPost]);
+  }, [setIsNewPost]);
 
   const handleGoBack = () => {
+    // 등록 직후 진입이면 항상 피드로 (isNewPost는 언마운트 시 초기화됨)
     if (isNewPost) {
-      setIsNewPost(false);
       return navigate("/photoFeed");
     }
     // 히스토리 없으면 fallback
@@ -92,8 +90,13 @@ export default function PostPage() {
     if (isPostPending) {
       return (
         <>
-          <div className="flex animate-pulse flex-col gap-[0.625rem] pb-10">
-            <Header title="" showBack onBack={handleGoBack} />
+          <div className="t-skel-sheen flex flex-col gap-[0.625rem] pb-10">
+            <Header
+              title=""
+              showBack
+              onBack={handleGoBack}
+              className="sticky top-0 z-50 bg-neutral-900"
+            />
             <ProfileSkeleton />
             <div className="h-90 w-full bg-neutral-700"></div>
             <p className="h-4 w-70 rounded-xl bg-neutral-800"></p>
@@ -104,14 +107,25 @@ export default function PostPage() {
     }
     if (isPostError)
       return (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-          <p className="text-red-400">불러오기에 실패했어요.</p>
+        <div className="flex h-full flex-col">
+          <Header
+            title=""
+            showBack
+            onBack={handleGoBack}
+            className="sticky top-0 z-50 bg-neutral-900"
+          />
+          <ErrorState className="flex flex-1 items-center justify-center" />
         </div>
       );
     if (!postDetail) return <EmptyView content="게시글 정보가 없습니다." />;
     return (
       <>
-        <Header title="" showBack onBack={handleGoBack} />
+        <Header
+          title=""
+          showBack
+          onBack={handleGoBack}
+          className="sticky top-0 z-50 bg-neutral-900"
+        />
         <section className="flex flex-col gap-[0.625rem] pb-10">
           {/** 상단 */}
           <div className="flex flex-col gap-4">
@@ -132,11 +146,12 @@ export default function PostPage() {
 
             <div className="flex h-5 w-full justify-start gap-3 pl-1">
               <div className="flex items-center gap-1">
-                <button
+                <Press
                   type="button"
                   disabled={isMutating}
                   aria-label="좋아요"
                   aria-pressed={postDetail.isLiked}
+                  className="flex items-center"
                   onClick={() => {
                     if (isMutating) return;
 
@@ -144,25 +159,37 @@ export default function PostPage() {
                     else likePost(postDetail.postId);
                   }}
                 >
-                  {postDetail.isLiked ? (
-                    <HeartFillIcon className="h-[1.25rem] w-[1.40625rem] text-orange-500" />
-                  ) : (
-                    <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
-                  )}
-                </button>
-                <p className="text-[0.8125rem]">{postDetail.likeCount}</p>
+                  <IconSwap
+                    active={postDetail.isLiked}
+                    bounce
+                    className="h-[1.25rem] w-[1.40625rem]"
+                    iconA={
+                      <HeartIcon className="h-[1.25rem] w-[1.40625rem] text-white/80" />
+                    }
+                    iconB={
+                      <HeartFillIcon className="h-[1.25rem] w-[1.40625rem] text-orange-500" />
+                    }
+                  />
+                </Press>
+                <NumberPopIn
+                  value={postDetail.likeCount}
+                  className="text-[0.8125rem]"
+                />
               </div>
               <div className="flex items-center gap-1">
-                <button
+                <Press
                   type="button"
                   aria-label="댓글 보기"
+                  className="flex items-center"
                   onClick={() => {
                     setCommentVisible(true);
                   }}
                 >
                   <ChatBubbleEmptyIcon className="h-[1.25rem] w-[1.25rem]" />
-                </button>
-                <p className="text-[0.8125rem]">{postDetail.commentCount}</p>
+                </Press>
+                <p className="text-[0.8125rem]">
+                  <NumberPopIn value={postDetail.commentCount} />
+                </p>
               </div>
             </div>
           </div>
@@ -188,7 +215,7 @@ export default function PostPage() {
                 </p>
               </div>
             ) : (
-              <button
+              <Press
                 type="button"
                 aria-label="현상소 보러가기"
                 onClick={() =>
@@ -207,7 +234,7 @@ export default function PostPage() {
                     {postDetail.labReview?.content}
                   </p>
                 </div>
-              </button>
+              </Press>
             )}
           </div>
         </section>
@@ -219,21 +246,15 @@ export default function PostPage() {
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem]">
       {renderPostDetail()}
 
-      {/** 게시글 업로드 toast 메세지 */}
-      {isNewPost && mounted && (
-        <div className="fixed right-0 bottom-0 left-0 z-50 flex justify-center px-5 py-5">
-          <div
-            className={`transition-opacity duration-300 ease-out ${
-              toastVisible ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <ToastItem
-              message="게시글이 성공적으로 업로드 되었어요 :)"
-              icon={<CheckCircleIcon className="h-5 w-5" />}
-            />
-          </div>
-        </div>
-      )}
+      <Toast
+        open={toastOpen}
+        // isNewPost는 언마운트 시에만 초기화한다.
+        // (여기서 false로 바꾸면 토스트가 닫힌 뒤 하드웨어 뒤로가기가 피드가 아닌 이전 단계로 감)
+        onClose={() => setToastOpen(false)}
+        duration={3000}
+        message="게시글이 성공적으로 업로드 되었어요 :)"
+        icon={<CheckCircleIcon className="h-5 w-5" />}
+      />
 
       {/** 댓글창 */}
       {postDetail && (

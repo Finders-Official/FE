@@ -1,9 +1,16 @@
 @import "pretendard/dist/web/variable/pretendardvariable.css";
 @import "tailwindcss";
+@import "./transitions/transitions.css";
 
 @theme {
-  /* Animation */
-  --animate-slide-up: slide-up 0.4s ease-out;
+  /* Easing */
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1);
+  --ease-ios-smooth: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-ios-snappy: cubic-bezier(0.34, 1.36, 0.64, 1); /* = --ease-bounce */
+  --ease-ios-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-ios-out: cubic-bezier(0.23, 1, 0.32, 1);
 
   /* Orange */
   --color-orange-900: #2f1004;
@@ -35,7 +42,9 @@
 }
 
 :root {
-  --tabbar-height: 5.5625rem;
+  /* 탭바 총 높이 = 시각 높이 + OS 하단 인셋(Android 15 엣지-투-엣지 내비바, iOS 홈 인디케이터).
+     bottom-[var(--tabbar-height)]로 탭바 위에 얹히는 FAB/토스트도 이 값으로 함께 밀려난다. */
+  --tabbar-height: calc(5.5625rem + env(safe-area-inset-bottom, 0px));
   --fab-gap: 0.8rem;
 }
 
@@ -92,58 +101,6 @@
 .font-ydestreet {
   font-family:
     "Ydestreet", "Pretendard Variable", Pretendard, system-ui, sans-serif;
-}
-
-/* 현상소 소식 rolling 애니메이션 */
-@keyframes slide-up {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* 토스트 애니메이션 */
-@keyframes toast-slide {
-  from {
-    transform: translateY(1.25rem);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes toast-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.animate-toast-in {
-  animation: toast-slide 0.3s ease-out;
-}
-
-.animate-toast-content {
-  animation: toast-fade 0.3s ease-out;
-}
-
-@keyframes toast-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.animate-toast-out {
-  animation: toast-out 0.1s ease-in forwards;
 }
 
 /* DEMO-DAY 애니메이션 (제거 시 이 블록 전체 삭제) */

@@ -21,6 +21,11 @@ type TextAreaProps = {
   placeholder?: string;
   maxLength?: number;
   minLength?: number;
+  /**
+   * true(기본): maxLength를 넘기면 더 이상 입력 불가(하드 캡)
+   * false: 초과 입력을 허용하고, 초과 시 테두리·카운터가 빨갛게 표시
+   */
+  enforceMaxLength?: boolean;
   /** 입력 전 힌트: "min" = 최소 N자 이상 (기본), "max" = 최대 N자 이내 */
   emptyHint?: "min" | "max";
 
@@ -29,6 +34,7 @@ type TextAreaProps = {
   disabled?: boolean;
 
   isError?: boolean;
+  shakeKey?: number;
 };
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
@@ -40,15 +46,20 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       placeholder = "",
       maxLength,
       minLength,
+      enforceMaxLength = true,
       emptyHint = "min",
       className = "",
       textareaClassName = "",
       disabled = false,
       isError = false,
+      shakeKey,
     },
     forwardedRef,
   ) => {
     const innerRef = useRef<HTMLTextAreaElement | null>(null);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    // 마운트 시점의 키를 기억해 "값이 바뀐 경우"에만 재생
+    const lastShakeKey = useRef(shakeKey);
 
     // forwardedRef + innerRef 같이 연결
     const setRefs = (el: HTMLTextAreaElement | null) => {
@@ -82,11 +93,22 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       el.style.height = `${el.scrollHeight}px`; // 내용만큼 증가
     }, [value]);
 
+    useEffect(() => {
+      if (shakeKey === undefined || shakeKey === lastShakeKey.current) return;
+      lastShakeKey.current = shakeKey;
+      const el = wrapperRef.current;
+      if (!el) return;
+      el.classList.remove("t-shake");
+      void el.offsetWidth;
+      el.classList.add("t-shake");
+    }, [shakeKey]);
+
     return (
       <div
+        ref={wrapperRef}
         className={[
           "flex flex-col gap-[0.625rem] rounded-2xl border bg-neutral-900 p-[1.25rem]",
-          isError ? "border-red-500" : "border-neutral-750",
+          isError || isOverMax ? "border-red-500" : "border-neutral-750",
           className,
         ]
           .filter(Boolean)
@@ -95,7 +117,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <textarea
           ref={setRefs}
           value={value}
-          maxLength={maxLength}
+          maxLength={enforceMaxLength ? maxLength : undefined}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
@@ -112,9 +134,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             typeof minLength === "number" ? (
             <span className="text-neutral-500">최소 {minLength}자 이상</span>
           ) : typeof maxLength === "number" ? (
-            <span
-              className={isOverMax ? "text-orange-500" : "text-neutral-400"}
-            >
+            <span className={isOverMax ? "text-red-500" : "text-neutral-400"}>
               {length}/{maxLength}
             </span>
           ) : null}

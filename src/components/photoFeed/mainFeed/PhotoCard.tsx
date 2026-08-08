@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { HeartIcon } from "@/assets/icon";
+import { IconSwap, Press, StaggerItem } from "@/components/common";
 import type { PostPreview } from "@/types/photoFeed/postPreview";
 import { Link } from "react-router";
 
@@ -8,6 +9,7 @@ type Props = {
   isLiked?: boolean; // optional override (없으면 photo.isLiked 사용)
   isShowLiked?: boolean; // 포토 카드에서 좋아요 표시 여부
   onToggleLike?: (id: string) => void;
+  staggerIndex?: number;
 };
 
 export default function PhotoCard({
@@ -15,6 +17,7 @@ export default function PhotoCard({
   isLiked,
   onToggleLike,
   isShowLiked,
+  staggerIndex,
 }: Props) {
   const { width, height } = photo.image;
   const aspect = width && height ? `${width} / ${height}` : "1 / 1";
@@ -32,10 +35,6 @@ export default function PhotoCard({
     setOptimisticLiked(likedFromProps);
   }
 
-  const heartColorClass = optimisticLiked
-    ? "fill-orange-500 text-orange-500"
-    : "text-white fill-none";
-
   const handleClickLike = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Link 이동 방지
     e.stopPropagation();
@@ -48,9 +47,13 @@ export default function PhotoCard({
   };
 
   return (
-    <div className="[break-inside:avoid]">
+    <StaggerItem index={staggerIndex} className="[break-inside:avoid]">
       <div className="group relative">
-        <Link to={`/photoFeed/post/${photo.postId}`} className="block w-full">
+        <Press
+          as={Link}
+          to={`/photoFeed/post/${photo.postId}`}
+          className="block w-full"
+        >
           <div
             className="relative w-full overflow-hidden rounded-2xl bg-neutral-800/60"
             style={{ aspectRatio: aspect }}
@@ -61,25 +64,34 @@ export default function PhotoCard({
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/10" />
           </div>
 
           <div className="mt-1 text-[0.625rem] break-words text-white">
             {photo.title}
           </div>
-        </Link>
+        </Press>
 
         {isShowLiked ? (
+          // eslint-disable-next-line no-restricted-syntax -- 좋아요 토글은 IconSwap 바운스가 탭 피드백을 담당(Press 미적용 확정)
           <button
             type="button"
             className="absolute right-2 bottom-7"
             onClick={handleClickLike}
             aria-label="좋아요 토글"
+            aria-pressed={optimisticLiked}
           >
-            <HeartIcon className={`h-6 w-6 ${heartColorClass}`} />
+            <IconSwap
+              active={optimisticLiked}
+              bounce
+              className="h-6 w-6"
+              iconA={<HeartIcon className="h-6 w-6 fill-none text-white" />}
+              iconB={
+                <HeartIcon className="h-6 w-6 fill-orange-500 text-orange-500" />
+              }
+            />
           </button>
         ) : null}
       </div>
-    </div>
+    </StaggerItem>
   );
 }

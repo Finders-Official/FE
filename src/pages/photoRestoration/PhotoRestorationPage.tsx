@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/common/Header";
 import RestorationSavedOverlay from "@/components/photoRestoration/RestorationSavedOverlay";
 import { getCreditBalance } from "@/apis/member";
+import { useAuthStore } from "@/store/useAuth.store";
 
 import { RestorationImageContainer } from "@/components/photoRestoration/RestorationImageContainer";
 import { RestorationDialogs } from "@/components/photoRestoration/RestorationDialogs";
@@ -38,6 +39,7 @@ export default function PhotoRestorationPage() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isComparing, setIsComparing] = useState(false);
@@ -47,10 +49,13 @@ export default function PhotoRestorationPage() {
 
   const imageUrl = useMemo(() => receivedImageUrl ?? "", [receivedImageUrl]);
 
+  // getState()는 스토어를 구독하지 않아 로그인 상태 변화에 반응하지 못하므로 훅으로 구독
+  const user = useAuthStore((s) => s.user);
+
   const { data: creditRes, isLoading: isCreditLoading } = useQuery({
     queryKey: ["credit-balance"],
     queryFn: getCreditBalance,
-    enabled: !!localStorage.getItem("accessToken"),
+    enabled: !!user,
   });
 
   const FREE_CREDIT_CAP = 5;
@@ -98,6 +103,7 @@ export default function PhotoRestorationPage() {
   } = useCanvasDrawing({
     canvasRef,
     containerRef,
+    imageRef,
     isImageLoaded,
     disabled: !!restoredImageUrl || isGenerating,
   });
@@ -118,12 +124,13 @@ export default function PhotoRestorationPage() {
     if (!receivedImageUrl) navigate("/", { replace: true });
   }, [receivedImageUrl, navigate]);
 
-  useEffect(() => {
-    return () => {
-      if (receivedImageUrl?.startsWith("blob:")) {
-        URL.revokeObjectURL(receivedImageUrl);
-      }
-    };
+  // blob URL은 Capacitor WebView에서 페이지 unload가 없어 자동 해제되지 않는다.
+  // StrictMode 이중 mount로 fetch가 깨지는 useEffect cleanup 대신,
+  // 편집기를 실제로 벗어나는 시점(뒤로가기/폐기)에 revoke한다.
+  const revokeReceivedImage = useCallback(() => {
+    if (receivedImageUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(receivedImageUrl);
+    }
   }, [receivedImageUrl]);
 
   const handleGenerateClick = useCallback(async () => {
@@ -166,6 +173,7 @@ export default function PhotoRestorationPage() {
   const handleDialogConfirm = useCallback(() => {
     switch (visibleDialog) {
       case "MASKING_BACK": {
+        revokeReceivedImage();
         navigate(-1);
         break;
       }
@@ -179,11 +187,15 @@ export default function PhotoRestorationPage() {
       }
       case "DISCARD_CONFIRM": {
         resetRestoration();
+        revokeReceivedImage();
         navigate(-1);
         break;
       }
-      case "NO_MASK":
       case "NO_CREDIT": {
+        navigate("/mypage/credit?tab=buy");
+        break;
+      }
+      case "NO_MASK": {
         // 닫기만
         break;
       }
@@ -191,7 +203,13 @@ export default function PhotoRestorationPage() {
         break;
     }
     setActiveDialog("NONE");
-  }, [visibleDialog, navigate, resetRestoration, setError]);
+  }, [
+    visibleDialog,
+    navigate,
+    resetRestoration,
+    setError,
+    revokeReceivedImage,
+  ]);
 
   const handleDialogCancel = useCallback(() => {
     if (visibleDialog === "SERVER_ERROR") setError(null);
@@ -211,7 +229,7 @@ export default function PhotoRestorationPage() {
     viewMode === "MAIN";
 
   return (
-    <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-neutral-900">
+    <div className="relative flex h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full flex-col overflow-hidden bg-neutral-900">
       {viewMode === "MAIN" && (
         <>
           <Header
@@ -248,6 +266,7 @@ export default function PhotoRestorationPage() {
                 isGenerating={isGenerating}
                 canvasRef={canvasRef}
                 containerRef={containerRef}
+                imageRef={imageRef}
                 startDrawing={startDrawing}
                 draw={draw}
                 stopDrawing={stopDrawing}
@@ -297,12 +316,11 @@ export default function PhotoRestorationPage() {
         </>
       )}
 
-      {viewMode === "SAVED" && restoredImageUrl && (
-        <RestorationSavedOverlay
-          imageUrl={restoredImageUrl}
-          onClose={() => setViewMode("MAIN")}
-        />
-      )}
+      <RestorationSavedOverlay
+        open={viewMode === "SAVED" && !!restoredImageUrl}
+        imageUrl={restoredImageUrl ?? ""}
+        onClose={() => setViewMode("MAIN")}
+      />
 
       <RestorationFooter
         viewMode={viewMode}

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import type { TermsType } from "@/types/auth";
 import { useDebouncedValue, useDebouncedTrue } from "@/hooks/common";
+import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
 import {
   useConfirmPhoneVerification,
   useNicknameCheck,
@@ -101,12 +102,12 @@ export function useOnBoardingForm(options?: Options) {
 
   const nicknameBorderClass =
     debouncedNicknameError && isNicknameErrorText
-      ? "transition-colors duration-100 border-orange-500"
+      ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out border-orange-500"
       : undefined;
 
   const nicknameTextClass =
     debouncedNicknameError && isNicknameErrorText
-      ? "transition-colors duration-100 text-orange-500"
+      ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out text-orange-500"
       : undefined;
 
   // 폰 인증
@@ -158,8 +159,8 @@ export function useOnBoardingForm(options?: Options) {
         setIsVerified(false);
         setVerifiedPhoneToken(null);
 
-        setPhoneVerifyMessage("인증번호를 재발송해주세요.");
-        setPhoneVerifyError("인증번호가 올바르지 않습니다.");
+        setPhoneVerifyMessage("");
+        setPhoneVerifyError("인증번호를 재발송해주세요.");
       },
     });
 
@@ -184,12 +185,34 @@ export function useOnBoardingForm(options?: Options) {
   const debouncedPhoneError = useDebouncedValue(isPhoneError, 100);
 
   const phoneBorderClass = debouncedPhoneError
-    ? "transition-colors duration-100 border-orange-500"
+    ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out border-orange-500"
     : undefined;
 
   const phoneTextClass = debouncedPhoneError
-    ? "transition-colors duration-100 text-orange-500"
+    ? "transition-colors duration-[var(--duration-quick)] ease-smooth-out text-orange-500"
     : undefined;
+
+  // 닉네임/전화 인증 오류가 새로 나타날 때 입력창 흔들기
+  const { shakeKey: nicknameShakeKey, shake: shakeNickname } =
+    useShakeTrigger();
+  const { shakeKey: phoneShakeKey, shake: shakePhone } = useShakeTrigger();
+
+  const nicknameErrorVisible = debouncedNicknameError && isNicknameErrorText;
+  const prevNicknameErrorVisible = useRef(false);
+  useEffect(() => {
+    if (nicknameErrorVisible && !prevNicknameErrorVisible.current) {
+      shakeNickname();
+    }
+    prevNicknameErrorVisible.current = nicknameErrorVisible;
+  }, [nicknameErrorVisible, shakeNickname]);
+
+  const prevPhoneErrorVisible = useRef(false);
+  useEffect(() => {
+    if (debouncedPhoneError && !prevPhoneErrorVisible.current) {
+      shakePhone();
+    }
+    prevPhoneErrorVisible.current = debouncedPhoneError;
+  }, [debouncedPhoneError, shakePhone]);
 
   // 인증 완료 후 비활성화를 위함
   const lockPhoneForm = isVerified;
@@ -316,5 +339,9 @@ export function useOnBoardingForm(options?: Options) {
     phoneBorderClass,
     phoneTextClass,
     lockPhoneForm,
+
+    // shake keys
+    nicknameShakeKey,
+    phoneShakeKey,
   };
 }

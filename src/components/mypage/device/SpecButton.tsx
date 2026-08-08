@@ -1,5 +1,6 @@
 import { PlusIcon } from "@/assets/icon";
 import React from "react";
+import { Press } from "@/components/common";
 
 interface SpecButtonProps {
   label: string; // 선택 전 안내 문구 (예: "카메라 기종 선택")
@@ -17,7 +18,7 @@ export function SpecButton({
   const isSelected = !!selectedName; // 값이 비어있지 않으면 true
 
   return (
-    <button
+    <Press
       onClick={onClick}
       type="button"
       className="bg-neutral-875 flex aspect-square h-[8.75rem] w-full min-w-0 flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl border border-neutral-800"
@@ -41,6 +42,6 @@ export function SpecButton({
           </span>
         </>
       )}
-    </button>
+    </Press>
   );
 }

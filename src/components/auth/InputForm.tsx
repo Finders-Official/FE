@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type React from "react";
 
 type InputFormSize = "medium" | "large";
@@ -13,6 +14,7 @@ interface InputFormProps {
   timer?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
+  shakeKey?: number;
 }
 
 export const InputForm = ({
@@ -26,7 +28,22 @@ export const InputForm = ({
   timer,
   onChange,
   disabled,
+  shakeKey,
 }: InputFormProps) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  // 마운트 시점의 키를 기억해 "값이 바뀐 경우"에만 재생
+  const lastShakeKey = useRef(shakeKey);
+
+  useEffect(() => {
+    if (shakeKey === undefined || shakeKey === lastShakeKey.current) return;
+    lastShakeKey.current = shakeKey;
+    const el = inputRef.current;
+    if (!el) return;
+    el.classList.remove("t-shake");
+    void el.offsetWidth;
+    el.classList.add("t-shake");
+  }, [shakeKey]);
+
   const sizeClass: Record<InputFormSize, string> = {
     medium: "h-[3.25rem] w-[15.75rem]",
     large: "h-[3.25rem] w-full",
@@ -38,6 +55,7 @@ export const InputForm = ({
 
       <div className="relative mt-[1rem]">
         <input
+          ref={inputRef}
           autoComplete="off"
           id={name}
           placeholder={placeholder}
@@ -47,7 +65,7 @@ export const InputForm = ({
           disabled={disabled}
           className={[
             sizeClass[size],
-            "rounded-lg border border-neutral-800 p-2 transition-colors duration-100 placeholder:text-neutral-600 focus:outline-none",
+            "ease-smooth-out rounded-lg border border-neutral-800 p-2 transition-colors duration-[var(--duration-quick)] placeholder:text-neutral-600 focus:outline-none",
             borderClass ?? "",
             disabled
               ? "bg-neutral-850 cursor-not-allowed text-neutral-400 placeholder:text-neutral-500"
@@ -63,7 +81,9 @@ export const InputForm = ({
       </div>
 
       {invalidText && (
-        <p className={`mb-[2.45rem] p-[0.625rem] text-sm ${textClass ?? ""}`}>
+        <p
+          className={`t-error-in mb-[2.45rem] p-[0.625rem] text-sm ${textClass ?? ""}`}
+        >
           {invalidText}
         </p>
       )}

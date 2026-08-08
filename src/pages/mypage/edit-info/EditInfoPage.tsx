@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from "@/assets/icon";
-import { ToastItem } from "@/components/common";
+import { Press, Toast } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { OptionLink } from "@/components/mypage/OptionLink";
@@ -29,6 +29,14 @@ export function EditInfoPage() {
     const raw = me?.member?.phone;
     return raw ? formatPhoneKorea(raw) : "";
   }, [me?.member?.phone]);
+
+  const socialAccount = me?.roleData?.user?.socialAccounts?.[0];
+  const socialProviderLabel =
+    socialAccount?.provider === "KAKAO"
+      ? "카카오톡"
+      : socialAccount?.provider === "APPLE"
+        ? "Apple"
+        : (socialAccount?.provider ?? "");
 
   const maxSizeMB = 5;
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -80,7 +88,7 @@ export function EditInfoPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state as LocationState) ?? null;
-  const [showToast, setShowToast] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
   const [message, setMessage] = useState("");
 
   // 로그아웃 모달
@@ -113,21 +121,9 @@ export function EditInfoPage() {
   useEffect(() => {
     const toast = state?.toast;
     if (!toast) return;
-
-    const showId = window.setTimeout(() => {
-      setMessage(toast);
-      setShowToast(true);
-    }, 0);
-
-    const id = window.setTimeout(() => {
-      navigate(location.pathname, { replace: true, state: null });
-      setShowToast(false);
-    }, 2000);
-
-    return () => {
-      window.clearTimeout(id);
-      window.clearTimeout(showId);
-    };
+    setMessage(toast);
+    setToastOpen(true);
+    navigate(location.pathname, { replace: true, state: null });
   }, [state?.toast, navigate, location.pathname]);
 
   const openPicker = () => {
@@ -151,7 +147,7 @@ export function EditInfoPage() {
     if (!me) throw new Error("내 정보가 아직 없어요.");
 
     const memberId = me.member?.memberId;
-    if (typeof memberId !== "number")
+    if (typeof memberId !== "string" || memberId.length === 0)
       throw new Error("memberId를 찾을 수 없어요.");
 
     setIsUploadingProfile(true);
@@ -209,7 +205,15 @@ export function EditInfoPage() {
     try {
       await uploadProfileImage(picked);
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      setError("사진 업로드에 실패했어요. 다시 시도해 주세요.");
+
+      // 업로드 실패 시 낙관적으로 보여준 미리보기를 되돌림
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      setObjectUrl(null);
     }
   };
 
@@ -249,17 +253,17 @@ export function EditInfoPage() {
           />
         </div>
 
-        <button
+        <Press
           type="button"
           className="text-orange-500"
           onClick={openPicker}
           disabled={isUploadingProfile}
         >
           {isUploadingProfile ? "업로드 중..." : "사진 수정"}
-        </button>
+        </Press>
 
         {error ? (
-          <p className="mt-2 text-sm text-orange-600" role="alert">
+          <p className="t-error-in mt-2 text-sm text-orange-600" role="alert">
             {error}
           </p>
         ) : null}
@@ -287,7 +291,7 @@ export function EditInfoPage() {
         <OptionLink
           to="./social"
           text="연동된 소셜 계정"
-          info="카카오톡"
+          info={socialProviderLabel}
           infoColor="gray"
         />
 
@@ -307,14 +311,13 @@ export function EditInfoPage() {
 
       <LoadingSpinner open={isLoading} />
 
-      {showToast ? (
-        <div className="fixed bottom-[var(--tabbar-height)] ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-          <ToastItem
-            message={message}
-            icon={<CheckCircleIcon className="h-5 w-5" />}
-          />
-        </div>
-      ) : null}
+      <Toast
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+        placement="above-tab"
+        message={message}
+        icon={<CheckCircleIcon className="h-5 w-5" />}
+      />
     </div>
   );
 }

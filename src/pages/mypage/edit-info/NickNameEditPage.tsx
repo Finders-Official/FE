@@ -102,6 +102,7 @@ export function NickNameEditPage() {
           }}
           borderClass={helperBorderClass}
           textClass={helperTextClass}
+          shakeKey={f.nicknameShakeKey}
         />
       </form>
 

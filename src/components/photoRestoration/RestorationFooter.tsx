@@ -1,4 +1,6 @@
+import type { CSSProperties } from "react";
 import { useNavigate } from "react-router";
+import { useReveal } from "@/transitions";
 
 import { Tooltip } from "@/components/common/ToolTip";
 import { CapsuleButton } from "@/components/common/CapsuleButton";
@@ -38,22 +40,33 @@ export const RestorationFooter = ({
   handleRegenerateClick,
 }: RestorationFooterProps) => {
   const navigate = useNavigate();
+  const tip = useReveal(shouldShowCreditTooltip, { variant: "popover" });
+
+  // 힌트 툴팁 표시 상태(초기 편집)와 액션 버튼 표시 상태는 상호배타
+  const isHintState =
+    viewMode === "MAIN" &&
+    historyStep === -1 &&
+    !currentPath &&
+    !restoredImageUrl &&
+    !isGenerating;
 
   return (
-    <div className="pointer-events-none absolute right-0 bottom-13 left-0 z-50 flex w-full flex-col items-center px-4">
-      {viewMode === "MAIN" && (
-        <RestorationHintTooltip
-          historyStep={historyStep}
-          currentPath={currentPath}
-          restoredImageUrl={restoredImageUrl}
-          isGenerating={isGenerating}
-        />
-      )}
+    <div
+      className={`pointer-events-none absolute inset-x-0 bottom-0 z-50 flex w-full flex-col items-center px-4 ${
+        isHintState ? "pb-4.5" : "pb-5.75"
+      }`}
+    >
+      <RestorationHintTooltip open={isHintState} />
 
       <div className="pointer-events-auto relative mt-2 inline-flex">
-        {shouldShowCreditTooltip && (
+        {tip.mounted && (
           <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2">
-            <div className="pointer-events-auto mb-4.5">
+            <div
+              {...tip.getRevealProps({
+                className: "pointer-events-auto mb-4.5",
+              })}
+              style={{ "--reveal-origin": "50% 100%" } as CSSProperties}
+            >
               <Tooltip
                 used={usedFree}
                 total={totalFree}
@@ -67,18 +80,19 @@ export const RestorationFooter = ({
           <CapsuleButton
             text="사진수다에 자랑하기"
             image={PhotoFillIcon}
-            size="medium"
+            size="large"
             onClick={() => navigate("/photoFeed")}
           />
         ) : (
-          <RestorationActionButtons
-            historyStep={historyStep}
-            currentPath={currentPath}
-            restoredImageUrl={restoredImageUrl}
-            isGenerating={isGenerating}
-            handleGenerateClick={handleGenerateClick}
-            handleRegenerateClick={handleRegenerateClick}
-          />
+          !isHintState && (
+            <RestorationActionButtons
+              historyStep={historyStep}
+              restoredImageUrl={restoredImageUrl}
+              isGenerating={isGenerating}
+              handleGenerateClick={handleGenerateClick}
+              handleRegenerateClick={handleRegenerateClick}
+            />
+          )
         )}
       </div>
     </div>
