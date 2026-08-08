@@ -99,7 +99,7 @@ export function EditInfoPage() {
   // 완전 로그아웃
   const clearUser = useAuthStore((s) => s.clearUser);
 
-  const { mutate: unregisterDeviceToken } = useUnregisterDeviceToken({
+  const { mutateAsync: unregisterDeviceToken } = useUnregisterDeviceToken({
     // 해제 API가 실제로 성공했을 때만 로컬 참조를 비운다
     // (실패 시 토큰 값을 남겨둬야 추후 재시도할 여지가 있음)
     onSuccess: () => {
@@ -108,15 +108,23 @@ export function EditInfoPage() {
   });
 
   const { mutate: doLogout, isPending: isLogoutPending } = useLogout({
+    // 기기 토큰 해제는 accessToken이 확실히 살아있는 onMutate에서 끝낸다.
+    // useLogout 내부 onSuccess가 tokenStorage.clear()를 먼저 호출하므로
+    // onSettled에서 요청하면 Authorization 없이 나가 401이 된다
+    onMutate: async () => {
+      const pushToken = usePushTokenStore.getState().token;
+      if (!pushToken) return;
+
+      try {
+        await unregisterDeviceToken(pushToken);
+      } catch {
+        // 해제 실패로 로그아웃 자체를 막지는 않는다
+      }
+    },
+
     onSettled: async () => {
       // API 통신 원천 차단
       queryClient.clear();
-
-      // 기기 토큰 해제 (accessToken이 살아있는 동안 먼저 요청)
-      const pushToken = usePushTokenStore.getState().token;
-      if (pushToken) {
-        unregisterDeviceToken(pushToken);
-      }
 
       // 기기 내장 토큰 삭제 (비동기)
       // (이때까지는 Zustand에 user 상태가 살아있어서 가드가 발동하지 않음)

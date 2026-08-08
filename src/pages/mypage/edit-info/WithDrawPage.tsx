@@ -43,7 +43,7 @@ export function WithDrawPage() {
     message: { title: "", description: "" },
   });
 
-  const { mutate: unregisterDeviceToken } = useUnregisterDeviceToken({
+  const { mutateAsync: unregisterDeviceToken } = useUnregisterDeviceToken({
     // 해제 API가 실제로 성공했을 때만 로컬 참조를 비운다
     // (실패 시 토큰 값을 남겨둬야 추후 재시도할 여지가 있음)
     onSuccess: () => {
@@ -52,11 +52,16 @@ export function WithDrawPage() {
   });
 
   const { mutate: withdraw, isPending } = useWithDrawMe({
-    onSuccess: () => {
-      // 기기 토큰 해제 (accessToken이 살아있는 동안 먼저 요청)
+    onSuccess: async () => {
+      // 기기 토큰 해제를 끝낸 뒤에 accessToken을 지운다
+      // (먼저 지우면 Authorization 없이 나가 401이 된다)
       const pushToken = usePushTokenStore.getState().token;
       if (pushToken) {
-        unregisterDeviceToken(pushToken);
+        try {
+          await unregisterDeviceToken(pushToken);
+        } catch {
+          // 해제 실패로 탈퇴 완료 처리를 막지는 않는다
+        }
       }
 
       tokenStorage.clear();
