@@ -2,7 +2,9 @@ name: Release Build (AAB / IPA)
 
 on:
   push:
-    branches: [main]
+    # TEMP: main 머지 전 CI 검증용. 검증 끝나면 이 브랜치 항목을 제거할 것
+    # (workflow_dispatch는 기본 브랜치에 있는 워크플로만 노출되어 머지 전엔 쓸 수 없다)
+    branches: [main, "chore/android-ios-build-ci(#312)"]
   workflow_dispatch:
 
 concurrency:
