@@ -156,9 +156,13 @@ export default function PhotoLabSearchPage() {
     }
   };
 
-  const handleLabClick = (photoLabId: string) => {
-    navigate(`/photolab/${photoLabId}`);
-  };
+  // 참조 고정 — memo된 SimpleLabCard가 리렌더를 건너뛸 수 있게
+  const handleLabClick = useCallback(
+    (photoLabId: string) => {
+      navigate(`/photolab/${photoLabId}`);
+    },
+    [navigate],
+  );
 
   return (
     <div className="flex w-full flex-col">
@@ -198,7 +202,7 @@ export default function PhotoLabSearchPage() {
       {/* PL-011-2: 검색어 입력 중 */}
       {!isResultsState && query.trim() && (
         <div
-          className={`pt-5 transition-opacity duration-200 ${
+          className={`pt-5 transition-opacity duration-[var(--duration-fast)] motion-reduce:transition-none ${
             isPreviewStale ? "opacity-40" : "opacity-100"
           }`}
         >
@@ -226,6 +230,7 @@ export default function PhotoLabSearchPage() {
           {/* 검색 결과 목록 */}
           <LabList
             labs={labs}
+            staggerResetKey={searchQuery}
             isLoading={isLoading || isLocationLoading}
             isFetchingNextPage={isFetchingNextPage}
             hasNextPage={hasNextPage ?? false}

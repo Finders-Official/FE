@@ -5,7 +5,9 @@ import { NoticeListItem } from "@/components/mypage/notice/NoticeListItem";
 import { TabNavigation } from "@/components/mypage/notice/TabNavigaton";
 import type { NoticeType, TabName } from "@/types/mypage/notice";
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll"; // 💡 무한 스크롤 옵저버 훅
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import { useNoticeListInfinite } from "@/hooks/my";
+import { StaggerItem } from "@/components/common";
 
 export function NoticePage() {
   const [activeTab, setActiveTab] = useState<TabName>("일반공지");
@@ -37,6 +39,8 @@ export function NoticePage() {
 
   // 여러 페이지(page)의 배열 평탄화
   const noticeList = data?.pages.flatMap((page) => page.data) ?? [];
+  // 탭(공지 타입) 변경은 새 데이터셋
+  const staggerIndexFor = useFirstPageStagger(noticeList.length, currentType);
 
   // --- 무한 스크롤 옵저버 로직 ---
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -65,13 +69,15 @@ export function NoticePage() {
         {isLoading ? (
           <LoadingSpinner open={isLoading} />
         ) : isError ? (
-          <div className="flex flex-1 items-center justify-center text-neutral-400">
+          <div className="t-fade-in flex flex-1 items-center justify-center text-neutral-400">
             공지사항을 불러오는 중 오류가 발생했습니다.
           </div>
         ) : noticeList.length > 0 ? (
           <div className="flex flex-col">
-            {noticeList.map((notice) => (
-              <NoticeListItem key={notice.id} data={notice} />
+            {noticeList.map((notice, index) => (
+              <StaggerItem key={notice.id} index={staggerIndexFor(index)}>
+                <NoticeListItem data={notice} />
+              </StaggerItem>
             ))}
 
             {/* 추가 데이터 로딩 인디케이터 */}

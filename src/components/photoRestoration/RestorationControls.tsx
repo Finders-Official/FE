@@ -2,6 +2,7 @@ import {
   ArrowTurnUpLeftIcon as UndoIcon,
   ArrowTurnUpRightIcon as RedoIcon,
 } from "@/assets/icon";
+import { Press } from "@/components/common";
 
 interface Props {
   onUndo: () => void;
@@ -20,30 +21,30 @@ export default function RestorationControls({
     <div className="flex w-85.75 justify-start">
       <div className="flex h-10 items-center gap-3 px-2">
         {/* Undo 버튼 */}
-        <button
+        <Press
           onClick={onUndo}
           disabled={!canUndo}
           className="flex items-center justify-center"
         >
           <UndoIcon
-            className={`h-3.5 w-3.5 transition-colors ${
+            className={`ease-smooth-out h-3.5 w-3.5 transition-colors duration-[var(--duration-quick)] ${
               canUndo ? "text-neutral-300" : "text-neutral-700"
             }`}
           />
-        </button>
+        </Press>
 
         {/* Redo 버튼 */}
-        <button
+        <Press
           onClick={onRedo}
           disabled={!canRedo}
           className="flex items-center justify-center"
         >
           <RedoIcon
-            className={`h-3.5 w-3.5 transition-colors ${
+            className={`ease-smooth-out h-3.5 w-3.5 transition-colors duration-[var(--duration-quick)] ${
               canRedo ? "text-neutral-300" : "text-neutral-700"
             }`}
           />
-        </button>
+        </Press>
       </div>
     </div>
   );

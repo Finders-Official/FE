@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { UploadIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 
 interface PaymentProofUploadProps {
   preview: string | null;
@@ -57,16 +58,18 @@ export function PaymentProofUpload({
           />
         )}
 
-        <button
-          type="button"
-          onClick={handleClick}
-          className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-white/40 bg-black/60 px-7 py-4"
-        >
-          <UploadIcon className="h-6 w-6 text-neutral-100" />
-          <span className="text-[1rem] leading-[1.55] font-semibold tracking-[-0.02rem] text-neutral-100">
-            업로드 하기
-          </span>
-        </button>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Press
+            type="button"
+            onClick={handleClick}
+            className="flex items-center gap-2 rounded-full border border-white/40 bg-black/60 px-7 py-4"
+          >
+            <UploadIcon className="h-6 w-6 text-neutral-100" />
+            <span className="text-[1rem] leading-[1.55] font-semibold tracking-[-0.02rem] text-neutral-100">
+              업로드 하기
+            </span>
+          </Press>
+        </div>
 
         <input
           ref={inputRef}

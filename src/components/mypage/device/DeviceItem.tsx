@@ -1,4 +1,5 @@
 import { CameraIcon, MyPageFilmIcon } from "@/assets/icon";
+import { Press } from "@/components/common";
 
 interface EquipmentCardProps {
   title: string;
@@ -52,18 +53,8 @@ export function DeviceItem({
 
       {/* 하단: 수정 및 삭제 버튼 */}
       <div className="flex justify-end gap-5 text-base font-medium text-neutral-600">
-        <button
-          onClick={onEdit}
-          className="transition-colors hover:text-gray-800 active:scale-95"
-        >
-          수정
-        </button>
-        <button
-          onClick={onDelete}
-          className="transition-colors hover:text-red-500 active:scale-95"
-        >
-          삭제
-        </button>
+        <Press onClick={onEdit}>수정</Press>
+        <Press onClick={onDelete}>삭제</Press>
       </div>
     </div>
   );

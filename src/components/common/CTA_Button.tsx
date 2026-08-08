@@ -1,5 +1,6 @@
 import type { IconComponent } from "@/types/icon";
 import { useNavigate } from "react-router";
+import { Press } from "@/components/common/motion";
 
 type CTA_ButtonColor = "orange" | "black" | "transparent" | "gray";
 type CTA_ButtonSize =
@@ -36,7 +37,7 @@ export const CTA_Button = ({
 }: CTA_ButtonProps) => {
   const router = useNavigate();
   const baseClass =
-    "inline-flex items-center justify-center rounded-2xl border shadow-sm active:scale-[0.99] gap-2";
+    "inline-flex items-center justify-center rounded-2xl border shadow-sm gap-2";
   const sizeClass: Record<CTA_ButtonSize, string> = {
     xsmall: "h-[2.875rem] w-[7.5625rem] text-[0.875rem]",
     small: "h-[3.5rem] w-[7.5625rem]",
@@ -63,7 +64,7 @@ export const CTA_Button = ({
   };
 
   return (
-    <button
+    <Press
       type="button"
       disabled={disabled}
       aria-disabled={disabled}
@@ -72,6 +73,6 @@ export const CTA_Button = ({
     >
       {Icon ? <Icon className="h-4 w-4" /> : null}
       <p>{text}</p>
-    </button>
+    </Press>
   );
 };

@@ -1,6 +1,7 @@
 import { HeartIcon } from "@/assets/icon";
 import type { Post } from "@/types/mypage/post";
 import { Link } from "react-router";
+import { Press } from "@/components/common";
 
 interface PostCardProps {
   post: Post;
@@ -9,7 +10,8 @@ interface PostCardProps {
 export const PostCard = ({ post }: PostCardProps) => {
   return (
     <div>
-      <Link
+      <Press
+        as={Link}
         to={`/photoFeed/post/${post.id}`}
         state={"mypost"}
         className="block"
@@ -22,13 +24,14 @@ export const PostCard = ({ post }: PostCardProps) => {
             loading="lazy"
           />
         </div>
-      </Link>
+      </Press>
 
       <p className="truncate py-1">{post.title}</p>
 
       <section className="flex items-center gap-1">
         <p className="flex-1 text-sm text-neutral-400">{post.date}</p>
 
+        {/* eslint-disable-next-line no-restricted-syntax -- onClick이 없는 표시용. 토글 기능을 붙일지 정적 아이콘으로 바꿀지 결정 필요 */}
         <button type="button" aria-label="좋아요">
           <HeartIcon className="h-[1rem] w-[1rem] fill-orange-500 text-orange-500" />
         </button>

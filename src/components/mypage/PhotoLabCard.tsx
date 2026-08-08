@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { StarIcon } from "@/assets/icon";
 import { photoLabPlaceholder } from "@/assets/images";
 import type { PhotoLab } from "@/types/mypage/photolab";
 import { Link } from "react-router";
+import { Press, IconSwap, NumberPopIn } from "@/components/common";
+import { useOptimisticFavorite } from "@/hooks/photoLab";
 
 type Props = {
   photoLab: PhotoLab;
@@ -10,46 +11,43 @@ type Props = {
 };
 
 export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
-  //Optimistic UI 상태
-  const [prevFavorite, setPrevFavorite] = useState(photoLab.isFavorite);
-  const [isFavorite, setIsFavorite] = useState(photoLab.isFavorite);
-
-  //서버/캐시에서 isFavorite가 바뀌어 내려오면 로컬 상태 동기화
-  if (photoLab.isFavorite !== prevFavorite) {
-    setPrevFavorite(photoLab.isFavorite);
-    setIsFavorite(photoLab.isFavorite);
-  }
-
-  const starColorClass = isFavorite
-    ? "fill-orange-500 text-orange-500"
-    : "fill-none text-white";
+  const { isFavorite, favoriteCount, toggle } = useOptimisticFavorite({
+    isFavorite: photoLab.isFavorite,
+    favoriteCount: photoLab.favoriteCount,
+    onToggle: (current) => onToggleLike?.(photoLab.id, current),
+  });
 
   return (
     <div className="mt-2 border-b border-neutral-800 py-4">
       <div className="group relative">
         {/*즐겨찾기 버튼: 클릭 시 링크 이동 방지 + UI 즉시 토글 */}
-        <button
+        <Press
           type="button"
           aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 등록"}
+          aria-pressed={isFavorite}
           className="absolute top-3 right-1 z-10 flex inline-flex h-10 w-10 flex-col items-center justify-center rounded-full"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-
-            // 1) UI는 즉시 토글
-            setIsFavorite((prev) => !prev);
-
-            // 2) 서버에는 현재값을 넘김
-            onToggleLike?.(photoLab.id, isFavorite);
+            toggle();
           }}
         >
-          <StarIcon className={`h-5 w-5 ${starColorClass}`} />
+          <IconSwap
+            active={isFavorite}
+            bounce
+            className="h-5 w-5"
+            iconA={<StarIcon className="h-5 w-5 fill-none text-white" />}
+            iconB={
+              <StarIcon className="h-5 w-5 fill-orange-500 text-orange-500" />
+            }
+          />
           <p className="text-[0.725rem] text-neutral-400">
-            {photoLab?.favoriteCount}
+            <NumberPopIn value={favoriteCount} />
           </p>
-        </button>
+        </Press>
 
-        <Link
+        <Press
+          as={Link}
           to={`/photolab/${photoLab.id}`}
           className="block rounded-2xl"
           aria-label={`${photoLab.name} 상세로 이동`}
@@ -76,7 +74,7 @@ export const PhotoLabCard = ({ photoLab, onToggleLike }: Props) => {
               </section>
             </section>
           </div>
-        </Link>
+        </Press>
       </div>
     </div>
   );

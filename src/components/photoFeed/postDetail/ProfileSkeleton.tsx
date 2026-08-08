@@ -1,6 +1,6 @@
 export default function ProfileSkeleton() {
   return (
-    <div className="flex animate-pulse items-start gap-2">
+    <div className="t-skel-sheen flex items-start gap-2">
       {/* avatar */}
       <div className="h-9 w-9 rounded-full bg-neutral-700" />
 

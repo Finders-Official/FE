@@ -316,12 +316,11 @@ export default function PhotoRestorationPage() {
         </>
       )}
 
-      {viewMode === "SAVED" && restoredImageUrl && (
-        <RestorationSavedOverlay
-          imageUrl={restoredImageUrl}
-          onClose={() => setViewMode("MAIN")}
-        />
-      )}
+      <RestorationSavedOverlay
+        open={viewMode === "SAVED" && !!restoredImageUrl}
+        imageUrl={restoredImageUrl ?? ""}
+        onClose={() => setViewMode("MAIN")}
+      />
 
       <RestorationFooter
         viewMode={viewMode}

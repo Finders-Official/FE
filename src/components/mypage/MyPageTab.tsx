@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { tabs } from "@/constants/mypage/mypagetab.constant";
+import { Press } from "@/components/common";
 
 export function MyPageTabs() {
   return (
@@ -10,7 +11,8 @@ export function MyPageTabs() {
 
       <div className="grid h-full w-full grid-cols-3 gap-[2.5rem]">
         {tabs.map(({ to, label, Icon }) => (
-          <Link
+          <Press
+            as={Link}
             key={to}
             to={to}
             className="flex h-full w-full flex-col items-center gap-2 py-3"
@@ -21,7 +23,7 @@ export function MyPageTabs() {
             <p className="mt-auto text-sm leading-none text-neutral-100">
               {label}
             </p>
-          </Link>
+          </Press>
         ))}
       </div>
     </div>

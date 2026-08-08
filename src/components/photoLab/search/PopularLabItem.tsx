@@ -1,3 +1,5 @@
+import { Press } from "@/components/common";
+
 interface PopularLabItemProps {
   rank: number;
   name: string;
@@ -10,7 +12,7 @@ export default function PopularLabItem({
   onClick,
 }: PopularLabItemProps) {
   return (
-    <button
+    <Press
       type="button"
       onClick={onClick}
       className="flex h-6 w-full items-center gap-4"
@@ -21,6 +23,6 @@ export default function PopularLabItem({
       <span className="flex-1 truncate text-left text-[0.875rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-300">
         {name}
       </span>
-    </button>
+    </Press>
   );
 }

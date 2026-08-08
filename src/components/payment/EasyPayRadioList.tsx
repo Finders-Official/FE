@@ -1,4 +1,5 @@
 import { CircleFillIcon, EmptyCircleIcon } from "@/assets/icon";
+import { IconSwap, Press } from "@/components/common";
 import { EASY_PAY_OPTIONS } from "@/constants/payment/payment.constant";
 import type { EasyPayProvider } from "@/types/payment";
 
@@ -14,20 +15,25 @@ export function EasyPayRadioList({ value, onChange }: EasyPayRadioListProps) {
         const selected = option.id === value;
         return (
           <li key={option.id}>
-            <button
+            <Press
               type="button"
               role="radio"
               aria-checked={selected}
               onClick={() => onChange(option.id)}
               className="text-neutral-0 flex items-center gap-[1.1875rem] text-[0.9375rem] leading-[1.55] font-normal tracking-[-0.02em]"
             >
-              {selected ? (
-                <CircleFillIcon className="h-[1.1875rem] w-[1.1875rem] text-orange-500" />
-              ) : (
-                <EmptyCircleIcon className="h-[1.1875rem] w-[1.1875rem] text-neutral-500" />
-              )}
+              <IconSwap
+                active={selected}
+                className="h-[1.1875rem] w-[1.1875rem]"
+                iconA={
+                  <EmptyCircleIcon className="h-[1.1875rem] w-[1.1875rem] text-neutral-500" />
+                }
+                iconB={
+                  <CircleFillIcon className="h-[1.1875rem] w-[1.1875rem] text-orange-500" />
+                }
+              />
               <span>{option.name}</span>
-            </button>
+            </Press>
           </li>
         );
       })}

@@ -34,6 +34,7 @@ type TextAreaProps = {
   disabled?: boolean;
 
   isError?: boolean;
+  shakeKey?: number;
 };
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
@@ -51,10 +52,14 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       textareaClassName = "",
       disabled = false,
       isError = false,
+      shakeKey,
     },
     forwardedRef,
   ) => {
     const innerRef = useRef<HTMLTextAreaElement | null>(null);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    // 마운트 시점의 키를 기억해 "값이 바뀐 경우"에만 재생
+    const lastShakeKey = useRef(shakeKey);
 
     // forwardedRef + innerRef 같이 연결
     const setRefs = (el: HTMLTextAreaElement | null) => {
@@ -88,8 +93,19 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       el.style.height = `${el.scrollHeight}px`; // 내용만큼 증가
     }, [value]);
 
+    useEffect(() => {
+      if (shakeKey === undefined || shakeKey === lastShakeKey.current) return;
+      lastShakeKey.current = shakeKey;
+      const el = wrapperRef.current;
+      if (!el) return;
+      el.classList.remove("t-shake");
+      void el.offsetWidth;
+      el.classList.add("t-shake");
+    }, [shakeKey]);
+
     return (
       <div
+        ref={wrapperRef}
         className={[
           "flex flex-col gap-[0.625rem] rounded-2xl border bg-neutral-900 p-[1.25rem]",
           isError || isOverMax ? "border-red-500" : "border-neutral-750",

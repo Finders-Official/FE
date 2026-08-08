@@ -4,6 +4,8 @@ import {
   promotionBanner2,
   promotionBanner3,
 } from "@/assets/images";
+import { PageDots } from "./PageDots";
+import { Press } from "@/components/common/motion";
 
 interface MainBannerProps {
   id: number;
@@ -49,7 +51,8 @@ export default function PromotionBanner() {
         className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5"
       >
         {BANNERS.map((banner) => (
-          <div
+          <Press
+            as="div"
             key={banner.id}
             className="min-w-[calc(100%-3px)] shrink-0 snap-center"
           >
@@ -60,23 +63,16 @@ export default function PromotionBanner() {
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
-          </div>
+          </Press>
         ))}
       </div>
 
       {/* 페이지네이션 도트 */}
-      <div className="mt-4 flex justify-center gap-2">
-        {BANNERS.map((_, index) => (
-          <div
-            key={index}
-            className={`h-1 rounded-full transition-all duration-300 ${
-              currentIndex === index
-                ? "w-1 bg-orange-500"
-                : "w-1 bg-neutral-400"
-            }`}
-          />
-        ))}
-      </div>
+      <PageDots
+        count={BANNERS.length}
+        activeIndex={currentIndex}
+        className="mt-4 gap-2"
+      />
     </div>
   );
 }

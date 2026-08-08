@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import BottomSheet from "@/components/common/BottomSheet";
 import RegionSelector from "@/components/photoLab/RegionSelector";
 import { REGIONS, MAX_REGION_SELECTIONS } from "@/constants/photoLab/regions";
 import { useRegionFilters } from "@/hooks/photoLab";
 import type { FilterState, Region, RegionSelection } from "@/types/photoLab";
+import { Press } from "@/components/common";
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -60,30 +61,36 @@ export default function FilterBottomSheet({
     initialFilter?.regionSelections?.[0]?.parentName ?? defaultDisplayRegion,
   );
 
-  // 지역 서브 리전 토글
-  const handleSubRegionToggle = (parentName: string, subRegion: string) => {
-    setSelectedRegions((prev) => {
-      const exists = prev.some(
-        (s) => s.parentName === parentName && s.subRegion === subRegion,
-      );
-      if (exists) {
-        return prev.filter(
-          (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+  // 지역 서브 리전 토글 (참조 고정 — RegionSelector 내부 memo 섹션이 리렌더를 건너뛸 수 있게)
+  const handleSubRegionToggle = useCallback(
+    (parentName: string, subRegion: string) => {
+      setSelectedRegions((prev) => {
+        const exists = prev.some(
+          (s) => s.parentName === parentName && s.subRegion === subRegion,
         );
-      }
-      if (prev.length >= MAX_REGION_SELECTIONS) return prev;
-      return [...prev, { parentName, subRegion }];
-    });
-  };
+        if (exists) {
+          return prev.filter(
+            (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+          );
+        }
+        if (prev.length >= MAX_REGION_SELECTIONS) return prev;
+        return [...prev, { parentName, subRegion }];
+      });
+    },
+    [],
+  );
 
   // 지역 선택 칩 제거
-  const handleRemoveSelection = (parentName: string, subRegion: string) => {
-    setSelectedRegions((prev) =>
-      prev.filter(
-        (s) => !(s.parentName === parentName && s.subRegion === subRegion),
-      ),
-    );
-  };
+  const handleRemoveSelection = useCallback(
+    (parentName: string, subRegion: string) => {
+      setSelectedRegions((prev) =>
+        prev.filter(
+          (s) => !(s.parentName === parentName && s.subRegion === subRegion),
+        ),
+      );
+    },
+    [],
+  );
 
   // RegionSelection[] → regionIds[] 변환
   const selectionsToRegionIds = (selections: RegionSelection[]): string[] => {
@@ -162,22 +169,22 @@ export default function FilterBottomSheet({
         {/* 하단 버튼 영역 */}
         <div className="bg-neutral-875 flex gap-3 border-t border-neutral-800 px-4 py-5">
           {/* 초기화 버튼 */}
-          <button
+          <Press
             type="button"
             onClick={handleReset}
             className="flex h-14 w-[7.5625rem] items-center justify-center rounded-[1.125rem] border border-neutral-600 text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-200"
           >
             초기화
-          </button>
+          </Press>
 
           {/* 적용 버튼 */}
-          <button
+          <Press
             type="button"
             onClick={handleApply}
             className="flex h-14 flex-1 items-center justify-center rounded-[1.125rem] bg-orange-500 text-[1rem] leading-[155%] font-semibold tracking-[-0.02em] text-neutral-100"
           >
             적용
-          </button>
+          </Press>
         </div>
       </div>
     </BottomSheet>

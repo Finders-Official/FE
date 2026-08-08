@@ -104,7 +104,7 @@ export default function CommunityGallerySection() {
               <CommunityGallerySectionCard post={post} />
               {/* 비활성 카드 오버레이 (클릭 간섭 방지를 위해 pointer-events-none 적용) */}
               <div
-                className={`pointer-events-none absolute inset-0 rounded-2xl bg-black transition-opacity duration-200 ${
+                className={`ease-smooth-out pointer-events-none absolute inset-0 rounded-2xl bg-black transition-opacity duration-[var(--duration-fast)] motion-reduce:transition-none ${
                   idx === activeIndex ? "opacity-0" : "opacity-45"
                 }`}
               />

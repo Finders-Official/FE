@@ -1,7 +1,7 @@
 export function PhotoLabCardSkeleton() {
   return (
     <div className="mt-2 border-b border-neutral-800 py-4">
-      <div className="group relative animate-pulse">
+      <div className="t-skel-sheen group relative">
         {/* 우상단 즐겨찾기(별) 버튼 자리 */}
         <div className="absolute top-3 right-1 z-10 flex h-10 w-10 items-center justify-center">
           <div className="h-6 w-6 rounded-full bg-neutral-800" />

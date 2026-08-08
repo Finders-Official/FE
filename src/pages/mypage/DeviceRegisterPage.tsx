@@ -9,8 +9,11 @@ import { InputForm } from "@/components/auth";
 import {
   Checkbox,
   CTA_Button,
+  PageSlide,
+  Press,
   SearchBar,
-  ToastItem,
+  StaggerItem,
+  Toast,
 } from "@/components/common";
 import { DialogBox } from "@/components/common/DialogBox";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -18,6 +21,7 @@ import { EmptyOrderState } from "@/components/mypage";
 import { DeviceItem, SpecButton } from "@/components/mypage";
 
 import { useInfiniteScroll } from "@/hooks/common/useInfiniteScroll";
+import { useFirstPageStagger } from "@/hooks/common/useFirstPageStagger";
 import type { EquipmentItem } from "@/types/mypage/device";
 import {
   useCamerasInfinite,
@@ -40,15 +44,6 @@ export function DeviceRegisterPage() {
 
   // 토스트 메시지 상태 관리
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // 토스트 타이머 (3초 후 자동 제거)
-  useEffect(() => {
-    if (!toastMessage) return;
-    const timer = setTimeout(() => {
-      setToastMessage(null);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [toastMessage]);
 
   // 등록 취소 다이얼로그 상태 추가
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
@@ -84,31 +79,35 @@ export function DeviceRegisterPage() {
 
   return (
     <div className="relative flex h-full flex-1 flex-col">
-      {step === "LIST" ? (
-        <ListView
-          onGoToRegister={() => handleGoToRegister()}
-          onGoToEdit={handleGoToRegister}
-        />
-      ) : (
-        <RegisterView
-          initialData={editingItem}
-          // 완료 시 토스트 메시지를 전달받아 상태를 업데이트하고 리스트로 이동
-          onSubmit={(message) => {
-            setToastMessage(message);
-            setStep("LIST");
-          }}
-        />
-      )}
-
-      {/*  토스트 렌더링 영역  */}
-      {toastMessage && (
-        <div className="fixed bottom-[var(--tabbar-height)] z-50 ml-4 flex animate-[finders-fade-in_500ms_ease-in-out_forwards] items-center justify-center">
-          <ToastItem
-            message={toastMessage}
-            icon={<CheckCircleIcon className="h-5 w-5" />}
+      <PageSlide
+        step={step}
+        direction={step === "REGISTER" ? "forward" : "back"}
+        className="flex flex-1 flex-col"
+      >
+        {step === "LIST" ? (
+          <ListView
+            onGoToRegister={() => handleGoToRegister()}
+            onGoToEdit={handleGoToRegister}
           />
-        </div>
-      )}
+        ) : (
+          <RegisterView
+            initialData={editingItem}
+            onSubmit={(message) => {
+              setToastMessage(message);
+              setStep("LIST");
+            }}
+          />
+        )}
+      </PageSlide>
+
+      <Toast
+        open={!!toastMessage}
+        onClose={() => setToastMessage(null)}
+        duration={3000}
+        placement="above-tab"
+        message={toastMessage ?? ""}
+        icon={<CheckCircleIcon className="h-5 w-5" />}
+      />
 
       <DialogBox
         isOpen={isCancelDialogOpen}
@@ -150,6 +149,7 @@ function ListView({ onGoToRegister, onGoToEdit }: ListViewProps) {
 
   const equipmentList = data?.pages.flatMap((page) => page.data.items) ?? [];
   const hasEquipments = equipmentList.length > 0;
+  const staggerIndexFor = useFirstPageStagger(equipmentList.length);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const onIntersect = useCallback(() => {
@@ -192,21 +192,25 @@ function ListView({ onGoToRegister, onGoToEdit }: ListViewProps) {
         {isLoading ? (
           <LoadingSpinner open={isLoading} />
         ) : isError ? (
-          <div className="flex flex-1 items-center justify-center text-neutral-400">
+          <div className="t-fade-in flex flex-1 items-center justify-center text-neutral-400">
             장비 목록을 불러오지 못했습니다.
           </div>
         ) : hasEquipments ? (
           <div className="flex flex-col gap-4">
-            {equipmentList.map((item) => (
-              <DeviceItem
+            {equipmentList.map((item, index) => (
+              <StaggerItem
                 key={item.combinationId}
-                title={item.nickname}
-                isDefault={item.isDefault}
-                cameraName={item.camera.name}
-                filmName={item.film.name}
-                onEdit={() => onGoToEdit(item)}
-                onDelete={() => handleDeleteClick(item.combinationId)}
-              />
+                index={staggerIndexFor(index)}
+              >
+                <DeviceItem
+                  title={item.nickname}
+                  isDefault={item.isDefault}
+                  cameraName={item.camera.name}
+                  filmName={item.film.name}
+                  onEdit={() => onGoToEdit(item)}
+                  onDelete={() => handleDeleteClick(item.combinationId)}
+                />
+              </StaggerItem>
             ))}
           </div>
         ) : (
@@ -268,6 +272,11 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
 
   const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
 
+  // 처리 실패 토스트 메시지
+  const [errorToastMessage, setErrorToastMessage] = useState<string | null>(
+    null,
+  );
+
   // 바텀시트 제어 상태
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [bottomSheetType, setBottomSheetType] = useState<
@@ -325,7 +334,6 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
 
   const closeBottomSheet = () => {
     setIsBottomSheetOpen(false);
-    setTimeout(() => setBottomSheetType(null), 200);
   };
 
   // 선택 시 이름과 아이디를 세트로 상태 주입
@@ -345,7 +353,9 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
     }
 
     // 그 외 알 수 없는 에러
-    alert("장비 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    setErrorToastMessage(
+      "장비 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    );
   };
 
   // 유효성 검사: 카메라, 필름 선택 완료 및 글자수가 입력되었을 때 주황색 활성화
@@ -450,7 +460,20 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
         onConfirm={() => setIsDuplicateDialogOpen(false)}
       />
 
-      <BottomSheet open={isBottomSheetOpen} onClose={closeBottomSheet}>
+      {/* 처리 실패 토스트 */}
+      <Toast
+        open={!!errorToastMessage}
+        onClose={() => setErrorToastMessage(null)}
+        duration={3000}
+        placement="above-tab"
+        message={errorToastMessage ?? ""}
+      />
+
+      <BottomSheet
+        open={isBottomSheetOpen}
+        onClose={closeBottomSheet}
+        onExited={() => setBottomSheetType(null)}
+      >
         <div className="flex h-full flex-col gap-6 px-4 pt-4">
           <SearchBar
             value={searchValue}
@@ -468,15 +491,16 @@ function RegisterView({ initialData, onSubmit }: RegisterViewProps) {
                 {currentItems.map((item) => {
                   const itemId = item.cameraId ?? item.filmId ?? "";
                   return (
-                    <li
+                    <Press
+                      as="li"
                       key={itemId}
-                      className="cursor-pointer border-b border-neutral-800 py-4 text-neutral-200 hover:bg-neutral-800"
+                      className="cursor-pointer border-b border-neutral-800 py-4 text-neutral-200"
                       onClick={() => handleSelectItem(itemId, item.name)}
                     >
                       <p className="font-semibold">
                         {item.company} {item.model}
                       </p>
-                    </li>
+                    </Press>
                   );
                 })}
 

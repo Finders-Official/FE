@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { CopyIcon, CopyFillIcon, ExclamationCircleIcon } from "@/assets/icon";
-import { ToastItem } from "./ToastMessage";
+import { Press, Toast } from "@/components/common/motion";
 
 interface CopyButtonProps {
   text: string;
@@ -21,70 +21,52 @@ export function CopyButton({
   ariaLabel,
   aboveTabBar = false,
 }: CopyButtonProps) {
-  const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [open, setOpen] = useState(false);
   const [isError, setIsError] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const showToast = useCallback((error: boolean) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
-    setIsError(error);
-    setMounted(true);
-    setVisible(true);
-
-    timeoutRef.current = setTimeout(() => {
-      setVisible(false);
-      timeoutRef.current = setTimeout(() => {
-        setMounted(false);
-      }, 200);
-    }, 1800);
-  }, []);
+  const [nonce, setNonce] = useState(0);
 
   const handleCopy = useCallback(async () => {
+    let error = false;
     try {
       await navigator.clipboard.writeText(text);
-      showToast(false);
     } catch {
-      showToast(true);
+      error = true;
     }
-  }, [text, showToast]);
+    setIsError(error);
+    setOpen(true);
+    setNonce((n) => n + 1);
+  }, [text]);
 
   return (
     <>
-      <button
+      <Press
         type="button"
         onClick={handleCopy}
         className={className}
         aria-label={ariaLabel}
       >
         {children ?? <CopyIcon className={iconClassName} />}
-      </button>
+      </Press>
 
-      {mounted && (
-        <div
-          className={`fixed left-1/2 z-[9999] flex -translate-x-1/2 flex-col gap-[0.75rem] ${aboveTabBar ? "bottom-[calc(var(--tabbar-height)+1rem)]" : "bottom-[2rem]"}`}
-        >
-          <div className={visible ? "" : "animate-toast-out"}>
-            <ToastItem
-              message={isError ? "복사에 실패했습니다." : toastMessage}
-              icon={
-                isError ? (
-                  <ExclamationCircleIcon className="text-orange-450 h-5 w-5" />
-                ) : (
-                  <CopyFillIcon className="text-orange-450 h-5 w-5" />
-                )
-              }
-            />
-          </div>
-        </div>
-      )}
+      <Toast
+        open={open}
+        onClose={() => setOpen(false)}
+        resetKey={nonce}
+        duration={1800}
+        className={
+          aboveTabBar
+            ? "fixed bottom-[calc(var(--tabbar-height)+1rem)] left-1/2 z-[9999] -translate-x-1/2"
+            : "fixed bottom-[2rem] left-1/2 z-[9999] -translate-x-1/2"
+        }
+        message={isError ? "복사에 실패했습니다." : toastMessage}
+        icon={
+          isError ? (
+            <ExclamationCircleIcon className="text-orange-450 h-5 w-5" />
+          ) : (
+            <CopyFillIcon className="text-orange-450 h-5 w-5" />
+          )
+        }
+      />
     </>
   );
 }
