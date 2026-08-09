@@ -19,8 +19,18 @@ export function usePushNotifications(
   enabled: boolean,
   navigate: NavigateFunction,
 ) {
-  const { mutate: registerDeviceToken } = useRegisterDeviceToken();
   const setPushToken = usePushTokenStore((s) => s.setToken);
+
+  const { mutate: registerDeviceToken } = useRegisterDeviceToken({
+    // 서버 등록이 성공했을 때만 로컬 참조를 채운다 (해제 쪽과 같은 규칙)
+    onSuccess: (_data, variables) => {
+      setPushToken(variables.token);
+    },
+    // mutate는 rejection을 삼키므로 여기서 잡지 않으면 실패가 흔적 없이 사라진다
+    onError: (error) => {
+      console.error("FCM 기기 토큰 서버 등록 실패", error);
+    },
+  });
 
   useEffect(() => {
     if (!enabled || !Capacitor.isNativePlatform()) return;
@@ -44,7 +54,6 @@ export function usePushNotifications(
               ? (await FindersFcm.getToken()).token
               : token.value;
 
-          setPushToken(fcmToken);
           registerDeviceToken({ token: fcmToken, platform });
         } catch (error) {
           console.error("FCM 기기 토큰 조회 실패", error);
@@ -64,7 +73,6 @@ export function usePushNotifications(
     const tokenRefreshHandle =
       platform === "IOS"
         ? FindersFcm.addListener("tokenRefresh", ({ token }) => {
-            setPushToken(token);
             registerDeviceToken({ token, platform });
           })
         : null;
@@ -104,5 +112,5 @@ export function usePushNotifications(
       pushActionHandle.then((handle) => handle.remove());
       tokenRefreshHandle?.then((handle) => handle.remove());
     };
-  }, [enabled, navigate, registerDeviceToken, setPushToken]);
+  }, [enabled, navigate, registerDeviceToken]);
 }

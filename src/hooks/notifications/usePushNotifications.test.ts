@@ -26,8 +26,21 @@ vi.mock("@/store/usePushToken.store", () => ({
     selector({ setToken }),
 }));
 
+// 훅이 넘긴 onSuccess/onError를 테스트가 직접 호출하기 위해 붙잡아 둔다
+const registerMock = vi.hoisted(() => ({
+  options: undefined as
+    | {
+        onSuccess?: (data: unknown, variables: { token: string }) => void;
+        onError?: (error: Error) => void;
+      }
+    | undefined,
+}));
+
 vi.mock("./useRegisterDeviceToken", () => ({
-  useRegisterDeviceToken: () => ({ mutate: vi.fn() }),
+  useRegisterDeviceToken: (options?: typeof registerMock.options) => {
+    registerMock.options = options;
+    return { mutate: vi.fn() };
+  },
 }));
 
 const navigate = vi.fn() as unknown as NavigateFunction;
@@ -47,6 +60,7 @@ function deferPermissions() {
 describe("usePushNotifications", () => {
   beforeEach(() => {
     vi.mocked(PushNotifications.register).mockClear();
+    setToken.mockClear();
   });
 
   it("권한 허용이 마운트 중에 끝나면 register를 호출한다", async () => {
@@ -69,5 +83,29 @@ describe("usePushNotifications", () => {
     await Promise.resolve();
 
     expect(PushNotifications.register).not.toHaveBeenCalled();
+  });
+
+  it("서버 등록이 성공해야 로컬 토큰 참조를 채운다", () => {
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    registerMock.options?.onSuccess?.(undefined, { token: "fcm-token" });
+
+    expect(setToken).toHaveBeenCalledWith("fcm-token");
+  });
+
+  it("서버 등록이 실패하면 로컬 토큰 참조를 채우지 않는다", () => {
+    // 실패한 토큰을 등록된 것으로 남기면 해제 API가 엉뚱한 값을 보낸다
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    registerMock.options?.onError?.(new Error("500"));
+
+    expect(setToken).not.toHaveBeenCalled();
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
   });
 });
