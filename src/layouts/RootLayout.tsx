@@ -6,6 +6,10 @@ import { DialogBox } from "@/components/common/DialogBox";
 import GlobalLoginDialog from "@/components/common/GlobalLoginDialog";
 import { useNewPostState } from "@/store/useNewPostState.store";
 
+// 이탈 시 입력값이 날아가는 가입 단계. /auth/terms는 메인에서 push로 들어오는
+// 약관 열람 페이지라 제외(뒤로가기가 원래 화면으로 돌아가야 한다).
+const SIGNUP_PATHS = ["/auth/agreement", "/auth/onboarding"];
+
 export default function RootLayout() {
   const navigate = useNavigate();
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
@@ -29,17 +33,17 @@ export default function RootLayout() {
         return;
       }
 
-      if (canGoBack) {
-        navigate(-1);
+      // 가입 플로우(약관/온보딩)에서 뒤로가기는 항상 로그인으로 되돌린다.
+      // canGoBack보다 먼저 판정해야 한다 — 로그인 다이얼로그로 진입하면 /auth/login이
+      // push라 히스토리가 남고, canGoBack 분기에 먼저 걸려 입력 중이던 가입 정보가 날아간다.
+      // (이벤트 발생 시점에 읽어야 리스너 재등록 없이 최신 경로가 잡힌다)
+      if (SIGNUP_PATHS.includes(window.location.pathname)) {
+        navigate("/auth/login", { replace: true });
         return;
       }
 
-      // 가입 플로우(약관/온보딩)는 전 구간 replace라 히스토리가 비어 있다.
-      // 여기서 앱을 닫으면 입력 중이던 가입 정보가 날아가므로 로그인으로 되돌린다.
-      // (이벤트 발생 시점에 읽어야 리스너 재등록 없이 최신 경로가 잡힌다)
-      const { pathname } = window.location;
-      if (pathname.startsWith("/auth/") && pathname !== "/auth/login") {
-        navigate("/auth/login", { replace: true });
+      if (canGoBack) {
+        navigate(-1);
         return;
       }
 
