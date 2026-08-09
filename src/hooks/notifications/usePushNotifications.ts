@@ -59,6 +59,16 @@ export function usePushNotifications(
       },
     );
 
+    // Android는 토큰이 회전하면 registration 이벤트가 다시 발생하지만 iOS는 그 경로가 없어
+    // 네이티브 브릿지가 대신 알려준다. 갱신하지 않으면 서버에 죽은 토큰이 남는다
+    const tokenRefreshHandle =
+      platform === "IOS"
+        ? FindersFcm.addListener("tokenRefresh", ({ token }) => {
+            setPushToken(token);
+            registerDeviceToken({ token, platform });
+          })
+        : null;
+
     const pushReceivedHandle = PushNotifications.addListener(
       "pushNotificationReceived",
       (notification) => {
@@ -92,6 +102,7 @@ export function usePushNotifications(
       registrationErrorHandle.then((handle) => handle.remove());
       pushReceivedHandle.then((handle) => handle.remove());
       pushActionHandle.then((handle) => handle.remove());
+      tokenRefreshHandle?.then((handle) => handle.remove());
     };
   }, [enabled, navigate, registerDeviceToken, setPushToken]);
 }

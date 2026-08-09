@@ -297,6 +297,10 @@ const router = createBrowserRouter([
         element: <MyPageLayout />,
         children: mypageRoutes,
       },
+
+      // 매칭되는 라우트가 없으면 빈 화면이 된다.
+      // 푸시 딥링크(data.route)가 잘못된 경로를 보내는 경우가 대표적이다
+      { path: "*", element: <Navigate to="/mainpage" replace /> },
     ],
   },
 ]);
