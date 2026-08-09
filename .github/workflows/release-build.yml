@@ -169,7 +169,9 @@ jobs:
           # (안 잡으면 뒤의 security cms가 "Cannot parse a NULL or zero-length data"로만 죽어 원인이 안 보인다)
           for f in "$CERT_PATH" "$PROFILE_PATH"; do
             SIZE=$(stat -f%z "$f" 2>/dev/null || echo 0)
-            echo "$(basename "$f"): ${SIZE} bytes"
+            # 컨테이너 형식 판별용 매직 바이트. DER(30 82…)가 아니면 인코딩이 잘못된 것이다
+            # (3c3f786d = "<?xml" 서명 안 된 plist, 그 외 ASCII면 base64 이중 인코딩)
+            echo "$(basename "$f"): ${SIZE} bytes, head=$(head -c 4 "$f" | xxd -p)"
             if [ "$SIZE" -lt 100 ]; then
               echo "::error::$(basename "$f") 디코딩 결과가 ${SIZE} bytes다. 해당 Secret 값을 다시 등록할 것"
               exit 1
