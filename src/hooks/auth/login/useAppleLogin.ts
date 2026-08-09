@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { loginWithApple } from "@/utils/auth/appleSdk";
-import { setRecentLoginProvider } from "@/utils/auth/recentLoginProvider";
+import {
+  setPendingSignupProvider,
+  setRecentLoginProvider,
+} from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -36,6 +39,7 @@ export function useAppleLogin({
         setUser({ memberId: data.member.id, nickname: data.member.nickname });
         onExistingMember();
       } else {
+        setPendingSignupProvider("APPLE");
         tokenStorage.setTokens({
           accessToken: null,
           signupToken: data.signupToken,

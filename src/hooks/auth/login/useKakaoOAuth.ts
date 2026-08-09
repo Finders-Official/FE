@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { consumeAndValidateKakaoState } from "@/utils/auth/kakaoOauth";
-import { setRecentLoginProvider } from "@/utils/auth/recentLoginProvider";
+import {
+  setPendingSignupProvider,
+  setRecentLoginProvider,
+} from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -41,6 +44,7 @@ export function useKakaoOauth({
         onExistingMember();
       } else {
         // 신규 회원: signupToken 저장 후 온보딩으로
+        setPendingSignupProvider("KAKAO");
         tokenStorage.setTokens({
           accessToken: null,
           signupToken: data.signupToken,

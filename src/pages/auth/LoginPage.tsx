@@ -11,6 +11,7 @@ import { isAndroidApp } from "@/utils/platform";
 import { oauth } from "@/apis/auth";
 import {
   getRecentLoginProvider,
+  setPendingSignupProvider,
   setRecentLoginProvider,
 } from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
@@ -163,6 +164,7 @@ export function LoginPage() {
         const data = response.data;
 
         if ("isNewMember" in data && data.isNewMember === true) {
+          setPendingSignupProvider("KAKAO");
           await tokenStorage.setTokens({
             accessToken: null,
             signupToken: data.signupToken,

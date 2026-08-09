@@ -11,6 +11,7 @@ import {
 } from "@/hooks/member";
 import { PHONE_ALREADY_REGISTERED_CODE } from "@/constants/member/phone.constant";
 import { tokenStorage } from "@/utils/tokenStorage";
+import { commitPendingSignupProvider } from "@/utils/auth/recentLoginProvider";
 import { useSocialSignup } from "./useSignUp";
 import { useAuthStore } from "@/store/useAuth.store";
 
@@ -231,6 +232,8 @@ export function useOnBoardingForm(options?: Options) {
 
   const { mutate: completeSignup, isPending: isCompleting } = useSocialSignup({
     onSuccess: (res) => {
+      // 가입이 끝났으므로 임시 보관한 provider를 "최근 로그인"으로 확정
+      commitPendingSignupProvider();
       tokenStorage.setTokens({
         accessToken: res.data.accessToken,
         signupToken: null,
