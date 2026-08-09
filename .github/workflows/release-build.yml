@@ -2,9 +2,7 @@ name: Release Build (AAB / IPA)
 
 on:
   push:
-    # TEMP: main 머지 전 CI 검증용. 검증 끝나면 이 브랜치 항목을 제거할 것
-    # (workflow_dispatch는 기본 브랜치에 있는 워크플로만 노출되어 머지 전엔 쓸 수 없다)
-    branches: [main, "chore/android-ios-build-ci(#312)"]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -178,19 +176,12 @@ jobs:
             fi
           done
 
-          echo "--- create-keychain"
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          echo "--- set-keychain-settings"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          echo "--- unlock-keychain"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          echo "--- import"
           security import "$CERT_PATH" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH" -T /usr/bin/codesign
-          echo "--- set-key-partition-list"
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          echo "--- list-keychain"
           security list-keychain -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | sed 's/"//g')
-          echo "--- security cms"
 
           mkdir -p ~/Library/MobileDevice/"Provisioning Profiles"
           cp "$PROFILE_PATH" ~/Library/MobileDevice/"Provisioning Profiles"/profile.mobileprovision
