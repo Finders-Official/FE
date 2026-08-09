@@ -195,8 +195,15 @@ jobs:
           mkdir -p ~/Library/MobileDevice/"Provisioning Profiles"
           cp "$PROFILE_PATH" ~/Library/MobileDevice/"Provisioning Profiles"/profile.mobileprovision
 
-          PROFILE_UUID=$(security cms -D -i "$PROFILE_PATH" | /usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin)
-          PROFILE_NAME=$(security cms -D -i "$PROFILE_PATH" | /usr/libexec/PlistBuddy -c "Print Name" /dev/stdin)
+          # security cms는 정상 DER 프로파일에도 "Cannot parse a NULL or zero-length data"로
+          # 실패한다(macos-latest 기준). openssl로 CMS 페이로드만 꺼낸다.
+          # -noverify: 서명 체인 검증은 불필요하고 payload plist만 있으면 된다
+          PROFILE_PLIST="$RUNNER_TEMP/profile.plist"
+          openssl smime -inform der -verify -noverify -in "$PROFILE_PATH" -out "$PROFILE_PLIST"
+
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" "$PROFILE_PLIST")
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" "$PROFILE_PLIST")
+          echo "profile: $PROFILE_NAME ($PROFILE_UUID)"
 
           echo "PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
           echo "PROFILE_NAME=$PROFILE_NAME" >> "$GITHUB_ENV"
