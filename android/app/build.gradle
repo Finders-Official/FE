@@ -14,7 +14,8 @@ android {
         applicationId "com.finders"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
+        // CI가 -PversionCode로 주입한다. 폴백은 로컬 빌드용 (develop 기준 최신 값)
+        versionCode project.hasProperty('versionCode') ? (project.property('versionCode') as Integer) : 4
         versionName "0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

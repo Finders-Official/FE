@@ -1,0 +1,255 @@
+name: Release Build (AAB / IPA)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: release-build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # 빌드 번호 = VERSION_CODE_BASE + github.run_number (Android versionCode / iOS CFBundleVersion 공용).
+  # 이미 배포된 versionCode(4) 이상이어야 Play Console이 업로드를 받는다.
+  VERSION_CODE_BASE: 4
+
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack (pnpm)
+        run: |
+          corepack enable
+          pnpm -v
+
+      - name: Setup Node (with pnpm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build web assets
+        env:
+          VITE_PUBLIC_API_URL: ${{ secrets.VITE_PUBLIC_API_URL }}
+          VITE_PUBLIC_KAKAO_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_KAKAO_REDIRECT_URI }}
+          VITE_PUBLIC_KAKAO_JS_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_JS_KEY }}
+          VITE_PUBLIC_KAKAO_REST_API_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_REST_API_KEY }}
+          VITE_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+          VITE_PUBLIC_APPLE_CLIENT_ID: ${{ secrets.VITE_PUBLIC_APPLE_CLIENT_ID }}
+          VITE_PUBLIC_APPLE_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_APPLE_REDIRECT_URI }}
+          VITE_PUBLIC_PORTONE_STORE_ID: ${{ secrets.VITE_PUBLIC_PORTONE_STORE_ID }}
+          VITE_PUBLIC_PORTONE_CHANNEL_KEY: ${{ secrets.VITE_PUBLIC_PORTONE_CHANNEL_KEY }}
+        run: pnpm build
+
+      - name: Sync Capacitor (android)
+        run: npx cap sync android
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Write google-services.json
+        env:
+          ANDROID_GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          echo "$ANDROID_GOOGLE_SERVICES_JSON_BASE64" | base64 -d > android/app/google-services.json
+
+      - name: Decode keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release.keystore
+
+      - name: Write keystore.properties
+        env:
+          ANDROID_KEYSTORE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_STORE_PASSWORD }}
+          ANDROID_KEYSTORE_KEY_ALIAS: ${{ secrets.ANDROID_KEYSTORE_KEY_ALIAS }}
+          ANDROID_KEYSTORE_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
+        run: |
+          cat <<EOF > android/keystore.properties
+          storeFile=release.keystore
+          storePassword=$ANDROID_KEYSTORE_STORE_PASSWORD
+          keyAlias=$ANDROID_KEYSTORE_KEY_ALIAS
+          keyPassword=$ANDROID_KEYSTORE_KEY_PASSWORD
+          EOF
+
+      - name: Build release AAB
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          VERSION_CODE=$((VERSION_CODE_BASE + GITHUB_RUN_NUMBER))
+          echo "versionCode: $VERSION_CODE"
+          ./gradlew bundleRelease --no-daemon -PversionCode=$VERSION_CODE
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: android/app/build/outputs/bundle/release/*.aab
+          retention-days: 14
+
+  ios-build:
+    runs-on: macos-latest
+    env:
+      TEAM_ID: YC7R5A6449
+      # TestFlight 내부 테스트 배포용. TestFlight는 app-store 방식 IPA를 사용하며, 내부 테스터 배포는 App Review 없이 가능.
+      EXPORT_METHOD: app-store
+      BUNDLE_ID: com.finders.app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack (pnpm)
+        run: |
+          corepack enable
+          pnpm -v
+
+      - name: Setup Node (with pnpm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build web assets
+        env:
+          VITE_PUBLIC_API_URL: ${{ secrets.VITE_PUBLIC_API_URL }}
+          VITE_PUBLIC_KAKAO_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_KAKAO_REDIRECT_URI }}
+          VITE_PUBLIC_KAKAO_JS_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_JS_KEY }}
+          VITE_PUBLIC_KAKAO_REST_API_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_REST_API_KEY }}
+          VITE_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.VITE_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+          VITE_PUBLIC_APPLE_CLIENT_ID: ${{ secrets.VITE_PUBLIC_APPLE_CLIENT_ID }}
+          VITE_PUBLIC_APPLE_REDIRECT_URI: ${{ secrets.VITE_PUBLIC_APPLE_REDIRECT_URI }}
+          VITE_PUBLIC_PORTONE_STORE_ID: ${{ secrets.VITE_PUBLIC_PORTONE_STORE_ID }}
+          VITE_PUBLIC_PORTONE_CHANNEL_KEY: ${{ secrets.VITE_PUBLIC_PORTONE_CHANNEL_KEY }}
+        run: pnpm build
+
+      - name: Sync Capacitor (ios)
+        run: npx cap sync ios
+
+      # Xcode 프로젝트에 리소스로 등록되어 있어 파일이 없으면 Archive가 바로 실패한다
+      # (Android와 달리 존재 여부를 체크하는 경로가 없음). cap sync 뒤에 써야 덮이지 않는다
+      - name: Write GoogleService-Info.plist
+        env:
+          IOS_GOOGLE_SERVICE_INFO_PLIST_BASE64: ${{ secrets.IOS_GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
+        run: |
+          echo "$IOS_GOOGLE_SERVICE_INFO_PLIST_BASE64" | base64 -d -o ios/App/App/GoogleService-Info.plist
+
+      - name: Import signing certificate & provisioning profile
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.IOS_DIST_CERTIFICATE_P12_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.IOS_DIST_CERTIFICATE_PASSWORD }}
+          PROFILE_BASE64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
+        run: |
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 24)
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/certificate.p12"
+          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
+
+          echo "$CERTIFICATE_BASE64" | base64 -d -o "$CERT_PATH"
+          echo "$PROFILE_BASE64" | base64 -d -o "$PROFILE_PATH"
+
+          # Secret이 비었거나 base64가 아니면 여기서 잡는다.
+          # (안 잡으면 뒤의 security cms가 "Cannot parse a NULL or zero-length data"로만 죽어 원인이 안 보인다)
+          for f in "$CERT_PATH" "$PROFILE_PATH"; do
+            SIZE=$(stat -f%z "$f" 2>/dev/null || echo 0)
+            # 컨테이너 형식 판별용 매직 바이트. DER(30 82…)가 아니면 인코딩이 잘못된 것이다
+            # (3c3f786d = "<?xml" 서명 안 된 plist, 그 외 ASCII면 base64 이중 인코딩)
+            echo "$(basename "$f"): ${SIZE} bytes, head=$(head -c 4 "$f" | xxd -p)"
+            if [ "$SIZE" -lt 100 ]; then
+              echo "::error::$(basename "$f") 디코딩 결과가 ${SIZE} bytes다. 해당 Secret 값을 다시 등록할 것"
+              exit 1
+            fi
+          done
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH" $(security list-keychains -d user | sed 's/"//g')
+
+          mkdir -p ~/Library/MobileDevice/"Provisioning Profiles"
+          cp "$PROFILE_PATH" ~/Library/MobileDevice/"Provisioning Profiles"/profile.mobileprovision
+
+          # security cms는 정상 DER 프로파일에도 "Cannot parse a NULL or zero-length data"로
+          # 실패한다(macos-latest 기준). openssl로 CMS 페이로드만 꺼낸다.
+          # -noverify: 서명 체인 검증은 불필요하고 payload plist만 있으면 된다
+          PROFILE_PLIST="$RUNNER_TEMP/profile.plist"
+          openssl smime -inform der -verify -noverify -in "$PROFILE_PATH" -out "$PROFILE_PLIST"
+
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" "$PROFILE_PLIST")
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" "$PROFILE_PLIST")
+          echo "profile: $PROFILE_NAME ($PROFILE_UUID)"
+
+          echo "PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
+          echo "PROFILE_NAME=$PROFILE_NAME" >> "$GITHUB_ENV"
+          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+
+      - name: Archive
+        working-directory: ios/App
+        run: |
+          BUILD_NUMBER=$((VERSION_CODE_BASE + GITHUB_RUN_NUMBER))
+          echo "build number: $BUILD_NUMBER"
+          xcodebuild -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -destination "generic/platform=iOS" \
+            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" \
+            CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
+            archive
+
+      - name: Create ExportOptions.plist
+        run: |
+          cat <<EOF > "$RUNNER_TEMP/ExportOptions.plist"
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>$EXPORT_METHOD</string>
+            <key>teamID</key>
+            <string>$TEAM_ID</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>$BUNDLE_ID</key>
+              <string>$PROFILE_NAME</string>
+            </dict>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportPath "$RUNNER_TEMP/build" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-ipa
+          path: ${{ runner.temp }}/build/*.ipa
+          retention-days: 14
+
+      - name: Cleanup keychain
+        if: always()
+        run: security delete-keychain "$KEYCHAIN_PATH" || true
