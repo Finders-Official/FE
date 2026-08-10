@@ -8,8 +8,6 @@ import {
   type WithdrawBlockMessage,
 } from "@/constants/mypage/withdrawErrorMessage.constant";
 import { useWithDrawMe } from "@/hooks/member";
-import { useUnregisterDeviceToken } from "@/hooks/notifications";
-import { usePushTokenStore } from "@/store/usePushToken.store";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useQueryClient } from "@tanstack/react-query";
@@ -43,27 +41,11 @@ export function WithDrawPage() {
     message: { title: "", description: "" },
   });
 
-  const { mutateAsync: unregisterDeviceToken } = useUnregisterDeviceToken({
-    // 해제 API가 실제로 성공했을 때만 로컬 참조를 비운다
-    // (실패 시 토큰 값을 남겨둬야 추후 재시도할 여지가 있음)
-    onSuccess: () => {
-      usePushTokenStore.getState().setToken(null);
-    },
-  });
-
   const { mutate: withdraw, isPending } = useWithDrawMe({
-    onSuccess: async () => {
-      // 기기 토큰 해제를 끝낸 뒤에 accessToken을 지운다
-      // (먼저 지우면 Authorization 없이 나가 401이 된다)
-      const pushToken = usePushTokenStore.getState().token;
-      if (pushToken) {
-        try {
-          await unregisterDeviceToken(pushToken);
-        } catch {
-          // 해제 실패로 탈퇴 완료 처리를 막지는 않는다
-        }
-      }
-
+    onSuccess: () => {
+      // 기기 토큰은 서버가 탈퇴 트랜잭션 안에서 지운다 (BE #712).
+      // 서버가 탈퇴 시점에 accessToken을 즉시 무효화하므로
+      // 클라이언트의 해제 호출은 어차피 항상 401이었다
       tokenStorage.clear();
       qc.clear();
       navigate("/auth/login", { replace: true });
