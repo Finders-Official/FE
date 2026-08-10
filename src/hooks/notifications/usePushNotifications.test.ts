@@ -34,14 +34,26 @@ const registerMock = vi.hoisted(() => ({
         onError?: (error: Error) => void;
       }
     | undefined,
+  mutate: vi.fn(),
 }));
 
 vi.mock("./useRegisterDeviceToken", () => ({
   useRegisterDeviceToken: (options?: typeof registerMock.options) => {
     registerMock.options = options;
-    return { mutate: vi.fn() };
+    return { mutate: registerMock.mutate };
   },
 }));
+
+// 훅이 등록한 Capacitor 리스너를 테스트가 직접 발화시킨다
+function getListener(event: string) {
+  const call = vi
+    .mocked(PushNotifications.addListener)
+    .mock.calls.find(([name]) => name === event);
+
+  if (!call) throw new Error(`${event} 리스너가 등록되지 않았다`);
+
+  return call[1] as (payload: unknown) => unknown;
+}
 
 const navigate = vi.fn() as unknown as NavigateFunction;
 
@@ -60,6 +72,9 @@ function deferPermissions() {
 describe("usePushNotifications", () => {
   beforeEach(() => {
     vi.mocked(PushNotifications.register).mockClear();
+    vi.mocked(PushNotifications.addListener).mockClear();
+    registerMock.mutate.mockClear();
+    vi.mocked(navigate).mockClear();
     setToken.mockClear();
   });
 
@@ -107,5 +122,49 @@ describe("usePushNotifications", () => {
     expect(setToken).not.toHaveBeenCalled();
     expect(consoleError).toHaveBeenCalled();
     consoleError.mockRestore();
+  });
+
+  it("같은 토큰이 두 번 통보돼도 서버에는 한 번만 등록한다", async () => {
+    // iOS는 초기 발급 시 registration과 tokenRefresh가 같은 값으로 둘 다 발생한다
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    const onRegistration = getListener("registration");
+    await onRegistration({ value: "fcm-token" });
+    await onRegistration({ value: "fcm-token" });
+
+    expect(registerMock.mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it("등록에 실패한 토큰은 다시 등록을 시도할 수 있다", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    const onRegistration = getListener("registration");
+    await onRegistration({ value: "fcm-token" });
+    registerMock.options?.onError?.(new Error("500"));
+    await onRegistration({ value: "fcm-token" });
+
+    expect(registerMock.mutate).toHaveBeenCalledTimes(2);
+    consoleError.mockRestore();
+  });
+
+  it("딥링크는 절대 경로일 때만 이동한다", async () => {
+    // 슬래시 없는 값은 현재 위치 기준 상대 경로로 해석돼 엉뚱한 화면으로 간다
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    const onAction = getListener("pushNotificationActionPerformed");
+    await onAction({ notification: { data: { route: "photoFeed" } } });
+    await onAction({ notification: { data: { route: "//evil.com" } } });
+
+    expect(navigate).not.toHaveBeenCalled();
+
+    await onAction({ notification: { data: { route: "/photoFeed" } } });
+
+    expect(navigate).toHaveBeenCalledWith("/photoFeed");
   });
 });

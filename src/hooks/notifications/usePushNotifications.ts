@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { NavigateFunction } from "react-router";
 import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
@@ -21,6 +21,10 @@ export function usePushNotifications(
 ) {
   const setPushToken = usePushTokenStore((s) => s.setToken);
 
+  // iOS는 초기 토큰 발급 때 registration과 tokenRefresh가 같은 값으로 둘 다 발생한다.
+  // 등록 성공(store)을 기준으로 비교하면 두 요청이 이미 나간 뒤라, 보낸 시점으로 막는다
+  const sentTokenRef = useRef<string | null>(null);
+
   const { mutate: registerDeviceToken } = useRegisterDeviceToken({
     // 서버 등록이 성공했을 때만 로컬 참조를 채운다 (해제 쪽과 같은 규칙)
     onSuccess: (_data, variables) => {
@@ -28,6 +32,8 @@ export function usePushNotifications(
     },
     // mutate는 rejection을 삼키므로 여기서 잡지 않으면 실패가 흔적 없이 사라진다
     onError: (error) => {
+      // 실패한 토큰을 보낸 것으로 남겨두면 남은 경로의 재시도까지 막힌다
+      sentTokenRef.current = null;
       console.error("FCM 기기 토큰 서버 등록 실패", error);
     },
   });
@@ -43,6 +49,12 @@ export function usePushNotifications(
     // (Capacitor는 이 이벤트를 버퍼링하지 않음)
     let cancelled = false;
 
+    const sendDeviceToken = (token: string) => {
+      if (sentTokenRef.current === token) return;
+      sentTokenRef.current = token;
+      registerDeviceToken({ token, platform });
+    };
+
     const registrationHandle = PushNotifications.addListener(
       "registration",
       async (token) => {
@@ -54,7 +66,7 @@ export function usePushNotifications(
               ? (await FindersFcm.getToken()).token
               : token.value;
 
-          registerDeviceToken({ token: fcmToken, platform });
+          sendDeviceToken(fcmToken);
         } catch (error) {
           console.error("FCM 기기 토큰 조회 실패", error);
         }
@@ -73,7 +85,7 @@ export function usePushNotifications(
     const tokenRefreshHandle =
       platform === "IOS"
         ? FindersFcm.addListener("tokenRefresh", ({ token }) => {
-            registerDeviceToken({ token, platform });
+            sendDeviceToken(token);
           })
         : null;
 
@@ -90,8 +102,14 @@ export function usePushNotifications(
         // 백엔드가 AdminPushRequest.data에 실어 보낸 딥링크 경로로 이동
         // (예: { "route": "/home" }) — 앱이 종료된 상태에서 탭해도
         // 콜드 스타트 후 리스너가 등록되는 시점에 버퍼링된 이벤트가 발생함
+        // 절대 경로만 허용한다 — 슬래시 없는 값은 Router가 현재 위치 기준
+        // 상대 경로로 해석하고, "//host"는 외부 URL로 나간다
         const route = action.notification.data?.route;
-        if (typeof route === "string" && route.length > 0) {
+        if (
+          typeof route === "string" &&
+          route.startsWith("/") &&
+          !route.startsWith("//")
+        ) {
           navigate(route);
         }
       },
@@ -106,6 +124,8 @@ export function usePushNotifications(
 
     return () => {
       cancelled = true;
+      // 계정이 바뀌면 같은 기기 토큰이라도 다시 등록해야 한다
+      sentTokenRef.current = null;
       registrationHandle.then((handle) => handle.remove());
       registrationErrorHandle.then((handle) => handle.remove());
       pushReceivedHandle.then((handle) => handle.remove());
