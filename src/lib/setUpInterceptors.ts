@@ -37,6 +37,23 @@ function shouldSkipAuth(config: AxiosRequestConfig) {
   return url.startsWith("/auth/reissue") || url.startsWith("/auth/refresh");
 }
 
+// 세션이 끊겼을 때 앱을 로그인 화면으로 되돌리기 위한 콜백.
+// 인터셉터는 라우터·스토어를 모르므로 RootLayout이 등록한다
+let onSessionExpired: (() => void) | null = null;
+
+export function setOnSessionExpired(handler: (() => void) | null) {
+  onSessionExpired = handler;
+}
+
+// accessToken을 버리는 경로는 전부 이 함수를 거친다.
+// 토큰만 지우고 앱 상태를 그대로 두면 로그인된 것처럼 보이는 세션이 남는다
+async function clearSession() {
+  // 이미 비워진 뒤에 도착한 401까지 매번 알리면 로그인 화면으로 중복 이동한다
+  const hadAccessToken = await tokenStorage.getAccessToken();
+  await tokenStorage.clear();
+  if (hadAccessToken) onSessionExpired?.();
+}
+
 type AttachedAuth = "access" | "signup" | "none";
 type AuthMetaConfig = InternalAxiosRequestConfig & {
   _authAttached?: AttachedAuth;
@@ -124,7 +141,7 @@ export function setupInterceptors(instance: AxiosInstance) {
 
       // refresh/reissue 요청이 401이면 더 이상 재시도하지 말고 토큰 정리
       if (shouldSkipAuth(originalConfig)) {
-        await tokenStorage.clear(); // await 추가
+        await clearSession();
         return Promise.reject(error);
       }
 
@@ -136,7 +153,7 @@ export function setupInterceptors(instance: AxiosInstance) {
 
       // 무한 루프 방지
       if (originalConfig._retry) {
-        await tokenStorage.clear(); // await 추가
+        await clearSession();
         return Promise.reject(error);
       }
       originalConfig._retry = true;
@@ -186,7 +203,7 @@ export function setupInterceptors(instance: AxiosInstance) {
         return instance(originalConfig);
       } catch (refreshErr) {
         processQueue(refreshErr, null);
-        await tokenStorage.clear(); // await 추가
+        await clearSession();
         return Promise.reject(refreshErr);
       } finally {
         isRefreshing = false;
