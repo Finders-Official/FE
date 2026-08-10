@@ -13,6 +13,33 @@ function toDevicePlatform(platform: string): DevicePlatform | null {
   return null;
 }
 
+// 서버는 경로 문자열 대신 action + resourceId를 보낸다 (BE #714)
+// null이면 이동하지 않는다 — action이 아예 없는 건 계약 이전 서버가 보낸 메시지다
+function toRoute(action: unknown, resourceId: unknown): string | null {
+  if (typeof action !== "string") return null;
+
+  const id =
+    typeof resourceId === "string" ? encodeURIComponent(resourceId) : "";
+
+  switch (action) {
+    case "PHOTO_FEED":
+      return "/photoFeed";
+    case "POST_DETAIL":
+      return id ? `/photoFeed/post/${id}` : "/photoFeed";
+    case "PHOTO_LAB_LIST":
+      return "/photolab";
+    case "PHOTO_LAB_DETAIL":
+      return id ? `/photolab/${id}` : "/photolab";
+    case "PHOTO_MANAGE":
+      return "/photoManage/main";
+    case "DEVELOPMENT_HISTORY":
+      return "/development-history";
+    default:
+      // HOME + 앱보다 나중에 추가된 action
+      return "/mainpage";
+  }
+}
+
 // FCM 기기 토큰 획득/등록 및 푸시 수신 리스너 등록
 // enabled(로그인 상태)일 때만 활성화되며, 네이티브 앱이 아니면 아무 것도 하지 않는다
 export function usePushNotifications(
@@ -99,19 +126,12 @@ export function usePushNotifications(
     const pushActionHandle = PushNotifications.addListener(
       "pushNotificationActionPerformed",
       (action) => {
-        // 백엔드가 AdminPushRequest.data에 실어 보낸 딥링크 경로로 이동
-        // (예: { "route": "/home" }) — 앱이 종료된 상태에서 탭해도
-        // 콜드 스타트 후 리스너가 등록되는 시점에 버퍼링된 이벤트가 발생함
-        // 절대 경로만 허용한다 — 슬래시 없는 값은 Router가 현재 위치 기준
-        // 상대 경로로 해석하고, "//host"는 외부 URL로 나간다
-        const route = action.notification.data?.route;
-        if (
-          typeof route === "string" &&
-          route.startsWith("/") &&
-          !route.startsWith("//")
-        ) {
-          navigate(route);
-        }
+        // 백엔드가 data에 실어 보낸 action으로 목적지를 결정한다
+        // (예: { "action": "POST_DETAIL", "resourceId": "..." }) — 앱이 종료된
+        // 상태에서 탭해도 콜드 스타트 후 리스너가 등록되는 시점에 버퍼링된 이벤트가 발생함
+        const data = action.notification.data;
+        const route = toRoute(data?.action, data?.resourceId);
+        if (route) navigate(route);
       },
     );
 

@@ -152,19 +152,48 @@ describe("usePushNotifications", () => {
     consoleError.mockRestore();
   });
 
-  it("딥링크는 절대 경로일 때만 이동한다", async () => {
-    // 슬래시 없는 값은 현재 위치 기준 상대 경로로 해석돼 엉뚱한 화면으로 간다
+  it("action을 목적지로 변환해 이동한다", async () => {
     deferPermissions();
     renderHook(() => usePushNotifications(true, navigate));
 
     const onAction = getListener("pushNotificationActionPerformed");
-    await onAction({ notification: { data: { route: "photoFeed" } } });
-    await onAction({ notification: { data: { route: "//evil.com" } } });
+    await onAction({
+      notification: { data: { action: "POST_DETAIL", resourceId: "123" } },
+    });
+
+    expect(navigate).toHaveBeenCalledWith("/photoFeed/post/123");
+  });
+
+  it("상세 action에 resourceId가 없으면 목록으로 강등한다", async () => {
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    const onAction = getListener("pushNotificationActionPerformed");
+    await onAction({ notification: { data: { action: "PHOTO_LAB_DETAIL" } } });
+
+    expect(navigate).toHaveBeenCalledWith("/photolab");
+  });
+
+  it("모르는 action은 메인으로 보낸다", async () => {
+    // 앱보다 나중에 서버에 추가된 action
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    const onAction = getListener("pushNotificationActionPerformed");
+    await onAction({ notification: { data: { action: "COUPON" } } });
+
+    expect(navigate).toHaveBeenCalledWith("/mainpage");
+  });
+
+  it("action이 없으면 이동하지 않는다", async () => {
+    // 계약 이전 서버가 route만 보내는 구간 — 알림을 탭해도 보던 화면이 유지돼야 한다
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    const onAction = getListener("pushNotificationActionPerformed");
+    await onAction({ notification: { data: { route: "/photoFeed" } } });
+    await onAction({ notification: { data: undefined } });
 
     expect(navigate).not.toHaveBeenCalled();
-
-    await onAction({ notification: { data: { route: "/photoFeed" } } });
-
-    expect(navigate).toHaveBeenCalledWith("/photoFeed");
   });
 });
