@@ -17,6 +17,7 @@ vi.mock("@capacitor/push-notifications", () => ({
     addListener: vi.fn(() => Promise.resolve({ remove: vi.fn() })),
     requestPermissions: vi.fn(),
     register: vi.fn(),
+    createChannel: vi.fn(() => Promise.resolve()),
   },
 }));
 
@@ -73,6 +74,7 @@ describe("usePushNotifications", () => {
   beforeEach(() => {
     vi.mocked(PushNotifications.register).mockClear();
     vi.mocked(PushNotifications.addListener).mockClear();
+    vi.mocked(PushNotifications.createChannel).mockClear();
     registerMock.mutate.mockClear();
     vi.mocked(navigate).mockClear();
     setToken.mockClear();
@@ -195,5 +197,15 @@ describe("usePushNotifications", () => {
     await onAction({ notification: { data: undefined } });
 
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("Android에서 헤즈업 채널을 만든다", () => {
+    // 채널이 없으면 FCM 기본 채널(importance DEFAULT)로 떨어져 배너가 뜨지 않는다
+    deferPermissions();
+    renderHook(() => usePushNotifications(true, navigate));
+
+    expect(PushNotifications.createChannel).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "finders_default", importance: 4 }),
+    );
   });
 });

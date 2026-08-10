@@ -13,6 +13,11 @@ function toDevicePlatform(platform: string): DevicePlatform | null {
   return null;
 }
 
+// Android 8+는 채널의 importance가 메시지 priority를 이긴다 — 앱이 채널을 만들지 않으면
+// FCM 기본 채널(importance DEFAULT)로 떨어져 서버가 high priority를 보내도 헤즈업/소리가 없다.
+// id는 AndroidManifest의 default_notification_channel_id와 반드시 같아야 한다
+const ANDROID_CHANNEL_ID = "finders_default";
+
 // 서버는 경로 문자열 대신 action + resourceId를 보낸다 (BE #714)
 // null이면 이동하지 않는다 — action이 아예 없는 건 계약 이전 서버가 보낸 메시지다
 function toRoute(action: unknown, resourceId: unknown): string | null {
@@ -134,6 +139,16 @@ export function usePushNotifications(
         if (route) navigate(route);
       },
     );
+
+    if (platform === "ANDROID") {
+      PushNotifications.createChannel({
+        id: ANDROID_CHANNEL_ID,
+        name: "알림",
+        importance: 4, // IMPORTANCE_HIGH — 헤즈업 배너 + 소리
+      }).catch((error) => {
+        console.error("알림 채널 생성 실패", error);
+      });
+    }
 
     PushNotifications.requestPermissions().then((result) => {
       if (cancelled) return;
