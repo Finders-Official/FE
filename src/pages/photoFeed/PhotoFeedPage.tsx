@@ -79,17 +79,19 @@ export default function PhotoFeedPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl pb-6">
-      <Header
-        title="사진수다"
-        rightAction={{
-          type: "icon",
-          icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
-          onClick: () => {
-            navigate("/photoFeed/search");
-          },
-        }}
-        className="sticky top-0 z-50 bg-neutral-900"
-      />
+      {/* 헤더 (스크롤 시에도 상단 고정, safe-area 대응) */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+        <Header
+          title="사진수다"
+          rightAction={{
+            type: "icon",
+            icon: <SearchIcon className="h-4.5 w-4.5 text-neutral-200" />,
+            onClick: () => {
+              navigate("/photoFeed/search");
+            },
+          }}
+        />
+      </div>
 
       {/* 에러 처리 */}
       {isError && <ErrorState />}

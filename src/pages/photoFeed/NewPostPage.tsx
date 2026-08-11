@@ -10,7 +10,7 @@ import { scrollToCenter } from "@/utils/scrollToCenter";
 const LIMITS = {
   titleMin: 2,
   titleMax: 30,
-  contentMin: 20,
+  contentMin: 0,
   contentMax: 300,
   maxPhotos: 10,
 } as const;
@@ -121,15 +121,17 @@ export default function NewPostPage() {
           await useNewPostState.getState().setFiles(picked);
         }}
       />
-      <Header
-        title="글 작성하기"
-        showBack
-        onBack={() => {
-          // 헤더 뒤로가기 → 네이티브 갤러리를 다시 연다.
-          galleryInputRef.current?.click();
-        }}
-        className="sticky top-0 z-50 bg-neutral-900"
-      />
+      {/* 헤더 (스크롤 시에도 상단 고정, safe-area 대응) */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+        <Header
+          title="글 작성하기"
+          showBack
+          onBack={() => {
+            // 헤더 뒤로가기 → 네이티브 갤러리를 다시 연다.
+            galleryInputRef.current?.click();
+          }}
+        />
+      </div>
       {/* 선택된 사진 슬라이딩 */}
       <div
         className="scrollbar-hide mb-[1rem] flex h-[15.1875rem] snap-x snap-mandatory gap-[0.5rem] overflow-x-auto p-[1rem] [-webkit-overflow-scrolling:touch]"
@@ -201,7 +203,6 @@ export default function NewPostPage() {
               }
             }}
             placeholder="나만의 필름 사진 이야기를 공유해주세요."
-            minLength={LIMITS.contentMin}
             maxLength={LIMITS.contentMax}
             enforceMaxLength={false}
             isError={contentError}
@@ -213,7 +214,7 @@ export default function NewPostPage() {
             </p>
           ) : contentError ? (
             <p className="t-error-in px-[0.625rem] text-[0.875rem] font-normal text-orange-500">
-              최소 20글자 이상 입력해주세요.
+              내용을 입력해주세요.
             </p>
           ) : null}
         </section>

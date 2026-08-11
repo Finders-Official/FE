@@ -100,12 +100,10 @@ export default function ReviewPhotoLabPage() {
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
-      <Header
-        title="현상소 리뷰 작성"
-        showBack
-        onBack={() => navigate(-1)}
-        className="sticky top-0 z-50 bg-neutral-900"
-      />
+      {/* 헤더 (스크롤 시에도 상단 고정, safe-area 대응) */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+        <Header title="현상소 리뷰 작성" showBack onBack={() => navigate(-1)} />
+      </div>
       <section className="flex flex-col gap-6 pt-10 pb-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-left text-[1.375rem] font-semibold text-white">

@@ -380,8 +380,8 @@ export default function PhotoFeedSearchPage() {
 
   return (
     <div className="relative min-h-dvh w-full flex-col">
-      {/* SearchBar */}
-      <div className="sticky top-0 z-50 bg-neutral-900 pt-3 pb-5">
+      {/* SearchBar (스크롤 시에도 상단 고정, safe-area 대응) */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-5">
         <SearchBar {...searchBarProps} />
       </div>
 
