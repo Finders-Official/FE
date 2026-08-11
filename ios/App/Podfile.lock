@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (5.9.1)
-  - Capacitor (8.3.4):
+  - Capacitor (8.4.2):
     - CapacitorCordova
   - Capacitor3KakaoLogin (0.8.7):
     - Capacitor
@@ -10,14 +10,14 @@ PODS:
     - KakaoSDKTalk
     - KakaoSDKTemplate
     - KakaoSDKUser
-  - CapacitorApp (8.1.0):
+  - CapacitorApp (8.1.1):
     - Capacitor
   - CapacitorCommunityAppleSignIn (7.1.0):
     - Capacitor
   - CapacitorCommunityMedia (9.1.0):
     - Capacitor
     - SDWebImage
-  - CapacitorCordova (8.3.4)
+  - CapacitorCordova (8.4.2)
   - CapacitorFilesystem (8.1.2):
     - Capacitor
     - IONFilesystemLib (~> 1.1.1)
@@ -27,14 +27,14 @@ PODS:
   - CapacitorGeolocation (8.2.0):
     - Capacitor
     - IONGeolocationLib (= 2.1.0)
-  - CapacitorPushNotifications (8.1.1):
+  - CapacitorPushNotifications (8.1.2):
     - Capacitor
   - CapacitorSecureStoragePlugin (0.13.0):
     - Capacitor
     - SwiftKeychainWrapper
   - CapacitorShare (8.0.1):
     - Capacitor
-  - CapacitorSplashScreen (8.0.1):
+  - CapacitorSplashScreen (8.0.2):
     - Capacitor
   - FirebaseCore (12.17.0):
     - FirebaseCoreInternal (~> 12.17.0)
@@ -185,19 +185,19 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
-  Capacitor: d13cad5fa09155679672808cc4ca9fbc2997e1b4
+  Capacitor: 52f999235b8bd6a7d01694753f4f4d54d182e3a3
   Capacitor3KakaoLogin: c48437e94bf1920730caeed35f35695fad783eb6
-  CapacitorApp: 449ffe26375e96f8aaaee625ac6e01e5c57c8650
+  CapacitorApp: 305bd13c44f6f9d164e2ee66a4faa956ed8c0e06
   CapacitorCommunityAppleSignIn: 271cb2860576fd2961508bbfa7a82117d93eadca
   CapacitorCommunityMedia: 862ba42957f75b74e403fc3a35bb1b286bfe9410
-  CapacitorCordova: c07921bdcfec6f691bae22274446b4d606ebf6a4
+  CapacitorCordova: 345eacdc4c8282415446aea4acd8c77d82480bd4
   CapacitorFilesystem: 2db285a1ac6e475cc27cae2e1bea999000f9e2be
   CapacitorFileTransfer: 445b9dc69ea5a5e0e708e011a4848e63c471abee
   CapacitorGeolocation: b36f6287bfc9f2eefa04dc900496f2c8ae666136
-  CapacitorPushNotifications: ec08d589c226a2c0db7c032ec1bf5b044ec85f8e
+  CapacitorPushNotifications: 32a7f840815f319fd9ba1c1c9b0b914be9d95237
   CapacitorSecureStoragePlugin: d083ff28d9ba5bc74924b9bcf9754ea605016b63
   CapacitorShare: 0c58305114538568059bfc07111f22dcb9cb2a82
-  CapacitorSplashScreen: 4b46c72298db552b3c57ce021ef028b6dc7f1fa7
+  CapacitorSplashScreen: 7bf61c2001557ff9e195e601c6b87344480d3c65
   FirebaseCore: 52d4512296984a44a8c8870c6494870fc7aeee2f
   FirebaseCoreInternal: 3b310521b34a51ce3a6c605e4618b9aef8f6c112
   FirebaseInstallations: bd8e80f51d4c8bdc6c872011dede0b800c5b49ea
