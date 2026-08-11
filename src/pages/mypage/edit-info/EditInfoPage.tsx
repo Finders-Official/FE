@@ -7,7 +7,9 @@ import { FALLBACK_PROFILE_SRC } from "@/constants/gcsUrl";
 import { useLogout } from "@/hooks/auth/login";
 import { useIssuePresignedUrl, useUploadToPresignedUrl } from "@/hooks/file";
 import { useMe, useEditMe } from "@/hooks/member";
+import { useUnregisterDeviceToken } from "@/hooks/notifications";
 import { useAuthStore } from "@/store/useAuth.store";
+import { usePushTokenStore } from "@/store/usePushToken.store";
 import { formatPhoneKorea } from "@/utils/formatPhoneKorea";
 import {
   pickPresignedPutUrl,
@@ -97,7 +99,29 @@ export function EditInfoPage() {
   // 완전 로그아웃
   const clearUser = useAuthStore((s) => s.clearUser);
 
+  const { mutateAsync: unregisterDeviceToken } = useUnregisterDeviceToken({
+    // 해제 API가 실제로 성공했을 때만 로컬 참조를 비운다
+    // (실패 시 토큰 값을 남겨둬야 추후 재시도할 여지가 있음)
+    onSuccess: () => {
+      usePushTokenStore.getState().setToken(null);
+    },
+  });
+
   const { mutate: doLogout, isPending: isLogoutPending } = useLogout({
+    // 기기 토큰 해제는 accessToken이 확실히 살아있는 onMutate에서 끝낸다.
+    // useLogout 내부 onSuccess가 tokenStorage.clear()를 먼저 호출하므로
+    // onSettled에서 요청하면 Authorization 없이 나가 401이 된다
+    onMutate: async () => {
+      const pushToken = usePushTokenStore.getState().token;
+      if (!pushToken) return;
+
+      try {
+        await unregisterDeviceToken(pushToken);
+      } catch {
+        // 해제 실패로 로그아웃 자체를 막지는 않는다
+      }
+    },
+
     onSettled: async () => {
       // API 통신 원천 차단
       queryClient.clear();

@@ -43,6 +43,9 @@ export function WithDrawPage() {
 
   const { mutate: withdraw, isPending } = useWithDrawMe({
     onSuccess: () => {
+      // 기기 토큰은 서버가 탈퇴 트랜잭션 안에서 지운다 (BE #712).
+      // 서버가 탈퇴 시점에 accessToken을 즉시 무효화하므로
+      // 클라이언트의 해제 호출은 어차피 항상 401이었다
       tokenStorage.clear();
       qc.clear();
       navigate("/auth/login", { replace: true });

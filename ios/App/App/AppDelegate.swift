@@ -2,6 +2,8 @@ import UIKit
 import Capacitor
 import KakaoSDKCommon
 import KakaoSDKAuth
+import FirebaseCore
+import FirebaseMessaging
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -12,6 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let appKey = Bundle.main.object(forInfoDictionaryKey: "KakaoAppKey") as? String {
             KakaoSDK.initSDK(appKey: appKey)
         }
+        FirebaseApp.configure()
         return true
     }
 
@@ -35,6 +38,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+
+    // APNs 등록 결과를 @capacitor/push-notifications 플러그인으로 전달 (플러그인이 이 알림을 구독한다)
+    // Firebase는 swizzling을 꺼둔 상태(Info.plist FirebaseAppDelegateProxyEnabled=false)라 apnsToken도 여기서 직접 넘긴다.
+    // APNs 환경은 자동 판별에 맡기지 말 것 — production으로 잘못 잡히면 개발 빌드에 푸시가 조용히 유실된다.
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        #if DEBUG
+        Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
+        #else
+        Messaging.messaging().setAPNSToken(deviceToken, type: .prod)
+        #endif
+        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {

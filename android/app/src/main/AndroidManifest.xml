@@ -39,6 +39,20 @@
         </provider>
 
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key" />
+
+        <!-- 상태바 알림 아이콘. 지정하지 않으면 런처 아이콘(배경 포함)이 쓰이는데,
+             Android는 알파 채널만 남겨 실루엣으로 그리므로 흰 사각형이 된다.
+             배경 없는 로고 레이어를 쓴다. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher_foreground" />
+
+        <!-- 서버가 channelId를 지정하지 않을 때 쓰이는 채널. 지정하지 않으면 FCM이
+             importance DEFAULT인 fallback 채널로 떨어뜨려 헤즈업 배너가 뜨지 않는다.
+             채널 자체는 usePushNotifications의 createChannel이 만든다 — id를 같이 바꿀 것. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="finders_default" />
     </application>
 
     <!-- Permissions -->
@@ -46,4 +60,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Android 13(API 33)+ 알림 표시를 위한 런타임 권한 (FCM 푸시) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

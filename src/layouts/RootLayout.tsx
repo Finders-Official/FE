@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router";
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
+import { useQueryClient } from "@tanstack/react-query";
 import { DialogBox } from "@/components/common/DialogBox";
 import GlobalLoginDialog from "@/components/common/GlobalLoginDialog";
 import { useNewPostState } from "@/store/useNewPostState.store";
+import { useAuthStore } from "@/store/useAuth.store";
+import { usePushNotifications } from "@/hooks/notifications";
+import { setOnSessionExpired } from "@/lib/setUpInterceptors";
 
 // 이탈 시 입력값이 날아가는 가입 단계. /auth/terms는 메인에서 push로 들어오는
 // 약관 열람 페이지라 제외(뒤로가기가 원래 화면으로 돌아가야 한다).
@@ -12,7 +16,29 @@ const SIGNUP_PATHS = ["/auth/agreement", "/auth/onboarding"];
 
 export default function RootLayout() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const user = useAuthStore((s) => s.user);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+
+  // 로그인 상태일 때만 푸시 토큰 등록/리스너 활성화
+  // (로그인 순간뿐 아니라 이미 로그인된 세션으로 앱을 재실행한 경우도 커버)
+  usePushNotifications(!!user, navigate);
+
+  // 토큰 재발급 실패 등으로 세션이 끊기면 인터셉터가 알려준다.
+  // 여기서 정리하지 않으면 토큰만 사라진 채 앱은 계속 로그인 상태로 보인다
+  useEffect(() => {
+    setOnSessionExpired(() => {
+      queryClient.clear();
+      navigate("/auth/login", { replace: true });
+
+      // 화면 이동(렌더링)이 끝난 뒤에 유저 상태를 지운다 (로그아웃 처리와 동일한 순서)
+      setTimeout(() => {
+        useAuthStore.getState().clearUser();
+      }, 100);
+    });
+
+    return () => setOnSessionExpired(null);
+  }, [navigate, queryClient]);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
