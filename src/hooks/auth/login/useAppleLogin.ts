@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { loginWithApple } from "@/utils/auth/appleSdk";
+import {
+  setPendingSignupProvider,
+  setRecentLoginProvider,
+} from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -26,6 +30,8 @@ export function useAppleLogin({
       const data = res.data;
 
       if ("accessToken" in data) {
+        // 가입이 끝난 계정만 "최근 로그인"으로 기록 (신규 회원은 아직 계정이 없음)
+        setRecentLoginProvider("APPLE");
         tokenStorage.setTokens({
           accessToken: data.accessToken,
           signupToken: null,
@@ -33,6 +39,7 @@ export function useAppleLogin({
         setUser({ memberId: data.member.id, nickname: data.member.nickname });
         onExistingMember();
       } else {
+        setPendingSignupProvider("APPLE");
         tokenStorage.setTokens({
           accessToken: null,
           signupToken: data.signupToken,

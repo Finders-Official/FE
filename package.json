@@ -28,19 +28,19 @@
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
     "@capacitor-community/media": "^9.1.0",
-    "@capacitor/android": "^8.3.4",
-    "@capacitor/app": "^8.1.0",
-    "@capacitor/core": "^8.3.4",
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/core": "^8.4.2",
     "@capacitor/file-transfer": "^2.0.4",
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/geolocation": "^8.2.0",
-    "@capacitor/ios": "^8.3.4",
+    "@capacitor/ios": "^8.4.2",
     "@capacitor/push-notifications": "^8.1.1",
     "@capacitor/share": "^8.0.1",
-    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.2",
     "@portone/browser-sdk": "^0.1.8",
     "@tanstack/react-query": "^5.90.12",
-    "axios": "^1.13.2",
+    "axios": "^1.19.0",
     "capacitor-secure-storage-plugin": "^0.13.0",
     "capacitor3-kakao-login": "^0.8.7",
     "jwt-decode": "^4.0.0",
@@ -49,12 +49,12 @@
     "react-daum-postcode": "^3.2.0",
     "react-dom": "^19.2.0",
     "react-masonry-css": "^1.0.16",
-    "react-router": "^7.11.0",
+    "react-router": "^7.18.2",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^8.3.4",
+    "@capacitor/cli": "^8.4.2",
     "@eslint/js": "^9.39.1",
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
@@ -83,7 +83,7 @@
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "7.3.0",
+    "vite": "7.3.6",
     "vite-plugin-svgr": "^4.5.0",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.1.9"
@@ -99,7 +99,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "7.3.0",
+      "vite": "7.3.6",
       "@types/node": "24.10.4"
     },
     "onlyBuiltDependencies": [

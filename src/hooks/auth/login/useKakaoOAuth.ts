@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { consumeAndValidateKakaoState } from "@/utils/auth/kakaoOauth";
+import {
+  setPendingSignupProvider,
+  setRecentLoginProvider,
+} from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useOauth } from "./useOauth";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -30,6 +34,8 @@ export function useKakaoOauth({
 
       if ("accessToken" in data) {
         // 기존 회원: accessToken 저장 후 메인으로 (refreshToken은 httpOnly 쿠키)
+        // 가입이 끝난 계정만 "최근 로그인"으로 기록 (신규 회원은 아직 계정이 없음)
+        setRecentLoginProvider("KAKAO");
         tokenStorage.setTokens({
           accessToken: data.accessToken,
           signupToken: null,
@@ -38,6 +44,7 @@ export function useKakaoOauth({
         onExistingMember();
       } else {
         // 신규 회원: signupToken 저장 후 온보딩으로
+        setPendingSignupProvider("KAKAO");
         tokenStorage.setTokens({
           accessToken: null,
           signupToken: data.signupToken,

@@ -1,4 +1,4 @@
-import { AppleButton, KakaoButton } from "@/components/auth";
+import { AppleButton, KakaoButton, RecentLoginDialog } from "@/components/auth";
 import { CTA_Button, Press } from "@/components/common";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
@@ -9,6 +9,11 @@ import { Capacitor3KakaoLogin } from "capacitor3-kakao-login";
 import { isNativeApp } from "@/utils/auth/envUtils";
 import { isAndroidApp } from "@/utils/platform";
 import { oauth } from "@/apis/auth";
+import {
+  getRecentLoginProvider,
+  setPendingSignupProvider,
+  setRecentLoginProvider,
+} from "@/utils/auth/recentLoginProvider";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { consumeRedirectAfterLogin } from "../demoDay/redirectAfterLogin";
 import { SplashScreen } from "@capacitor/splash-screen"; // 앱 초기 스플래시 제어용
@@ -33,6 +38,9 @@ export function LoginPage() {
   // 자동 로그인(토큰 유무) 상태 관리
   const [authCheckStatus, setAuthCheckStatus] =
     useState<AuthCheckStatus>("pending");
+
+  // 최근에 로그인했던 SNS (버튼 위 안내용)
+  const [recentLoginProvider] = useState(() => getRecentLoginProvider());
 
   // 앱 실행 시 네이티브 스플래시 숨김 & 백그라운드 토큰 검사
   useEffect(() => {
@@ -156,12 +164,15 @@ export function LoginPage() {
         const data = response.data;
 
         if ("isNewMember" in data && data.isNewMember === true) {
+          setPendingSignupProvider("KAKAO");
           await tokenStorage.setTokens({
             accessToken: null,
             signupToken: data.signupToken,
           });
           navigate("/auth/onboarding", { replace: true });
         } else if ("member" in data) {
+          // 가입이 끝난 계정만 "최근 로그인"으로 기록 (신규 회원은 아직 계정이 없음)
+          setRecentLoginProvider("KAKAO");
           await tokenStorage.setTokens({
             accessToken: data.accessToken,
             signupToken: null,
@@ -240,7 +251,7 @@ export function LoginPage() {
           >
             <CTA_Button
               text="홈으로"
-              link="/mainpage"
+              onClick={() => navigate("/mainpage", { replace: true })}
               color="orange"
               size="compact"
             />
@@ -259,9 +270,29 @@ export function LoginPage() {
             key={ui.footerKey}
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
-            <div className="flex flex-col gap-2">
-              {!isAndroidApp() && (
-                <AppleButton onClick={apple.login} disabled={apple.isPending} />
+            <div className="flex flex-col gap-3">
+              {recentLoginProvider === "APPLE" && !isAndroidApp() && (
+                <RecentLoginDialog />
+              )}
+              <div
+                className={
+                  recentLoginProvider === "KAKAO" && !isAndroidApp()
+                    ? "relative"
+                    : undefined
+                }
+              >
+                {!isAndroidApp() && (
+                  <AppleButton
+                    onClick={apple.login}
+                    disabled={apple.isPending}
+                  />
+                )}
+                {recentLoginProvider === "KAKAO" && !isAndroidApp() && (
+                  <RecentLoginDialog className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/4" />
+                )}
+              </div>
+              {recentLoginProvider === "KAKAO" && isAndroidApp() && (
+                <RecentLoginDialog />
               )}
               <KakaoButton onClick={handleKakaoLogin} />
             </div>

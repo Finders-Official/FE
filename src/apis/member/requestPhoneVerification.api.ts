@@ -17,7 +17,7 @@ export async function requestPhoneVerification(
   const body = res.data;
 
   if (!body.success) {
-    throw new Error(body.message);
+    throw Object.assign(new Error(body.message), { code: body.code });
   }
 
   return body;
