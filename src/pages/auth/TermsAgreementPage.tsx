@@ -19,7 +19,10 @@ export function TermsAgreementPage() {
 
   const handleConfirm = () => {
     if (!requiredAllChecked) return;
-    navigate("/auth/onboarding", { state: { agreedTermTypes } });
+    navigate("/auth/onboarding", {
+      state: { agreedTermTypes },
+      replace: true,
+    });
   };
 
   return (

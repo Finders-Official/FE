@@ -4,11 +4,14 @@ import type { TermsType } from "@/types/auth";
 import { useDebouncedValue, useDebouncedTrue } from "@/hooks/common";
 import { useShakeTrigger } from "@/hooks/common/useShakeTrigger";
 import {
+  extractPhoneVerifyErrorCode,
   useConfirmPhoneVerification,
   useNicknameCheck,
   useRequestPhoneVerification,
 } from "@/hooks/member";
+import { PHONE_ALREADY_REGISTERED_CODE } from "@/constants/member/phone.constant";
 import { tokenStorage } from "@/utils/tokenStorage";
+import { commitPendingSignupProvider } from "@/utils/auth/recentLoginProvider";
 import { useSocialSignup } from "./useSignUp";
 import { useAuthStore } from "@/store/useAuth.store";
 
@@ -43,6 +46,7 @@ export function useOnBoardingForm(options?: Options) {
 
   const [phoneVerifyMessage, setPhoneVerifyMessage] = useState<string>(""); // 성공 문구
   const [phoneVerifyError, setPhoneVerifyError] = useState<string>(""); // 실패 문구
+  const [isDuplicatePhone, setIsDuplicatePhone] = useState(false); // 이미 가입된 번호 안내
 
   // 닉네임 인증
   const debouncedNickname = useDebouncedValue(nickname, 400);
@@ -134,7 +138,13 @@ export function useOnBoardingForm(options?: Options) {
       }
         // prettier-ignore
       },
-      onError: (e) => console.error(e.message),
+      onError: (e) => {
+        if (extractPhoneVerifyErrorCode(e) === PHONE_ALREADY_REGISTERED_CODE) {
+          setIsDuplicatePhone(true);
+          return;
+        }
+        console.error(e.message);
+      },
     });
 
   const { mutate: confirmCode, isPending: isConfirmingCode } =
@@ -222,6 +232,8 @@ export function useOnBoardingForm(options?: Options) {
 
   const { mutate: completeSignup, isPending: isCompleting } = useSocialSignup({
     onSuccess: (res) => {
+      // 가입이 끝났으므로 임시 보관한 provider를 "최근 로그인"으로 확정
+      commitPendingSignupProvider();
       tokenStorage.setTokens({
         accessToken: res.data.accessToken,
         signupToken: null,
@@ -339,6 +351,10 @@ export function useOnBoardingForm(options?: Options) {
     phoneBorderClass,
     phoneTextClass,
     lockPhoneForm,
+
+    // 이미 가입된 번호 안내
+    isDuplicatePhone,
+    closeDuplicatePhoneDialog: () => setIsDuplicatePhone(false),
 
     // shake keys
     nicknameShakeKey,
