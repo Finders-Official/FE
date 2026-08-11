@@ -267,6 +267,7 @@ const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
+      // replace가 아니면 히스토리에 "/"가 남아 Android 뒤로가기로 앱이 안 닫힘
       { index: true, element: <Navigate to="/auth/login" replace /> },
 
       // auth prefix를 한 번만
