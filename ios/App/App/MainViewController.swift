@@ -6,5 +6,8 @@ class MainViewController: CAPBridgeViewController {
 
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(FindersBillingPlugin())
+
+        // 엣지 스와이프 뒤로가기 — SPA(pushState) 히스토리에도 동작
+        webView?.allowsBackForwardNavigationGestures = true
     }
 }
