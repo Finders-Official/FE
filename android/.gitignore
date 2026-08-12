@@ -66,7 +66,10 @@ keystore.properties
 .cxx/
 
 # Google Services (e.g. APIs or Firebase)
-google-services.json
+# google-services.json은 비밀정보가 아니다(API 키는 패키지명+SHA-1로 제한됨).
+# 무시하면 다른 머신·CI에서 google-services 플러그인이 조용히 미적용되어
+# Firebase 리소스 없는 APK가 나오고 푸시가 에러 없이 죽는다(#361).
+# google-services.json
 
 # Freeline
 freeline.py
