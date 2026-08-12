@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "266626418049",
+    "project_id": "finders-firebase",
+    "storage_bucket": "finders-firebase.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:266626418049:android:97d15cca1a967db201d480",
+        "android_client_info": {
+          "package_name": "com.finders"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLFOVwkDrk0p_PjsTzt1WsTygQnoPDyUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
