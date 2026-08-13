@@ -67,9 +67,6 @@ export default function PhotoRestorationPage() {
     FREE_CREDIT_CAP,
   );
 
-  const totalFree = FREE_CREDIT_CAP;
-  const usedFree = totalFree - creditBalance;
-
   const {
     isGenerating,
     statusMessage,
@@ -329,8 +326,7 @@ export default function PhotoRestorationPage() {
         restoredImageUrl={restoredImageUrl}
         isGenerating={isGenerating}
         shouldShowCreditTooltip={shouldShowCreditTooltip}
-        usedFree={usedFree}
-        totalFree={totalFree}
+        creditBalance={creditBalance}
         setIsCreditTooltipOpen={setIsCreditTooltipOpen}
         handleGenerateClick={handleGenerateClick}
         handleRegenerateClick={handleRegenerateClick}
