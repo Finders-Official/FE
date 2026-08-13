@@ -15,7 +15,12 @@ const SectionWrapper = ({
   id: string;
   children: React.ReactNode;
 }) => (
-  <div data-anchor={id} className="mx-auto w-full max-w-sm">
+  // 스크롤 컨테이너가 w-screen으로 확장돼 있으므로(#347) RootLayout의 콘텐츠 박스를
+  // 여기서 그대로 재현해야 Header와 좌우 정렬이 맞는다.
+  <div
+    data-anchor={id}
+    className="mx-auto w-full max-w-120 px-4 sm:px-6 lg:px-8"
+  >
     {children}
   </div>
 );
@@ -51,7 +56,7 @@ export default function MainPage() {
   useAnchorScroll(scrollRef);
 
   return (
-    <div className="mx-auto flex h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full max-w-sm flex-col bg-neutral-900 text-white">
+    <div className="flex h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full flex-col bg-neutral-900 text-white">
       <Header />
       <div
         ref={scrollRef}
@@ -69,9 +74,7 @@ export default function MainPage() {
         <SectionWrapper id="community">
           <CommunityGallerySection />
         </SectionWrapper>
-        <div className="mx-auto w-full max-w-sm">
-          <Footer />
-        </div>
+        <Footer />
       </div>
     </div>
   );

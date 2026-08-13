@@ -19,8 +19,7 @@ interface RestorationFooterProps {
   restoredImageUrl: string | null;
   isGenerating: boolean;
   shouldShowCreditTooltip: boolean;
-  usedFree: number;
-  totalFree: number;
+  creditBalance: number;
   setIsCreditTooltipOpen: (isOpen: boolean) => void;
   handleGenerateClick: () => void;
   handleRegenerateClick: () => void;
@@ -33,8 +32,7 @@ export const RestorationFooter = ({
   restoredImageUrl,
   isGenerating,
   shouldShowCreditTooltip,
-  usedFree,
-  totalFree,
+  creditBalance,
   setIsCreditTooltipOpen,
   handleGenerateClick,
   handleRegenerateClick,
@@ -68,8 +66,7 @@ export const RestorationFooter = ({
               style={{ "--reveal-origin": "50% 100%" } as CSSProperties}
             >
               <Tooltip
-                used={usedFree}
-                total={totalFree}
+                balance={creditBalance}
                 onClose={() => setIsCreditTooltipOpen(false)}
               />
             </div>

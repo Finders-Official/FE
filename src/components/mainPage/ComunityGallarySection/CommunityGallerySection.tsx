@@ -88,8 +88,7 @@ export default function CommunityGallerySection() {
 
       <div
         ref={scrollerRef}
-        className="scrollbar-hide relative flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-4"
-        style={{ scrollPadding: "0 20px" }}
+        className="scrollbar-hide relative flex w-full snap-x snap-mandatory gap-3 overflow-x-auto pb-4"
       >
         {posts.map((post, idx) => (
           <div
