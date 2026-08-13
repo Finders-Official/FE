@@ -91,12 +91,9 @@ export default function PostPage() {
       return (
         <>
           <div className="t-skel-sheen flex flex-col gap-[0.625rem] pb-10">
-            <Header
-              title=""
-              showBack
-              onBack={handleGoBack}
-              className="sticky top-0 z-50 bg-neutral-900"
-            />
+            <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+              <Header title="" showBack onBack={handleGoBack} />
+            </div>
             <ProfileSkeleton />
             <div className="h-90 w-full bg-neutral-700"></div>
             <p className="h-4 w-70 rounded-xl bg-neutral-800"></p>
@@ -108,24 +105,18 @@ export default function PostPage() {
     if (isPostError)
       return (
         <div className="flex h-full flex-col">
-          <Header
-            title=""
-            showBack
-            onBack={handleGoBack}
-            className="sticky top-0 z-50 bg-neutral-900"
-          />
+          <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+            <Header title="" showBack onBack={handleGoBack} />
+          </div>
           <ErrorState className="flex flex-1 items-center justify-center" />
         </div>
       );
     if (!postDetail) return <EmptyView content="게시글 정보가 없습니다." />;
     return (
       <>
-        <Header
-          title=""
-          showBack
-          onBack={handleGoBack}
-          className="sticky top-0 z-50 bg-neutral-900"
-        />
+        <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+          <Header title="" showBack onBack={handleGoBack} />
+        </div>
         <section className="flex flex-col gap-[0.625rem] pb-10">
           {/** 상단 */}
           <div className="flex flex-col gap-4">

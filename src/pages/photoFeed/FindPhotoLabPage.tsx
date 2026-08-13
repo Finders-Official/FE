@@ -180,7 +180,13 @@ export default function FindPhotoLabPage() {
       return <ErrorState />;
     }
     if (!data || data.length === 0) {
-      return <EmptyView />;
+      // EmptyView는 absolute inset-0라, 높이를 가진 relative 컨테이너로 감싸
+      // 검색창 아래 영역에서 중앙정렬되게 한다 (검색창과 겹침 방지)
+      return (
+        <div className="relative min-h-[50dvh]">
+          <EmptyView />
+        </div>
+      );
     }
     return (
       <ul className="divide-y divide-neutral-800 px-4">
@@ -239,12 +245,11 @@ export default function FindPhotoLabPage() {
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
-      <Header
-        title="현상소 입력하기"
-        showBack
-        onBack={handleGoBack}
-        className="sticky top-0 z-50 bg-neutral-900"
-      />
+      {/* 헤더 (스크롤 시에도 상단 고정, safe-area 대응)
+          z-30: 검색 컨테이너(z-20)보다 위여야 검색 결과가 헤더를 덮지 않는다 */}
+      <div className="sticky top-0 z-30 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+        <Header title="현상소 입력하기" showBack onBack={handleGoBack} />
+      </div>
 
       {/* 검색모드일 때: 화면 전체 클릭을 감지하는 투명 오버레이 */}
       {labReviewStep === "search" && (
