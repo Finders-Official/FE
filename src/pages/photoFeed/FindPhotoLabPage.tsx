@@ -245,8 +245,9 @@ export default function FindPhotoLabPage() {
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[23.4375rem] pb-[1rem]">
-      {/* 헤더 (스크롤 시에도 상단 고정, safe-area 대응) */}
-      <div className="sticky top-0 z-20 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
+      {/* 헤더 (스크롤 시에도 상단 고정, safe-area 대응)
+          z-30: 검색 컨테이너(z-20)보다 위여야 검색 결과가 헤더를 덮지 않는다 */}
+      <div className="sticky top-0 z-30 -mx-4 -mt-[env(safe-area-inset-top)] bg-neutral-900 px-4 pt-[env(safe-area-inset-top)]">
         <Header title="현상소 입력하기" showBack onBack={handleGoBack} />
       </div>
 
