@@ -3,26 +3,23 @@ import { TooltipXIcon } from "@/assets/icon";
 import { Press } from "@/components/common/motion";
 
 interface TooltipProps {
-  used: number;
-  total: number;
+  balance: number;
   onClose: () => void;
   className?: string;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({ used, total, onClose }) => {
+export const Tooltip: React.FC<TooltipProps> = ({ balance, onClose }) => {
   return (
     <div
       className={
-        "pointer-events-auto relative flex h-11 w-40.25 items-center rounded-[0.625rem] bg-orange-500 text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+        "pointer-events-auto relative flex h-11 w-fit items-center rounded-[0.625rem] bg-orange-500 text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
       }
       role="status"
       aria-live="polite"
     >
       {/* 본문: 한 줄 고정 + 양끝 정렬 */}
       <div className="font-regular flex h-full w-full items-center justify-between gap-2 px-4 text-[13px] whitespace-nowrap">
-        <span>
-          무료 크레딧 {used}/{total} 사용
-        </span>
+        <span>사용 가능한 크레딧 {balance}개</span>
 
         <Press
           type="button"
