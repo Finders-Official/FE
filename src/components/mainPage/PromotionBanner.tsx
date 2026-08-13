@@ -48,7 +48,7 @@ export default function PromotionBanner() {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-5"
+        className="scrollbar-hide flex w-full snap-x snap-mandatory gap-3 overflow-x-auto"
       >
         {BANNERS.map((banner) => (
           <Press
