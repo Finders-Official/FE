@@ -270,7 +270,7 @@ export function LoginPage() {
             key={ui.footerKey}
             className={`mx-auto max-w-sm ${ui.footerAnim}`}
           >
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               {recentLoginProvider === "APPLE" && !isAndroidApp() && (
                 <RecentLoginDialog />
               )}
@@ -288,7 +288,7 @@ export function LoginPage() {
                   />
                 )}
                 {recentLoginProvider === "KAKAO" && !isAndroidApp() && (
-                  <RecentLoginDialog className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/4" />
+                  <RecentLoginDialog className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2" />
                 )}
               </div>
               {recentLoginProvider === "KAKAO" && isAndroidApp() && (
