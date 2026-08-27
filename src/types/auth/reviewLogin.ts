@@ -1,8 +1,9 @@
 import type { SocialLoginSuccess } from "./oAuth";
 
 // 스토어 심사용 로그인 요청 (POST /auth/review/login)
+// 심사 계정은 실제 메일을 수신하지 않아 서버가 이메일 형식을 강제하지 않는다.
 export interface ReviewLoginReq {
-  email: string;
+  username: string;
   password: string;
 }
 

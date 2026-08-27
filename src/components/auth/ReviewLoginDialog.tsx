@@ -19,7 +19,7 @@ export const ReviewLoginDialog = ({
   onClose,
   onSuccess,
 }: ReviewLoginDialogProps) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,16 +31,16 @@ export const ReviewLoginDialog = ({
 
   if (!open) return null;
 
-  const canSubmit = email.trim() !== "" && password !== "" && !isPending;
+  const canSubmit = username.trim() !== "" && password !== "" && !isPending;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
     setErrorMessage("");
-    mutate({ email: email.trim(), password });
+    mutate({ username: username.trim(), password });
   };
 
   const handleClose = () => {
-    setEmail("");
+    setUsername("");
     setPassword("");
     setShowPassword(false);
     setErrorMessage("");
@@ -71,14 +71,13 @@ export const ReviewLoginDialog = ({
 
         <div className="mt-5 flex flex-col gap-3">
           <input
-            type="email"
-            inputMode="email"
+            type="text"
             autoCapitalize="none"
             autoCorrect="off"
-            placeholder="Email"
+            placeholder="ID"
             className={fieldClass}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <div className="relative">

@@ -44,7 +44,7 @@ describe("useReviewLogin", () => {
     const { result } = renderHook(() => useReviewLogin(), { wrapper });
 
     result.current.mutate({
-      email: "review@finders.app",
+      username: "finders2026**",
       password: "pw",
     });
 
@@ -59,7 +59,7 @@ describe("useReviewLogin", () => {
     reviewLoginMock.mockResolvedValue(SUCCESS);
     const { result } = renderHook(() => useReviewLogin(), { wrapper });
 
-    result.current.mutate({ email: "review@finders.app", password: "pw" });
+    result.current.mutate({ username: "finders2026**", password: "pw" });
 
     await waitFor(() => expect(setUserMock).toHaveBeenCalled());
     expect(setUserMock).toHaveBeenCalledWith({
@@ -75,7 +75,7 @@ describe("useReviewLogin", () => {
       wrapper,
     });
 
-    result.current.mutate({ email: "review@finders.app", password: "pw" });
+    result.current.mutate({ username: "finders2026**", password: "pw" });
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalled());
     expect(setTokensMock).toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe("useReviewLogin", () => {
       wrapper,
     });
 
-    result.current.mutate({ email: "review@finders.app", password: "wrong" });
+    result.current.mutate({ username: "finders2026**", password: "wrong" });
 
     await waitFor(() => expect(onError).toHaveBeenCalled());
     expect(setTokensMock).not.toHaveBeenCalled();
