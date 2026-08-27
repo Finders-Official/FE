@@ -14,3 +14,5 @@ export type {
 } from "./signUp";
 
 export type { TermsType, AgreementGroup, AgreementTerm } from "./terms";
+
+export type { ReviewLoginReq, ReviewLoginData } from "./reviewLogin";

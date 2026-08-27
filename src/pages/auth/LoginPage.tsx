@@ -1,7 +1,12 @@
-import { AppleButton, KakaoButton, RecentLoginDialog } from "@/components/auth";
+import {
+  AppleButton,
+  KakaoButton,
+  RecentLoginDialog,
+  ReviewLoginDialog,
+} from "@/components/auth";
 import { CTA_Button, Press } from "@/components/common";
 import { Link, useNavigate, useSearchParams } from "react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { buildKakaoAuthorizeUrl } from "@/utils/auth/kakaoOauth";
 import { useAppleLogin, useLoginIntroUi } from "@/hooks/auth/login";
 import { useAuthStore } from "@/store/useAuth.store";
@@ -34,6 +39,26 @@ export function LoginPage() {
   const welcome = sp.get("welcome") === "1";
   const nonce = sp.get("nonce");
   const navigate = useNavigate();
+
+  // 스토어 심사용 로그인 진입점 — 로고를 2초 누르면 열린다.
+  const [isReviewLoginOpen, setIsReviewLoginOpen] = useState(false);
+  const reviewPressTimerRef = useRef<number | null>(null);
+
+  const cancelReviewLoginPress = () => {
+    if (reviewPressTimerRef.current === null) return;
+    window.clearTimeout(reviewPressTimerRef.current);
+    reviewPressTimerRef.current = null;
+  };
+
+  const startReviewLoginPress = () => {
+    cancelReviewLoginPress();
+    reviewPressTimerRef.current = window.setTimeout(() => {
+      reviewPressTimerRef.current = null;
+      setIsReviewLoginOpen(true);
+    }, 2000);
+  };
+
+  useEffect(() => cancelReviewLoginPress, []);
 
   // 자동 로그인(토큰 유무) 상태 관리
   const [authCheckStatus, setAuthCheckStatus] =
@@ -206,10 +231,18 @@ export function LoginPage() {
       <header
         className={`mt-60 flex flex-col items-center text-center ${ui.headerAnim}`}
       >
+        {/* 로고 롱프레스는 스토어 심사용 로그인 진입점이다. 심사관은 카카오 계정을 만들 수 없고
+            애플 로그인은 항상 신규 가입(휴대폰 인증) 플로우를 타서 소셜만으로는 진입할 수 없다. */}
         <img
           src="/MainLogo.svg"
           alt="Main Logo"
-          className="h-28 w-42 sm:h-32 sm:w-46"
+          className="h-28 w-42 select-none sm:h-32 sm:w-46"
+          draggable={false}
+          onPointerDown={startReviewLoginPress}
+          onPointerUp={cancelReviewLoginPress}
+          onPointerLeave={cancelReviewLoginPress}
+          onPointerCancel={cancelReviewLoginPress}
+          onContextMenu={(e) => e.preventDefault()}
         />
 
         <div key={ui.headerKey}>
@@ -307,6 +340,16 @@ export function LoginPage() {
           </section>
         ) : null}
       </footer>
+
+      <ReviewLoginDialog
+        open={isReviewLoginOpen}
+        onClose={() => setIsReviewLoginOpen(false)}
+        onSuccess={() => {
+          setIsReviewLoginOpen(false);
+          const redirect = consumeRedirectAfterLogin();
+          navigate(redirect ?? "/mainpage", { replace: true });
+        }}
+      />
     </main>
   );
 }
