@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Press } from "@/components/common";
-import { useReviewLogin } from "@/hooks/auth/login/useReviewLogin";
+import { useReviewLogin } from "@/hooks/auth/login";
 
 interface ReviewLoginDialogProps {
   open: boolean;
@@ -59,6 +59,9 @@ export const ReviewLoginDialog = ({
       <button
         type="button"
         aria-label="닫기"
+        // 요청이 시트보다 오래 살아남으면 닫은 뒤에 로그인이 성사되거나,
+        // 다음에 열었을 때 지난 시도의 에러·pending 상태가 남는다
+        disabled={isPending}
         className="absolute inset-0 bg-black/60"
         onClick={handleClose}
       />

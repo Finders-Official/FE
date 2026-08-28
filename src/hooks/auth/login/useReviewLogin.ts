@@ -4,8 +4,18 @@ import type { ReviewLoginData, ReviewLoginReq } from "@/types/auth";
 import type { ApiResponse } from "@/types/common/apiResponse";
 import { tokenStorage } from "@/utils/tokenStorage";
 import { useMutation } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 
 type Response = ApiResponse<ReviewLoginData>;
+
+// 비-2xx 응답은 axios가 먼저 reject하므로 api 함수의 !success 분기를 타지 않는다.
+// 그대로 두면 "Request failed with status code 401" 같은 axios 원문이 시트에 렌더된다
+function resolveErrorMessage(error: Error): string {
+  if (isAxiosError<ApiResponse<unknown>>(error)) {
+    return error.response?.data?.message ?? error.message;
+  }
+  return error.message;
+}
 
 type Options = {
   onSuccess?: () => void;
@@ -34,7 +44,7 @@ export function useReviewLogin(options?: Options) {
       options?.onSuccess?.();
     },
     onError: (error) => {
-      options?.onError?.(error.message);
+      options?.onError?.(resolveErrorMessage(error));
     },
   });
 }

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createElement, type ReactNode } from "react";
+import { AxiosError, type AxiosResponse } from "axios";
 import { useReviewLogin } from "./useReviewLogin";
 
 const { reviewLoginMock, setTokensMock, setUserMock } = vi.hoisted(() => ({
@@ -95,5 +96,34 @@ describe("useReviewLogin", () => {
     await waitFor(() => expect(onError).toHaveBeenCalled());
     expect(setTokensMock).not.toHaveBeenCalled();
     expect(setUserMock).not.toHaveBeenCalled();
+  });
+
+  it("비-2xx 응답이면 axios 원문 대신 서버 메시지를 onError로 넘긴다", async () => {
+    reviewLoginMock.mockRejectedValue(
+      new AxiosError(
+        "Request failed with status code 401",
+        "ERR_BAD_REQUEST",
+        undefined,
+        undefined,
+        {
+          status: 401,
+          data: {
+            success: false,
+            message: "아이디 또는 비밀번호가 일치하지 않습니다.",
+          },
+        } as AxiosResponse,
+      ),
+    );
+    const onError = vi.fn();
+    const { result } = renderHook(() => useReviewLogin({ onError }), {
+      wrapper,
+    });
+
+    result.current.mutate({ username: "finders2026**", password: "wrong" });
+
+    await waitFor(() => expect(onError).toHaveBeenCalled());
+    expect(onError).toHaveBeenCalledWith(
+      "아이디 또는 비밀번호가 일치하지 않습니다.",
+    );
   });
 });
