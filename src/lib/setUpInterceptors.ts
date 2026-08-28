@@ -34,7 +34,12 @@ function processQueue(error: unknown, newAccessToken: string | null) {
 
 function shouldSkipAuth(config: AxiosRequestConfig) {
   const url = config.url ?? "";
-  return url.startsWith("/auth/reissue") || url.startsWith("/auth/refresh");
+  return (
+    url.startsWith("/auth/reissue") ||
+    url.startsWith("/auth/refresh") ||
+    // 인증 전 공개 엔드포인트. 401을 refresh로 재시도하면 원래 로그인 에러가 reissue 에러로 덮인다
+    url.startsWith("/auth/review/login")
+  );
 }
 
 // 세션이 끊겼을 때 앱을 로그인 화면으로 되돌리기 위한 콜백.
