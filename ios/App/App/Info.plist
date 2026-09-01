@@ -72,6 +72,8 @@
 		<string>storykompassauth</string>
 		<string>kakaolink</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>사진을 촬영해 업로드하기 위해 카메라 접근 권한이 필요합니다.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>복원한 사진을 갤러리에 저장하기 위해 사진 접근 권한이 필요합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
