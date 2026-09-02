@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 type PrintOrderState = {
-  selectedAddressId: number | null;
-  setSelectedAddressId: (id: number | null) => void;
+  selectedAddressId: string | null;
+  setSelectedAddressId: (id: string | null) => void;
 };
 
 export const useAddressIdStore = create<PrintOrderState>()((set) => ({

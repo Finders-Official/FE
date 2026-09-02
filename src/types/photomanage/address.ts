@@ -1,6 +1,6 @@
 // 배송지 조회 응답 (GET /users/addresses)
 export type Address = {
-  addressId: number;
+  addressId: string;
   addressName: string;
   zipcode: string;
   address: string;
