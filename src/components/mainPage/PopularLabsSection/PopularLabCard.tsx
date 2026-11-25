@@ -1,6 +1,7 @@
 import { useRequireAuth } from "@/hooks/mainPage/useRequireAuth";
 import type { Lab } from "@/apis/mainPage/mainPage.api";
 import { Press } from "@/components/common";
+import { photoLabPlaceholder } from "@/assets/images";
 
 interface PopularLabCardProps {
   lab: Lab;
@@ -26,14 +27,24 @@ export default function PopularLabCard({ lab }: PopularLabCardProps) {
       onClick={() => requireAuthNavigate(`/photolab/${lab.photoLabId}`)}
       className="relative block aspect-163/230 w-full cursor-pointer overflow-hidden rounded-[0.625rem] border border-neutral-800"
     >
-      <img
-        src={imageUrl}
-        alt={lab.name}
-        className="absolute inset-0 h-full w-full object-cover"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = fallbackImage;
-        }}
-      />
+      {raw ? (
+        <img
+          src={imageUrl}
+          alt={lab.name}
+          className="absolute inset-0 h-full w-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = fallbackImage;
+          }}
+        />
+      ) : (
+        <div className="bg-neutral-850 absolute inset-0 flex items-center justify-center pb-16.25">
+          <img
+            src={photoLabPlaceholder}
+            alt={lab.name}
+            className="h-15 w-15 rounded-[0.625rem]"
+          />
+        </div>
+      )}
 
       <div
         className="absolute right-0 bottom-16.25 left-0 z-10 h-13.25 w-full"

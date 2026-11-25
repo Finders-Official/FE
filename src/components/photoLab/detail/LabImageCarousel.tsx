@@ -1,5 +1,6 @@
 import { useCarousel } from "@/hooks/common/useCarousel";
 import { NumberPopIn } from "@/components/common";
+import { photoLabPlaceholder } from "@/assets/images";
 
 type Props = {
   images: string[];
@@ -12,7 +13,18 @@ export default function LabImageCarousel({
 }: Props) {
   const { index, scrollerRef } = useCarousel(images.length);
 
-  if (images.length === 0) return null;
+  if (images.length === 0) {
+    return (
+      <div className="bg-neutral-850 flex h-[13.6875rem] w-full items-center justify-center">
+        <img
+          src={photoLabPlaceholder}
+          alt={`${altPrefix}-placeholder`}
+          className="h-15 w-15 rounded-[0.625rem]"
+          draggable={false}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full overflow-hidden">
