@@ -8,7 +8,7 @@ import { usePrintOrderStore } from "@/store/usePrintOrder.store";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-type LocationState = { selectedAddressId?: number } | null;
+type LocationState = { selectedAddressId?: string } | null;
 
 export function SelectAddressPage() {
   const navigate = useNavigate();
