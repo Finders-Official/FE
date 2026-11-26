@@ -186,3 +186,6 @@ export async function getResource(params: Params): Promise<ApiResponse<Data>> {
 - **release 빌드는 JS `console.log`가 logcat에 안 찍힌다** (네이티브 `Log.*`만 나옴). JS 레벨 디버깅은 debug 빌드로.
 - Android 서명 release 빌드: `pnpm build` → `npx cap sync android` → `android/`에서 `gradlew assembleRelease` (Play Store용 AAB는 `bundleRelease`). **Capacitor 8은 JDK 21 필요** — `invalid source release: 21` 에러는 로컬에 낮은 JDK(JAVA_HOME 또는 사용자 전역 gradle.properties)가 잡힌 것이니 `-Dorg.gradle.java.home=<JDK21 경로>`로 오버라이드. 서명 비밀정보는 `android/keystore.properties`(gitignore) — **절대 커밋 금지**.
 - User-Agent에 `FindersApp`이 append되어 있음 (서버/외부 서비스에서 앱 판별용).
+- 🔴 **iOS 아카이브 전에 반드시 `pnpm cap:sync:ios`**. `capacitor.config.ts`에 `server.url`이 없어 **웹 자산이 바이너리에 통째로 구워진다** — 웹을 배포해도 앱은 안 바뀌고, Xcode에서 빌드번호만 올려 아카이브하면 **이전 JS가 그대로 심사에 올라간다**.
+- 🔴 **기기 권한 문구(`ios/App/App/Info.plist`)가 없으면 그 기능을 쓰는 순간 앱이 죽는다** — 권한 거부가 아니라 OS의 즉시 프로세스 종료다. 2026-08-29 심사에서 `NSCameraUsageDescription` 누락으로 「사진수다 → Take Photo」 크래시 리젝(Guideline 2.1a). 파일 입력(`<input type="file" accept="image/*">`)도 WKWebView가 카메라를 열므로 대상이다.
+- **Sign in with Apple 버튼은 Apple이 규격을 강제한다**(Guideline 4). 허용 스타일은 black / white / white-outline 셋뿐이고, 배경과 구분돼 «버튼으로 보여야» 한다. 2026-08-29 심사에서 `bg-[#040505]` 버튼이 `#131313` 배경(=`body`의 `--color-neutral-900`)에 묻혀 리젝 — 대비 약 1.08:1이었다. 현재는 흰색(`AppleButton.tsx`). **어두운 테마에서 검은 버튼으로 되돌리지 마라.**
